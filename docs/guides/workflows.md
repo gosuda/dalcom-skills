@@ -1,6 +1,6 @@
 # Workflows
 
-Most campaigns below share one shape: open by clarifying or planning(*explicitly* in **plan mode** with `/askme` or`/architect` or *implictly* with `/wayfinder` or `/autoplan)`, steer with short corrections rather than restated requirements, and close with a pass over what was left behind before you call anything done. The mined work spans a Rust Bitcoin node, two greenfield Rust ports, a harness port, and this marketplace itself; map your own work onto the closest shape.
+Most campaigns below share one shape: open by clarifying or planning (*explicitly* in **plan mode** with `/askme` or `/architect` or *implicitly* with `/wayfinder` or `/autoplan`), steer with short corrections rather than restated requirements, and close with a pass over what was left behind before you call anything done. The mined work spans a Rust Bitcoin node, two greenfield Rust ports, a harness port, and this marketplace itself; map your own work onto the closest shape.
 
 Chains are written in the harness-neutral form `/skill:<slug>`. Type each step as your harness spells it: `/<plugin>:<slug>` in Claude Code, `$<slug>` in Codex, or `/` and the skill name in Cursor; [using-skills.md](using-skills.md) has the table.
 

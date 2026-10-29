@@ -167,7 +167,7 @@ description: 'Use when building a lexer, Pratt or recursive-descent parser, AST,
    ```
 
    Error productions for common mistakes and single-token insertion or deletion are the next steps when the frontend serves an editor. Done when: an input with two independent errors reports both, not a cascade from the first.
-8. Emit LLVM IR from the typed AST through the C API. Create types from a context, build instructions through a builder, and use the typed load: the untyped `LLVMBuildLoad` is gone from the current C API (LLVM 23.1.0) and `LLVMInt32Type()` without a context is deprecated.
+8. Emit LLVM IR from the typed AST through the C API. Create types from a context, build instructions through a builder, and use the typed load: the untyped `LLVMBuildLoad` is gone from the current C API (LLVM 23.1.4) and `LLVMInt32Type()` without a context is deprecated.
 
    ```c
    #include <llvm-c/Core.h>

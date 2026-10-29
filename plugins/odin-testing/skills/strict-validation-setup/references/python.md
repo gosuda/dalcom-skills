@@ -7,7 +7,7 @@
 ```json
 {
   "typeCheckingMode": "strict",
-  "pythonVersion": "3.14",
+  "pythonVersion": "3.15",
   "useLibraryCodeForTypes": true,
   "reportMissingTypeStubs": true,
   "reportImplicitOverride": "error",
@@ -21,7 +21,7 @@ Pyright `typeCheckingMode = "strict"` is the canonical 2026 strict surface (~30 
 ## ruff.toml
 
 ```toml
-target-version = "py314"
+target-version = "py315"
 line-length = 100
 
 [lint]

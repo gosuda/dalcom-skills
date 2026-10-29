@@ -2,14 +2,14 @@
 
 The Go MCP world has **two real SDKs with incompatible APIs**: the **official `modelcontextprotocol/go-sdk`** (Google + Anthropic, v1, API-frozen until v2; the default for new code) and the community **`mark3labs/mcp-go`** (still v0, fast-moving, batteries-included). Default to the official SDK for protocol infrastructure; reach for mcp-go for app-framework ergonomics. For Go *coding* agents, don't reinvent code intelligence; `gopls` ships an MCP server.
 
-> Verified against Go **1.26** (stable) + **1.27 RC** notes; `modelcontextprotocol/go-sdk` **v1.6.1** (stable; v1.7.0-pre targeting the RC spec); `mark3labs/mcp-go` **v0.55.1**; `gopls` MCP **v0.20.0→v0.22.x**; **MCP spec 2025-11-25** (current) / **2026-07-28** (RC), 2026-06. This is a **fast-moving, young ecosystem**: verify SDK API shapes and exact patch versions against the upstream repo before pinning.
+> Verified against Go **1.26** (stable) + **1.27 RC** notes; `modelcontextprotocol/go-sdk` **v1.8.0** (stable; v1.8.0-pre targeting the RC spec); `mark3labs/mcp-go` **v1.4.0**; `gopls` MCP **v0.24.0→v0.22.x**; **MCP spec 2025-11-25** (current) / **2026-07-28** (RC), 2026-06. This is a **fast-moving, young ecosystem**: verify SDK API shapes and exact patch versions against the upstream repo before pinning.
 
 ## TL;DR: the deltas models miss (read first)
 
-- The official SDK is v1 and stable, not "the new unstable one." v1.0.0 (late Sep 2025) froze the API: no breaking changes until a v2 that the maintainers intend to delay "as long as possible." Latest stable is **v1.6.1**; **v1.7.0** (prerelease) adds the **2026-07-28** spec.
+- The official SDK is v1 and stable, not "the new unstable one." v1.0.0 (late Sep 2025) froze the API: no breaking changes until a v2 that the maintainers intend to delay "as long as possible." Latest stable is **v1.8.0**; **v1.7.0** (prerelease) adds the **2026-07-28** spec.
 - The official tool API is a top-level generic with schema inference: `mcp.AddTool(server, &mcp.Tool{...}, handler)`, handler `func(ctx, *mcp.CallToolRequest, In) (*mcp.CallToolResult, Out, error)`. **Don't hand-write JSON Schema**: it's inferred from struct tags and inputs are auto-validated.
 - The pre-v1.0 prototype API is all over training data and won't compile against v1.x (`mcp.NewServerTool`, `server.AddTools`, `CallToolParamsFor[T]`, `mcp.NewStdioTransport()`, string-arg `NewServer`); see the WRONG block in [official SDK](#official-sdk).
-- `mcp-go` is at v0.55.1 and actively maintained; not dead; but still v0 (no semver stability). The official SDK's own README calls it a "viable alternative."
+- `mcp-go` is at v1.4.0 and actively maintained; not dead; but still v0 (no semver stability). The official SDK's own README calls it a "viable alternative."
 - Transports: stdio + Streamable HTTP. Plain **HTTP+SSE is deprecated** (since spec 2025-03-26). Models keep emitting two-endpoint SSE servers. (But SSE isn't gone everywhere; `gopls` attached mode and mcp-go still expose it for compatibility.)
 - **Input-validation failures should return as a tool *result* (`IsError`), not a JSON-RPC protocol error**; so the model can self-correct. The official SDK formalized this in v1.5.0.
 - **`gopls mcp` exists and is underused.** Detached mode sees only saved files; **attached mode** (`gopls -mcp.listen`) sees unsaved editor buffers.
@@ -52,7 +52,7 @@ The classification trap: models collapse everything into tools because "the mode
 | | Official `go-sdk` | Community `mcp-go` |
 |---|---|---|
 | **Import** | `modelcontextprotocol/go-sdk/mcp` | `mark3labs/mcp-go/{mcp,server,client}` |
-| **Backing / maturity** | Google + Anthropic; **v1, frozen until v2** (v1.6.1) | Ed Zynda; **still v0**, very active (v0.55.1) |
+| **Backing / maturity** | Google + Anthropic; **v1, frozen until v2** (v1.6.1) | Ed Zynda; **still v0**, very active (v1.4.0) |
 | **Tool definition** | generic `AddTool` + struct-tag schema inference | builder `mcp.NewTool` + `WithString/WithNumber/Enum` |
 | **Feel** | stdlib-like substrate; explicit sessions, typed contracts | app framework; hooks, filters, middleware, tracing, tasks |
 | **Extras** | `auth`/`oauthex` OAuth, `jsonrpc`, `google/jsonschema-go` | per-session tools, prompt filtering, `mcptest`, framework-agnostic `Handle` |
@@ -354,7 +354,7 @@ Cross-cutting concerns beat topology: bound every step with a `context` deadline
 
 ## gopls MCP integration {#gopls-mcp}
 
-For a Go *coding* agent, **don't reimplement Go intelligence as generic file tools**; `gopls` exposes semantic analysis as MCP tools. Introduced in gopls **v0.20.0** (still **experimental** through v0.22.x; the tool set may change). Two modes with a critical difference:
+For a Go *coding* agent, **don't reimplement Go intelligence as generic file tools**; `gopls` exposes semantic analysis as MCP tools. Introduced in gopls **v0.24.0** (still **experimental** through v0.22.x; the tool set may change). Two modes with a critical difference:
 
 - Attached: `gopls -mcp.listen=localhost:8092`; rides the live LSP session, shares memory, **sees unsaved editor buffers**. Documented as **HTTP+SSE** at `/sessions/<id>` (intentionally SSE, despite "new remote servers should use Streamable HTTP"; it's editor-integration, not a remote-deploy template).
 - Detached: `gopls mcp`; own headless LSP session over stdio; **sees only saved files on disk**. This is the form for CLI agent configs (Gemini CLI, Claude Code).
@@ -370,9 +370,9 @@ Key tools (v0.20.x-v0.21.x): `go_diagnostics`, `go_references`, `go_symbol_refer
 | Library / artifact | Status [2026-06] | Use when |
 |---|---|---|
 | `modelcontextprotocol/go-sdk` (v1.6.1) | **Default / official**, v1 frozen until v2 | new MCP code; spec fidelity; needs Go 1.25+ |
-| `mark3labs/mcp-go` (v0.55.1) | **Maintained, pre-v1.0** (fast-moving) | fast servers; hooks/filters/tasks; framework embedding |
+| `mark3labs/mcp-go` (v1.4.0) | **Maintained, pre-v1.0** (fast-moving) | fast servers; hooks/filters/tasks; framework embedding |
 | `google/jsonschema-go` | Active | schema engine the official SDK depends on |
-| `gopls` built-in MCP (v0.20.0→v0.22.x) | **Experimental, useful** | Go coding agents; don't reinvent Go intelligence |
+| `gopls` built-in MCP (v0.24.0→v0.22.x) | **Experimental, useful** | Go coding agents; don't reinvent Go intelligence |
 | `golang.org/x/tools/internal/mcp` | **Superseded** | never; prototype, not externally importable |
 | `metoro-io/mcp-golang`, `ThinkInAIXYZ/go-mcp` | Legacy community | predate the official SDK |
 | MCP spec `2025-11-25` | **Current finalized** | advertise this; tasks, icons, OIDC discovery |
@@ -388,12 +388,12 @@ Key tools (v0.20.x-v0.21.x): `go_diagnostics`, `go_references`, `go_symbol_refer
 | **go-sdk v1.0.0-v1.1.0** | spec 2025-06-18; "no breaking changes until v2" commitment begins |
 | **go-sdk v1.2.0-v1.3.1** | partial 2025-11-25 (no client OAuth / sampling-with-tools) |
 | **go-sdk v1.4.0-v1.6.1** | full 2025-11-25; client OAuth experimental (v1.4.0) → stabilized (v1.5.0, no more `mcp_go_client_oauth` build tag); **v1.5.0** returns input-validation as `CallToolResult`; **v1.6.0** changes cross-origin default + adds `ClientCredentialsHandler`; **v1.6.1** adds Content-Type escape hatch |
-| **go-sdk v1.7.0+** | spec 2026-07-28 (RC); roots/sampling/logging deprecated (SEP-2577, ≥12-mo window). Prerelease as of 2026-06 |
+| **go-sdk v1.8.0+** | spec 2026-07-28 (RC); roots/sampling/logging deprecated (SEP-2577, ≥12-mo window). Prerelease as of 2026-06 |
 | **mcp-go v0.50→v0.55.1** | production-hardening burst: input/output schema validation, paginated iterators, `CommandTransport`, RFC 9728 protected-resource metadata, `SchemaCache`, framework-agnostic `Handle`, strict-schema defaults, task tools, `_meta` trace propagation |
-| **gopls v0.20.0 / v0.21.0** | MCP server introduced / `go_rename_symbol` + `gopls.vulncheck` added; experimental through v0.22.x |
+| **gopls v0.24.0 / v0.21.0** | MCP server introduced / `go_rename_symbol` + `gopls.vulncheck` added; experimental through v0.22.x |
 | **Go 1.25** | `net/http.CrossOriginProtection` (SDKs require ≥1.25) |
 | **Go 1.26** | experimental goroutine-leak profile (`runtime/pprof`); useful for streaming/SSE/worker leaks |
-| **Go 1.27 (RC)** | goroutine-leak profile GA; `httptest.NewTestServer` for `synctest`; `encoding/json/v2` GA (stricter UTF-8/dup-key defaults; watch exact JSON error text). Draft until GA (~Aug 2026) |
+| **Go 1.27** | goroutine-leak profile GA; `httptest.NewTestServer` for `synctest`; `encoding/json/v2` GA (stricter UTF-8/dup-key defaults; watch exact JSON error text). Draft until GA (~Aug 2026) |
 
 ---
 

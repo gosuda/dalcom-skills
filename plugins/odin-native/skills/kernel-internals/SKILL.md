@@ -18,11 +18,11 @@ description: 'Use when diagnosing scheduler latency, kmalloc vs vmalloc, page ca
 
 1. The question or symptom (required): latency, allocation failure, cache behavior, memory pressure, OOM victim.
 2. Target access (optional): `/proc`, `/sys`, and `perf` on the running machine.
-3. Kernel version (optional): mainline 7.2 or LTS 6.18 assumed when not stated.
+3. Kernel version (optional): mainline 7.3 or LTS 6.18 assumed when not stated.
 
 ## Procedure
 
-1. **Pin the kernel and the scheduler it runs.** `uname -r` first. EEVDF (Earliest Eligible Virtual Deadline First) replaced CFS: merged as an option in 6.6, the transition completed in 6.12, so mainline 7.2 and LTS 6.18 run EEVDF. On 6.6 through 6.11, check which one is active before applying CFS reasoning. Each CPU carries a runqueue with three classes:
+1. **Pin the kernel and the scheduler it runs.** `uname -r` first. EEVDF (Earliest Eligible Virtual Deadline First) replaced CFS: merged as an option in 6.6, the transition completed in 6.12, so mainline 7.3 and LTS 6.18 run EEVDF. On 6.6 through 6.11, check which one is active before applying CFS reasoning. Each CPU carries a runqueue with three classes:
 
    ```
    Per-CPU runqueue (struct rq)

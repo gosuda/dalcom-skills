@@ -24,7 +24,7 @@
 }
 ```
 
-TypeScript 7.0.x is the current stable release, a Go-native port of the compiler; `strict: true` has been the default since 6.0. The additional flags above harden array/index access, optional-property semantics, and override-keyword discipline. `skipLibCheck: false` is intentional, type-check upstream `.d.ts` files to catch upstream regressions.
+TypeScript 7.0.2 is the current stable release, a Go-native port of the compiler; `strict: true` has been the default since 6.0. The additional flags above harden array/index access, optional-property semantics, and override-keyword discipline. `skipLibCheck: false` is intentional, type-check upstream `.d.ts` files to catch upstream regressions.
 
 ## biome.json
 

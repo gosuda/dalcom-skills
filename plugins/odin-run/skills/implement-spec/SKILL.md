@@ -1,6 +1,6 @@
 ---
 name: implement-spec
-description: 'Use when a ticket DAG from a complete specification needs parallel execution into a green draft PR. Not for a settled ticket with no spec: use work. Not for ticket decomposition: use to-tickets.'
+description: 'Use when a ticket DAG from a complete specification needs parallel execution into a verified integration branch, with an optional green draft pull request on explicit approval. Not for a settled ticket with no spec (use work) and not for ticket decomposition (use to-tickets).'
 disable-model-invocation: true
 ---
 
@@ -11,53 +11,53 @@ disable-model-invocation: true
 | Field | Bound contract |
 |---|---|
 | Trigger | A ticket DAG from a complete specification needs parallel execution. |
-| Authority | Human-gated: runs only on explicit human invocation and previews the exact target and consequence, then obtains explicit human approval, before using credentials, publishing commits or a pull request, mutating remote state, or deleting cleanup targets; every other write is reversible local, with version control as the rollback. |
-| Side effect | Create implementation commits in isolated worktrees, integrate them on the named branch, publish the approved branch and draft pull request, and remove only the previewed temporary worktrees and branches. |
-| Done | Every ticket is complete, the dependency frontier is empty, required checks pass, review has no unresolved actionable finding, and the green draft pull request exists. |
+| Authority | Human-gated: runs only on explicit human invocation. Credentials, remote publication, and cleanup deletions each need their own explicit approval bound to the exact target and consequence; every other write is reversible local, with version control as the rollback. |
+| Side effect | Implementation commits in isolated worktrees integrated on the named branch. Publication of the branch and draft pull request happens only when the human explicitly approves that remote write. Cleanup removes only previewed temporary worktrees and branches. |
+| Done | Every ticket is complete, the dependency frontier is empty, required checks pass, and review has no unresolved actionable finding. The verified integration branch exists locally; the green draft pull request exists only when publication was approved and verified. |
 
 ## Inputs
 
-- Required: the complete specification; a finite ticket DAG with stable ticket identifiers, dependencies, acceptance criteria, and owned file scopes; the repository and integration base; the required check commands; the review-clear criterion; and the remote repository, target branch, and draft pull-request destination.
-- Approval: the human must supply publication and cleanup approval when prompted. Credentials may be used only after that approval.
-- Optional: ticket-specific verification commands and a pull-request title or body.
+- Required: the complete specification; a finite ticket DAG with stable ticket identifiers, dependencies, acceptance criteria, and owned file scopes; named TDD seams per ticket; the repository and integration base; the required check commands; the review-clear criterion.
+- Publication inputs (only when the human requests publication): the remote repository, target branch, and draft pull-request destination, plus publication and cleanup approval when prompted. Credentials are used only after that approval. The local path is complete and needs no tracker, no remote, no credentials, and no cloud service.
+- Optional: ticket-specific verification commands, a pull-request title or body, and an outside-repo path for exploration notes (default `<repo-parent>/spec-notes-<slug>/`).
 
 ## Procedure
 
-1. Validate that every ticket traces to the specification, has measurable acceptance criteria and a unique owned file scope, and references only existing ticket identifiers; reject cycles, missing dependencies, overlapping ownership, an unclean or wrong repository, and an ambiguous publication target without mutation.
-2. Record the bounded execution set, integration base, initial ready frontier, required checks, review-clear criterion, and cleanup targets. Do not add work outside this set or invent missing evidence.
-3. Create one isolated worktree and branch per ready ticket. Give each worker only its ticket, the exact specification sections and repository paths needed to execute it, its acceptance criteria, dependencies, owned files, and verification command; use artifact paths or commit identifiers for results instead of copying unrelated context.
-4. Execute independent ready tickets in parallel. Each worker may change only its owned files, must run its ticket verification, and must return the commit identifier, changed paths, verification result, and any blocker. A ticket without a passing acceptance proof remains incomplete.
-5. Integrate completed ticket commits onto the named integration branch in dependency order. Resolve a conflict only when the specification and ownership make the intended result unambiguous; otherwise stop the affected path as blocked. After each integration, mark the ticket complete and release newly ready tickets whose dependencies are all complete.
-6. Continue frontier execution until every ticket is integrated or no incomplete ticket is ready. If the frontier is empty while tickets remain, return `blocked` with the unmet dependency or failed-ticket evidence; do not bypass the DAG.
-7. Run all required checks on the integrated branch. Review the full integrated change against the specification, ticket acceptance criteria, ownership boundaries, and repository safety. Turn each actionable finding into a bounded correction on the owning ticket branch, verify it, reintegrate it, and repeat checks and review until clear. Return `non-converged` if a finding repeats without progress, checks are unavailable, or correction would widen the bounded scope.
-8. Preview the integration branch, commits, remote, target branch, draft pull-request title and body, and publication consequences. After explicit human approval, use the approved credentials to publish the branch and create the draft pull request; verify the remote pull request points to the reviewed commit and reports the required checks as passing.
-9. Preview the exact temporary worktrees and branches eligible for cleanup. After explicit human approval, remove only those whose commits are reachable from the published integration branch. Preserve any target containing unintegrated or uncommitted work and report it instead of deleting it.
+1. Validate without mutation. Every ticket traces to the specification, carries measurable acceptance criteria and a unique owned file scope, names its TDD seams, and references only existing ticket identifiers; reject cycles, missing dependencies, overlapping ownership, and an unclean or wrong repository without mutation. Validate the publication destination only when publication is requested; an ambiguous destination blocks publication, never the local implementation path. Done when the DAG, seams, repository, and commands validate, or the run stops as `invalid-input`.
+2. Record the bounded execution set, integration base, initial ready frontier (tickets whose dependencies are all complete), required checks, review-clear criterion, publication scope (local-only by default), and cleanup targets. Add no work outside this set and invent no missing evidence. Done when the bounded set, initial frontier, and publication scope are recorded.
+3. Create the integration branch from the base. Give every worker only its ticket, the exact specification sections and repository paths needed, its acceptance criteria, dependencies, owned files, named seams, and verification command. Pass results by artifact paths or commit identifiers plus context pointers to the spec, tickets, research notes, and prior commits; never duplicate unrelated context into worker packets. Done when the integration branch exists and worker packets are pointer-sparse.
+4. Run an optional exploration subagent first when tickets need codebase or external research. It saves markdown notes in the outside-repo notes path, never inside the repository, so implementer subagents share findings without polluting the tree. Done when notes are saved outside the repo or the step is skipped as unneeded.
+5. Execute the ready frontier in parallel. Each implementer works in its own worktree on its own branch, confirms its worktree is based on the integration branch tip and resets onto it when drifted, writes the failing behavioral test first at each named seam, implements only its owned files, runs its ticket verification, merges the integration branch tip into its own branch before reporting, and returns the commit identifier, changed paths, verification result, and any blocker. A ticket without a passing acceptance proof stays incomplete. Done when every ready ticket reports complete with proof or a named blocker.
+6. Merge completed ticket commits onto the integration branch in dependency order with a merger pass. Resolve a conflict only when the specification and ownership make the intended result unambiguous; otherwise stop the affected path as blocked and preserve both commits plus the integration branch at the last verified state. After each integration, mark the ticket complete and release newly ready tickets. Done when the frontier advances by the DAG and every integration is verified.
+7. Continue frontier execution until every ticket is integrated or no incomplete ticket is ready. When the frontier is empty while tickets remain, return `blocked` with the unmet dependency or failed-ticket evidence; never bypass the DAG. Done when every ticket is integrated or the run is blocked with evidence.
+8. Run all required checks on the integrated branch: the TDD cadence evidence (failing-first seam tests), the required check commands, and a full review of the integrated change against the specification, acceptance criteria, ownership boundaries, and repository safety. Turn each actionable finding into a bounded correction on the owning ticket branch, verify it, reintegrate it, and repeat checks and review until clear. Continue while each correction shows verified progress against a distinct finding. Stop as `non-converged` when a finding repeats without progress, results oscillate, checks are unavailable, or correction would widen the bounded scope. Never apply a fixed cycle count as the stopping rule. Done when checks pass and review has no unresolved actionable finding, or the run stops as `non-converged` with evidence.
+9. Publication is optional and separately approved. Local-only (default): stop here with the verified integration branch, report its name, head commit, checks, and review-clear evidence, and never touch a remote. Publication (only when the human explicitly requests it with an exact destination): preview the integration branch, commits, remote, target branch, draft pull-request title and body, and publication consequences; after explicit human approval, publish with the approved credentials, then verify the remote pull request points to the reviewed commit and reports the required checks. Done when the local branch is verified and reported, plus the approved draft pull request exists at the verified commit when publication was requested; otherwise the run stops as `publication-failed` with the local branch preserved, or as `publication-declined` with the local-complete result standing.
+10. Preview the exact temporary worktrees and branches eligible for cleanup. After explicit human approval, remove only those whose commits are reachable from the verified integration branch. Preserve any target holding unintegrated or uncommitted work and report it. Done when approved cleanup completes or stops as `cleanup-blocked` with every uncertain target preserved.
 
-## Closing chain: Work -> Review-fix-loop -> Offensive Aggressive Simplify
+## Closing chain: work, review-fix-loop, offensive simplify
 
-1. Work first. Complete this skill's own implementation path before any closing pass.
-2. Review-fix-loop with native gates. Run this skill's native review/fix gate — required checks plus review-clear on the integrated branch — to green. Bound it: max 3 fix cycles per unit, then stop as blocked or `non-converged`. Never widen scope to unrelated code.
-3. Offensive aggressive simplify last. Offense-first: re-derive the general case from contracts, delete old structure (no shims/aliases/flags), collapse special cases, migrate every caller in the same change, one concern per atomic commit. Ask first before removing any live consumer surface. Stay inside this skill's authority: the bounded execution set and each ticket's owned file scope. Run the native gate after each increment; revert the increment on red. Close with a simplify compression pass (dead branches, duplicate logic, one-use wrappers) with behavior preserved and the native gate green.
-
-## Failure and recovery
-
-- `invalid-input`: the specification, DAG, ownership, repository, commands, or destination cannot be validated. Make no mutation.
-- `ticket-failed`: preserve the ticket worktree and commit evidence; block its dependents.
-- `integration-conflict`: preserve both commits and the integration branch at the last verified state.
-- `check-failed` or `review-blocked`: permit only bounded correction through the owning ticket. Return `non-converged` when checks are unavailable, an equivalent failure repeats, results oscillate, or correction requires wider scope.
-- `publication-failed`: preserve the verified local branch and report the attempted remote operation without claiming that a pull request exists.
-- `cleanup-blocked`: preserve every uncertain target.
-
-For any partial result, report completed tickets, the remaining frontier, commits, checks, findings, remote state, and retained worktrees. Never discard unintegrated work, swallow an error, or claim the done predicate.
-
-## Output
-On success, return the ticket-to-commit ledger, empty frontier, integrated commit identifier, passing check evidence, review-clear evidence, draft pull-request URL and head commit, and cleanup result. Otherwise return exactly one terminal classification, `invalid-input`, `blocked`, `ticket-failed`, `integration-conflict`, `check-failed`, `review-blocked`, `non-converged`, `publication-failed`, or `cleanup-blocked`, with the partial-result ledger and the next human-resolvable blocker.
+1. Work first. Complete the skill's own implementation path before any closing pass.
+2. Review-fix-loop with native gates. Run the skill's native review and fix gate, required checks plus review-clear on the integrated branch, to green. Continue while each correction shows verified progress against a distinct finding. Stop as blocked or `non-converged` when a finding repeats without progress, results oscillate, checks are unavailable, or correction would widen the bounded scope. Never widen scope to unrelated code.
+3. Offensive simplify last. Re-derive the general case from contracts, delete old structure with no shims, aliases, or flags, collapse special cases, migrate every caller in the same change, one concern per atomic commit. Stay inside the skill's authority: the bounded execution set and each ticket's owned file scope. Ask first before removing any live consumer surface. Run the native gate after each increment; revert the increment on red. Close with a simplify compression pass (dead branches, duplicated logic, one-use wrappers) with behavior preserved and the native gate green.
 
 ## Single-feature case (degenerate DAG)
 
-When the specification is one approved feature described by a product spec and a tech spec (for example `PRODUCT.md` and `TECH.md`), the DAG has exactly one ticket. Run the procedure with that single ticket: validate it traces to both specs, execute it in one worktree, integrate trivially, and ship the draft PR. Two extra rules apply only to the spec-driven single-feature case:
+When the specification is one approved feature described by a product spec and a tech spec (for example `PRODUCT.md` and `TECH.md`), the DAG holds exactly one ticket. Run the procedure with that single ticket: validate it traces to both specs, execute it in one worktree, and integrate. Two extra rules apply only here: when implementation reveals that intended behavior or design should change, update the checked-in spec in the same change (product spec for user-facing behavior and success criteria, tech spec for architecture and validation strategy); staged spec updates, code, and tests stay together so specs and code never diverge. When either spec file is absent, stop and report the missing file before writing code. The draft pull request follows step 9 only: local integration is the default terminal state.
 
-- **Spec-code alignment in the same PR.** If implementation reveals that intended behavior or design should change, update the checked-in spec immediately rather than leaving it stale. Update the product spec when user-facing behavior or success criteria change; update the tech spec when architecture or validation strategy changes. Do not leave specs and code unsynchronized.
-- **Spec drift is a failure.** If code diverges from a spec, either correct the code or update the spec to match the reality discovered during implementation. Stage the spec updates, code, and tests together in the same PR.
+## Failure and recovery
 
-Read the product spec first as the source of truth for user-facing behavior, UX, edge cases, and success criteria; read the tech spec as the source of truth for architecture, module boundaries, sequencing, and implementation shape. If either spec file is absent, stop and report the missing file before writing any code.
+| Failure class | Behavior |
+|---|---|
+| `invalid-input` | The specification, DAG, ownership, seams, repository, or commands cannot be validated. Make no mutation. |
+| `ticket-failed` | Preserve the ticket worktree and commit evidence; block its dependents. |
+| `integration-conflict` | Preserve both commits and the integration branch at the last verified state. |
+| `check-failed` or `review-blocked` | Permit only bounded correction through the owning ticket. Stop as `non-converged` when a finding repeats without progress or correction needs wider scope. |
+| `publication-declined` | The human declines publication. The verified local integration branch stands as the complete result. Never treat invocation as publication approval. |
+| `publication-failed` | Preserve the verified local branch and report the attempted remote operation without claiming a pull request exists. |
+| `cleanup-blocked` | Preserve every uncertain target. |
+
+For any partial result, report completed tickets, the remaining frontier, commits, checks, findings, publication scope and remote state, and retained worktrees. Never discard unintegrated work, swallow an error, or claim the done predicate.
+
+## Output
+
+On success, the ticket-to-commit ledger, empty frontier, integrated branch name and commit identifier, passing check evidence, review-clear evidence, cleanup result, and either the draft pull-request URL and head commit (publication approved and verified) or the local-complete statement (no remote touched). Otherwise exactly one terminal classification (`invalid-input`, `blocked`, `ticket-failed`, `integration-conflict`, `check-failed`, `review-blocked`, `non-converged`, `publication-declined`, `publication-failed`, or `cleanup-blocked`) with the partial-result ledger and the next human-resolvable blocker.

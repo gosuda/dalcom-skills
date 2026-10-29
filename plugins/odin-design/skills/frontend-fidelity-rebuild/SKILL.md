@@ -32,7 +32,7 @@ description: 'Use when an authorized reference surface needs a clean-room fronte
 4. Reconstruct the surface in a clean-room implementation. Build from the captures, not from the reference source code. Match the static layout, the motion timing, and the responsive behavior. Done when: the reconstruction renders at every viewport and plays every timeline.
 5. Measure fidelity against the reference. For each viewport, compare the reconstruction screenshot to the reference screenshot using a visual regression tool. Record the pixel difference percentage. For each timeline, compare the reconstruction motion to the reference motion. Record timing deviation and property delta. For each viewport transition, compare the layout shift. Record whether each gate passes its tolerance. Done when: all three fidelity gates have comparison results.
 6. Stop at success (all three gates pass their tolerances), any non-success terminal, or the bound (round cap reached). Done when: a terminal class is reached and recorded.
-7. Persist per profiles.persistence.P1 (durable_location `.outline/loops/frontend-fidelity-rebuild/<run_id>/` when durable). Emit `receipt.json` before return. Done when: the receipt is written with per-gate comparison evidence, tolerances, and the terminal class.
+7. Persist to .outline/loops/frontend-fidelity-rebuild/<run_id>/ when durable. Emit receipt.json with per-gate comparison evidence, tolerances, and terminal class. Done when: the receipt is written with per-gate comparison evidence, tolerances, and the terminal class.
 
 ## Failure and recovery
 

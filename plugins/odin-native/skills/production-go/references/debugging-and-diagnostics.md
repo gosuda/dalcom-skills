@@ -2,7 +2,7 @@
 
 Pick the right lens: **pprof** = *where* time/memory went (statistical, always-on); the **execution tracer** = *why a goroutine wasn't running* (temporal: scheduling, blocking, GC timing); **`dlv`** = step one process or read a core post-mortem; **`-race`** = test shared-memory-unsafety. The last two years didn't change *how* to debug Go: they changed which tools are production-viable and which defaults moved underneath you.
 
-> Verified against Go **1.26.4** (stable) + **1.27 RC1** (GA ~Aug 2026), `dlv` **v1.27.0**. Version tags `[1.N]` mark the release a claim applies to.
+> Verified against Go **1.26.4** (stable) + **1.27 RC1** (GA ~Aug 2026), `dlv` **v1.27.2**. Version tags `[1.N]` mark the release a claim applies to.
 
 ## TL;DR: the modern deltas (read first)
 
@@ -231,7 +231,7 @@ Overhead: CPU/heap low (prod-safe); goroutine dump low to moderate; trace ~1-2% 
 
 | Tool / lib | Status [2026] | Note |
 |---|---|---|
-| **`dlv`** | **v1.27.0**, active | Build with Go ≥ target; DWARFv5 [1.25]; `--api-version` only `2` (v1 removed 1.24.0). |
+| **`dlv`** | **v1.27.2**, active | Build with Go ≥ target; DWARFv5 [1.25]; `--api-version` only `2` (v1 removed 1.24.0). |
 | `runtime/trace` + FlightRecorder | **Stdlib** [1.25] | Supersedes `x/exp/trace` for rolling capture. |
 | `goroutineleak` profile | **GA [1.27]** (exp 1.26) | GC-reachability; complements `goleak`. |
 | `runtime/metrics` | **Stdlib, stable** | Prefer over parsing `gctrace` text. |

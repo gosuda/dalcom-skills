@@ -8,7 +8,7 @@ The [Install section](../../README.md#install) of the root README gives the comm
 
 ## Confirm the install
 
-List your installed plugins. On Claude Code the command is `claude plugin list`, and `docs/specs/install-proof.md` records the run that proves it: the list shows each plugin with its version, scope, and status. If both plugins appear as enabled, your client resolved this tree.
+List your installed plugins. On Claude Code the command is `claude plugin list`, and [`install-proof`](../specs/install-proof.md) records the run that proves it: the list shows each plugin with its version, scope, and status. If both plugins appear as enabled, your client resolved this tree.
 
 ## Run one skill
 

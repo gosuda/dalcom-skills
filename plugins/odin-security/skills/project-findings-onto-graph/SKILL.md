@@ -1,6 +1,6 @@
 ---
 name: project-findings-onto-graph
-description: 'Use when graph-backed security analysis is needed: project SARIF or reviewer findings onto a program graph; build or query a multi-language graph; summarize Trailmark structure; map smart-contract entry points; compare two refs or snapshots; or hunt confirmed vulnerability variants with pattern or graph seeding. Select findings, build-program-graph, trailmark-structural, entry-point-analyzer, graph-evolution, or variant-hunt mode and supply its required inputs. Not for security-finding triage: use triage-security-finding. Not for unrelated remote, credential, publish, deploy, or irreversible work.'
+description: 'Use when graph-backed security analysis is needed: project SARIF or reviewer findings onto a program graph; build or query a multi-language graph; summarize Trailmark structure; map smart-contract entry points; compare two refs or snapshots; or hunt confirmed vulnerability variants with pattern or graph seeding. Select findings, build-program-graph, trailmark-structural, entry-point-analyzer, graph-evolution, or variant-hunt mode and supply its required inputs. Not for initial vulnerability discovery: use security-review. Not for verifying one named allegation: use security-finding-verification. Not for security-finding triage: use triage-security-finding. Not for unrelated remote, credential, publish, deploy, or irreversible work.'
 ---
 
 # Project findings and graph-backed security analysis
@@ -71,13 +71,149 @@ Graph-backed analysis gives external findings, source structure, entry points, s
    5. Verify and return the complete summary or full payload, including the version when captured, or the exact missing-field/import gap. **Done when:** every field required by the selected mode is present or its gap is named.
 
 5. **Mode `entry-point-analyzer`: analyze state-changing smart-contract entry points.**
-   1. Resolve the codebase or `entry-points` command directory to an absolute readable path. Detect languages from extensions and manifests: Solidity, Vyper, Solana/Rust with `solana-program`, Move Sui with `Move.toml` `edition`, Move Aptos with `Move.toml` `Aptos`, TON (`.fc`, `.func`, `.tact`), and CosmWasm with `cosmwasm-std`. If none is supported, report the unsupported codebase and stop. **Done when:** languages and scope are confirmed.
-   2. Apply the optional directory filter and locate every contract or module file in scope. **Done when:** every in-scope file is located.
-   3. For Solidity, use `slither . --print entry-points` when `slither` is available, then manually verify access classification; on failure or absence, use manual analysis and record the fallback. **Done when:** a foundation method is selected and recorded.
-   4. Retain every externally callable, state-changing function and exclude read-only forms: Solidity `view`/`pure`; Vyper `@view`/`@pure`; Solana functions without `mut` accounts; Move non-entry `public fun`; TON `get` and read-only receivers; and CosmWasm `query` handlers. **Done when:** state-changing scope is complete.
-   5. Classify each retained function as Public (Unrestricted), Role-Restricted, Restricted (Review Required), or Contract-Only (Internal Integration Points). Trace explicit roles and checks (`admin`, `owner`, `governance`, `guardian`, `operator`, `manager`, `minter`, `pauser`, `keeper`, `relayer`, `lender`, `borrower`, `onlyRole`, `hasRole`, sender equality, `assert_owner`, `#[access_control]`); preserve ambiguous dynamic checks as Restricted; and include callback/interface indicators such as `onERC721Received`, `uniswapV3SwapCallback`, `flashLoanCallback`, contract-caller checks, `tx.origin` guards, and cross-contract hooks. **Done when:** every function has one conservative category.
-   6. Record signature, file and line, category, actual restriction evidence and implementation, inheritance, callbacks, and expected-caller notes. Do not infer safety from modifier names or apparent low state impact. **Done when:** every entry point has evidence.
-   7. Emit the markdown report with project, timestamp, scope, languages, focus, summary counts for Public/Role-Restricted/Restricted/Contract-Only/Total, per-category tables, per-file accounting, and Analysis Warnings. **Done when:** every file is analyzed or explicitly warned.
+
+   1. Resolve the codebase or `entry-points` command directory to an absolute
+      readable path. Detect languages from extensions and manifests:
+
+      - Solidity;
+      - Vyper;
+      - Solana/Rust with `solana-program` or an equivalent program entrypoint;
+      - Move Sui with `Move.toml` Sui/edition metadata;
+      - Move Aptos with `Move.toml` Aptos metadata;
+      - TON (`.fc`, `.func`, `.tact`);
+      - CosmWasm with `cosmwasm-std`.
+
+      If none is supported, report the unsupported codebase and stop.
+
+      **Done when:** languages and scope are confirmed.
+
+   2. Apply the optional directory filter and locate every contract or module
+      file in scope. Do not sample the tree. Record generated, inherited,
+      vendored, and unreadable paths separately.
+
+      **Done when:** every in-scope file is located or explicitly recorded as
+      unreadable.
+
+   3. Use source inspection as the authoritative foundation. A locally available
+      Solidity analyzer may be read as supplementary evidence, but it is never
+      required, never installed, and never authoritative for access
+      classification. If an analyzer is absent or fails, continue with manual
+      source analysis and record the fallback. Do not invent a replacement
+      command.
+
+      **Done when:** the foundation method and any analyzer limitation are
+      recorded.
+
+   4. Retain every externally callable, state-changing function and exclude only
+      forms that are read-only or not externally reachable in the target
+      language:
+
+      - Solidity: exclude `view` and `pure`; include state-changing `external`
+        and `public` functions, `receive`, `fallback`, and state-changing
+        callbacks.
+      - Vyper: exclude `@view` and `@pure`; include state-changing `@external`
+        functions and the state-changing default handler.
+      - Solana/Rust: include the native program entrypoint, instruction
+        handlers, and Anchor program functions that can mutate accounts; exclude
+        helpers and handlers whose accounts are not mutable.
+      - Move/Aptos: include `public entry fun`, `entry fun`, and `public fun`
+        when the body changes state or accesses mutable resources. Exclude
+        private, `public(package)`, and `public(friend)` functions as
+        independent transaction entry points.
+      - Move/Sui: include `public entry fun`, `entry fun`, and transaction-
+        reachable `public fun` when they mutate an owned or shared object.
+        Exclude private `fun` and `public(package) fun`.
+      - TON: include state-changing `recv_internal`, `recv_external`, tick-tock
+        handlers, Tact `receive`, `external`, and `bounced` handlers; exclude
+        getters and read-only receivers.
+      - CosmWasm: include `instantiate`, `execute`, `migrate`, `reply`, `sudo`,
+        IBC, and other state-changing callback entry points; exclude `query`.
+
+      Do not decide whether a Move function is an entry point from the presence
+      or absence of `entry` alone. Determine state effects and transaction
+      reachability according to the target Move dialect.
+
+      **Done when:** state-changing scope is complete for each detected
+      language, and every excluded form has a recorded reason.
+
+   5. Classify each retained function as exactly one of:
+
+      - `Public (Unrestricted)`;
+      - `Role-Restricted`;
+      - `Restricted (Review Required)`;
+      - `Contract-Only (Internal Integration Point)`.
+
+      Trace actual restrictions, including owner/admin/governance/guardian/
+      operator/minter/pauser/keeper/relayer checks, role predicates,
+      capability objects, ownership constraints, signer checks, sender equality,
+      and inherited modifiers or decorators.
+
+      Read every modifier, helper, parent definition, handler, and constraint
+      that establishes the restriction. Names are search hints, not proof.
+
+      **Done when:** every retained entry point has one conservative class.
+
+   6. Apply these adversarial classification checks before preparing the report:
+
+      - An unguarded callback is Public, regardless of its name.
+      - A configured caller address whose identity is not established remains
+        Restricted (Review Required), not Contract-Only.
+      - Aptos public non-entry functions that mutate state are included.
+      - Sui public non-entry transaction-reachable mutating functions are
+        included.
+      - Read-only Solidity, Vyper, Move, TON, and CosmWasm forms remain
+        excluded from the recurring state-changing inventory.
+      - CosmWasm `execute` message variants are classified at their handlers,
+        not only at the dispatcher.
+      - Constructors, initializers, upgrade functions, and proxy dispatchers
+        are listed separately when they are not recurring entry points.
+      - A signer argument alone is not an administrator role.
+      - `msg.sender != tx.origin` is a call-path condition, not authentication.
+      - An inherited, generated, or unresolved restriction remains a warning or
+        Review Required classification.
+
+      **Done when:** every callback, caller check, read-only exclusion, and
+      framework-specific visibility rule has a source-backed classification or
+      an explicit warning.
+
+   7. Record for every entry point:
+
+      - signature or message variant;
+      - file and line;
+      - state-changing operation;
+      - access class;
+      - exact restriction evidence;
+      - inherited or delegated restriction implementation;
+      - callback or integration role;
+      - expected caller and how that identity is established;
+      - unresolved assumptions.
+
+      **Done when:** every entry point has source-backed evidence.
+
+   8. Emit the markdown report with:
+
+      - project and optional project name;
+      - timestamp;
+      - scope and directory filter;
+      - detected languages;
+      - state-changing-only focus;
+      - summary counts for Public, Role-Restricted, Restricted (Review
+        Required), Contract-Only, deployment-only, and recurring total;
+      - per-category entry-point tables;
+      - read-only exclusions;
+      - per-file accounting;
+      - Analysis Warnings.
+
+      The report MUST contain an explicit recurring state-changing entry-point
+      count and an explicit Analysis Warnings section, even when the warning set
+      is empty.
+
+      Entry-point mode is inventory only. It does not report vulnerabilities,
+      assign exploitability or severity, generate exploits, recommend fixes, or
+      invoke `security-review` automatically.
+
+      **Done when:** every file and classification is accounted for and the
+      final report is emitted.
 
 6. **Mode `graph-evolution`: compare graph structure across two refs or snapshots.**
    1. Confirm both refs resolve or both directories exist. Run `trailmark --help`; if absent, report the installation gap and stop. **Done when:** inputs and Trailmark are valid.
@@ -92,13 +228,176 @@ Graph-backed analysis gives external findings, source structure, entry points, s
    10. Remove temporary worktrees after writing the report and record their removal. **Done when:** no temporary worktree remains.
 
 7. **Mode `variant-hunt`: search variants of a confirmed root cause.**
-   1. Require the root-cause statement and either the original location or a vulnerable snippet. Validate the location in the codebase when supplied; otherwise preserve and validate the supplied snippet before proceeding. If neither is present, return `blocked: root cause and original location or snippet required`. **Done when:** the root cause and one concrete source anchor are validated.
-   2. Enumerate expansion axes: the dangerous operation, dangerous data, missing protection, enabling context, related identifiers, other manifestations, and edge cases including null comparisons, empty strings, zero versus null, unauthenticated callers, and boundary values. **Done when:** every independent axis is listed.
-   3. Write an exact ripgrep, Semgrep, or CodeQL pattern that matches the known bug only. Run it and require one hit at the known location or supplied snippet; zero hits means `blocked: pattern does not match known bug`. If the preferred tool is unavailable, try the next available tool in the stated preference order and record the fallback; if all are unavailable, report the tool gap. **Done when:** the exact pattern is proven or the tool gap is reported.
-   4. Generalize one element at a time from names to structure to semantics. Record each pattern, tool, match count, true positives, and false positives; revert any change producing more than 50% noise. **Done when:** the final pattern is stable at no more than 50% false positives.
-   5. In `graph-seeding` mode, load an existing graph and resolve the seed. If no artifact exists, return `blocked: missing-graph-artifact` and direct the invoker to `build-program-graph` mode; malformed or missing nodes return `blocked: invalid node object` or `blocked: node-not-found`. Compute at most three hops, exclude the seed, confirmed vulnerabilities, out-of-scope nodes, and nodes without textual or symbol content, then bound to 50 candidates. Rank by at least three of degree centrality, clustering coefficient, path length, and structural similarity using equal or supplied weights; document truncation, label every result a review target, and feed it directly into triage. **Done when:** the bounded ranked candidate set is ready.
-   6. Triage every pattern or graph candidate by reading its surrounding function, callers, and types. Check guards, sanitizers, type constraints, and whether callers can provide attacker-controlled input. Record a verdict, severity, confidence, and the evidence for every ruled-out candidate. **Done when:** every candidate is triaged.
-   7. Write the variant report with root cause, location, methodology table, confirmed findings, grouped false positives, and a CI-ready regression rule from the strongest pattern. In graph-seeding mode include seed, hop bound, ranking dimensions and weights, and truncation. **Done when:** the complete report and regression rule are written.
+
+   1. Require a confirmed root-cause statement and either the original
+      location or a vulnerable snippet. Validate the location in the codebase
+      when supplied; otherwise preserve and validate the supplied snippet before
+      proceeding.
+
+      If neither is present, return:
+
+      `blocked: root cause and original location or snippet required`
+
+      This mode is not initial vulnerability discovery. Route initial discovery
+      to `security-review`. It is also not verification of one allegation; route
+      that work to `security-finding-verification`.
+
+      **Done when:** the root cause and one concrete source anchor are
+      validated.
+
+   2. State the root cause precisely.
+
+      For taint-like defects:
+
+      > `[data or state] reaches [dangerous operation or decision] without
+      > [required protection] under [enabling context].`
+
+      For logic, ordering, or concurrency defects without a taint flow:
+
+      > `[invariant] must hold across [operation], but [ordering or state
+      > transition] allows it to fail.`
+
+      A check/use separation such as TOCTOU MUST be described as a changing
+      checked state, a check/use gap, or a missing atomicity guarantee. Do not
+      reduce it to generic "untrusted input reaches a sink" language.
+
+      **Done when:** the root-cause statement distinguishes the known defect
+      from nearby safe code.
+
+   3. Enumerate grounded expansion axes:
+
+      - dangerous operation;
+      - dangerous data or state;
+      - missing protection;
+      - enabling context;
+      - semantically related identifiers;
+      - sibling APIs and callbacks;
+      - alternate entry points;
+      - copied implementations;
+      - alternate manifestations of the same invariant failure;
+      - null, empty, zero, negative, maximum, repeated, and nested values;
+      - success, error, cancellation, teardown, and cleanup paths.
+
+      Search for evidence that each proposed identifier or axis exists in the
+      codebase. Do not invent a family from names alone.
+
+      **Done when:** every independent axis is grounded or explicitly rejected.
+
+   4. Calibrate with an exact pattern that matches only the known bug.
+
+      Use the strongest available local mechanism: repository-native structural
+      search, Semgrep, CodeQL, or a simpler textual search when the stronger
+      tool is unavailable. Do not install a tool or fabricate a command.
+
+      The exact pattern must match the original location or supplied vulnerable
+      snippet. A zero-hit calibration is:
+
+      `blocked: pattern does not match known bug`
+
+      It is not evidence that no variants exist. Record the tool actually used
+      and any precision loss caused by fallback.
+
+      **Done when:** exact calibration is proven or the tool limitation is
+      explicit.
+
+   5. Generalize one element at a time.
+
+      For each axis:
+
+      - change exactly one name, literal, structural relation, source/sink, or
+        graph expansion parameter;
+      - search the complete declared source scope;
+      - record all matches;
+      - read every new match;
+      - record confirmed variants, safe matches, unreadable matches, and noise;
+      - stop that axis when more than half of its matches are noise.
+
+      Do not jump from the seed directly to a maximally broad semantic pattern.
+      A pattern change that exceeds the noise threshold is rejected or narrowed;
+      it is not hidden.
+
+      **Done when:** each completed axis has a methodology record.
+
+   6. In graph-seeding mode, load an existing graph and resolve the seed.
+
+      If no graph artifact exists, return:
+
+      `blocked: missing-graph-artifact`
+
+      and direct the invoker to `build-program-graph`.
+
+      Malformed or missing nodes return:
+
+      - `blocked: invalid node object`; or
+      - `blocked: node-not-found`.
+
+      Compute at most three hops, exclude the seed, confirmed vulnerabilities,
+      out-of-scope nodes, and nodes without textual or symbol content. Bound
+      the candidate set to 50 and rank by at least three of degree centrality,
+      clustering coefficient, path length, and structural similarity. Record
+      weights, truncation, and the fact that every result is only a review
+      target.
+
+      **Done when:** the bounded ranked candidate set is ready for triage.
+
+   7. Triage every pattern or graph candidate.
+
+      Read the surrounding function, relevant callers and callees, types,
+      guards, sanitizers, validation, ownership, and entry-point reachability.
+
+      Assign exactly one status:
+
+      - `confirmed-variant`: the same root cause is present;
+      - `safe-look-alike`: the shape resembles the seed but an actual guard,
+        sanitizer, type constraint, or different sink prevents the seed defect;
+      - `unreachable-unprotected`: the protection is absent but current
+        reachability is not established; retain it at lower confidence and state
+        what would make it reachable;
+      - `unreadable`: required source or callee evidence could not be read;
+      - `out-of-scope`: the match is outside the declared scope.
+
+      A candidate is not safe merely because it currently has no callers. A
+      candidate is not confirmed merely because it resembles the seed.
+
+      Record severity and confidence separately. For every ruled-out candidate,
+      record why it was safe. For every confirmed candidate, quote the relevant
+      code and identify the violated invariant or source-to-sink path.
+
+      **Done when:** every candidate has a status, severity where applicable,
+      confidence, and evidence.
+
+   8. Write the variant report with:
+
+      - root cause;
+      - original location;
+      - analyzed scope and coverage;
+      - methodology table;
+      - exact and generalized patterns;
+      - confirmed findings with quoted code;
+      - grouped safe look-alikes;
+      - unreachable, unreadable, and out-of-scope candidates;
+      - graph seed, hop bound, ranking dimensions, weights, and truncation when
+        graph seeding is selected;
+      - a CI-ready regression-rule recommendation from the strongest pattern.
+
+      The report MUST end with an explicit conclusion:
+
+      - `variants found: N`; or
+      - `no confirmed variants found in the analyzed scope`.
+
+      A per-candidate "not a variant" list without an overall conclusion is
+      incomplete. A negative conclusion MUST name the analyzed scope and any
+      unreadable remainder.
+
+      The report MUST state that graph reachability is not data-flow proof.
+
+      **Done when:** the complete report and explicit conclusion are written.
+
+   9. Variant-hunt mode is read/search/report work. It does not edit source,
+      tests, CI, or graph data to make a candidate pass. Its CI-ready rule is
+      a recommendation only.
+
+      **Done when:** no repair or review-loop mutation occurs.
 
 ## Failure and recovery
 
@@ -109,7 +408,7 @@ Graph-backed analysis gives external findings, source structure, entry points, s
 | Trailmark-structural | invalid target, missing Trailmark, no supported languages, import failure, missing summary field, or failed feature probe is reported without fabricated sections; empty pass outputs are valid and returned explicitly; partial output is labeled partial. |
 | Entry-point-analyzer | an unsupported codebase returns no invented entry points; unparsable files remain in Analysis Warnings; Slither failures fall back to manual analysis; ambiguous access remains Restricted (Review Required); no source or repository mutation is attempted. |
 | Graph-evolution | Trailmark absence, failed diff, a single failed snapshot, skipped preanalysis, or a language-mismatched empty diff stops report generation. Healthy non-zero summaries plus empty arrays mean structural stability. If cleanup is interrupted, remove temporary worktrees before retrying and report the incomplete state. |
-| Variant-hunt | missing root cause, zero exact matches, excessive false positives, missing graph artifacts, missing or malformed seed nodes, zero candidates, and write failures return their named blocked result. If more than 200 candidates exist before triage, triage the first 200 and document the remainder; if the 50-candidate bound is exceeded, truncate by degree centrality and document it. Delete partial reports after a failed write. |
+| Variant-hunt | missing root cause, missing original location or snippet, zero exact matches, excessive false positives, missing graph artifacts, missing or malformed seed nodes, zero candidates, unsupported initial-discovery request, one-finding-verification request, and write failures return their named blocked result. If more than 200 candidates exist before triage, triage the first 200 and document the remainder; if the graph-seeded 50-candidate bound is exceeded, truncate by the documented ranking and record the truncation. Delete partial reports after a failed write. |
 | Rollback | remove every named local artifact and temporary worktree created by the selected mode; no remote state is changed. |
 
 ## Output
@@ -119,4 +418,26 @@ Graph-backed analysis gives external findings, source structure, entry points, s
 - `trailmark-structural`: the requested Trailmark summary with language, `Entrypoints:`, `Dependencies:`, and version, or the full JSON payload ordered as languages, summary, preanalysis, attack surface, hotspots, proxy nodes, subgraphs, and optional type-reference samples.
 - `entry-point-analyzer`: the scoped markdown entry-point report with summary and per-category tables, file accounting, restriction evidence, callbacks, and warnings.
 - `graph-evolution`: `GRAPH_EVOLUTION_{project}_{before_ref}_{after_ref}.md`, including metrics, all structural and security-relevant changes, severity, source context, and cleanup methodology.
-- `variant-hunt`: a local variant report with root cause, original location, methodology, confirmed findings, false positives, ranked graph-seeded candidates when selected, and a CI-ready regression rule.
+- `variant-hunt`: a local variant report with root cause, original location, analyzed scope and coverage, methodology table, exact and generalized patterns, confirmed findings with quoted code, grouped safe look-alikes, unreachable/unreadable/out-of-scope candidates, graph-seeding details when selected, an explicit `variants found: N` or `no confirmed variants found in the analyzed scope` conclusion naming scope and unreadable remainder, and a CI-ready regression-rule recommendation; states that reachability is not data-flow proof.
+
+## Provenance
+
+This skill contains substantially rewritten adaptations of material from:
+
+- `trailofbits/skills`
+- revision `2be6433b39e009cd2b6fd3be1895f6b1faa5af9a`
+- source paths:
+  - `plugins/entry-point-analyzer/skills/entry-point-analyzer/SKILL.md`
+  - `plugins/variant-analysis/skills/variant-analysis/SKILL.md`
+
+Copyright: Made by Trail of Bits.
+
+The adapted entry-point and variant-hunt procedures are modified for ODIN's
+existing graph-backed security owner, tool boundaries, report formats, and
+failure semantics. They are distributed under CC-BY-SA-4.0:
+https://creativecommons.org/licenses/by-sa/4.0/legalcode
+
+The surrounding ODIN-authored material remains covered by the repository's
+existing license and notice structure. This provenance does not imply Trail of
+Bits sponsorship, endorsement, or official status. No Trail of Bits logo,
+mark, brand color, or marketplace metadata is included.

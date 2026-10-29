@@ -1,133 +1,135 @@
 # Repository contract
 
-## Repository file
-
-Edit `AGENTS.md`, never `CLAUDE.md`. `CLAUDE.md` is a symlink, so replacing it forks the two files.
-
 ## Canonical baseline
 
-Make every persona or doctrine change in `system-prompt-baseline.md`; it is the only source of truth. The Claude Code loader resolves no references, so each of the six output styles under `plugins/odin-core/output-styles/` embeds the full baseline as its tail, byte-identical from its second `<role>` through EOF. The generator owns that tail; never hand-propagate it:
+Make persona and doctrine changes in `system-prompt-baseline.md`, not in the generated output-style tails. [David Parnas]
 
-1. Edit `system-prompt-baseline.md` without changing an output style below its charter `<role>`.
-2. Run `python3 scripts/sync-baseline.py`. It replaces each style from its second `<role>` through EOF and preserves the persona preamble above it.
-3. Run `python3 scripts/sync-baseline.py --check`. Exit 0 means all styles match; exit 1 names drifted files; exit 2 means the canonical file or a required two-`<role>` layout is missing.
-4. Stage and commit the canonical file and all six styles together.
+Replace the embedded span in each output style by running `python3 scripts/sync-baseline.py`, which replaces each style from its second `<role>` through EOF while preserving the persona preamble above it; stage and commit the canonical file and all six styles together. [Tony Hoare]
 
-Never hand-edit `plugins/odin-core/output-styles/benchmark.md`. Its margin-runner v0.5.5 header marks it as generated. The baseline generator may change only the embedded cascade below the runner preamble; a hand edit above that region requires explicit user authorization.
+Verify alignment with `python3 scripts/sync-baseline.py --check` before committing; exit 0 means all styles match, exit 1 names drifted files, and exit 2 means the canonical file or a required two-`<role>` layout is missing. [Tony Hoare]
+
+Never hand-edit `plugins/odin-core/output-styles/benchmark.md`; changing its runner preamble requires explicit user authorization, and baseline regeneration may change only the embedded cascade below that preamble. [Tony Hoare]
 
 ## Submodule publishing
 
-Commit and push from this repository, not its parent `~/.claude`, because this tree is a Git
-submodule. This checkout's `.git` is an unwritable submodule pointer, so git operations must run
-in a clone inside `.outline/worktree/<name>`, never in `/tmp`, where work is easily lost.
+Run git operations in a clone inside `.outline/worktree/<name>` because this checkout's `.git` pointer is unwritable; never put that clone in `/tmp`, where work can be lost. [Tony Hoare]
 
-Never force-push, and that includes every `--force-with-lease` variant: a lease protects the
-remote from a stale overwrite and protects nothing from a rewrite you intended. On a branch with
-an open pull request, rewriting history strands every inline review comment on commits that no
-longer exist, and no permission error tells you that.
+Never force-push, including any `--force-with-lease` variant; a lease does not protect review history from an intentional rewrite. [Tony Hoare]
 
-If a push is rejected as non-fast-forward, the answer is to fetch and rebase or to ask, never to
-reach for a force variant.
+After a non-fast-forward rejection, fetch and rebase or ask; do not use a force variant. [Tony Hoare]
 
 ## The skill tree
 
-A skill is authored once, at `plugins/<plugin>/skills/<slug>/SKILL.md`. That path is its only home, and the directory states which plugin owns the skill. Do not add a membership registry, a second skill tree, or a per-plugin copy: the earlier model kept all three in sync and each one drifted.
+Author each skill once at `plugins/<plugin>/skills/<slug>/SKILL.md`; its directory determines its owner, with no separate membership registry, second tree, or per-plugin copy. [David Parnas]
 
-Adding a skill means creating `plugins/<plugin>/skills/<slug>/SKILL.md` and running `just render`.
+Each harness reads the immediate children of `skills/`, so keep every skill at `skills/<slug>/`; Cursor additionally walks deeper levels, which would load a nested skill there alone and break cross-harness parity. [Tony Hoare]
 
-Moving a skill between plugins means moving its directory. Nothing else records membership. For a batch of moves, or for creating, merging, or retiring a plugin, run the `retaxonomize-plugins` skill; it rewrites `catalog/plugins.json`, replaces retired ids in authored files, regenerates, and proves the gates.
+Use `retaxonomize-plugins` for batch skill moves or plugin creation, merger, or retirement. [David Parnas]
 
-Each harness reads the immediate children of `skills/`, so a skill nested deeper than `skills/<slug>/` never loads.
+Promote reusable lessons into the existing owning skill first; add a skill only for a distinct job that warrants a deep procedure. [Dieter Rams]
+
+Keep brainstorming and multiple-agent ideation as distinct jobs; use multiple subagents when ideating skill changes. [David Parnas]
+
+Give iterative review-and-fix orchestration one owner, `review-fix-loop`, rather than duplicating its procedure across skills. [David Parnas]
+
+Balance session-wide essentials and frequently used cross-project workflows in core; keep technology-specific skills in modules. [Christopher Alexander]
+
+Preserve consent and host-policy boundaries when placing remote publishing workflows in core; placement grants no additional authority. [Tony Hoare]
+
+Keep native development and toolchains in `odin-native`, Rust in `odin-rust`, and hardware performance in `odin-performance`; fold singleton systems and Zig skills into `odin-native`. The Apple plugin has no retained skills and is retired. [David Parnas]
+
+Measure explicit user invocation and genuine autonomous task use separately; exclude catalog exposure, inherited replay, and audit-only reads, and leave uncertain intent unresolved. [Richard Feynman]
+
+Use recent cross-project usage alongside lifetime evidence when considering core placement; neither zero observed usage nor a time window authorizes deletion. [Richard Feynman]
+
+Obtain family-level user approval before deleting never-used procedural skills; do not automatically include reference-only teaching in that deletion set. [Tony Hoare]
+
+Keep upstream source checkouts under `.references/<owner>/<repo>` and treat them as read-only sources. [David Parnas]
+
+Adapt upstream procedures and necessary narrow scripts selectively with provenance; propose substantial runtime or service dependencies separately. [Dieter Rams]
+
+Leave managed-source libraries unchanged and promote general lessons into ODIN. [David Parnas]
 
 ## Distribution surfaces
 
-Five harness surfaces are supported, and no others: Claude Code, Codex, Cursor, Grok, and Kimi. Nothing is published to a package registry, and no npm artifact belongs in this tree. A flat Devin mirror of these same skills is exported to the outline repository, which publishes nothing and installs nothing.
+Keep distribution limited to Claude Code, Codex, Cursor, Grok, and Kimi; do not add package-registry publication or npm artifacts. A flat Devin mirror of these same skills is exported to the outline repository, which publishes nothing and installs nothing; it is not a sixth distribution surface. [Tony Hoare]
 
-`catalog/plugins.json` owns plugin identity: name, description, category, tags, and directory. Every manifest and registry is generated from it. Keep every plugin and marketplace version at the single `releaseVersion` literal `2.1.5`; never bump only some manifests.
+Change plugin identity in `catalog/plugins.json`, not generated manifests or registries. [David Parnas]
 
-Treat these as generator-owned and never hand-edit them:
+Never hand-edit generated plugin and marketplace manifests, plugin `README.md`, `LICENSE`, or `NOTICE` files, skill `agents/openai.yaml` files, or `docs/specs/skill-index.md`. [Tony Hoare]
 
-- `plugins/*/.claude-plugin/plugin.json`, `plugins/*/.codex-plugin/plugin.json`, `plugins/*/.cursor-plugin/plugin.json`, `plugins/*/.grok-plugin/plugin.json`, `plugins/*/.kimi-plugin/plugin.json`, `plugins/*/README.md`, `plugins/*/LICENSE`, `plugins/*/NOTICE`
-- `.claude-plugin/marketplace.json`, `.codex-plugin/marketplace.json`, `.cursor-plugin/marketplace.json`, `.grok-plugin/marketplace.json`, `.kimi-plugin/marketplace.json`
-- `plugins/*/skills/*/agents/openai.yaml`
-- in the root `README.md`: the plugin table under `## Plugins`, the `N skills in M plugins` bullet and sentence, and the `The largest plugins are ...` sentence, and nothing else in that file
-- `docs/specs/skill-index.md`
+In the root `README.md`, leave only these spans to the generator: the plugin table under `## Plugins`, the `N skills in M plugins` sentence, and the `The largest plugins are ...` sentence; the rest of that file remains authored. [Tony Hoare]
 
-To change one, change its generator or `catalog/plugins.json`, run `just render`, and commit input and output together.
+Change generated output through its generator or catalog input, regenerate with `just render`, and commit input and output together. [David Parnas]
 
-Each harness dotdir manifest declares only what its own defaults do not already resolve: Kimi needs `skills`, and Codex and Grok need `mcpServers` where a plugin ships the dotless `mcp.json`. Do not add component declarations a harness resolves by convention.
+Declare only harness components that defaults do not resolve: Kimi needs `skills`, and Codex and Grok need `mcpServers` where a plugin ships dotless `mcp.json`. [Dieter Rams]
 
-Bump `releaseVersion` by one patch (`+0.0.1`) for every change that ships a skill, output style, manifest, or attribution; bump the minor version only on explicit request. Three authored copies carry the literal, and the bump commit updates all three: `catalog/plugins.json`, the literal in this file, and the sentence under the skill count in the root `README.md`. Run `just render` and commit the catalog with its generated output. Do not change `releaseVersion` for tooling-only changes such as pre-commit hooks or formatter configuration, or for edits to this file alone. Do not add or backfill `CHANGELOG.md` entries for routine version work; a bump that ships a skill or behavior change gets one entry.
+Keep every plugin and marketplace version aligned with `releaseVersion`, currently `2.1.6`. [Tony Hoare]
 
-A plugin id names a job someone is doing or a stack they are working in. A tier suffix such as `-advanced` is not a job, and a grab-bag id that collects whatever fits is not one either; split by job instead. `scripts/check-plugin-surfaces.mjs` rejects a tier-suffixed id, so the rule fails a commit rather than a review.
+Bump `releaseVersion` by one patch when shipping a skill, output style, manifest, or attribution change; bump the minor version only on explicit request. [Tony Hoare]
+
+Update the authored version literals in `catalog/plugins.json`, this file, and the release-version sentence in the root `README.md` together, then regenerate and commit the catalog with its generated output. [Tony Hoare]
+
+Do not bump for tooling-only changes or edits to this file alone. [Tony Hoare]
+
+Do not add or backfill changelog entries for routine version work; give a bump shipping a skill or behavior change one entry. [Dieter Rams]
+
+Name plugins for a job or stack, not a tier such as `-advanced` or a miscellaneous collection. [David Parnas]
 
 ## Devin skill mirror
 
-The outline repository carries a flat copy of every skill at `.devin/skills/<slug>/`, the
-project-scope path Devin reads. `scripts/sync-outline-skills.mjs` generates it from this tree, so
-it is an export of the same skills rather than a sixth distribution surface.
+Never hand-edit the outline repository's `.devin/skills/<slug>/` mirror; edit the owning ODIN skill and regenerate the export. [David Parnas]
 
-Regenerate it with `just sync-outline`. The default target is the sibling checkout
-`../outline-driven-development`, resolved from this tree's own parent directory, so from a clone
-under `.outline/worktree/` it points at a directory that does not exist; pass
-`--target <path-of-the-real-outline-checkout>` there. The script mirrors
-exactly the files git tracks under each skill directory, prunes anything under `.devin/skills/`
-that the plugin tree no longer carries, and refuses a target that does not hold both
-`manifest.json` and `.git`.
+From a clone under `.outline/worktree/`, give the mirror script an explicit `--target` pointing to the real outline checkout; its default sibling path is not that checkout. [Tony Hoare]
 
-Never hand-edit the mirror. Edit the skill under `plugins/<plugin>/skills/<slug>/` and resync,
-because the next run reverts an edit made in the mirror.
+Track a new `SKILL.md` before syncing; an untracked skill is a sync error, not an omission to accept. [Tony Hoare]
 
-A skill whose `SKILL.md` is untracked is a sync error, not a skip. Add the file to git first.
-
-The mirror lives in another repository with its own history, so commit it there, in its own
-commit, and never from this repository.
+Commit mirror changes separately in the outline repository, never from this repository. [David Parnas]
 
 ## Skill metadata
 
-Frontmatter carries `name` and `description` and little else. `name` must equal the directory name, or `gh skill install` drops the skill. `description` must open with a trigger a model can route on; `scripts/check-skill-routes.mjs` accepts `Use when ` and its listed variants and rejects `Use when,` or a bare imperative, and its first sentence becomes the generated `short_description`.
+Keep frontmatter to `name`, `description`, and little else; make `name` match the directory and begin `description` with a routable trigger. [Dieter Rams]
 
-Single-quote every frontmatter value containing `: `. Strict YAML parsers reject an unquoted colon-space even though Claude Code's loader accepts it, so it ships silently broken.
+Single-quote frontmatter values containing `: `; strict YAML parsers reject unquoted colon-space even when Claude Code accepts it. [Tony Hoare]
 
-Do not add a `license` field to a skill. This tree has mixed provenance and attribution lives in `licenses/NOTICE`; a uniform value would misstate the provenance of adapted skills.
+Do not add a `license` field to a skill. [Tony Hoare]
+
+Maintain attribution in `licenses/NOTICE` rather than representing mixed provenance with a uniform skill license. [Tony Hoare]
 
 ## Verification
 
-Before a commit, run `just check`; it runs every hook in `.pre-commit-config.yaml` over the whole tree (`prek run --all-files`) and can repair the style cascade, so read `git status` afterwards. `just verify` adds `gh skill publish --dry-run`, which validates every skill in the tree against the Agent Skills specification; its `recommended field missing: license` advisories are accepted, not fixed.
+Run `just check` before committing and inspect resulting changes because the cascade hook can repair files. [Tony Hoare]
 
-Do not invent language test commands or add CI without an explicit request; this repository has no build, no unit-test suite, and no GitHub Actions workflow.
+Accept `recommended field missing: license` advisories from `just verify` skill validation rather than adding misleading license metadata. [Tony Hoare]
 
-Test persona or doctrine changes in a fresh Claude Code session. The canonical baseline and output styles load only at session start, so the current session cannot verify them.
+Do not invent language test commands or add CI without an explicit request. [Tony Hoare]
 
-## Prompt audit
-
-Run the `prompt-optimizer` skill in audit mode when a prompt, skill, output style, or tool description changes behavior, and again at each model release. Publish its report and proposed diff. Apply only high- and medium-confidence hunks with explicit consent, and leave low-confidence and flagged items in the report.
-
-Ground every prompting claim in a current vendor guide. Re-fetch the guides in `plugins/odin-skills/skills/prompt-optimizer/references/prompt-guides.md` before an audit run, at each model release, and whenever a row is older than one release cycle. Update the index in the same change: stamp each re-read row `Verified <ISO date>`, move a superseded guide to the legacy-avoid rows and name its successor, and add the new model's guide as a current row. A claim whose row is stale is unverified: report it and keep it out of any applied diff.
+Test persona and doctrine changes in a fresh Claude Code session; the current session has already loaded its baseline and output style. [John Carmack]
 
 ## External harness carriers
 
-Propagate every shared doctrine change to `~/.codex/AGENTS.md` and `~/.omp/agent/AGENTS.md` with `just sync-carriers`, and prove it with `just sync-carriers-check` (`scripts/check-carriers.py` is the same gate as a pre-commit hook). The baseline generator does not touch these carriers.
+Propagate shared doctrine changes to `~/.codex/AGENTS.md` and `~/.omp/agent/AGENTS.md` with `just sync-carriers`, then prove alignment with `just sync-carriers-check`; baseline generation does not update them. [Tony Hoare]
 
-Each carrier holds every shared section of the baseline byte for byte, `<change_discipline>` included. The four tool-layer sections, `<git>`, `<directives>`, `<code_tools>`, and `<thinking>`, differ by design and are compared for presence only: Codex shells out through `rtk`; omp and Claude Code provide native file tools.
+Keep shared carrier sections byte-identical to `system-prompt-baseline.md`, including `<change_discipline>`; preserve the intentional tool-layer differences in `<git>`, `<directives>`, `<code_tools>`, and `<thinking>`, which are compared for presence only. Reference the omp-authoritative doctrine choice when selecting future shared wording and move it into the baseline rather than authorizing a second variant. [Tony Hoare]
 
-Edit both carriers in place. Never commit them from this repository, and never stage `~/.codex/config.toml`; their owning repositories live outside this submodule.
+Edit carriers in place under their owning repositories; never commit them from this submodule or stage `~/.codex/config.toml`. [David Parnas]
 
 ## Writing style
 
-Write content under this tree so each section is independently actionable: state a needed rule where the reader needs it, and let no sentence send the reader back to an earlier passage for it.
+Make each section independently actionable, with needed conditions and rules stated where the reader uses them. [Italo Calvino]
 
-Prefer a short repeated rule to a decorative inter-file pointer. Use a cross-reference only when the target itself is required for correct behavior, such as the byte-identical canonical baseline span.
+Prefer a short necessary repetition to a decorative pointer; cross-reference when the target itself is required for correct behavior. [Dieter Rams]
+
+When auditing authored Markdown, distinguish generated regions, verbatim upstream material, and historical records before proposing edits; exclude generated output from the authored-prose audit. [Tony Hoare]
+
+Preserve behavior and structure in wording-only edits and obtain file-specific approval before deleting a whole document. [Tony Hoare]
 
 ## Voice
 
-Every skill in this tree is authored in one register, set by the ODIN doctrine in
-`system-prompt-baseline.md` and the spine taste anchors. `docs/specs/voice.md` is the contract.
+Follow `docs/specs/voice.md` and the baseline's authoring register. [Otl Aicher]
 
-The spine itself is user-private, at `~/.claude/skills/spine/`. Read it when authoring; never
-edit it from this repository, and never vendor a copy into this tree. `docs/specs/voice.md`
-carries what an editor needs without loading it.
+Read the private spine when authoring, but never edit it from this repository or vendor its contents here. [David Parnas]
 
-Passing `scripts/check-voice.py` is not passing the register. That script sees formatting
-tells, not absent conviction; whether a section earns its place is the spine audit's
-judgment, not a regular expression's.
+Judge the prose itself rather than treating a passing voice gate as proof of quality. [Richard Feynman]
+
+Give every prescriptive rule in this file exactly one full-name spine anchor and re-check its fit when the rule changes. [Tony Hoare]

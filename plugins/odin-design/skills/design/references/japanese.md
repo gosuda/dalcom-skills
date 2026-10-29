@@ -61,7 +61,7 @@ Shueisha "Jump TOON" (2025) launched as Webtoon-style vertical-scroll horizontal
 
 ## 4. BudouX line-break library
 
-Google project, ~15KB ML model, v0.9.x, Python / JS / Java bindings. Inserts zero-width-space breakpoints based on phrase-level segmentation, replaces brittle `<br>` placement and over-eager `word-break: break-all`.
+Google project, ~15KB ML model, 0.10.2, Python / JS / Java bindings. Inserts zero-width-space breakpoints based on phrase-level segmentation, replaces brittle `<br>` placement and over-eager `word-break: break-all`.
 
 Adobe.com is a confirmed BudouX production user, replaced AEM's JP line-breaking pipeline. Chrome 119+ ships BudouX-style segmentation natively via `<wbr>`-equivalent break opportunities, reducing the need to ship the JS for Chromium audiences.
 

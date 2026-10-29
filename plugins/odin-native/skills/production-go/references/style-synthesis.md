@@ -10,7 +10,7 @@ Idiomatic Go is no longer a timeless checklist: since 1.22 it is **version-sensi
 - The Google guide is three tiers (verified at source): **Style Guide** (normative **+ canonical**, enduring rules) > **Style Decisions** (normative, *not* canonical, changes with language features) > **Best Practices** (neither, patterns, not law).
 - Code Review Comments is frozen/legacy ("a supplement to Effective Go… not a comprehensive style guide"); `staticcheck` + `go vet` + the Google guide are its living equivalents.
 - The #1 source of stale model output is pre-1.22 idiom: `interface{}` not `any`, loop-var copies (`x := x`), hand-rolled `Contains`/`min`/`max`, `sort.Slice` over `slices.Sort`, `for i:=0;i<n;i++`, `tools.go`, third-party loggers over `slog`, capitalized error strings. `go fix` [1.26] auto-rewrites most via the **modernize** analyzers.
-- Tooling consolidated: `golint` is archived (→ `revive` + `staticcheck`); `golangci-lint v2` split formatters from linters and changed the schema; `gofumpt` is the de-facto stricter formatter (policy choice, not baseline).
+- Tooling consolidated: `golint` is archived (→ `revive` + `staticcheck`); `golangci-lint v2.15.0` split formatters from linters and changed the schema; `gofumpt` is the de-facto stricter formatter (policy choice, not baseline).
 
 ## Table of Contents
 1. [Naming](#naming)
@@ -339,20 +339,20 @@ The high-value section: these are judgment calls tools can't settle.
 | Tool | State [2026] | Use for | Notes |
 |---|---|---|---|
 | `gofmt` | bundled, **law** | canonical formatting | never overridden |
-| `gofumpt` | active, v0.8.x | stricter format | superset of `gofmt`; policy choice |
+| `gofumpt` | active, v0.12.0 | stricter format | superset of `gofmt`; policy choice |
 | `goimports` / `gci` | active | import grouping + add/remove | run as *formatters* in golangci-lint v2 |
 | `go vet` | bundled | suspicious constructs | bundles `printf`, `nilness`, `loopclosure`, `composites`, `shadow` (opt-in), `fieldalignment` (opt-in), `stdversion` [1.23], `waitgroup`+`hostport` [1.25] |
 | `go fix` | **rewritten [1.26]** | safe modernization | hosts the `modernize` analyzers; review the diff (comments/perf can shift) |
 | `gopls` | active, v0.22.x | LSP, modernize hints, vuln prompts | same modernize suite as code actions |
-| `staticcheck` | active (2026.x / v0.8.x) | ~150 SA bug + ST style checks | absorbed `gosimple`+`stylecheck` in golangci-lint v2 |
+| `staticcheck` | active (2026.x / v0.8.2) | ~150 SA bug + ST style checks | absorbed `gosimple`+`stylecheck` in golangci-lint v2 |
 | `golangci-lint` | active, **v2.x** | CI lint orchestration | v2 (2025-03-23) split formatters from linters; `version: "2"`, `linters.default: standard\|all\|none\|fast` |
-| `revive` | active, v1.15.x | configurable golint-style rules | drop-in `golint` replacement, ~6× faster |
+| `revive` | active, v1.17.1 | configurable golint-style rules | drop-in `golint` replacement, ~6× faster |
 | `errorlint` | active | 1.13 wrap mistakes (`==` on wrapped, `%v` where `%w` meant) | |
 | `sloglint` | active | slog key/value misuse | |
 | `golint` | **archived** | n/a | → `revive` + `staticcheck`; do not recommend |
 | `maligned`/`scopelint`/`structcheck`/`deadcode`/`varcheck`/`interfacer` | **removed** | n/a | folded into vet/staticcheck/unused |
 
-golangci-lint v2 default ("standard") set (verified): `errcheck`, `govet`, `ineffassign`, `staticcheck`, `unused`. Recommended adds: `revive`, `errorlint`, `sloglint`, `copyloopvar`, `nonamedreturns`, `bodyclose`, `modernize` (added v2.6.0). v2 has **no exclusions by default**: opt into presets (`comments`, `std-error-handling`, `common-false-positives`). `golangci-lint migrate` converts v1 configs.
+golangci-lint v2.15.0 default ("standard") set (verified): `errcheck`, `govet`, `ineffassign`, `staticcheck`, `unused`. Recommended adds: `revive`, `errorlint`, `sloglint`, `copyloopvar`, `nonamedreturns`, `bodyclose`, `modernize` (added v2.6.0). v2 has **no exclusions by default**: opt into presets (`comments`, `std-error-handling`, `common-false-positives`). `golangci-lint migrate` converts v1 configs.
 
 `modernize` analyzers (canonical: `golang.org/x/tools/.../passes/modernize`; power `go fix` + gopls + golangci-lint). "Fixes may be safely applied en masse without changing behavior." Key ones (analyzer → rewrite, target version):
 

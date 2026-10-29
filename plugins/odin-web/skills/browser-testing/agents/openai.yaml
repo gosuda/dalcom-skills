@@ -1,3 +1,0 @@
-interface:
-  display_name: "Browser Testing"
-  short_description: "Use when building, debugging, or verifying browser-rendered code, or running browser tests for PR- or branch-affected pages."

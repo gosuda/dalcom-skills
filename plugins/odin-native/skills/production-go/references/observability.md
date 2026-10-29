@@ -2,7 +2,7 @@
 
 Logging is not observability. Traces, metrics, and structured logs (**correlated by `trace_id`**) are the minimum to diagnose production failures. The whole point is jumping from an alert to the exact request: span carries the work, metrics aggregate it, logs explain it, all sharing one ID. In Go the hard parts are *lifecycle* (flush exporters before exit), *propagation* (the default propagator is a **no-op**), and *cardinality* (one unbounded label OOMs your TSDB).
 
-> Verified against Go **1.26.4** (stable) + **1.27 RC** notes; OpenTelemetry-Go **v1.44.0** (stable signals) / **v0.20.0** (logs), contrib `otelhttp`/`otelgrpc` **v0.69.0**, `prometheus/client_golang` **v1.23.2**, semconv **v1.41.0**, 2026-06. Version tags `[1.N]` mark the Go release a claim applies to; OTel maturity is noted by module/signal, not Go version.
+> Verified against Go **1.27.3** (stable); OpenTelemetry-Go **v1.47.0** (stable signals **and logs**), contrib `otelhttp`/`otelgrpc` **v0.72.0**, `prometheus/client_golang` **v1.25.0**, semconv **v1.43.0**, 2026-06. Version tags `[1.N]` mark the Go release a claim applies to; OTel maturity is noted by module/signal, not Go version.
 
 ## TL;DR: the modern deltas (read first)
 
@@ -35,9 +35,9 @@ Logging is not observability. Traces, metrics, and structured logs (**correlated
 
 | Signal | Carries | OTel-Go module | Maturity | Key type |
 |---|---|---|---|---|
-| **Traces** | Request flow across services | `go.opentelemetry.io/otel/trace` | **Stable** (v1.44) | `Span` |
-| **Metrics** | Aggregated numbers over time | `go.opentelemetry.io/otel/metric` | **Stable** (v1.44) | `Counter`, `Histogram`, `Observable*` |
-| **Logs** | Structured event records | `log/slog` [1.21] + OTel bridge | **slog stable; OTel logs BETA** | `slog.Record` → `log.Record` |
+| **Traces** | Request flow across services | `go.opentelemetry.io/otel/trace` | **Stable** (v1.47) | `Span` |
+| **Metrics** | Aggregated numbers over time | `go.opentelemetry.io/otel/metric` | **Stable** (v1.47) | `Counter`, `Histogram`, `Observable*` |
+| **Logs** | Structured event records | `log/slog` [1.21] + OTel bridge | **slog stable; OTel logs Stable (v1.47)** | `slog.Record` → `log.Record` |
 
 The objective: every log line carries `trace_id`/`span_id`, every span shares the same `Resource` attributes as metrics, and high-cardinality detail (user/request IDs) lives in **traces and logs, never metrics**. Correlation flows through one thing (`context.Context`), so the cardinal sin below is logging without it.
 
@@ -60,7 +60,7 @@ import (
     sdkmetric "go.opentelemetry.io/otel/sdk/metric"
     "go.opentelemetry.io/otel/sdk/resource"
     sdktrace "go.opentelemetry.io/otel/sdk/trace"
-    semconv "go.opentelemetry.io/otel/semconv/v1.41.0" // versioned path — pin ONE per binary
+    semconv "go.opentelemetry.io/otel/semconv/v1.43.0" // versioned path — pin ONE per binary
 )
 
 func setupOTel(ctx context.Context, service, version string) (shutdown func(context.Context) error, err error) {
@@ -476,16 +476,16 @@ Continuous profiling: Pyroscope (`grafana/pyroscope-go`, push) or Parca (pull/eB
 
 | Library / module | Current (mid-2026) | Status | Note |
 |---|---|---|---|
-| `go.opentelemetry.io/otel` (+ `sdk`, `trace`, `metric`, `sdk/metric`) | v1.44.0 | **Stable** | Traces + metrics GA |
-| `otel/log`, `otel/sdk/log`, `otel/log/global` | v0.20.0 | **Beta** | Logs signal experimental: adopt consciously |
-| OTLP exporters `otlp{trace,metric}{http,grpc}` | v1.44.0 | Stable | HTTP fixed ≥ v1.43.0 (GHSA advisory) |
-| `otel/exporters/prometheus` | v0.66.0 | **Experimental** | OTel→Prometheus bridge; older `exporters/metric/prometheus` is frozen |
-| `otel/semconv/v1.41.0` | versioned path | Stable | Pin **one** version per binary; v1.39.0 RPC renames |
-| contrib `otelhttp`, `otelgrpc`, `propagators/autoprop` | v0.69.0 | Stable instrumentation | Use `stats.Handler`; avoid interceptors / `WithRouteTag` |
+| `go.opentelemetry.io/otel` (+ `sdk`, `trace`, `metric`, `sdk/metric`) | v1.47.0 | **Stable** | Traces + metrics GA |
+| `otel/log`, `otel/sdk/log`, `otel/log/global` | v1.47.0 | **Beta** | Logs signal experimental: adopt consciously |
+| OTLP exporters `otlp{trace,metric}{http,grpc}` | v1.47.0 | Stable | HTTP fixed ≥ v1.43.0 (GHSA advisory) |
+| `otel/exporters/prometheus` | v0.72.0 | **Experimental** | OTel→Prometheus bridge; older `exporters/metric/prometheus` is frozen |
+| `otel/semconv/v1.43.0` | versioned path | Stable | Pin **one** version per binary; v1.39.0 RPC renames |
+| contrib `otelhttp`, `otelgrpc`, `propagators/autoprop` | v0.72.0 | Stable instrumentation | Use `stats.Handler`; avoid interceptors / `WithRouteTag` |
 | contrib `bridges/otelslog` | v0.x | Beta (needs Logs SDK) | Or custom handler + Collector |
 | contrib `instrumentation/runtime` | current | Stable | New `go.*` metric names; old `runtime.go.*` gated by env |
 | `log/slog` (stdlib) | [1.21] | **Default** | `NewMultiHandler` [1.26], `DiscardHandler` [1.24] |
-| `prometheus/client_golang` | v1.23.2 | **Stable** | Native histograms ≥1.14 (client-experimental) |
+| `prometheus/client_golang` | v1.25.0 | **Stable** | Native histograms ≥1.14 (client-experimental) |
 | `samber/slog-multi`, `samber/slog-*` | active | Optional | Superseded by `slog.NewMultiHandler` for simple fan-out |
 | `uber/zap`, `rs/zerolog`, `sirupsen/logrus` | maintained | Legacy for new code | `slog` is the default; bridge old loggers via contrib |
 
@@ -501,7 +501,7 @@ Continuous profiling: Pyroscope (`grafana/pyroscope-go`, push) or Parca (pull/eB
 | **1.25** | **Flight recorder** (`runtime/trace`, config-struct API); `testing/synctest` GA |
 | **1.26** | **`slog.NewMultiHandler`**; scheduler `runtime/metrics` (`/sched/goroutines/*`); experimental `goroutineleak` profile; `NotifyContext` cancels with signal cause; Green Tea GC default |
 | **1.27 (RC)** | `asynctimerchan` GODEBUG **removed** (ticker channels always synchronous); `goroutineleak` GA target [verify]. RC-stage: confirm before GA (~Aug 2026) |
-| **OTel-Go** | Traces/metrics **Stable** (v1.x); **logs Beta** (v0.x); default metric cardinality cap **2000**; `Int64Gauge` v1.27; `Enabled(ctx)` v1.40; `AlwaysRecord` v1.40 |
+| **OTel-Go** | Traces/metrics/logs **Stable** (v1.x); default metric cardinality cap **2000**; `Int64Gauge` v1.27; `Enabled(ctx)` v1.40; `AlwaysRecord` v1.40 |
 
 ---
 
@@ -547,7 +547,7 @@ Month 1: SLIs (p50/p99, error rate) on **histograms**, alerts on burn rate, View
 
 ## Sources {#sources}
 - opentelemetry.io/docs/languages/go (instrumentation, sampling, getting-started); OTel Go status page (Traces/Metrics Stable, **Logs Beta**)
-- pkg.go.dev/go.opentelemetry.io/otel/{trace,metric,sdk/trace,sdk/metric,sdk/log,semconv/v1.41.0}; contrib `otelhttp`/`otelgrpc`/`bridges/otelslog`/`propagators/autoprop`/`exporters/autoexport`
+- pkg.go.dev/go.opentelemetry.io/otel/{trace,metric,sdk/trace,sdk/metric,sdk/log,semconv/v1.43.0}; contrib `otelhttp`/`otelgrpc`/`bridges/otelslog`/`propagators/autoprop`/`exporters/autoexport`
 - open-telemetry/opentelemetry-go CHANGELOG (cardinality cap #8247; `Enabled`/`AlwaysRecord` v1.40; exemplar filter v1.32); advisory GHSA-w8rr-5gcm-pp58
 - pkg.go.dev/{log/slog,runtime/metrics,runtime/trace,net/http/pprof}; go.dev/doc/go1.{21..27} release notes; go.dev/blog/{flight-recorder,testing-time}
 - github.com/prometheus/client_golang (exemplars, collectors, native histograms); Prometheus docs (cardinality, histogram vs summary, native histograms v3.8/v3.9); Kubernetes probe docs

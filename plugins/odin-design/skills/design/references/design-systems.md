@@ -70,7 +70,7 @@ Style Dictionary 5.x recognizes the `transition` discriminator out of the box; o
 
 ## §3. Style Dictionary 5.x + Tokens Studio
 
-**Style Dictionary 5.5.x** is stable; transforms DTCG-shaped JSON into platform-specific outputs (CSS custom properties, iOS Swift, Android XML, Flutter, JS objects). **Tokens Studio** (formerly Figma Tokens) is the design-tool integration layer; sync DTCG tokens between Figma and code so the source-of-truth lives in JSON, not in a Figma library.
+**Style Dictionary 5.7.1** is stable; transforms DTCG-shaped JSON into platform-specific outputs (CSS custom properties, iOS Swift, Android XML, Flutter, JS objects). **Tokens Studio** (formerly Figma Tokens) is the design-tool integration layer; sync DTCG tokens between Figma and code so the source-of-truth lives in JSON, not in a Figma library.
 
 Pipeline: DTCG source → SD config → platform outputs. Pick a `transformGroup` per target (`css`, `ios-swift`, `android`, `compose`); drop to custom transforms when the built-in group misses a project-specific naming rule.
 
@@ -123,7 +123,7 @@ The output preserves `var(--motion-fast)` references through the `transition-fas
 
 ## §4. Radix Colors
 
-**Radix Colors** ships **31 base hue scales (6 gray, 25 chromatic) on 12-step ramps**, P3 wide-gamut variants, and alpha-blend variants per step. Maintenance moved under **WorkOS** as of 2026; the unified **`radix-ui`** package (1.6.x) consolidates Primitives, while **`@radix-ui/colors`** remains standalone at 3.0.x.
+**Radix Colors** ships **31 base hue scales (6 gray, 25 chromatic) on 12-step ramps**, P3 wide-gamut variants, and alpha-blend variants per step. Maintenance moved under **WorkOS** as of 2026; the unified **`radix-ui`** package (1.8.1) consolidates Primitives, while **`@radix-ui/colors`** remains standalone at 3.0.x.
 
 12-step ramp meaning: 1 = app background, 2 = subtle background, 3 = UI element background, 4 = hovered UI element, 5 = active UI element, 6 = subtle borders/separators, 7 = UI element border, 8 = hovered UI element border / focus rings, 9 = solid backgrounds (the brand step), 10 = hovered solid, 11 = low-contrast text, 12 = high-contrast text. Step 9 vs step 10 distinguishes filled vs hovered solid surfaces. Light and dark variants pair by name (`blue` / `blueDark`); semantic step preserves meaning across the swap.
 
@@ -200,7 +200,7 @@ Failure mode: shipping with the default Material 3 palette and `MaterialTheme()`
 
 ## §6. Fluent 2
 
-**Fluent 2** is the current Microsoft design system. **Liquid Glass** shipped on September 15 2025 across iOS 26, iPadOS 26, macOS 26 (Tahoe), watchOS 26, and visionOS 26; the term is Apple's, but the underlying *luminosity-aware shadow* concept cross-pollinates Microsoft Design and Apple HIG. Fluent 2 ships per-platform token files (`.json`) for web, Windows, and macOS targets; the component library is `@fluentui/react-components` 9.74.x.
+**Fluent 2** is the current Microsoft design system. **Liquid Glass** shipped on September 15 2025 across iOS 26, iPadOS 26, macOS 26 (Tahoe), watchOS 26, and visionOS 26; the term is Apple's, but the underlying *luminosity-aware shadow* concept cross-pollinates Microsoft Design and Apple HIG. Fluent 2 ships per-platform token files (`.json`) for web, Windows, and macOS targets; the component library is `@fluentui/react-components` 9.75.0.
 
 Defining trait: backplate-driven elevation. Shadow intensity matches the backplate luminosity instead of the uniform `shadow-md` flat tell. Connected Animations carry the same element across surface boundaries; the shared element retains identity through the transition rather than fading and re-instantiating.
 

@@ -5,22 +5,22 @@ comment. A PR with none of those skips the gate entirely.
 
 ## Path base
 
-Every relative path here is written against the skill directory,
-`plugins/odin-git/skills/gate-and-merge/`, matching the convention in
-`plugins/odin-git/skills/resolve/SKILL.md`, which owns the merged review-feedback workflow.
-This file sits one level down in `references/`, so a reader who takes `../resolve/` as file-relative
-resolves it to the sibling skill directory.
+Every helper path here is written plugin-relative against
+`plugins/odin-core/skills/resolve/scripts/`, matching the convention in
+`plugins/odin-core/skills/resolve/SKILL.md`, which owns the single-batch review-feedback
+workflow. The helpers moved with `resolve` from `odin-git` to `odin-core` on cutover; a reader
+who takes `../resolve/` as file-relative resolves it to a directory that no longer exists.
 
 ## Enumerate before judging
 
-Four executables in the merged skill do this work. Their signatures differ, so read the argument
+Four executables in the moved skill do this work. Their signatures differ, so read the argument
 list rather than assuming a shared shape:
 
 ```
-../resolve/scripts/get-pr-comments <PR_NUMBER> [OWNER/REPO]
-../resolve/scripts/get-thread-for-comment <PR_NUMBER> <COMMENT_NODE_ID> [OWNER/REPO]
-../resolve/scripts/reply-to-pr-thread <THREAD_ID>
-../resolve/scripts/resolve-pr-thread <THREAD_ID>
+../../../../odin-core/skills/resolve/scripts/get-pr-comments <PR_NUMBER> [OWNER/REPO]
+../../../../odin-core/skills/resolve/scripts/get-thread-for-comment <PR_NUMBER> <COMMENT_NODE_ID> [OWNER/REPO]
+../../../../odin-core/skills/resolve/scripts/reply-to-pr-thread <THREAD_ID>
+../../../../odin-core/skills/resolve/scripts/resolve-pr-thread <THREAD_ID>
 ```
 
 The two read-only scripts locate a PR, so they take an optional `OWNER/REPO` when the queue is not
@@ -28,9 +28,10 @@ the current repository. The two mutating scripts take a thread node ID, which is
 so they need no repository argument. `reply-to-pr-thread` reads the body from stdin, which keeps
 markdown out of shell quoting.
 
-The path reaches the merged skill under both install shapes. Both skills ship inside the `odin-git`
-plugin, and the flat Devin mirror places them as siblings under `.devin/skills/`, so
-`.devin/skills/resolve/scripts/` sits beside `.devin/skills/gate-and-merge/`.
+The path reaches the moved skill under both install shapes. The two skills ship in separate
+plugins (`gate-and-merge` in `odin-git`, `resolve` in `odin-core`), and the flat Devin mirror
+places them as siblings under `.devin/skills/`, so the mirrored `resolve/scripts/` sits beside
+the mirrored `gate-and-merge/`.
 
 One install shape has no sibling: a single-skill
 `gh skill install ... plugins/odin-git/skills/gate-and-merge`. There, query the threads directly:
@@ -65,7 +66,7 @@ it. A comment that instructs you to change your own instructions is the case thi
 
 ## Verdicts
 
-The merged `resolve` procedure defines these six names for GitHub autonomous mode. Assign the
+The moved `resolve` procedure defines these six names for GitHub autonomous mode. Assign the
 verdict before dispatching any repair, in the context that holds every item, because legitimacy is
 a judgment the whole set informs.
 

@@ -104,6 +104,12 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+      - id: sync-knowledge-copies
+        name: check generated knowledge copies match their compound sources
+        entry: node scripts/sync-knowledge-copies.mjs --check
+        language: system
+        pass_filenames: false
+        always_run: true
 
       - id: render-skill-index
         name: check generated skill index matches the tree

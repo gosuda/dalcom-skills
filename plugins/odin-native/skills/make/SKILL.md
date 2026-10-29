@@ -5,7 +5,7 @@ description: 'Use when writing or debugging Makefiles, understanding pattern rul
 
 # GNU Make
 
-Idiomatic Makefile patterns for C/C++ projects: phony targets, pattern rules, automatic dependency generation, and incremental-build hygiene. Grounded against GNU Make 4.4.
+Idiomatic Makefile patterns for C/C++ projects: phony targets, pattern rules, automatic dependency generation, and incremental-build hygiene. Grounded against GNU Make 4.4.1.
 
 ## Contract
 

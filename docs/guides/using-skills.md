@@ -22,7 +22,7 @@ Several invocations in one message stack in the order you wrote them. This is th
 
 A skill can also load when your request matches its description trigger. Every description opens with a routing phrase such as `Use when`, and `scripts/check-skill-routes.mjs` rejects a description that states no trigger. When you phrase a request as the situation a skill names, that skill loads without an explicit invocation.
 
-The exception is the 333 skills whose frontmatter sets `disable-model-invocation: true`, such as `work`, `commit-push-current`, and `publish-branch`: these run only when you invoke them by name, so the model never starts a side-effecting workflow on a phrase match.
+The exception is the skills whose frontmatter sets `disable-model-invocation: true`, such as `work`, `commit-push-current`, and `commit-push-pr`: these run only when you invoke them by name, so the model never starts a side-effecting workflow on a phrase match.
 
 ## Pass arguments
 
@@ -63,4 +63,4 @@ gh skill install OutlineDriven/odin-claude-plugin plugins/odin-planning/skills/a
 
 Prefer this when one trigger is all you need from a large plugin.
 
-Any claim about harness behavior beyond this page needs a check against `docs/specs/distribution-surfaces.md`, which carries tiered, dated evidence for each surface.
+Any claim about harness behavior beyond this page needs a check against [`distribution-surfaces`](../specs/distribution-surfaces.md), which carries tiered, dated evidence for each surface.

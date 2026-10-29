@@ -10,7 +10,6 @@ supported client discovers them from that same layout, so nothing is copied or r
 Methodology: [outline-driven-development](https://github.com/OutlineDriven/outline-driven-development)
 · Site: [outlinedriven.github.io](https://outlinedriven.github.io)
 
-- 657 skills in 28 plugins, each authored once at `plugins/<plugin>/skills/<slug>/SKILL.md`
 - Five harness surfaces from one tree: Claude Code, Codex, Cursor, Grok, and Kimi
 - No package manager for the tooling; every script is dependency-free Node ESM or standard-library Python
 - Six output styles in odin-core, each embedding the canonical doctrine byte-identically
@@ -33,7 +32,7 @@ Methodology: [outline-driven-development](https://github.com/OutlineDriven/outli
 657 skills in 28 plugins. A skill is authored once, at
 `plugins/<plugin>/skills/<slug>/SKILL.md`, and that path is its only home. The directory states
 which plugin owns the skill, so no registry has to answer that question. Every plugin and
-marketplace ships at one `releaseVersion`, currently 2.1.5, held in `catalog/plugins.json`.
+marketplace ships at one `releaseVersion`, currently 2.1.6, held in `catalog/plugins.json`.
 
 Each harness resolves components from fixed conventions at the plugin root, so this layout is the
 one every supported client already discovers. Nothing is copied at publish time, and nothing is
@@ -52,7 +51,7 @@ plugins/odin-core/
   output-styles/               Claude output styles, odin-core only
 ```
 
-> `odin-core` carries the six output styles and the planning skills; `odin-code` carries the day-to-day engineering skills. Install the rest by working domain.
+> `odin-core` carries the six output styles and the core session gates; `odin-planning` carries the planning skills. `odin-code` carries the day-to-day engineering skills. Install the rest by working domain.
 
 
 ## Core philosophy

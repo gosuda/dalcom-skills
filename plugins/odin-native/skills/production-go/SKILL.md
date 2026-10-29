@@ -24,7 +24,7 @@ disable-model-invocation: true
 
 ## Procedure
 
-1. Fix the Go baseline. The grounded pin is Go 1.27.1 (current stable, released 2026-09-01). Go maintains only the two newest major releases, so 1.26 is still supported and 1.25 is end of life. The `go` line in the module's `go.mod` is the feature ceiling: never emit a feature newer than that line, and remember that bumping it can change runtime behavior through `GODEBUG` defaults. Done when: the effective Go version is named.
+1. Fix the Go baseline. The grounded pin is Go 1.27.3 (current stable, released 2026-09-01). Go maintains only the two newest major releases, so 1.26 is still supported and 1.25 is end of life. The `go` line in the module's `go.mod` is the feature ceiling: never emit a feature newer than that line, and remember that bumping it can change runtime behavior through `GODEBUG` defaults. Done when: the effective Go version is named.
 2. Route the task. Match the project type and topic to the reference table below and load every file the task touches in the same turn. For a topic the table does not name, look it up in `references/index.md`, the alphabetical topic index. Done when: each relevant reference is loaded.
 3. Apply the conventions. Done when: the code or review reflects each convention that applies.
    - Philosophy: clarity over cleverness; composition over inheritance; accept interfaces, return structs; make the zero value useful; errors are values; every goroutine gets a shutdown path; stdlib before third-party.

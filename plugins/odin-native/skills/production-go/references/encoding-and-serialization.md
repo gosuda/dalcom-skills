@@ -9,7 +9,7 @@ JSON dominates, but its defaults betray you: a `nil` slice becomes `null`, every
 - `omitzero` [1.24] is the fix for `omitempty`'s broken cases. `omitempty` can't omit a zero `time.Time`, a zero-valued struct, or `0`/`false` you want to keep. `omitzero` omits on the Go zero value (and honors a `IsZero() bool` method). They're independent: you can set both.
 - `encoding/json` numbers decode to `float64` into `any`: silent precision loss above 2^53. Decode into a typed `int64` field, or `Decoder.UseNumber()` to get a lossless `json.Number` (a `string`).
 - JSON member matching is case-*insensitive* in v1 (an exact match wins over an inexact one, but `{"id"}` still fills a `ID` field). v2 makes it case-*sensitive* by default. This is a real interop/security difference.
-- `encoding/json/v2` [1.26, `GOEXPERIMENT=jsonv2`] flips the bad defaults (nil slice→`[]`, nil map→`{}`, duplicate names *rejected*, invalid UTF-8 *rejected*, case-*sensitive*) and adds streaming `MarshalWrite`/`UnmarshalRead` + a `jsontext` tokenizer. Still experimental: gate behind a build tag, never in published modules. [verify: GA target.]
+- `encoding/json/v2` [1.27, standard] flips the bad defaults (nil slice→`[]`, nil map→`{}`, duplicate names *rejected*, invalid UTF-8 *rejected*, case-*sensitive*) and adds streaming `MarshalWrite`/`UnmarshalRead` + a `jsontext` tokenizer. Standard package: safe in published modules; use `GOEXPERIMENT=nojsonv2` only as the compatibility opt-out.
 - `encoding.TextAppender`/`BinaryAppender` [1.24] append into a caller's buffer (alloc-free); if you also implement Marshaler, `MarshalText()` must equal `AppendText(nil)`.
 - `new(expr)` [1.26] makes optional pointer fields ergonomic: `Age: new(yearsSince(born))` instead of a throwaway local + `&`.
 - `gob` is Go-only and self-describing: fine for `net/rpc` / same-binary caches, a foot-gun for durable storage or cross-language.
@@ -21,7 +21,7 @@ JSON dominates, but its defaults betray you: a `nil` slice becomes `null`, every
 4. [Numbers, precision, json.Number & RawMessage](#numbers)
 5. [Custom marshalers, time & []byte](#custom-marshal)
 6. [Streaming with Decoder / Encoder](#streaming)
-7. [JSON v2 [1.26, experimental]](#json-v2)
+7. [JSON v2 [1.27, standard]](#json-v2)
 8. [encoding.TextAppender / BinaryAppender [1.24]](#appender)
 9. [Protocol Buffers](#protobuf)
 10. [MessagePack & CBOR](#msgpack)
@@ -241,9 +241,9 @@ Trap: one `Decode` reads *one* value and stops at the next token boundary: it do
 
 ---
 
-## JSON v2 [1.26, experimental] {#json-v2}
+## JSON v2 [1.27, standard] {#json-v2}
 
-`encoding/json/v2` is a ground-up redesign (RFC 8259) fixing v1's worst defaults and adding true streaming. It exists **only** with `GOEXPERIMENT=jsonv2`; the overview states it is experimental and **not** under the Go 1 compatibility promise. It ships with `encoding/json/jsontext`, a low-level format-only tokenizer.
+`encoding/json/v2` is a ground-up redesign (RFC 8259) fixing v1's worst defaults and adding true streaming. It exists **only** with `GOEXPERIMENT=jsonv2`; the overview states it is standard in Go 1.27 and **not** under the Go 1 compatibility promise. It ships with `encoding/json/jsontext`, a low-level format-only tokenizer.
 
 ```bash
 GOEXPERIMENT=jsonv2 go build ./...
@@ -286,7 +286,7 @@ func (t *MyType) UnmarshalJSONFrom(dec *jsontext.Decoder) error { /* read tokens
 
 Useful options: `json.Deterministic(true)` (sorted map keys → reproducible/signable output), `json.OmitZeroStructFields(true)`, `json.StringifyNumbers(true)`, and `json.WithMarshalers(...)`/`WithUnmarshalers(...)` to register type behavior *without* modifying the type; combine via `json.JoinOptions(...)`.
 
-Status & guidance: experimental in 1.26: **do not** import from a published module or rely on it in production. Use a feature-flagged/staging build to measure the perf win and flush out behavioral diffs (nil collections, case-sensitivity, duplicate-key rejection) before GA. The dev repo `github.com/go-json-experiment/json` mirrors the API but **must not** appear in published `go.mod`. [verify: GA target; whether v1 is internally reimplemented on v2: the v2 doc does not assert this, treat as unconfirmed.]
+Status & guidance: the pre-Go-1.27 experimental restriction no longer applies; Go 1.27 makes encoding/json/v2 and encoding/json/jsontext standard packages (GOEXPERIMENT=nojsonv2 is the opt-out). The dev repo `github.com/go-json-experiment/json` mirrors the API but **must not** appear in published `go.mod`. [verify: GA target; whether v1 is internally reimplemented on v2: the v2 doc does not assert this, treat as unconfirmed.]
 
 ---
 
@@ -509,7 +509,7 @@ Rules: protobuf is the gold standard: never reuse a retired field number (`reser
 | Library | Status [2026] | Use when |
 |---------|---------------|----------|
 | stdlib `encoding/json` (v1) | **Default** | Almost all JSON today |
-| `encoding/json/v2` + `jsontext` | **Experimental** [1.26, `GOEXPERIMENT=jsonv2`] | New code via build flag; better defaults + streaming; not in published modules |
+| `encoding/json/v2` + `jsontext` | **Standard** [1.27] | Usable in published modules; v1 API retained; nojsonv2 opt-out |
 | `google.golang.org/protobuf` | **Default** for protobuf | gRPC, schemas, polyglot |
 | `github.com/golang/protobuf`, `gogo/protobuf` | **Deprecated** | Never in new code |
 | `github.com/fxamacker/cbor/v2` | Active, security-reviewed | CBOR (RFC 8949), COSE/WebAuthn, deterministic encoding |
@@ -532,7 +532,7 @@ Rules: protobuf is the gold standard: never reuse a retired field number (`reser
 | **1.24** | **`omitzero` struct tag**; **`encoding.TextAppender`/`BinaryAppender`** |
 | **1.25** | `encoding/json/v2` available as an experiment (early form) |
 | **1.26** | **`encoding/json/v2` + `encoding/json/jsontext`** under `GOEXPERIMENT=jsonv2` (experimental); `new(expr)` aids optional pointer fields; (`slog.NewMultiHandler`, `NotifyContext` cause: adjacent) |
-| **1.27 (RC)** | json/v2 progress toward GA [verify]; generic methods (enable generic marshaler helpers). Treat as draft until GA. |
+| **1.27** | json/v2 progress toward GA [verify]; generic methods (enable generic marshaler helpers). Treat as draft until GA. |
 
 ---
 

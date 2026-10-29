@@ -10,17 +10,17 @@ Qt is the most mature cross-platform native UI toolkit, with a generation of pro
 
 ## 2. Qt versions
 
-- Qt 6.5 LTS: standard support ended **April 3 2026** (commercial extended support continues for paying customers). Open-source projects on 6.5 should plan a migration to 6.8 LTS.
-- Qt 6.8 LTS: current LTS line and the production target for new work; latest point release 6.8.3.
+- Qt 6.5 LTS: standard support ended **April 3 2026** (commercial extended support continues for paying customers). Open-source projects on 6.5 should plan a migration to 6.12 LTS.
+- Qt 6.12 LTS: current LTS line and the production target for new work; latest point release 6.12.3.
 - Qt 6.11: the current feature line, at 6.11.x. Lottie and SVG rendering moved out of tech preview; Quick Controls now ships `DoubleSpinBox` (a long-requested gap); hardware-accelerated 2D graphics improvements via the RHI backend.
 - Qt 7: roadmap not yet published as of this grounding.
 
-Recommendation: target **Qt 6.8 LTS** for production releases; track 6.11 for new features. Pin the major.minor in build manifests; Qt point releases are well-behaved, but minor-version drift across a team produces avoidable rebuild cycles.
+Recommendation: target **Qt 6.12 LTS** for production releases; track 6.11 for new features. Pin the major.minor in build manifests; Qt point releases are well-behaved, but minor-version drift across a team produces avoidable rebuild cycles.
 
 ```toml
 # Cargo.toml fragment for a Qt-bound Rust app
 [dependencies]
-cxx-qt = "0.10"  # bindings against system Qt; align with installed 6.8 LTS
+cxx-qt = "0.10"  # bindings against system Qt; align with installed 6.12 LTS
 ```
 
 The Qt licensing model still bifurcates LGPL/GPL open source vs commercial, confirm the license shape against the deployment target before pinning a version.
@@ -143,4 +143,4 @@ The diagnostic for anchors-versus-layouts: if a component needs to grow with ava
 
 ## 7. Cite-and-defer
 
-Citations: doc.qt.io, qt.io/blog. Qt 6.8 LTS for production; defer to release notes for 6.11 features and the 6.11 → next-LTS migration window. The Qt commercial / open-source licensing split shifts independently of the version cadence, confirm against current terms before pinning.
+Citations: doc.qt.io, qt.io/blog. Qt 6.12 LTS for production; defer to release notes for 6.11 features and the 6.11 → next-LTS migration window. The Qt commercial / open-source licensing split shifts independently of the version cadence, confirm against current terms before pinning.

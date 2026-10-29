@@ -2,7 +2,7 @@
 
 `database/sql` is a *pool* with a thin conversion layer, not a driver: tune the pool, always pass `ctx`, and remember the conversion machinery (`Scan`, `driver.Valuer`/`Scanner`) is where NULLs and custom types bite. For PostgreSQL, **pgx v5** is the default, but pick its native, single-conn, or `database/sql`-adapter mode deliberately, because their semantics differ (notably ctx-cancel rollback). The library you pick matters less than pool discipline + transaction discipline.
 
-> Source horizon: verified against Go **1.26.4** (stable, GA 2026-02-10) + **1.27 RC** draft notes, 2026-06, before general availability. Go 1.27 has since gone GA (2026-08-19, current pin in SKILL.md) and the 1.27 rows were checked against the final notes. Ecosystem pins (as of 2026-06): pgx **v5.10.0**, sqlc **v1.31.1**, golang-migrate **v4.19.1**, goose **v3.27.x**, Atlas CLI **v1.2.0**. Version tags `[1.N]` mark the Go release a claim applies to. Triangulated from two deep-research reports + go.dev/pkg.go.dev.
+> Source horizon: verified against Go **1.26.4** (stable, GA 2026-02-10) + **1.27 RC** draft notes, 2026-06, before general availability. Go 1.27 has since gone GA (2026-08-19, current pin in SKILL.md) and the 1.27 rows were checked against the final notes. Ecosystem pins (as of 2026-06): pgx **v5.11.0**, sqlc **v1.31.1**, golang-migrate **v4.20.1**, goose **v3.29.0**, Atlas CLI **v1.3.0**. Version tags `[1.N]` mark the Go release a claim applies to. Triangulated from two deep-research reports + go.dev/pkg.go.dev.
 
 ## TL;DR: the modern deltas (read first)
 
@@ -578,16 +578,16 @@ Translate `ErrNoRows` to a domain sentinel at the repo boundary; don't leak driv
 
 | Area | Use now | Avoid / superseded | Why |
 |---|---|---|---|
-| PG driver | **pgx v5** (`jackc/pgx/v5`, v5.10.0; needs **Go 1.25+**) | lib/pq for new code | pgx faster, PG-native features; lib/pq maintenance-mode |
+| PG driver | **pgx v5** (`jackc/pgx/v5`, v5.11.0; needs **Go 1.25+**) | lib/pq for new code | pgx faster, PG-native features; lib/pq maintenance-mode |
 | pgx pool ctor | `pgxpool.New`/`NewWithConfig` | `pgxpool.Connect`/`ConnectConfig` | v4→v5 rename |
 | pgx nulls | `pgtype.*` (`Valid bool`) | v4 tri-state `Status` | v5 simplified |
 | stdlib nulls | `sql.Null[T]` [1.22] | per-type `sql.NullString`/… (valid, verbose) | one generic type |
 | Bulk insert | `pgx.CopyFrom` | `pq.CopyIn` | ergonomic, COPY protocol |
 | MySQL / SQLite | `go-sql-driver/mysql` / `modernc.org/sqlite` (pure) or `mattn/go-sqlite3` (CGO) | - | standard |
 | Codegen | **sqlc v1.31.1** | hand-rolled scan boilerplate | typed, validated, `vet`/`verify` |
-| Migrations (embed lib) | **goose v3.27.x** | - | `embed.FS`, Go migrations, provider/locker API |
-| Migrations (CLI) | **golang-migrate v4.19.1** | its lib/pq driver path | use the native `pgx5://` driver |
-| Migrations (schema-as-code) | **Atlas v1.2.0** | manual diffing | auto-plan + 50+ linters + drift |
+| Migrations (embed lib) | **goose v3.29.0** | - | `embed.FS`, Go migrations, provider/locker API |
+| Migrations (CLI) | **golang-migrate v4.20.1** | its lib/pq driver path | use the native `pgx5://` driver |
+| Migrations (schema-as-code) | **Atlas v1.3.0** | manual diffing | auto-plan + 50+ linters + drift |
 | Query helper | `jmoiron/sqlx` | - | named params/`StructScan` over `database/sql` |
 | MongoDB | `mongo-driver/v2` | v1 (deprecated) | v2 import paths |
 

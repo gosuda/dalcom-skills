@@ -19,7 +19,7 @@ description: 'Use when reading llc output, tracing IR through legalization and i
 1. Source file, LLVM IR (`.ll`), or bitcode (`.bc`) (required).
 2. Target triple and CPU features (required if not inferrable from the build): for example `aarch64-linux-gnu`, `riscv64-unknown-elf`, `thumbv7em-none-eabi` with `+neon` or `+crc`.
 3. The observed symptom (required): the assembly region, the `llc` error text, or the question about the pipeline.
-4. Installed LLVM version (`llc --version`) (gathered by the skill). Grounded current stable is LLVM 23.1.0; tool flags below are confirmed against that release.
+4. Installed LLVM version (`llc --version`) (gathered by the skill). Grounded current stable is LLVM 23.1.4; tool flags below are confirmed against that release.
 
 ## Procedure
 

@@ -6,7 +6,7 @@ Go does not train models: it **serves** them. The 2026 stack is inference-first:
 
 ## TL;DR: the deltas models get wrong (read first)
 
-- `onnxruntime_go` is at v1.31.0 (pkg.go.dev, 2026-06-04), *not* the v1.21.0 some sources cite, but it still wraps **ORT C API 1.26.0** and "will probably only work with version 1.26.0 of the onnxruntime shared libraries." Binding version ≠ runtime version; **pin the shared lib to 1.26.0**.
+- `onnxruntime_go` is at v1.38.0 (pkg.go.dev, 2026-06-04), *not* the v1.21.0 some sources cite, but it still wraps **ORT C API 1.31.0** and "will probably only work with version 1.26.0 of the onnxruntime shared libraries." Binding version ≠ runtime version; **pin the shared lib to 1.26.0**.
 - `NewSession`/`DynamicSession` are deprecated. Use `NewAdvancedSession`/`DynamicAdvancedSession`: explicit caller-owned tensors, no per-run realloc.
 - Every C-allocated handle (`Tensor`, `Session`, `*ProviderOptions`, `ArenaCfg`) must `Destroy()`: it lives outside the Go GC. Forgetting this is a C-heap leak, not a Go leak.
 - Vector clients all moved: Milvus → `milvus-io/milvus/client/v2/milvusclient` (old `milvus-sdk-go/v2` archived 2025-03-21), Weaviate → `/v5` (v6 alpha), Pinecone → `/v5`, Qdrant flattened to `qdrant.NewClient` with a unified `Query` API (not `Search`).
@@ -90,13 +90,13 @@ Start pure-Go; switch to netlib only when profiling shows a BLAS-bound hotspot. 
 
 > `gorgonia.org/gorgonia` + `gorgonia.org/tensor`: **effectively abandoned.** Last meaningful commit ~Aug 2024; pre-v1.0; no model zoo; finicky GPU. Define-then-run graph (TF1/Theano style): `G.NewGraph()`, `G.NewMatrix`, `G.Must(G.Mul(...))`, execute via `G.NewTapeMachine(g)`.
 
-Verdict: do not start new work here. For inference, use ONNX Runtime. If you genuinely need in-process *training/fine-tuning in Go*, the live option is **GoMLX** (`github.com/gomlx/gomlx`, v0.26.0, XLA-backed via `gopjrt`): real and improving but niche, with few ready models (it can import ONNX via `onnx-gomlx`). `tensorflow/go` is **officially unsupported by the TF team** ("not covered by the TensorFlow API stability guarantees"); the only working TF path is the community `wamuir/graft` binding (libtensorflow 2.18.0): prefer converting SavedModels to ONNX. `onnx-go` (now `oramasearch/onnx-go`) was archived then revived but is partial/experimental: not production. (Forbidding these as *defaults*, not as libraries: if you must, `graft` and GoMLX are the live ones.)
+Verdict: do not start new work here. For inference, use ONNX Runtime. If you genuinely need in-process *training/fine-tuning in Go*, the live option is **GoMLX** (`github.com/gomlx/gomlx`, v0.28.18, XLA-backed via `gopjrt`): real and improving but niche, with few ready models (it can import ONNX via `onnx-gomlx`). `tensorflow/go` is **officially unsupported by the TF team** ("not covered by the TensorFlow API stability guarantees"); the only working TF path is the community `wamuir/graft` binding (libtensorflow 2.18.0): prefer converting SavedModels to ONNX. `onnx-go` (now `oramasearch/onnx-go`) was archived then revived but is partial/experimental: not production. (Forbidding these as *defaults*, not as libraries: if you must, `graft` and GoMLX are the live ones.)
 
 ---
 
 ## ONNX Runtime: pre-trained model inference {#onnx}
 
-> `github.com/yalue/onnxruntime_go`: **the de-facto binding.** v1.31.0 (pkg.go.dev 2026-06-04), MIT, ~142 importers, actively maintained. Loads the ORT shared library at runtime via `dlopen` (so it links no MSVC and works on Windows under MinGW). **Uses ORT C API headers 1.26.0**: match your shared lib to 1.26.0 or it won't load.
+> `github.com/yalue/onnxruntime_go`: **the de-facto binding.** v1.38.0 (pkg.go.dev 2026-06-04), MIT, ~142 importers, actively maintained. Loads the ORT shared library at runtime via `dlopen` (so it links no MSVC and works on Windows under MinGW). **Uses ORT C API headers 1.31.0**: match your shared lib to 1.31.0 or it won't load.
 
 Train in Python → export ONNX → infer in Go. The lifecycle is explicit and non-optional in production:
 
@@ -148,7 +148,7 @@ session, _ := ort.NewAdvancedSession("model.onnx", in, out, ins, outs, opts)
 
 Introspection: `ort.GetInputOutputInfo("model.onnx")` returns names/shapes/dtypes: use it instead of hard-coding I/O names. **Training is not supported:** `IsTrainingSupported()` always returns `false`; the ORT training API was deprecated in ORT 1.20 and the wrappers are stubs that return errors. Train in Python.
 
-Higher-level path: `github.com/knights-analytics/hugot` (v0.7.5, 2026-06-05) runs Hugging Face pipelines (feature-extraction, NER, classification, cross-encoders, image classification) from ONNX, giving Python-identical predictions. Backends are build-tag selected: `-tags ORT` (fastest CPU), `-tags XLA` (TPU + the only fine-tuning path), or a **pure-Go backend** (`NewGoSession()`) for cgo-free environments. The docs are blunt that pure-Go is "for simpler workloads… smaller models such as all-MiniLM-L6-v2… best with small batches of roughly 32 inputs per call" and to "move to a C backend such as XLA or ORT" for performance: exactly the nuance summaries miss. **Computer vision:** `gocv.io/x/gocv` (OpenCV 4.12) does `ReadNetFromONNX` with CUDA/OpenVINO: use only if you already need OpenCV; it's a heavy CGO dependency.
+Higher-level path: `github.com/knights-analytics/hugot` (v0.8.3, 2026-06-05) runs Hugging Face pipelines (feature-extraction, NER, classification, cross-encoders, image classification) from ONNX, giving Python-identical predictions. Backends are build-tag selected: `-tags ORT` (fastest CPU), `-tags XLA` (TPU + the only fine-tuning path), or a **pure-Go backend** (`NewGoSession()`) for cgo-free environments. The docs are blunt that pure-Go is "for simpler workloads… smaller models such as all-MiniLM-L6-v2… best with small batches of roughly 32 inputs per call" and to "move to a C backend such as XLA or ORT" for performance: exactly the nuance summaries miss. **Computer vision:** `gocv.io/x/gocv` (OpenCV 4.12) does `ReadNetFromONNX` with CUDA/OpenVINO: use only if you already need OpenCV; it's a heavy CGO dependency.
 
 ---
 
@@ -224,9 +224,9 @@ Every client moved major versions or import paths: this is the densest stale-kno
 
 | Database | Current import path | Version (2026-06) | Protocol | Note |
 |---|---|---|---|---|
-| **Qdrant** | `github.com/qdrant/go-client/qdrant` | v1.18.2 | gRPC :6334 | Package flattened to `qdrant`; unified `Query` API |
-| **Weaviate** | `github.com/weaviate/weaviate-go-client/v5/weaviate` | v5.7.x | HTTP+gRPC | v4 superseded; **v5.0.0 retracted → use ≥5.0.1**; v6 alpha |
-| **Milvus** | `github.com/milvus-io/milvus/client/v2/milvusclient` | client/v2.6.x | gRPC | Old `milvus-sdk-go/v2` **archived 2025-03-21** |
+| **Qdrant** | `github.com/qdrant/go-client/qdrant` | v1.20.1 | gRPC :6334 | Package flattened to `qdrant`; unified `Query` API |
+| **Weaviate** | `github.com/weaviate/weaviate-go-client/v5/weaviate` | v6.0.0 | HTTP+gRPC | v4 superseded; **v5.0.0 retracted → use ≥5.0.1**; v6 alpha |
+| **Milvus** | `github.com/milvus-io/milvus/client/v2/milvusclient` | client/v2.6.5 | gRPC | Old `milvus-sdk-go/v2` **archived 2025-03-21** |
 | **Pinecone** | `github.com/pinecone-io/go-pinecone/v5/pinecone` | v5 | gRPC/HTTP | Managed-only; v3/v4 superseded |
 | **pgvector** | `github.com/pgvector/pgvector-go` + `pgx` | v0.4.0 | SQL | Use if Postgres is already in your stack |
 | **chromem-go** | `github.com/philippgille/chromem-go` | v0.7.0 (2024-09) | in-proc | **Pure Go, zero deps**, embeddable (SQLite-like) |
@@ -343,11 +343,11 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 | Library | Import path | Status [2026] | CGO? | Use when |
 |---|---|---|---|---|
 | onnxruntime_go | `github.com/yalue/onnxruntime_go` | **Current** (v1.31.0; ORT C API 1.26.0) | dlopen (no cgo at compile; ships `.so`) | Default neural-net inference |
-| hugot | `github.com/knights-analytics/hugot` | **Current** (v0.7.5) | ORT/XLA backends cgo; pure-Go backend opt | HF pipelines from ONNX |
+| hugot | `github.com/knights-analytics/hugot` | **Current** (v0.8.3) | ORT/XLA backends cgo; pure-Go backend opt | HF pipelines from ONNX |
 | gocv | `gocv.io/x/gocv` | **Current** (OpenCV 4.12) | **Yes, heavy** | CV/DNN if already on OpenCV |
 | gonum | `gonum.org/v1/gonum` | **Current/stable** (v0.17.0, pre-v1) | No (pure Go default) | Linear algebra, stats, optimize |
 | gonum netlib | `gonum.org/v1/netlib` | Current | **Yes** | cgo BLAS/LAPACK for large dense |
-| GoMLX | `github.com/gomlx/gomlx` | **Current, niche** (v0.26.0) | XLA via gopjrt | Pure-Go/XLA training in-process |
+| GoMLX | `github.com/gomlx/gomlx` | **Current, niche** (v0.28.18) | XLA via gopjrt | Pure-Go/XLA training in-process |
 | daulet/tokenizers | `github.com/daulet/tokenizers` | **Current** | **Yes (Rust FFI)** | HF tokenization (fast) |
 | sugarme/tokenizer | `github.com/sugarme/tokenizer` | Current (alt) | No | Pure-Go tokenization |
 | Qdrant | `github.com/qdrant/go-client/qdrant` | **Current** (v1.18.2) | No | Self-hosted, rich retrieval |
@@ -373,9 +373,9 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 | gonum | v0.17.0 (pre-v1) | No SemVer stability promise; supports 2 latest Go |
 | hugot | v0.7.5 | Pure-Go backend = convenience, not throughput |
 | GoMLX | v0.26.0 | Only live in-process training path |
-| Qdrant client | v1.18.2 | Query API since Qdrant 1.10 |
-| Weaviate client | v5.7.x (v6 alpha) | `models.Vector` is now `interface{}` (ColBERT), not `[]float32` |
-| Milvus client | client/v2.6.x | Pin a tested tag; compat table drifts `[verify]` exact patch |
+| Qdrant client | v1.20.1 | Query API since Qdrant 1.10 |
+| Weaviate client | v6.0.0 (v6 alpha) | `models.Vector` is now `interface{}` (ColBERT), not `[]float32` |
+| Milvus client | client/v2.6.5 | Pin a tested tag; compat table drifts `[verify]` exact patch |
 | Pinecone client | v5 | API-version-pinned; v3/v4 each broke |
 | pgvector-go | v0.4.0 | half-precision + sparse codecs available |
 | chromem-go | v0.7.0 (2024-09) | Quiet but functional; pure Go |

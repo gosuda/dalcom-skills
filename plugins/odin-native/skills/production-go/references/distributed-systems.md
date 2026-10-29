@@ -41,7 +41,7 @@ Distributed systems fail in ways invisible locally. Almost every bug here is the
 
 ## gRPC: client/server, deadlines, errors {#grpc}
 
-`google.golang.org/grpc` is at **v1.81.x** (2026). The two facts models get wrong: **dialing is now lazy**, and **errors are a status code + message, not a Go error string**.
+`google.golang.org/grpc` is at **v1.85.0** (2026). The two facts models get wrong: **dialing is now lazy**, and **errors are a status code + message, not a Go error string**.
 
 ```go
 // CORRECT [grpc v1.63+] — NewClient is lazy (no connection until first RPC).
@@ -315,7 +315,7 @@ func RunSaga(ctx context.Context, steps []Step) error {
 
 **Compensation rules:** reverse order; each compensation idempotent and retryable (it can re-run); sagas lack ACID isolation (intermediate states are visible; use semantic locks / commutative updates / re-reads); handle **timed-out/orphaned** sagas explicitly (a mid-flight timeout leaves partial state). A compensation for an irreversible action is a counter-action, not an undo.
 
-**Temporal** (`go.temporal.io/sdk`, **v1.45.0** 2026-06) is the dominant durable orchestrator: write saga logic as ordinary Go; it persists workflow history and replays on crash, which mitigates the "coordinator is a SPOF" concern. **Replay imposes hard constraints models violate:** workflow code must be **deterministic** (no `time.Now`; no `range` over a Go map: use `workflow.DeterministicKeys` [SDK v1.26+]; no bare goroutines: use `workflow.Go`); `workflow.SideEffect` is **not at-most-once**; use `workflow.NewDisconnectedContext` for compensation after cancellation (a canceled `ctx` won't run cleanup); and evolve running workflows with `workflow.GetVersion` (keep the first marker even after a branch is gone).
+**Temporal** (`go.temporal.io/sdk`, **v1.50.0** 2026-06) is the dominant durable orchestrator: write saga logic as ordinary Go; it persists workflow history and replays on crash, which mitigates the "coordinator is a SPOF" concern. **Replay imposes hard constraints models violate:** workflow code must be **deterministic** (no `time.Now`; no `range` over a Go map: use `workflow.DeterministicKeys` [SDK v1.26+]; no bare goroutines: use `workflow.Go`); `workflow.SideEffect` is **not at-most-once**; use `workflow.NewDisconnectedContext` for compensation after cancellation (a canceled `ctx` won't run cleanup); and evolve running workflows with `workflow.GetVersion` (keep the first marker even after a branch is gone).
 
 ```go
 func OrderWorkflow(ctx workflow.Context, req Request) error {
@@ -346,7 +346,7 @@ Mechanics (backoff loop, breaker state machine, code) live in [errors-and-resili
 
 ## Consensus (Raft) {#raft}
 
-> `github.com/hashicorp/raft` **v1.7.3** (Mar 2025) is the dominant embeddable Raft (Consul, Nomad, Vault). Use it when you need a *replicated log + FSM* and will own correctness/snapshots/recovery; if you actually just need an HA coordination store, use **etcd** and its ecosystem instead. Pre-vote is default since v1.7.0; be on **≥1.7.1** (two pre-vote bugs fixed). Storage: `hashicorp/raft-boltdb/v2` **v2.3.1**: **always the `/v2` path** (bbolt, not unmaintained boltdb); migrate with `MigrateToV2`.
+> `github.com/hashicorp/raft` **v1.8.0** (Mar 2025) is the dominant embeddable Raft (Consul, Nomad, Vault). Use it when you need a *replicated log + FSM* and will own correctness/snapshots/recovery; if you actually just need an HA coordination store, use **etcd** and its ecosystem instead. Pre-vote is default since v1.7.0; be on **≥1.7.1** (two pre-vote bugs fixed). Storage: `hashicorp/raft-boltdb/v2` **v2.3.1**: **always the `/v2` path** (bbolt, not unmaintained boltdb); migrate with `MigrateToV2`.
 
 ```go
 type FSM interface {
@@ -495,7 +495,7 @@ A resumes, writes @33 → RESOURCE REJECTS (33 < 34)
 
 Two families: **NATS** (lightweight, low-latency, JetStream for persistence) and **Kafka** (high-throughput durable log). Pick by ops profile, not features alone.
 
-**NATS**: `nats-io/nats.go` **v1.52.0** (2026). Core NATS is fire-and-forget at-most-once; **JetStream** adds persistence + at-least-once. The **modern API is the `github.com/nats-io/nats.go/jetstream` subpackage**. `nc.JetStream()`/`js.Subscribe`/`js.PullSubscribe` (the `JetStreamContext`) is documented as **legacy**.
+**NATS**: `nats-io/nats.go` **v1.55.0** (2026). Core NATS is fire-and-forget at-most-once; **JetStream** adds persistence + at-least-once. The **modern API is the `github.com/nats-io/nats.go/jetstream` subpackage**. `nc.JetStream()`/`js.Subscribe`/`js.PullSubscribe` (the `JetStreamContext`) is documented as **legacy**.
 
 ```go
 nc, _ := nats.Connect("nats://localhost:4222")
@@ -664,17 +664,17 @@ An asynchronously-fed read side is eventually consistent, so surface that stalen
 
 | Concern | Library | Version (2026) | Status / note |
 |---|---|---|---|
-| gRPC | `google.golang.org/grpc` | **v1.81.x** | `Dial`→`NewClient`; status codes; keepalive |
+| gRPC | `google.golang.org/grpc` | **v1.85.0** | `Dial`→`NewClient`; status codes; keepalive |
 | Protobuf runtime + codegen | `google.golang.org/protobuf` (+`protoc-gen-go-grpc`) | current | APIv2; old `golang/protobuf` deprecated |
 | Proto toolchain | `buf` | current | Lint + breaking-change detection + BSR |
-| Raft | `github.com/hashicorp/raft` | **v1.7.3** | Pre-vote default ≥1.7.0; use ≥1.7.1 |
+| Raft | `github.com/hashicorp/raft` | **v1.8.0** | Pre-vote default ≥1.7.0; use ≥1.7.1 |
 | Raft store | `github.com/hashicorp/raft-boltdb/v2` | **v2.3.1** | Use **/v2** (bbolt); `MigrateToV2` |
 | Raft WAL store | `github.com/hashicorp/raft-wal` | n/a | Faster than BoltDB write-heavy |
-| Saga / workflow | `go.temporal.io/sdk` | **v1.45.0** | Durable orchestration; determinism rules |
+| Saga / workflow | `go.temporal.io/sdk` | **v1.50.0** | Durable orchestration; determinism rules |
 | Outbox / messaging toolkit | `github.com/ThreeDotsLabs/watermill` | v1.5+ | Forwarder nacks non-decorated msgs |
-| etcd lock/election | `go.etcd.io/etcd/client/v3` (`/concurrency`) | **v3.6.x** | Correctness-grade; revision=fence; `NewSTMSerializable` deprecated |
+| etcd lock/election | `go.etcd.io/etcd/client/v3` (`/concurrency`) | **v3.7.3** | Correctness-grade; revision=fence; `NewSTMSerializable` deprecated |
 | Redis lock | `github.com/go-redsync/redsync/v4` | **v4.16.x** | **Efficiency only**; no fencing; `Valid` deprecated |
-| NATS / JetStream | `github.com/nats-io/nats.go` (`/jetstream`) | **v1.52.0** | Use the `jetstream` subpkg; legacy `JetStreamContext` |
+| NATS / JetStream | `github.com/nats-io/nats.go` (`/jetstream`) | **v1.55.0** | Use the `jetstream` subpkg; legacy `JetStreamContext` |
 | Kafka | `github.com/twmb/franz-go` | current (Feb 2026) | Pure Go, fastest, full EOS, **default** |
 | Kafka (simple) | `github.com/segmentio/kafka-go` | current | Smaller surface; `Reader`/`Writer` |
 | Kafka (legacy) | `github.com/IBM/sarama` | maintained | Older; franz-go preferred for new code |
@@ -723,7 +723,7 @@ An asynchronously-fed read side is eventually consistent, so surface that stalen
 
 ## Sources {#sources}
 
-- pkg.go.dev: `google.golang.org/grpc{,/status,/codes,/keepalive,/metadata}` (v1.81.x); `google.golang.org/protobuf`; `go.etcd.io/etcd/client/v3/concurrency` (v3.6.x); `github.com/hashicorp/raft` (v1.7.3); `github.com/hashicorp/raft-boltdb/v2` (v2.3.1); `github.com/nats-io/nats.go{,/jetstream}` (v1.52.0); `github.com/twmb/franz-go/pkg/kgo`; `github.com/go-redsync/redsync/v4`; `github.com/buraksezer/consistent` (v0.10.0); `go.temporal.io/sdk` (v1.45.0)
+- pkg.go.dev: `google.golang.org/grpc{,/status,/codes,/keepalive,/metadata}` (v1.81.x); `google.golang.org/protobuf`; `go.etcd.io/etcd/client/v3/concurrency` (v3.7.3); `github.com/hashicorp/raft` (v1.7.3); `github.com/hashicorp/raft-boltdb/v2` (v2.3.1); `github.com/nats-io/nats.go{,/jetstream}` (v1.52.0); `github.com/twmb/franz-go/pkg/kgo`; `github.com/go-redsync/redsync/v4`; `github.com/buraksezer/consistent` (v0.10.0); `go.temporal.io/sdk` (v1.45.0)
 - grpc.io docs (status codes, deadlines, keepalive, name resolution); developers.google.com/protocol-buffers (wire format, field rules); buf.build docs
 - Kleppmann, "How to do distributed locking" (2016-02-08); antirez, "Is Redlock safe?"; etcd `concurrency.Mutex.IsOwner` source
 - microservices.io transactional outbox; Stripe API idempotency docs; IETF `Idempotency-Key` draft; Temporal workflow determinism docs (`SideEffect`, `NewDisconnectedContext`, `GetVersion`, `DeterministicKeys`)

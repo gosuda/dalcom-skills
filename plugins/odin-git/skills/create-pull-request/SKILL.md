@@ -1,6 +1,6 @@
 ---
 name: create-pull-request
-description: 'Use when asked to create or update a PR, revise its description, or link issue references to its body. Not for multi-PR stacks: use gate-and-merge. Not for releases: use git-workflow-and-versioning.'
+description: 'Use when asked to create or update a PR, shape or revise its description, or link issue references to its body. Not for multi-PR stacks: use gate-and-merge. Not for releases: use git-workflow-and-versioning.'
 disable-model-invocation: true
 ---
 
@@ -10,18 +10,19 @@ disable-model-invocation: true
 
 | Field | Bound contract |
 |---|---|
-| Trigger | User asks to create a PR, open or update a draft PR, write or refresh a PR description, revise an existing PR body for reviewer context, or append GitHub issue and Linear ticket references to a PR body. |
-| Authority | Human-gated: requires explicit human invocation and preview confirmation before each remote mutation. The write set is one GitHub PR: create or update its title, body, draft state, head, and base, or append one `#### Issues` block to its body. Rollback is `gh pr edit` restoring the prior body or closing the created PR. |
-| Side effect | Creates or updates a GitHub PR with a descriptive title and body, optionally as a draft; rewrites an existing PR body; or appends one `#### Issues` block. Remote mutation on GitHub, bounded to one PR. |
-| Done | The mode's done state holds: a created or updated PR whose remote title, body, draft state, head, and base match the preview (full, quick); a remote PR body that gives reviewers context the diff cannot, confirmed by a fresh read (describe); or a fresh remote read showing one non-duplicate `#### Issues` block with both supplied references (link-issues). |
+| Trigger | User asks to shape a PR body for reviewers, create a PR, open or update a draft PR, write or refresh a PR description, revise an existing PR body for reviewer context, or append GitHub issue and Linear ticket references to a PR body. |
+| Authority | Per-mode authority. Shape mode is read-only: chat-only draft, no file, VCS, credential, or remote mutation, no `gh` write. Full, quick, describe, and link-issues modes are human-gated: each requires explicit human invocation and preview confirmation before any remote mutation. The mutating write set is one GitHub PR: create or update its title, body, draft state, head, and base, or append one `#### Issues` block to its body. Rollback is `gh pr edit` restoring the prior body or closing the created PR. |
+| Side effect | Shape mode: a chat-only PR body draft. Other modes: a created or updated GitHub PR with descriptive title and body, optionally as a draft; a rewritten PR body; or one appended `#### Issues` block. Remote mutation on GitHub, bounded to one PR, only in mutating modes. |
+| Done | Shape: a draft stating what changed and why with the smallest visual, a before-and-after evidence pair, and door plus blast radius, presented with no mutation. Full and quick: a created or updated PR whose remote title, body, draft state, head, and base match the preview. Describe: a remote PR body giving reviewers context the diff cannot, confirmed by a fresh read. Link-issues: a fresh remote read showing one non-duplicate `#### Issues` block with both supplied references. |
 
 ## Inputs
 
 Required:
-- Mode: one of `full` (default), `quick`, `describe`, `link-issues`. Pick the mode from the user's ask, not by guessing.
-- `gh` CLI installed and authenticated (`gh --version`, `gh auth status`).
+- Mode: one of `shape` (read-only default when the user asks only for a body draft), `full` (default when the user asks to publish), `quick`, `describe`, `link-issues`. Pick the mode from the user's ask, not by guessing. When the user asks only to write, shape, or revise body text with no publication request, use `shape` and run no `gh` write.
+- `gh` CLI installed and authenticated (`gh --version`, `gh auth status`) for every mode except `shape`.
 - For `full` and `quick`: a current git branch that is not `main`/`master`, with commits ahead of the base branch, and the base branch confirmed against the repository default (quick mode rechecks this and rebases when the branch is stale).
 - For `describe`: a PR number or URL and its diff context, retrieved via `gh pr diff` and `gh pr view --json files`.
+- For `shape`: the change to describe as a diff, branch range, changed-file list, or plain-language summary, plus the problem it solves. Optional: an existing body to revise with preservation notes, screenshots or test output for evidence, and known risks or rollout notes.
 - For `link-issues`: a PR identifier accepted by `gh pr view`, a GitHub issue reference, and a Linear ticket key, all supplied exactly. Do not infer, search for, or substitute a missing identifier. Accept an explicit repository when the PR is not resolvable from the current repository.
 
 Optional:
@@ -32,6 +33,16 @@ Optional:
 - For `describe`: the existing PR body via `gh pr view --json body` when revising.
 
 ## Procedure
+
+### Mode shape (read-only)
+
+Shape mode fires when the user asks to write, shape, or revise PR body text with no publication request. It drafts the body in chat and stops; publication is a separate explicitly authorized step in `full`, `quick`, or `describe`.
+
+1. Bound the story from the supplied diff, branch range, files, or summary. Identify the problem solved, the approach taken, and the risks or tradeoffs. State what changed and why in reviewer terms, never a line-by-line restatement of what the diff already shows. Use the project own terminology. Keep prose brief with no preamble. Done when: problem, approach, and risks are identified in reviewer terms.
+2. Pick the smallest visual that makes the key point, and add a second view only when it answers a different reviewer question. Options: logic as short pseudocode; runtime control flow as an indented call tree; UI structure as a component tree with only the states and module boundaries that matter; file responsibility as a shallow file tree; interaction or data flow as a short fenced Mermaid or sequence block as plain text; what changes as a small diff sketch matched to the topic. Place each visual next to the short text it supports and keep only the calls, files, props, states, and boundaries needed for the current question. Done when: one smallest visual is selected and scoped to the key point.
+3. Pair concrete before-and-after evidence. Prefer screenshots for visual changes when supplied; otherwise use execution evidence with the exact test or command and its observed output, shown as a failing before and passing after pair. Record only observed results; state not run when nothing was observed and give no invented reason. Done when: each claimed behavior has a before-and-after pair or an explicit not-run statement.
+4. Name merge danger. State the door as one-way when rollback is hard or destructive, or two-way when rollback is cheap, with one optional sentence of explanation. State the blast radius in one word with optional ramifications. Done when: door and blast radius are stated.
+5. Draft the body in `## Summary`, `## Evidence`, `## Merge Danger` order with the visual in Summary and no empty or padded sections. Present the full draft for approval, revision, or rejection. Run no `gh` command, touch no file, and publish nothing. Done when: the draft is presented with zero mutation.
 
 ### Mode full
 
@@ -66,7 +77,7 @@ Describe mode fires when the user asks to draft or revise the body of an existin
 1. Validate the PR exists: `gh pr view <number> --json number,title,state`. If the command fails or returns no result, stop and report "PR not found." Done when: the PR is confirmed to exist with its number, title, and state.
 2. Retrieve the diff scope: `gh pr diff <number>` and `gh pr view <number> --json files`. If the diff is empty, stop and report "Empty diff: nothing to describe." Done when: the changed files and diff summary are recorded, or the empty-diff stop is taken.
 3. Read the changed files to understand intent. Identify the problem being solved, the approach taken, and any risks or tradeoffs. Done when: the problem, approach, and risks are identified.
-4. If revising, read the existing PR body via `gh pr view <number> --json body` and note what to preserve, replace, or remove. Done when: the existing body is read and preservation notes are recorded, or this is confirmed a new draft.
+4. If revising, read the existing PR body via `gh pr view --json body` and note what to preserve, replace, or remove. Done when: the existing body is read and preservation notes are recorded, or this is confirmed a new draft.
 5. Draft the description: plain language with short sentences, concrete nouns, and active verbs; a review guide that tells the reviewer where to look first and calls out breaking changes, migration steps, risk areas, and testing performed; no inflated claims the diff does not evidence; Markdown headings or bullets when the PR touches multiple concerns, with length proportional to the change. State what changed and why, not how the code works internally, and do not restate what the diff already shows line by line. Done when: the draft is complete with plain language, a review guide, and no inflated claims.
 6. Present the full draft to the user and wait for explicit approval, revision requests, or rejection. Done when: the user explicitly approves, requests revisions, or rejects.
 7. On approval, write the approved description to a temporary file and run `gh pr edit <number> --body-file <tmp>`, because the shell interprets quotes, backticks, and `$` in an inline `--body` argument. Confirm the write succeeded, then delete the temporary file on every path. Done when: the PR body is updated, the write is confirmed, and the temporary file is gone.
@@ -94,17 +105,19 @@ Link-issues mode fires when the user explicitly asks to link a GitHub issue and 
 
 ## Failure and recovery
 
-- `gh` not installed or not authenticated: stop and instruct the user to install `gh` or run `gh auth login`; do not create or edit the PR.
-- No commits ahead of base (full, quick): stop and ask whether the user meant a different branch; no PR is created.
+- `gh` not installed or not authenticated (all modes except shape): stop and instruct the user to install `gh` or run `gh auth login`; do not create or edit the PR.
+- No change supplied (shape) or no commits ahead of base (full, quick): stop and ask for the missing input or a different branch; shape produces no draft and the mutating modes create no PR.
+- Empty diff (shape, describe): stop and report that there is nothing to describe; attempt no draft in shape and no write in describe.
+- Evidence unavailable (shape): mark the behavior not run and keep the draft honest; never invent screenshots, test output, or reviewer guidance.
 - Branch not pushed (full, quick): push with `git push -u origin HEAD` before creating; if push fails, report the error and stop.
 - PR already exists for the branch (full): do not create a duplicate; show the existing PR and ask whether to view, update, or close-and-recreate.
 - Update target is not a draft or is closed (full, quick): stop without changing it and report that state.
 - Stale base (quick): rebase onto the confirmed base and re-push; do not open or update the PR until the base is merged.
-- Title or body rejected (quick, describe): revise per user feedback and re-present; do not create or update until approved. On rejection the remote PR body remains unchanged.
+- Title, body, or draft rejected (shape, quick, describe): revise per user feedback and re-present; shape publishes nothing and the mutating modes create or update nothing until approved. On rejection the remote PR body remains unchanged.
 - Merge conflicts with base (full, quick): guide the user through resolving conflicts or rebasing; do not create the PR until the branch is conflict-free.
 - Presubmit red (quick): report the failing checks and stop; do not claim done. Fix only with explicit user direction.
 - Push rejected by branch protection: stop and report; do not force-push without explicit user approval.
-- PR not found or empty diff (describe): stop and report; no write attempted.
+- PR not found (describe): stop and report; no write attempted.
 - Invalid input, unresolved target, authentication failure, read failure, or Issues-block conflict (link-issues): make no mutation and return `blocked` with the failing class and command error or conflicting body condition.
 - Submission or GitHub API failure: stop and report the error; the remote PR remains unchanged. Do not claim or retry the mutation without first fetching the remote body again.
 - Verification mismatch: report the observed title, body, draft state, head, and base values that differ from the preview. Do not broaden the operation or claim the done predicate holds.
@@ -114,4 +127,4 @@ Link-issues mode fires when the user explicitly asks to link a GitHub issue and 
 
 ## Output
 
-A GitHub pull request, open in the browser in full mode, with a descriptive title, a body following the project template (full) or an accurate title and body (quick), a linked issue if one was found, all commits pushed, the chosen draft/regular status, and a reported presubmit status. In describe mode, the approved description written to the PR body with write confirmation; on failure, the failure class with the PR body unmodified. In link-issues mode, one terminal classification: `success` with the pull request URL and fresh-read proof; `no-op` with the same proof; `blocked` with the named pre-mutation or command failure; or `partial-result` with the pull request URL and observed post-submission state. The terminal report states the PR number and URL and whether the PR was created or updated.
+Shape mode: a chat-only PR body draft in `Summary`, `Evidence`, `Merge Danger` order with the smallest visual, an honest before-and-after evidence pair, and door plus blast radius, presented for approval with zero mutation and no `gh` call. Full mode: a GitHub pull request, open in the browser, with a descriptive title, a body following the project template or a clear description, a linked issue if one was found, all commits pushed, and the chosen draft or regular status with presubmit status. Quick mode: the approved title, body, and confirmed base created or updated with presubmit status reported. Describe mode: the approved description written to the PR body with write confirmation; on failure, the failure class with the PR body unmodified. Link-issues mode: one terminal classification of `success` with the pull request URL and fresh-read proof; `no-op` with the same proof; `blocked` with the named pre-mutation or command failure; or `partial-result` with the pull request URL and observed remote state. The terminal report states the mode used and, for mutating modes, the PR number and URL and whether the PR was created or updated.

@@ -222,7 +222,7 @@ From a local clone (Tier 1, sources: `source.ts` and `marketplace.ts`, verified 
 - `*/SKILL.md` at root level
 - `plugins/{scope}/skills/*/SKILL.md`
 
-`gh skill install --help` states discovery follows the agentskills.io `skills/*/SKILL.md` convention "including when the `skills/` directory is nested under a prefix", and that an exact repository path "avoids a full tree traversal of the repository" (Tier 1, source: `gh skill install --help`, verified). The traversal shortcut matters for a repository with 605 skills.
+`gh skill install --help` states discovery follows the agentskills.io `skills/*/SKILL.md` convention "including when the `skills/` directory is nested under a prefix", and that an exact repository path "avoids a full tree traversal of the repository" (Tier 1, source: `gh skill install --help`, verified). The traversal shortcut matters for a repository with 363 skills.
 
 ### Publish validation
 
@@ -277,7 +277,7 @@ The current layout satisfies all five surfaces from one tree (Tier 1, source: re
 │       ├── .grok-plugin/plugin.json     # Grok manifest
 │       ├── .kimi-plugin/plugin.json     # Kimi manifest, skills declared
 │       ├── mcp.json                     # optional; only odin-core ships one
-│       └── skills/<slug>/SKILL.md       # 543 skills total
+│       └── skills/<slug>/SKILL.md       # 363 skills total
 ├── catalog/                             # registry and membership data
 ├── scripts/                             # dependency-free Node ESM and stdlib Python
 ├── Justfile                             # render, check, validate-skills, verify
@@ -299,7 +299,7 @@ All versions read 2026-09-03. Harness-surface rows re-verified that day; the rem
 
 | Tool | Pin or line | Current | Released | End of support | Source and tier |
 |---|---|---|---|---|---|
-| Node.js | LTS line 24 is the project line | 24.20.0 | 2026-08-26 | 2028-04-30 | (Tier 3, source: https://endoflife.date/api/v1/products/nodejs/, probable) |
+| Node.js | no project Node.js pin; historical snapshot | 24.20.0 | 2026-08-26 | 2028-04-30 | (Tier 3, source: https://endoflife.date/api/v1/products/nodejs/, probable) |
 | Node.js, this machine | none | v26.8.1, Current, not LTS; line 26 becomes LTS 2026-10-28 | | | (Tier 1, source: `node --version`, verified 2026-09-03; Tier 3, source: endoflife.date, probable) |
 | Python | 3.14 is the project line | 3.14.7 | 2026-08-05 | 2030-10-31 | (Tier 3, source: https://endoflife.date/api/v1/products/python/, probable) |
 | Python, this machine | | 3.14.7, equals current | | | (Tier 1, source: `python3 --version`, verified) |
@@ -311,11 +311,11 @@ Notes:
 
 - prek is the only gate runner. `.pre-commit-config.yaml` opens with "Run the whole set with: prek run --all-files", and the Justfile `check` task calls `prek run --all-files` (Tier 1, source: repository files, verified).
 - tombi hook ids `tombi-lint` and `tombi-format` are byte-identical in `.pre-commit-hooks.yaml` at tags v1.1.3 and v1.5.0, so the pin raise changes no hook interface (Tier 1, source: raw.githubusercontent.com at both tags, verified).
-- The repository has no runtime dependencies. The Justfile states it: "There is no package manager here: every script is dependency-free Node ESM or standard-library Python, and nothing is published to a package registry." An import audit agrees: every `scripts/*.mjs` import resolves to a `node:` builtin, and `scripts/sync-baseline.py` imports only `argparse`, `sys`, and `pathlib` (Tier 1, source: Justfile and scripts imports, verified).
+- The repository has no runtime dependencies. The Justfile states it: "There is no package manager here: every script is dependency-free Node ESM or standard-library Python, and nothing is published to a package registry." An import audit agrees: every `scripts/*.mjs` import resolves to a `node:` builtin or a local project module (`./plugin-surfaces.mjs`), and `scripts/sync-baseline.py` imports only the standard library (`__future__`, `argparse`, `sys`, `pathlib`) (Tier 1, source: Justfile and scripts imports, verified).
 - No Node version is pinned, and there is no enforcement point: the repository has no CI, no build,
   and no `engines` field to read. Every script imports `node:` builtins only, so the real floor is
-  whatever ships `node:fs`, `node:path`, and `node:url`, which is every supported line. The earlier
-  claim of a Node 24 doctrine pin is withdrawn (Tier 1, source: repository files, verified absent).
+  whatever ships `node:fs`, `node:path`, and `node:url`, which is every supported line.
+  This is about the repository's own toolchain, not the `<languages>` doctrine row: the baseline sets Node 26 LTS as the target line for code the agent writes, with the runtime pinned per-project. No Node version is pinned for this repository's own scripts, which import only `node:` builtins and local project modules. (Tier 1, source: repository files, verified.)
 
 ## Open questions
 

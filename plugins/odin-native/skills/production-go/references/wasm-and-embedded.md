@@ -2,7 +2,7 @@
 
 Go has **two unrelated wasm ports**: `GOOS=js GOARCH=wasm` (browser/Node, `syscall/js`, since 1.11) and `GOOS=wasip1 GOARCH=wasm` (any WASI runtime, since 1.21). They share `GOARCH=wasm` (single-threaded, no parallelism, no cgo) but nothing else: `syscall/js` exists only on `js`; `//go:wasmimport`/`//go:wasmexport` are meaningful only on `wasip1`. Standard Go can **export functions and build reactor libraries** since 1.24: the "wasm is command-only / must use `js.Global().Set`" belief is stale. TinyGo is a *size/embedded/Component-Model* choice, not a WASI prerequisite. Embed wasm in a Go host with **wazero** (pure-Go, no cgo).
 
-> Verified against Go **1.26.x** (stable) + **1.27 RC** notes, TinyGo **0.41.x**, 2026-06. Version tags `[1.N]` mark the release a claim applies to. Deepened from deep-research + primary-source verification.
+> Verified against Go **1.26.x** (stable) + **1.27 RC** notes, TinyGo **v0.44.0**, 2026-06. Version tags `[1.N]` mark the release a claim applies to. Deepened from deep-research + primary-source verification.
 
 ## TL;DR: the modern deltas (read first)
 

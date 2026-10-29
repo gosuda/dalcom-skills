@@ -368,7 +368,7 @@ DON'T put interactive tools (gopls, dlv, air) in CI, and **DON'T** leave golangc
 Multi-stage build + a `CGO_ENABLED=0` static binary on a distroless/scratch base is the canonical Go container: sub-20 MB images, minimal attack surface.
 
 ```dockerfile
-FROM golang:1.26-bookworm AS build
+FROM golang:1.27-bookworm@sha256:d9b6a1beb9474adc2a1ce842573639b44b2a0dd49b6669f51d3821baf9ec37c9 AS build
 WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download
@@ -380,7 +380,7 @@ COPY --from=build /out/server /server
 ENTRYPOINT ["/server"]                    # vector form — distroless has no shell
 ```
 
-Key points: `CGO_ENABLED=0` → fully static (required for `scratch`/distroless); `-ldflags="-s -w"` strips debug info (smaller binary, but breaks `Delve` symbol resolution: don't ship stripped if you debug in prod); **pin the Go image tag** (`golang:1.26-bookworm`, never `:latest`) for reproducible builds; copy only the binary into the runtime stage. Cross-compile/build internals: [platform-and-build.md](platform-and-build.md#docker).
+Key points: `CGO_ENABLED=0` → fully static (required for `scratch`/distroless); `-ldflags="-s -w"` strips debug info (smaller binary, but breaks `Delve` symbol resolution: don't ship stripped if you debug in prod); **pin the Go image tag** (`golang:1.27-bookworm@sha256:d9b6a1beb9474adc2a1ce842573639b44b2a0dd49b6669f51d3821baf9ec37c9`, never `:latest`) for reproducible builds; copy only the binary into the runtime stage. Cross-compile/build internals: [platform-and-build.md](platform-and-build.md#docker).
 
 ---
 
@@ -417,13 +417,13 @@ These cover the judgment a formatter can't enforce (naming, package design, when
 | Tool | Status [2026] | Use when |
 |---|---|---|
 | `go` command (`build`/`test`/`vet`/`mod`/`work`/`tool`) | **Default** | Always: it's the platform |
-| `gopls` v0.22.x | **Default** (Go team) | Editor LSP; agent MCP backend |
+| `gopls` v0.24.0 | **Default** (Go team) | Editor LSP; agent MCP backend |
 | `golangci-lint` v2 | **De-facto standard** | CI lint gate (pin the version) |
 | `staticcheck` | **Default**, bundled in golangci-lint | Deep static analysis (incl. ex-gosimple/stylecheck) |
 | `gofumpt` | Active, stricter gofmt | New projects' formatter (via golangci-lint `formatters`) |
 | `modernize` | Active; folding into `go fix` [1.26] | Auto-migrate to modern idioms |
 | `govulncheck` | **Default** (Go team) | CVE gate, call-graph aware |
-| `delve` (dlv) v1.26.x | **Default** debugger | Interactive debugging; `gdb` is not recommended |
+| `delve` (dlv) v1.27.2 | **Default** debugger | Interactive debugging; `gdb` is not recommended |
 | `go.uber.org/mock` (mockgen) | Active | Interface mocks (golang/mock is archived) |
 | `sqlc` / `stringer` | Active | SQL→Go / enum `String()` codegen |
 | `benchstat` | **Default** (Go team) | Statistical benchmark comparison |
@@ -448,7 +448,7 @@ These cover the judgment a formatter can't enforce (naming, package design, when
 | **1.26** | **`go fix` modernizers** (auto-migrate idioms incl. `errors.As`→`AsType`); `errors.AsType[E]`; `fmt.Errorf` alloc-parity with `errors.New`; Green Tea GC default |
 | **1.27 (RC)** | Generic methods; `asynctimerchan` GODEBUG removed; `encoding/json/v2` GA. Treat as draft until GA (~Aug 2026). |
 
-(golangci-lint **v2**, gopls **v0.22.x**, `dlv` **v1.26.x** are independent of the Go release cycle: pin them explicitly.)
+(golangci-lint **v2**, gopls **v0.24.0**, `dlv` **v1.27.2** are independent of the Go release cycle: pin them explicitly.)
 
 ---
 

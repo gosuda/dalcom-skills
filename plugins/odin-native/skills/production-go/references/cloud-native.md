@@ -2,12 +2,12 @@
 
 Kubernetes controllers are **level-triggered, idempotent state reconcilers**, not event handlers. `client-go` versions as `v0.<k8s-minor>` (not semver), `controller-runtime` splits its client (**cached reads, direct writes**), webhooks and workqueues went **generic**, and Server-Side Apply replaced GET-modify-PUT. Reconcile the full desired state every call; never assume a read is fresh or an event fires once.
 
-> Verified against Go **1.26.4** (stable) + **1.27 RC**, **Kubernetes 1.36** / `client-go` **v0.36.x** / `controller-runtime` **v0.24.1** / `controller-tools` v0.21.0 / Kubebuilder go/v4, 2026-06. This ecosystem moves fast: version tags `[CR vX]` / `[k8s 1.N]` mark the release a claim applies to; patch numbers drift weekly. Deepened from multi-source research, corroborated against pkg.go.dev.
+> Verified against Go **1.27.3** (stable), **Kubernetes 1.37** / `client-go` **v0.37.x** / `controller-runtime` **v0.25.2** / `controller-tools` v0.23.0 / Kubebuilder v4.16.0 go/v4, 2026-06. This ecosystem moves fast: version tags `[CR vX]` / `[k8s 1.N]` mark the release a claim applies to; patch numbers drift weekly. Deepened from multi-source research, corroborated against pkg.go.dev.
 
 ## TL;DR: the modern deltas (read first)
 
-- `client-go` is `v0.<k8s-minor>.<patch>`, NOT semver. `v0.36.x` ⇔ k8s 1.36; `apimachinery` matches. The `kubernetes-1.x.y` tags are legacy (pre-1.17). There is no "client-go v1".
-- controller-runtime version is locked to a k8s minor: **CR v0.24 ⇔ k8s 1.36 ⇔ client-go v0.36**; v0.23⇔1.35, v0.22⇔1.34, v0.21⇔1.33, v0.20⇔1.32. The README is explicit: cross-minor pairings are "neither supported nor tested" and often won't compile. CR v0.24 minimum Go is 1.26.
+- `client-go` is `v0.<k8s-minor>.<patch>`, NOT semver. `v0.37.x` ⇔ k8s 1.37; `apimachinery` matches. The `kubernetes-1.x.y` tags are legacy (pre-1.17). There is no "client-go v1".
+- controller-runtime version is locked to a k8s minor: **CR v0.25 ⇔ k8s 1.37 ⇔ client-go v0.37**; v0.23⇔1.35, v0.22⇔1.34, v0.21⇔1.33, v0.20⇔1.32. The README is explicit: cross-minor pairings are "neither supported nor tested" and often won't compile. CR v0.25 minimum Go is 1.26.
 - The webhook builder is generic and lost `.For()` [CR v0.23]. `ctrl.NewWebhookManagedBy(mgr, &T{})` (two args) + typed `admission.Validator[T]`/`Defaulter[T]` structs in `internal/webhook/`. The old `ctrl.NewWebhookManagedBy(mgr).For(r)` + `webhook.Validator` methods **on the API type** are gone. This is the #1 stale-model trap.
 - Workqueues/handlers/sources/predicates are generic: `workqueue.TypedRateLimitingInterface[T]`, `handler.TypedEnqueueRequestForObject[*T]`, `source.TypedKind[T]`. The untyped versions are deprecated aliases.
 - Server-Side Apply via `applyconfigurations` is the idiomatic controller write path, not GET-modify-PUT-retry, not strategic-merge. Build the *apply config* (all-pointer fields), `Force: true`, unique `FieldManager`.
@@ -142,7 +142,7 @@ clientset.AppsV1().Deployments("default").Apply(ctx, dep, ...) // type error any
 
 > **Agent needs this:** scaffold an operator with the *current* Manager/Builder API: the flat `MetricsBindAddress` options and `Requeue bool` are gone.
 
-Import: `sigs.k8s.io/controller-runtime` **v0.24.x** [CR v0.24] (k8s 1.36). The Manager owns the shared cache, split client, leader election, webhook server, and metrics.
+Import: `sigs.k8s.io/controller-runtime` **v0.25.x** [CR v0.25] (k8s 1.37). The Manager owns the shared cache, split client, leader election, webhook server, and metrics.
 
 ```go
 mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
@@ -264,7 +264,7 @@ Event recording: `mgr.GetEventRecorderFor("db-controller").Event(obj, corev1.Eve
 
 ## CRDs & code generation {#crds}
 
-CRDs are generated **`apiextensions.k8s.io/v1` only** (controller-tools v0.21.0) with structural schemas. Annotate Go types with kubebuilder markers; `make manifests` / `controller-gen` emits the YAML.
+CRDs are generated **`apiextensions.k8s.io/v1` only** (controller-tools v0.23.0) with structural schemas. Annotate Go types with kubebuilder markers; `make manifests` / `controller-gen` emits the YAML.
 
 Type markers: `+kubebuilder:object:root=true`, `+kubebuilder:subresource:status`, `+kubebuilder:resource:shortName=db,scope=Namespaced`, `+kubebuilder:printcolumn:name=Phase,type=string,JSONPath=.status.phase`.
 Field markers: `+kubebuilder:validation:MinLength=1`, `+kubebuilder:validation:Enum=postgres;mysql`, `+kubebuilder:default=3`, `+kubebuilder:validation:XValidation:rule="self >= oldSelf",message="immutable"` (CEL), `+optional`.
@@ -426,11 +426,11 @@ Fast-moving: pin to the row matching your cluster's k8s minor.
 
 | Library | Status [mid-2026] | Note |
 |---|---|---|
-| `k8s.io/client-go` | **v0.36.x** ⇔ k8s 1.36 *(fast-moving)* | `v0.<minor>` scheme since 1.17; not semver |
-| `k8s.io/apimachinery` | **v0.36.x** *(fast-moving)* | Matches client-go minor |
-| `sigs.k8s.io/controller-runtime` | **v0.24.1** ⇔ k8s 1.36 *(fast-moving)* | Generic webhooks/queues; priority queue default; min Go 1.26 |
-| `sigs.k8s.io/controller-tools` | v0.21.0 *(fast-moving)* | `controller-gen`: CRD/RBAC/webhook codegen; v1 CRDs only |
-| Kubebuilder | go/v4 (k8s 1.36 / Go 1.26) *(fast-moving)* | go/v2, go/v3 layouts removed; Apple-silicon support |
+| `k8s.io/client-go` | **v0.37.2** ⇔ k8s 1.37 *(fast-moving)* | `v0.<minor>` scheme since 1.17; not semver |
+| `k8s.io/apimachinery` | **v0.37.2** *(fast-moving)* | Matches client-go minor |
+| `sigs.k8s.io/controller-runtime` | **v0.25.2** ⇔ k8s 1.37 *(fast-moving)* | Generic webhooks/queues; priority queue default; min Go 1.26 |
+| `sigs.k8s.io/controller-tools` | v0.23.0 *(fast-moving)* | `controller-gen`: CRD/RBAC/webhook codegen; v1 CRDs only |
+| Kubebuilder | v4.16.0 go/v4 (k8s 1.37 / Go 1.27) *(fast-moving)* | go/v2, go/v3 layouts removed; Apple-silicon support |
 | Operator SDK | tracks Kubebuilder *(fast-moving)* | Uses Kubebuilder as a library |
 | `cert-manager` | `cert-manager.io/v1` | Webhook/conversion CA injection |
 | `go.uber.org/automaxprocs` | **Obsolete for `go 1.25+`** | Runtime does it natively |
@@ -446,9 +446,9 @@ Fast-moving: pin to the row matching your cluster's k8s minor.
 | **1.33** | v0.33 | **v0.21** | Webhook custom paths (`WithValidatorCustomPath`) |
 | **1.34** | v0.34 | **v0.22** | MutatingAdmissionPolicy progressing `[verify]` |
 | **1.35** | v0.35 | **v0.23** | **Generic webhook builder** (`NewWebhookManagedBy(mgr, &T{})`, no `.For()`); priority queue default-on; events → `events.k8s.io` |
-| **1.36** | v0.36 | **v0.24** | Current; min Go 1.26; MutatingAdmissionPolicy GA `[verify]`; v0.24.1 "Fix regression in Apply typed error handling" |
+| **1.37** | v0.37 | **v0.25** | Current; min Go 1.26; MutatingAdmissionPolicy GA; v0.25.2 latest patch |
 
-Cross-minor pairings are untested and often won't compile; always match the row. Go: **1.26.4** stable (green-tea GC default), **1.27 RC** (generic methods → may finally enable fully-generic `Watches`).
+Cross-minor pairings are untested and often won't compile; always match the row. Go: **1.27.3** stable (green-tea GC default), **generic methods stable** (interface methods still may not declare type parameters).
 
 ---
 
@@ -488,7 +488,7 @@ Cross-minor pairings are untested and often won't compile; always match the row.
 - [http-and-apis.md](http-and-apis.md): HTTP server patterns, graceful shutdown, middleware
 
 ## Sources {#sources}
-- pkg.go.dev/{k8s.io/client-go@v0.36.1, sigs.k8s.io/controller-runtime@v0.24.1, .../pkg/webhook/admission, .../pkg/builder} (API signatures verified)
+- pkg.go.dev/{k8s.io/client-go@v0.36.1, sigs.k8s.io/controller-runtime@v0.25.2, .../pkg/webhook/admission, .../pkg/builder} (API signatures verified)
 - github.com/kubernetes-sigs/controller-runtime: VERSIONING.md, compatibility matrix, v0.24.1 release notes
 - book.kubebuilder.io: cronjob-tutorial/webhook-implementation, markers reference, versions_compatibility_supportability
 - kubernetes.io: admission controllers reference (ValidatingAdmissionPolicy GA 1.30; MutatingAdmissionPolicy / KEP-3962); CRD versioning; API Priority & Fairness

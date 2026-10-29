@@ -22,7 +22,7 @@ An ELF binary reports its own structure. Every question about dependencies, symb
 - The question: required. Dependency, symbol, size, hardening, relocation, or build identity.
 - A symbol name or address: optional, narrows the query.
 - The mode: optional. `inspect` (default) answers a question about the binary; `binary-hardening` measures the current mitigations and emits the flag set that closes the gaps.
-- The toolchain: required in `binary-hardening` mode. `gcc --version` or `clang --version`, `ld --version`, and `ldd --version` for the libc. Grounded channels: GCC 16.x, Clang 23.1.0, binutils 2.47, glibc 2.44.
+- The toolchain: required in `binary-hardening` mode. `gcc --version` or `clang --version`, `ld --version`, and `ldd --version` for the libc. Grounded channels: GCC 16.x, Clang 23.1.4, binutils 2.47, glibc 2.44.
 - Target platforms: optional. x86-64, AArch64, or both. Threat scope: optional, which mitigations the deployment actually needs.
 
 ## Procedure

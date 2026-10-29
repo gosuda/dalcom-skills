@@ -1,6 +1,6 @@
 # Sanitizer flags reference
 
-Build flags and runtime option variables. Grounded channels: GCC 16.x and Clang 23.1.0; sanitizers ship inside the compiler distribution and switch on through `-fsanitize=`.
+Build flags and runtime option variables. Grounded channels: GCC 16.x and Clang 23.1.4; sanitizers ship inside the compiler distribution and switch on through `-fsanitize=`.
 
 ## Quick table
 

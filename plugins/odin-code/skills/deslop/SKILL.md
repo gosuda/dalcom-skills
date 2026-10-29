@@ -1,6 +1,6 @@
 ---
 name: deslop
-description: 'Use when the user says deslop, debloat, tidy, simplify, clean a diff, cleanup codebase, or deslop branch diff, or remove dead code or config. Not for remote, credential, publish, deploy, or irreversible changes.'
+description: 'Use when the user says deslop, debloat, tidy, clean a diff, cleanup codebase, or deslop branch diff, or remove dead code or config. Not for remote, credential, publish, deploy, or irreversible changes.'
 ---
 
 # Deslop
@@ -11,7 +11,7 @@ Four modes share one spine: bound scope, verify with the repo's own command, rol
 
 | Field | Bound contract |
 |---|---|
-| Trigger | The user says deslop, debloat, tidy, simplify, clean up this diff, cleanup codebase, deslop a branch diff, remove dead code, find placeholders or stubs, remove dead fields, redundant wrappers, or stale config, or the slop skill routes code findings here |
+| Trigger | The user says deslop, debloat, tidy, clean up this diff, cleanup codebase, deslop a branch diff, remove dead code, find placeholders or stubs, remove dead fields, redundant wrappers, or stale config, or the slop skill routes code findings here |
 | Authority | Reversible local: writes only production source files or prose artifacts (may run the repo verifier and `git restore` on regression); rollback is version control or undo. No remote mutation. |
 | Side effect | Local writes to production source files or prose artifacts; no edits to tests, fixtures, mocks, examples, generated, vendored, or lockfile/build artifacts |
 | Done | Mode-specific done predicate holds; verifier green or rollback confirmed |
@@ -26,7 +26,7 @@ Not for behavior changes, new abstractions, or refactors that introduce patterns
 |---|---|---|
 | deslop, remove debug code, find placeholders or stubs, remove dead code, slop routed here | slop | Production source files |
 | debloat, tighten this, too long | bloat | One padded prose artifact (document, skill, spec) |
-| tidy this up, simplify, clean up this diff, polish my changes, make this simpler | tidy | Code in the working tree |
+| tidy this up, clean up this diff, polish my changes, make this simpler | tidy | Code in the working tree |
 | dead field, redundant wrapper, stale config, duplicate state, speculative abstraction | tidy | Code already under edit |
 | cleanup codebase | tidy | Code already under edit |
 | deslop this branch diff, remove AI debris from my branch, clean up added lines only | diff | Added/modified lines in a branch diff |
@@ -79,7 +79,7 @@ Done when: every prior rule and claim remains, the artifact is materially denser
 
 Remove constructs that do not earn their keep from code in the working tree, then verify. Branch-specific detection patterns: `references/dead-fields.md` (dead fields and members), `references/dead-config.md` (dead flags, env vars, branches), `references/redundant-wrappers.md` (inline-then-delete wrappers).
 
-1. **Confirm scope.** In cleanup-codebase trigger shape (dead field, redundant wrapper, stale config), the candidate must lie in a file already touched by the active change. If it does not, stop: opportunistic sweeps across untouched files are out of scope. In tidy trigger shape (tidy this up, simplify), the scope is the user-named target, the active file, or the current diff. Done when: the exact files and functions in scope are identified.
+1. **Confirm scope.** In cleanup-codebase trigger shape (dead field, redundant wrapper, stale config), the candidate must lie in a file already touched by the active change. If it does not, stop: opportunistic sweeps across untouched files are out of scope. In tidy trigger shape (tidy this up), the scope is the user-named target, the active file, or the current diff. Done when: the exact files and functions in scope are identified.
 
 2. **Read end to end.** Understand what each function, type, and module in scope must do or convey. Note the behavioral contract each piece serves. Done when: the scope's contracts are mapped.
 
@@ -110,7 +110,7 @@ Remove AI-generated debris from a branch diff, bounded to added/modified diff li
 2. **Enumerate changed files from the diff.** Exclude tests, fixtures, mocks, examples, benchmarks, generated output, vendored code, lockfiles, and build artifacts; they may intentionally contain placeholders, fake tokens, and debug output. Done when: the changed-file list is produced with exclusions applied.
 3. **Read local style context.** For each changed file, read the diff hunks plus enough surrounding unchanged lines to judge the file's dominant indentation, naming, comment density, and import ordering. "Matching local style" is the done predicate, so this context is required before any edit. Done when: per-file dominant indentation, naming, comment density, and import ordering are recorded.
 4. **Identify AI-generated debris in added lines only.** Scan the lines the branch introduced, not unchanged context. Debris classes: debug output left after debugging (console/print/debug macros/shell tracing), excluding output that is the product (CLIs, loggers, entrypoints); placeholder or unimplemented bodies (empty block, no-op, not-yet-implemented throw/abort, `TODO: implement`); commented-out code blocks; restating-the-code comments and motivational or hedging comments ("Let me...", "Now we...", "Here we..."); placeholder text in string literals (lorem ipsum, `foo bar baz`, `replace this`); unused imports or variables introduced by the change; redundant defensive guards that duplicate a check already present in the same path; mixed tabs+spaces or trailing whitespace on added lines. Done when: every added line is scanned and findings are listed by debris class.
-5. **Classify each finding before editing.** Apply only removals that cannot change behavior: delete debug prints, delete restating/hedging/motivational comments, delete commented-out code blocks, delete unused added imports and variables, and normalize added-line indentation and trailing whitespace to the file's dominant convention. Flag-only, no edit: placeholder implementations on live API surfaces, hardcoded credentials, crash-on-failure shortcuts (forced unwrap, unchecked cast, abort-on-error where failure is recoverable), and dead code requiring control-flow judgment. Done when: each finding is marked remove or flag-only.
+5. **Classify each finding before editing.** Apply only removals that cannot change behavior: delete debug prints, delete restating/hedging/motivational comments, delete commented-out code blocks, delete unused added imports and variables, and normalize added-line indentation and trailing whitespace to the file's dominant convention. Flag-only, no edit: placeholder implementations on live API surfaces, hardcoded secrets, crash-on-failure shortcuts (forced unwrap, unchecked cast, abort-on-error where failure is recoverable), and dead code requiring control-flow judgment. Done when: each finding is marked remove or flag-only.
 6. **Bound every edit to added/modified diff lines.** Never edit unchanged context lines, never reformat the whole file, and never introduce new logic, imports, or abstractions. The diff must shrink or stay focused; it must not grow. Done when: edits are applied only on added/modified lines and the diff has not grown.
 
 Done when: focused diff matching local style, verifier green or rollback confirmed.
@@ -139,4 +139,3 @@ Partial-result rule: applied fixes that verify stay; any fix whose verification 
 ## Output
 
 A compact report naming the mode, changed files, fixes applied (HIGH only in slop mode), findings left for manual inspection, the verifier command and its result, and any rollback action taken. Bloat mode: the artifact rewritten in place plus a one-line summary of what was cut and which non-bloat problems were handed off. Tidy mode: removed/fixed/skipped counts with one-phrase skip reasons. Diff mode: resolved base ref (or working-tree/root-commit note), changed files cleaned, debris classes removed with file/line, flag-only findings left for manual review, the verifier command and its result, and any rollback action taken. If nothing needed doing: `Deslop: nothing to do.`
-

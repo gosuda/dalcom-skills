@@ -123,7 +123,7 @@ cmd := &cobra.Command{Use: "app", SilenceUsage: true} // SilenceErrors NOT set
 
 ## Kong {#kong}
 
-Kong (**v1.15.0**, Apr 2026) is the declarative struct-tag parser: define commands as structs, attach `Run(...) error` methods, let Kong dispatch with dependency injection. No code-gen, far less plumbing than cobra.
+Kong (**v1.16.1**, Apr 2026) is the declarative struct-tag parser: define commands as structs, attach `Run(...) error` methods, let Kong dispatch with dependency injection. No code-gen, far less plumbing than cobra.
 
 ```go
 type Globals struct {
@@ -496,9 +496,9 @@ Charm v2 stack (Feb-Mar 2026, first breaking changes in ~6 years): moved to **va
 |---|---|---|---|
 | stdlib `flag` | 1.26 | `flag` | Tiny tools; `FlagSet` for subcommands; no POSIX/long flags |
 | `spf13/cobra` | v1.10.2 | `github.com/spf13/cobra` | **Default** for command trees; needs pflag ≥ v1.0.9 (build break otherwise) |
-| `spf13/pflag` | v1.0.x | `github.com/spf13/pflag` | POSIX flags; `ParseErrorsWhitelist`→`Allowlist` rename; `[verify]` patch |
+| `spf13/pflag` | v1.0.10 | `github.com/spf13/pflag` | POSIX flags; `ParseErrorsWhitelist`→`Allowlist` rename; `[verify]` patch |
 | `spf13/cobra-cli` | separate | `github.com/spf13/cobra-cli` | Split from cobra at v1.3.0; `init`/`add` only |
-| `alecthomas/kong` | v1.15.0 | `github.com/alecthomas/kong` | Declarative struct tags + DI; no code-gen |
+| `alecthomas/kong` | v1.16.1 | `github.com/alecthomas/kong` | Declarative struct tags + DI; no code-gen |
 | `urfave/cli` | v3.8.0 | `github.com/urfave/cli/v3` | v3 current (context-first); v2 maint-only, v1 security-only |
 | `knadh/koanf/v2` | v2.3.4 | `github.com/knadh/koanf/v2` | **Default** config; modular, case-sensitive, explicit precedence |
 | koanf env provider | env/v2 | `…/koanf/providers/env/v2` | v1 env provider superseded |

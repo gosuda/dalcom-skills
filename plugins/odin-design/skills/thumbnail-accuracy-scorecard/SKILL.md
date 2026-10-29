@@ -43,7 +43,7 @@ Tie-breaking: if two thumbnails tie on aggregate, the higher claim-accuracy scor
 3. Score each render against the fixed rubric. Score each dimension independently on the 0 to 10 scale. Record the per-dimension score, the aggregate, and whether the aggregate clears the threshold. Apply the disqualification rule: a claim-accuracy score below 5.0 disqualifies regardless of aggregate. Done when: every render has a complete scorecard.
 4. Rank the thumbnails by aggregate score. Apply tie-breaking if needed. Select the winner (highest aggregate, threshold cleared, not disqualified) and two runners-up. Done when: the winner and runners-up are selected, or no accurate winner exists.
 5. Stop at outcome.success (one winner and two runners-up clear the threshold), outcome.non_success (no accurate winner), or outcome.bound (round cap or budget reached). Done when: a terminal class is assigned.
-6. Persist per profiles.persistence.P1 (durable_location `.outline/loops/thumbnail-accuracy-scorecard/<run_id>/` when durable). Write an immutable K11 receipt with every K11 field. Done when: the receipt is written with the terminal class, bound, and scorecard evidence.
+6. Persist to .outline/loops/thumbnail-accuracy-scorecard/<run_id>/ when durable. Write receipt.json with terminal class, bound, and per-thumbnail scorecard evidence. Done when: the receipt is written with the terminal class, bound, and scorecard evidence.
 
 ## Failure and recovery
 

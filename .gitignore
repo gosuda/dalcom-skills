@@ -86,3 +86,4 @@ checkpoint-*.json
 
 # Specific files found in this directory
 __store.db
+.references/

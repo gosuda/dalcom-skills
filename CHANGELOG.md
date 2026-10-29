@@ -5,6 +5,26 @@ All notable changes to the ODIN Claude Plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.6] - 2026-10-30
+### Changed
+- Skill library reorganization: 657 skills across 28 plugins become 363
+  skills across 25 coherent plugins. 307 skills are retained (49 moved to
+  their named homes), 333 unused skills are removed, and 17 fold into named
+  surviving owners. Six empty plugin shells retire (`odin-critique`,
+  `odin-people`, `odin-python`, `odin-apple`, `odin-formal`, `odin-web`);
+  three new plugins ship (`odin-rust`, `odin-performance`, `odin-marketing`).
+### Added
+- 16 restored workflows (including `clarify`, `commit-push-main`,
+  `fastopt`, `optimize-extremely`, `grill-core`, `fix`,
+  `resolve-pr-comments`, `review-fix-loop`, and `let-fate-decide`) and 40
+  accepted new capabilities (including `browser-testing` and the marketing
+  portfolio).
+### Changed (doctrine and tooling)
+- Root `AGENTS.md` rewritten as 65 anchored rules; canonical baseline and
+  carriers updated with version pins grounded 2026-10-29. `just render`
+  now mirrors compound knowledge copies via
+  `scripts/sync-knowledge-copies.mjs`.
+
 ## [2.1.5] - 2026-09-26
 ### Changed
 - Eight orchestration skills gain one shared closing chain: Work, then the

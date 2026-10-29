@@ -1,4 +1,4 @@
-# react.md: React 19.2 + Tailwind v4 + shadcn v4
+# react.md: React 19.3.1 + Tailwind v4 + shadcn v4
 
 Surface reference for React applications. Companion to `references/web.md` for the vanilla CSS baseline; reach for vanilla first, React only when state crosses surface boundaries.
 
@@ -12,7 +12,7 @@ The 2020-era assumption that "React + Tailwind + a UI kit" is the default web su
 
 ## 2. React 19-era surface (as of 19.2)
 
-React 19.2 was released October 1 2025; React Compiler 1.0 stable shipped October 7 2025; the current line is 19.2.x. The six APIs below are the modern surface a designer needs to know; most landed with React 19 GA and are stable through the 19.2.x line.
+React 19.2 was released October 1 2025; React Compiler 1.0 stable shipped October 7 2025; the current line is 19.3.1. The six APIs below are the modern surface a designer needs to know; most landed with React 19 GA and are stable through the 19.3.1 line.
 
 ### RSC default
 
@@ -119,7 +119,7 @@ Anti-pattern: keeping `tailwind.config.js` on a v4 install. The JS config is a v
 
 ## 4. shadcn/ui v4
 
-shadcn/ui v4 with full Tailwind v4 + React 19 support reached stable February 2026. The CLI is on the 4.19.x line. shadcn is a starting point, not a finish line; every component is yours to mold to the picked direction. Use the CLI to install, then derive token-driven variants per the picked paradigm (`references/paradigms.md`).
+shadcn/ui v4 with full Tailwind v4 + React 19 support reached stable February 2026. The CLI is on the 4.23.0 line. shadcn is a starting point, not a finish line; every component is yours to mold to the picked direction. Use the CLI to install, then derive token-driven variants per the picked paradigm (`references/paradigms.md`).
 ```bash
 pnpm dlx shadcn@latest init
 pnpm dlx shadcn@latest add button dialog
@@ -268,4 +268,4 @@ const count = useStore((s) => s.count); // re-renders only when count changes
 
 ## 10. Cite-and-defer
 
-Citations: react.dev (19.2.x), tailwindcss.com (4.3.x), ui.shadcn.com (shadcn 4.19.x). This is starter density; defer to react.dev/learn for the current API surface, tailwindcss.com/docs for v4 directives, and ui.shadcn.com/docs/changelog for component versions before relying on any hook, directive, or component in production.
+Citations: react.dev (19.3.1), tailwindcss.com (4.3.x), ui.shadcn.com (shadcn 4.23.0). This is starter density; defer to react.dev/learn for the current API surface, tailwindcss.com/docs for v4 directives, and ui.shadcn.com/docs/changelog for component versions before relying on any hook, directive, or component in production.

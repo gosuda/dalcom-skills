@@ -25,13 +25,13 @@ ROOT = Path(__file__).resolve().parent.parent
 
 # Scripts whose self-check needs torch: (script, skip exit code).
 SELF_CHECKS = [
-    ("plugins/odin-native/skills/cpu-kernel-authoring/scripts/benchmark_cpu.py", 2),
+    ("plugins/odin-performance/skills/cpu-kernel-authoring/scripts/benchmark_cpu.py", 2),
 ]
 
 # The constants the intrinsics text must carry in both reference snippets.
 FP8_SNIPPETS = [
-    "plugins/odin-native/skills/cpu-kernel-authoring/references/dtype_optimizations.yaml",
-    "plugins/odin-native/skills/cpu-kernel-authoring/references/quantized_gemm_patterns.yaml",
+    "plugins/odin-performance/skills/cpu-kernel-authoring/references/dtype_optimizations.yaml",
+    "plugins/odin-performance/skills/cpu-kernel-authoring/references/quantized_gemm_patterns.yaml",
 ]
 FP8_CONSTANTS = ["set1_epi16(120)", "slli_epi16", ", 7)", ", 4)", "0x7F", "0x7FC0"]
 

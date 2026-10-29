@@ -19,6 +19,13 @@ disable-model-invocation: true
 
 1. **Project path** (required): directory containing a manifest file (`package.json`, `requirements.txt` / `pyproject.toml`, or `go.mod`).
 2. **Lockfile** (optional): if present (`package-lock.json`, `poetry.lock`, `Pipfile.lock`, `go.sum`), the auditor resolves transitive dependencies and matches advisories to exact resolved versions. If absent, direct dependencies are assessed against declared version constraints and all transitive dependencies are marked unassessable.
+- `severity_floor` (optional): the minimum advisory severity to show as an
+  actionable finding. Default: `medium`. This is the only severity floor for
+  this skill and applies after the existing three-state coverage calculation.
+```
+
+**Edit B — insert immediately after existing advisory-query step (live step 4), verbatim:**
+
 3. **Output directory** (required): directory where `findings.json` and `report.md` are written. Defaults to a directory adjacent to the audited project.
 
 ## Refusal
@@ -42,6 +49,32 @@ disable-model-invocation: true
    - unassessable: advisory source was unreachable, rate-limited, returned malformed data, the dependency has no resolved version, or the dependency is transitive with no lockfile.
    Done when: every direct dependency has a state and every query is attempted.
 
+## Vulnerability enrichment and patchability
+
+The existing ecosystem query owner remains authoritative:
+
+- npm uses the existing `npm audit --json` path;
+- PyPI uses the existing OSV query path;
+- Go uses the existing `vuln.go.dev` path.
+
+Do not invoke a second scanner for an ecosystem already handled by
+`references/ecosystem-queries.md`. Do not add pip-audit, cargo-audit, or trivy
+as a second answer for the same dependency graph in this skill.
+
+For every advisory returned by the existing query:
+
+```text
+advisory_id
+package
+ecosystem
+installed_or_declared_version
+affected_range
+severity, when supplied or derivable from the advisory
+fixed_versions, when supplied
+patchable
+```
+
+
 5. **Compile `findings.json`** with the structure: `{ dependencies: [{ name, version, ecosystem, direct, state, advisories }], summary: { total, assessed_clean, assessed_flagged, unassessable } }`. Done when: `findings.json` is written.
 
 6. **Generate `report.md`** containing: direct-dependency risk findings with per-dependency state and advisory detail, lockfile-wide version-matched advisories for transitive dependencies (if the lockfile was available), coverage summary with counts for each of the three states, unassessable dependencies with their reason, and remediation recommendations prioritized by severity and clearly separated from measured findings. Done when: `report.md` is written.
@@ -52,6 +85,25 @@ disable-model-invocation: true
 - Unrecognized manifest: write `findings.json` with empty dependencies and zero counts; `report.md` states no recognized manifest was found.
 - Network failure: mark affected dependencies unassessable with reason `network-failure`; continue with completed queries.
 - Malformed advisory response: mark the affected dependency unassessable with reason `malformed-response`; do not guess vulnerability status.
+
+The final report includes:
+
+- one severity floor;
+- advisory IDs and affected ranges;
+- fixed versions when the source supplies them;
+- patchable versus unpatchable counts;
+- suppressed-by-floor counts;
+- assessed-clean, assessed-flagged, and unassessable counts.
+
+A clean conclusion is permitted only for the portion whose advisory queries
+completed and whose exact-version coverage is assessed-clean. Unassessable
+dependencies must remain visible in the coverage section.
+```
+
+---
+
+## TARGET 5 — `plugins/odin-infra/skills/workflow-capacity-audit/SKILL.md` — new, policy-neutral (complete file)
+
 
 ## Output
 

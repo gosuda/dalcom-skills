@@ -18,7 +18,7 @@ description: 'Use when planning an end-to-end fuzzing program for a project: eng
 
 1. Target code (required): the library or entry point to fuzz, ideally a parse or I/O boundary.
 2. Seeds (required when they exist): known-good inputs from tests or real traffic.
-3. Toolchain (required): Clang for libFuzzer; AFL++ installed for fork-mode fuzzing. Grounded channels: Clang 23.1.0, AFL++ v5.03c (AGPL 3.0+ since v5.00c, mixed licensing in the repo).
+3. Toolchain (required): Clang for libFuzzer; AFL++ installed for fork-mode fuzzing. Grounded channels: Clang 23.1.4, AFL++ v5.03c (AGPL 3.0+ since v5.00c, mixed licensing in the repo).
 4. Time budget (optional): seconds for CI regression runs, hours for nightly.
 
 ## Procedure
@@ -120,7 +120,7 @@ For structured formats that checksum or length-prefix, implement `LLVMFuzzerCust
 ```
 
 Longer campaigns go to scheduled jobs with `-max_total_time=3600` or to OSS-Fuzz infrastructure. Done when: a pull request cannot merge with a target that regresses.
-9. Add Python targets with Atheris, and Zig targets through the built-in fuzzer (Zig 0.13 and later):
+9. Add Python targets with Atheris, and Zig targets through the built-in fuzzer (Zig 0.14.0 and later):
 
 ```python
 import atheris, sys

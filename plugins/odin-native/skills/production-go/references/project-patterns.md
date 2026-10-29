@@ -188,7 +188,7 @@ func InitializeApp(cfg Config) (*App, error) {
 ```
 
 - API trap: passing a **struct value directly** to `wire.NewSet(Svc{})` is *deprecated*: use `wire.Struct(new(Svc), "*")` (or named fields). Core surface: `Build`, `NewSet`, `Bind`, `Value`, `InterfaceValue`, `Struct`, `FieldsOf`; providers may add an optional `func()` cleanup and trailing `error`, and the injector signature must match.
-- Maintained fork: `github.com/goforj/wire` (v1.2.0, Apr 2026) is a drop-in, API-compatible fork (faster, deterministic, `wire watch`); migrate existing imports with `go mod edit -replace=github.com/google/wire=github.com/goforj/wire@latest`. **Caveat:** adoption is tiny (single-digit importers). Vet before standardizing on it. [verify: long-term maintenance]
+- Maintained fork: `github.com/goforj/wire` (v1.3.1, Apr 2026) is a drop-in, API-compatible fork (faster, deterministic, `wire watch`); migrate existing imports with `go mod edit -replace=github.com/google/wire=github.com/goforj/wire@latest`. **Caveat:** adoption is tiny (single-digit importers). Vet before standardizing on it. [verify: long-term maintenance]
 
 ### Runtime DI: `uber-go/dig`, `uber-go/fx`, `samber/do/v2`
 - **`dig`**: reflection inspects constructor signatures to build a DAG (`dig.New`, `Provide`, `Invoke`). Its README is explicit: good for *powering a framework / resolving the graph at startup*; **bad as a service locator or for resolving deps after startup**. Errors are runtime, stack traces deep.
@@ -396,7 +396,7 @@ require golang.org/x/tools v0.47.0 // indirect
 | `tool` directive in `go.mod` | **Default** [1.24] | Supersedes `tools.go` blank imports |
 | Manual constructor wiring | **Default** | Almost always; escalate only on evidence |
 | `google/wire` | **Archived/unmaintained** (v0.7.0, Aug 2025) | Existing code only; don't start new projects |
-| `goforj/wire` | Maintained fork (v1.2.0, Apr 2026) | Drop-in Wire successor; **tiny adoption; vet first** |
+| `goforj/wire` | Maintained fork (v1.3.1, Apr 2026) | Drop-in Wire successor; **tiny adoption; vet first** |
 | `uber-go/fx` | Active (v1.24.0, May 2025) | Large services: lifecycle + module scoping |
 | `uber-go/dig` | Active (v1.19.0, May 2025) | Framework plumbing; **not** a service locator |
 | `samber/do/v2` | Active GA (v2.0.0, Sep 2025) | Type-safe container, no reflection/codegen |

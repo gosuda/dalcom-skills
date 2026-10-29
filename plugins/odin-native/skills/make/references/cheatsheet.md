@@ -1,7 +1,7 @@
 # GNU Make cheatsheet
 
 Source: <https://www.gnu.org/software/make/manual/make.html>. Grounded against
-GNU Make 4.4.
+GNU Make 4.4.1.
 
 ## Automatic variables
 

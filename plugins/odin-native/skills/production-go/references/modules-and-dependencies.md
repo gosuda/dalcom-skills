@@ -342,7 +342,7 @@ Debug toolkit: `go mod graph | grep <mod>`, `go mod why -m <mod>`, `go list -m -
 | `GO111MODULE` | env | **Legacy/no-op** | Modules always on; GOPATH-mode `go get` removed [1.22] |
 | `go work vendor` | command | **Current** [1.22] | `go mod vendor` errors under a workspace |
 | `go mod tidy -diff` | command | **Current** [1.25] | Non-mutating CI gate |
-| `golang.org/x/mod` | library | Active (v0.37.x, 2026-06) | Programmatic `go.mod`/version editing |
+| `golang.org/x/mod` | library | Active (v0.42.0, 2026-06) | Programmatic `go.mod`/version editing |
 | `golang.org/x/vuln` (`govulncheck`) | tool | Active (v1.5.x, 2026-06) | Official vuln scanner; not auto-run |
 | `honnef.co/go/tools` (`staticcheck`) | tool | Active (v0.7.x) | Supplementary lint beyond `go vet` |
 | `gopls` | tool | Active (v0.22.x stable) | Integrated vulncheck + modernizers |

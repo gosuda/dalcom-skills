@@ -20,12 +20,14 @@ description: 'Use when a document or file has been edited piecemeal and reads as
 
 ## Procedure
 
-1. **Pin the target.** Identify the artifact from the request or the active context. Read it end to end. Name any nearby artifacts that must stay aligned.
+1. **Pin the target.** If the artifact does not exist on disk, stop; report `MISS` and do not create a replacement. Otherwise read it end to end and record its full content as the rollback snapshot. Name any nearby artifacts that must stay aligned.
 2. **Strip the noise.** Remove scaffolding residue, stale deltas, duplicated process noise, deprecated information, and over-specific history. A log of what changed stays out of the artifact unless the artifact is a changelog.
 3. **Fold in what lasted.** Move durable lessons into the place they should have lived from the start, not as an appended note.
 4. **Rewrite, do not append.** Start the artifact fresh from what is true now. Keep its useful voice and structure; cut everything else.
 5. **Smooth the prose.** Fold a parenthetical that interrupts a sentence into its own clause or cut it. Keep a repeated word or point once within reach. Unwrap a hard line break that splits a sentence mid-flow so each paragraph or list item lives on one source line. Make a plain-text pointer to a section or file followable.
+5a. **Unwrap source noise without paraphrase.** Merge wrapped paragraphs into single logical lines and split list items into one line per item. Preserve meaning; do not paraphrase.
 6. **Cut again.** Re-read the result cold and tighten what remains.
+6a. **Verify before writing.** The result must read as a clean v0 to fresh eyes with no patch traces, changelog scars, or source noise. Use unicode-safe operations applied per occurrence (never blanket sweep); script large structural moves as explicit steps; when in doubt repair from the source of truth. If the rewrite introduces claims, structure, or scope not present in the original, discard it, restore from the snapshot, and report what drifted. If verification fails, do not write.
 
 ## Failure and recovery
 - Cannot pin target: stop; return blocked.

@@ -11,7 +11,7 @@ The post-1.22 story for this topic is **not new containers**: it's GC-integrated
 - `sync.Map` was rewritten on a HashTrieMap [1.24] (faster misses/deletes, prompter shrink; load-hit ~slightly slower). Still `any`-typed, still specialized for (1) grow-only caches or (2) disjoint key sets, *not* a default concurrent map.
 - `container/heap`/`list`/`ring` are still non-generic through 1.26. Generic-heap proposals are open/on-hold/declined; do not represent any as accepted.
 - `singleflight` is duplicate suppression, not a cache: it retains nothing after the call returns, and the shared return value must be treated **read-only**.
-- Eviction moved past LRU: adaptive **W-TinyLFU** (otter v2) and TinyLFU-admission (ristretto v2) win hit ratio; **S3-FIFO** is lock-friendly and scan-resistant. otter **v1 was S3-FIFO; v2 is W-TinyLFU**. Claiming otter is S3-FIFO is stale.
+- Eviction moved past LRU: adaptive **W-TinyLFU** (otter v2.4.0) and TinyLFU-admission (ristretto v2.4.2) win hit ratio; **S3-FIFO** is lock-friendly and scan-resistant. otter **v1 was S3-FIFO; v2 is W-TinyLFU**. Claiming otter is S3-FIFO is stale.
 
 ## Table of Contents
 1. [Quick Decision Table](#decision-table)
@@ -403,7 +403,7 @@ got, ok := c.Get("k")
 _ = got; _ = ok
 ```
 
-Picks (see [decision table](#decision-table) for the full grid): hit ratio + throughput → **otter v2**; cost/size-based, freq-skewed → **ristretto v2**; simple bounded LRU/ARC/2Q → **golang-lru v2**; per-item TTL + loaders → **ttlcache v3**; GBs where GC pause dominates → **bigcache**/**freecache** (off-GC byte arenas; re-benchmark on the [1.26] Green Tea GC, which weakened "byte arenas always win"). **Avoid `patrickmn/go-cache`** (no release since 2017).
+Picks (see [decision table](#decision-table) for the full grid): hit ratio + throughput → **otter v2.4.0**; cost/size-based, freq-skewed → **ristretto v2.4.2**; simple bounded LRU/ARC/2Q → **golang-lru v2**; per-item TTL + loaders → **ttlcache v3.4.1**; GBs where GC pause dominates → **bigcache**/**freecache** (off-GC byte arenas; re-benchmark on the [1.26] Green Tea GC, which weakened "byte arenas always win"). **Avoid `patrickmn/go-cache`** (no release since 2017).
 
 ---
 
@@ -456,7 +456,7 @@ Stampede defense is three layers, not one: (1) **`singleflight`** collapses conc
 | `bits-and-blooms/bloom/v3` | Active | Probabilistic set membership |
 | `patrickmn/go-cache` | **Unmaintained** (no release since 2017) | Avoid for new code: use `ttlcache` v3 / `otter` v2 |
 
-> Migrate stale imports to generic majors: `dgraph-io/ristretto/v2`, `hashicorp/golang-lru/v2`, `puzpuzpuz/xsync` v4, `maypok86/otter/v2`. Bare v1 paths are stale. `[verify]` exact latest tags on `?tab=versions` before pinning: several were not directly confirmable from primary pages (otter v2.x, bigcache v3.x, x/sync, freecache/eko date stamps).
+> Migrate stale imports to generic majors: `dgraph-io/ristretto/v2`, `hashicorp/golang-lru/v2`, `puzpuzpuz/xsync` v4, `maypok86/otter/v2`. Bare v1 paths are stale. `[verify]` exact latest tags on `?tab=versions` before pinning: several were not directly confirmable from primary pages (otter v2.x, bigcache v3.2.0, x/sync, freecache/eko date stamps).
 
 ---
 

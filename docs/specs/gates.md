@@ -1,7 +1,6 @@
 # Gates and generators
 
-Every script under `scripts/` is either a generator that writes derived files from one authored
-source, or a gate that proves an invariant over the whole tree. This document says what each one
+Every file under `scripts/` is either a generator that writes derived files from one authored source, a gate that proves an invariant over the whole tree, or a shared helper module imported by them (`plugin-surfaces.mjs`, `carriers.py`). This document says what each one
 reads, what it writes or proves, how to run it, and how to read a failure. It is written against the
 scripts as they stand in the tree; when a script and this page disagree, the script is right and this
 page has drifted.
@@ -13,7 +12,7 @@ order or their membership, because a second copy of that list drifted twice befo
 
 | Command | What runs |
 |---|---|
-| `just render` | `render-skill-manifests.mjs`, then `render-plugin-surfaces.mjs`, then `render-skill-index.mjs`, in that order |
+| `just render` | `render-skill-manifests.mjs`, then `node scripts/sync-knowledge-copies.mjs`, then `render-plugin-surfaces.mjs`, then `render-skill-index.mjs`, then `python3 scripts/sync-baseline.py`, in that order |
 | `just check` | `prek run --all-files`: every hook in `.pre-commit-config.yaml` |
 | `just verify` | `just check`, then `gh skill publish --dry-run` |
 | `just sync-outline` | `sync-outline-skills.mjs`, writing into the sibling outline checkout |
@@ -24,8 +23,7 @@ Every local hook carries `pass_filenames: false` and `always_run: true`, so each
 whole tree on every commit no matter which files were touched. Expect the full set to take a few
 seconds.
 
-The scripts need no package manager. Every `.mjs` imports `node:` builtins only and every `.py`
-imports the standard library only, so each one runs directly when `prek` or `just` is absent:
+The scripts need no package manager. Every `.mjs` imports only `node:` builtins and local project modules (chiefly `./plugin-surfaces.mjs`); every `.py` imports only the standard library and local project modules (chiefly `carriers.py`). There are no external package dependencies, so each one runs directly when `prek` or `just` is absent:
 
 ```shell
 node scripts/check-plugin-surfaces.mjs
@@ -187,7 +185,7 @@ The name-parity rule exists because Codex resolves a plugin's namespace from the
 alone. Five manifests with different names load one plugin's components under another's namespace,
 and nothing else reports it.
 
-Passing output: `plugin surfaces ok: 28 plugins, 543 skills`.
+Passing output: `plugin surfaces ok: 25 plugins, 363 skills`.
 
 ### check-skill-routes.mjs
 
@@ -302,6 +300,9 @@ The carriers are edited in place and never committed from this repository. The b
 does not update them. A doctrine change means editing `system-prompt-baseline.md`, running
 `sync-baseline.py`, then `just sync-carriers` so the two external carriers pick up the shared
 sections. `check-carriers.py` and `just sync-carriers-check` both have to be green.
+
+### check-skill-scripts.py
+Compile-, syntax-, and self-checks shipped skill executables before commit. This gates shipped executables; it is not a test suite. `--self-test` flags planted defects, and the hook pair runs the gate plus its fixtures.
 
 ## Exit codes
 

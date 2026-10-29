@@ -2,7 +2,7 @@
 
 Go's supply-chain story is unusually strong by default: the `go` command verifies every dependency against `go.sum` and a public **transparency log** (`sum.golang.org`) before a single byte compiles. The delta you own is the rest; proving *reachability* of vulns (`govulncheck`, not version-matching), keeping `go.sum` honest in CI, generating an **SBOM** (no first-party tool exists), and signing/attesting your *own* artifacts. This file is the supply-chain layer; module mechanics live in [modules-and-dependencies.md](modules-and-dependencies.md), app-level crypto/auth in [security.md](security.md).
 
-> Verified against Go **1.26.x** (stable) + **1.27 RC** notes, 2026-06. Tool versions: `govulncheck` **v1.3.0**, `cosign` v2.x, `syft` v1.x. Version tags `[1.N]` mark the Go release a claim applies to. No research corpus; written from expert knowledge, verified against primary sources; `[verify]` marks anything you should re-check before relying on it.
+> Verified against Go **1.26.x** (stable) + **1.27 RC** notes, 2026-06. Tool versions: `govulncheck` **v1.9.0**, `cosign` v3.1.4, `syft` v1.55.0. Version tags `[1.N]` mark the Go release a claim applies to. No research corpus; written from expert knowledge, verified against primary sources; `[verify]` marks anything you should re-check before relying on it.
 
 ## TL;DR: the modern deltas (read first)
 
@@ -81,7 +81,7 @@ The distinction models blur: `GOSUMDB=off` is a *global* trust downgrade: a *new
 The headline: `govulncheck` builds a **call graph** and reports a vuln only when a vulnerable *symbol* (not just module) is reachable from your code. A CVE in a function you never call is silently dropped. This is categorically better signal than presence-based scanners.
 
 ```bash
-go install golang.org/x/vuln/cmd/govulncheck@latest   # v1.3.0 [verify: latest]
+go install golang.org/x/vuln/cmd/govulncheck@latest   # v1.9.0 [verify: latest]
 
 govulncheck ./...                       # source scan (default) — full call stacks
 govulncheck -mode binary ./bin/app      # scan a compiled binary (no source needed)
@@ -271,8 +271,8 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1 — pinned by SHA
-      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491  # v5.0.0
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v7.0.1 — pinned by SHA
+      - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491  # v7.0.0
         with: { go-version: stable, check-latest: true }
       - run: go mod verify
       - run: go mod tidy && git diff --exit-code go.mod go.sum   # fail if not tidy
@@ -296,7 +296,7 @@ CI *is* part of your supply chain: a compromised action runs with your secrets. 
 # WRONG — mutable tag; an attacker who re-points it runs in your pipeline:
 - uses: actions/checkout@v4
 # RIGHT — immutable SHA (keep the version in a comment for humans + bots):
-- uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v4.1.1
+- uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11  # v7.0.1
 ```
 
 - Least-privilege `GITHUB_TOKEN`. Set top-level `permissions: { contents: read }` and widen *per job* only where needed (`id-token: write` for OIDC signing, `attestations: write` for provenance). The default token is over-scoped.
@@ -358,7 +358,7 @@ Verification is the point: signing without consumers verifying identity *and* is
 | `google/osv-scanner` | Active | Presence-based scan incl. non-Go SBOM components |
 | `google/capslock` | Active (Google) | Capability analysis; alert on capability drift |
 | `google/go-licenses` | Active | License compliance gate |
-| `sigstore/cosign` v2.x | **Standard** | Keyless artifact/container signing |
+| `sigstore/cosign` v3.1.4 | **Standard** | Keyless artifact/container signing |
 | `actions/attest-build-provenance` | Active (GitHub) | SLSA provenance attestations |
 | `GoReleaser` | Active | Reproducible release builds + signing + SBOM |
 | `slsa-framework/slsa-github-generator` | Active | SLSA L3 provenance via reusable workflows `[verify]` |

@@ -414,12 +414,6 @@ export function renderRootReadme(catalog, current) {
   const counts = entries.map((entry) => [entry.id, skillRows(entry).length]);
   const total = counts.reduce((n, [, c]) => n + c, 0);
   const plugins = counts.length;
-  if (!/^- \d+ skills in \d+ plugins,/m.test(out))
-    throw new Error("README.md: no skills-in-plugins bullet found");
-  out = out.replace(
-    /^- \d+ skills in \d+ plugins,/m,
-    `- ${total} skills in ${plugins} plugins,`,
-  );
   if (!/^\d+ skills in \d+ plugins\./m.test(out))
     throw new Error("README.md: no skills-in-plugins sentence found");
   out = out.replace(
