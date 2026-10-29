@@ -1,0 +1,20 @@
+{
+  "name": "odin-rust",
+  "version": "2.1.7",
+  "description": "ODIN workflows for Rust development: cargo, async, FFI, cross-compilation, debugging, and unsafe review.",
+  "keywords": [
+    "odin",
+    "outlinedriven",
+    "agent-skills",
+    "rust"
+  ],
+  "author": {
+    "name": "OutlineDriven",
+    "url": "https://github.com/OutlineDriven"
+  },
+  "interface": {
+    "displayName": "ODIN Rust",
+    "shortDescription": "ODIN workflows for Rust development: cargo, async, FFI, cross-compilation, debugging, and unsafe review.",
+    "category": "Coding"
+  }
+}

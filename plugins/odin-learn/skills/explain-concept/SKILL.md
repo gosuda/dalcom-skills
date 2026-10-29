@@ -1,6 +1,6 @@
 ---
 name: explain-concept
-description: 'Use when a concept needs making clear rather than practising: explain simply, why does this exist, draw it, or simplify for a beginner. Not for scaffolded practice: use drill.'
+description: 'Use when a concept needs making clear rather than practising: explain simply, why does this exist, draw it, or simplify for a beginner. Not for scaffolded practice.'
 ---
 
 # Explain concept

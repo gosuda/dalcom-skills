@@ -1,0 +1,3 @@
+interface:
+  display_name: "Explain"
+  short_description: "Use when a scoped question about how or why something has its current shape, or what happened over a work window, needs an evidence-grounded answer."

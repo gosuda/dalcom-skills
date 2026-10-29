@@ -1,6 +1,6 @@
 ---
 name: deps-upgrade
-description: 'Use when dependency upgrades need batching for CVEs, a major release, forced compatibility, a scheduled or vulnerability-triggered sweep. Not for PR queue triage: use github-backlog-triage.'
+description: 'Use when dependency upgrades need batching for CVEs, a major release, forced compatibility, a scheduled or vulnerability-triggered sweep.'
 ---
 
 # Deps upgrade
@@ -61,6 +61,9 @@ Must be supplied: a working repository with VCS history; toolchains for each in-
 10. **Lockfile audit**: compare the pre- and post-campaign snapshots with `difft` (never `diff`; lockfiles are machine-generated and coarser diffs misread them). Check transitive churn: surface dependencies can look clean while a transitive bump carries the CVE fix, or a new transitive CVE. Done when: expected and unexpected transitive churn are recorded.
 11. **Re-scan**: run the CVE scanner again post-upgrade (`cargo audit`, `pip-audit`, `pnpm audit` / `npm audit`, `govulncheck`, per family). Read the output and record it; auto-fix flags that bypass reading (`npm audit fix --force`) are forbidden. Done when: every included family has recorded post-upgrade scan results.
 12. **Sweep disposition**: for a cadence-driven or vulnerability-triggered sweep, record each update's classification, verification result, or deferral reason in the sweep report. Every update has one disposition. Done when: every update has one disposition.
+
+For a held upgrade, record the exact blocking requirement, its declaring package and version, and the resolved and installed environments to which that evidence applies. A lock edit does not update installed metadata, and latest-release claims require a current registry check. Use release notes to locate changes, then verify a mitigation-retirement claim against the installed mechanism and the guarded failure; a nearby or similarly named upstream fix is insufficient. Before removing an apparently unused dependency, inspect feature unification, macro expansion, package/import aliases, build metadata, and runtime loading. A textual-use scan or one successful build is not exhaustive evidence. Keep lock churn concern-atomic and aligned with the target manifests; do not move a lockfile onto a different manifest set without resolving and verifying that target. Do not preserve a gate's old counts by suppressing newly real defects.
+
 13. **Stop at the boundary**: a major whose migration requires API-break propagation across the codebase beyond compatibility code is not started: it is reported. New CVEs surfaced by the re-scan are recorded, not remediated, inside this campaign. Done when: boundary-crossing majors and newly surfaced CVEs are report items, not campaign work.
 
 ## Failure and recovery

@@ -1,12 +1,12 @@
 ---
 name: c-hardening-baseline
-description: 'Use when C code is written or audited and needs a pure-C baseline: standard, undefined behavior, integer and buffer safety, sanitizers, fuzzing, build flags. Not for C++: use modern-cpp-practices.'
+description: 'Use when C code is written or audited and needs a pure-C baseline: standard, undefined behavior, integer and buffer safety, sanitizers, fuzzing, build flags. Not for C++.'
 disable-model-invocation: true
 ---
 
 # C hardening baseline
 
-This skill is a pure-C policy. It never prescribes a C++ idiom (RAII, destructors, smart pointers, lock guards, containers) as C practice. C++ code goes to `modern-cpp-practices`.
+This skill is a pure-C policy. It never prescribes a C++ idiom (RAII, destructors, smart pointers, lock guards, containers) as C practice.
 
 ## Contract
 
@@ -100,7 +100,7 @@ This skill is a pure-C policy. It never prescribes a C++ idiom (RAII, destructor
 | C23 unsupported | Fall back to `-std=c17` and list the C23 controls that are lost, with the C17 replacement for each (`__builtin_*_overflow` for `<stdckdint.h>`, `_Static_assert` for `static_assert`). |
 | Hardening flag rejected | Omit it, name the compiler that rejects it, and recommend the subset that compiles cleanly. |
 | Sanitizer unavailable on the platform | Name the missing sanitizer, recommend Valgrind Memcheck as the fallback, and state what it misses. |
-| C++ found in the tree | Report the C++ files and route them to `modern-cpp-practices`. Apply this baseline to the C files only. |
+| C++ found in the tree | Report the C++ files as out of scope. Apply this baseline to the C files only. |
 | Prescription found that is a C++ idiom | Drop it from the report and list it under dropped prescriptions. |
 
 No partial result is claimed complete. When a step cannot finish, the report states which steps succeeded and which are blocked.

@@ -91,7 +91,6 @@ required action:
 
 A stale or unresolvable plan binding blocks completion. Do not silently substitute
 a newer plan.
-````
 
 
 ### 3. Classify every deliverable
@@ -140,5 +139,4 @@ The `PLAN COMPLETION REPORT` must include these sections in this order:
 ## Gate result
 STATUS:
 ```
-````
 

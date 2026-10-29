@@ -88,7 +88,7 @@ Traps: `go env -w` does **not** override a real environment variable already set
 
 ## gopls: the language server {#gopls}
 
-`gopls` (v0.22.0) is the official LSP server, maintained by the Go team: it powers completion, go-to-definition, refactoring, and inline diagnostics in every editor. It is **not** something you invoke directly; your editor manages it. Install/update with `go install golang.org/x/tools/gopls@latest`.
+`gopls` (v0.24.0) is the official LSP server, maintained by the Go team: it powers completion, go-to-definition, refactoring, and inline diagnostics in every editor. It is **not** something you invoke directly; your editor manages it. Install/update with `go install golang.org/x/tools/gopls@latest`.
 
 - It runs analyzers live: the same `vet` checks plus gopls-only ones (`unusedparams`, `fillstruct`, `unusedfunc`, `modernize`). Diagnostics you see in-editor are often *ahead* of CI.
 - MCP mode [verify]: recent gopls exposes its index over the Model Context Protocol so an agent can ask for definitions/references/diagnostics structurally instead of regex-grepping a tree. This is the right substrate for Go-aware agents: details and setup in [mcp-and-agents.md](mcp-and-agents.md#gopls-mcp).

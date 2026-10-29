@@ -8,7 +8,7 @@ When assessing a candidate for deepening, classify its dependencies. The categor
 
 ### 1. In-process
 
-Pure computation, in-memory state, no I/O. Always deepenable: merge the modules and test through the new interface directly. No adapter needed.
+Pure computation, in-memory state, no I/O. Usually deepenable when the modules share one owner and one change reason: merge the modules and test through the new interface directly. No adapter needed. Keep separate when owners or change reasons differ.
 
 _Examples_: a Rust parser combinator chain consolidated into one `parse(input) -> Result<Ast, ParseError>`; a Python pipeline `parse_invoice` + `apply_tax` + `round_total` collapsed into `Invoice.finalize(raw) -> Invoice`.
 
@@ -24,11 +24,11 @@ Owned services across a network boundary (microservices, internal APIs). Define 
 
 _Examples_: a Kotlin service calling an internal pricing microservice via a `PricingPort` interface, gRPC adapter in production, in-memory adapter in tests; a Rust client wrapping an internal queue with a `JobQueue` trait, RabbitMQ adapter in production, channel-backed adapter in tests.
 
-### 4. True external (Mock)
+### 4. True external (Test adapter)
 
-Third-party services (Stripe, Twilio, GitHub, Auth0) the team does not control. The deepened module takes the external dependency as an injected port; tests provide a mock adapter.
+Third-party services (Stripe, Twilio, GitHub, Auth0) the team does not control. The deepened module takes the external dependency as an injected port; tests provide a test adapter: an in-memory or recording fake asserting observable outcomes through the interface, not a mock echo.
 
-_Examples_: a Python billing module that takes a `PaymentGateway` protocol, `StripePaymentGateway` in production, a `pytest` mock in tests; a Go SMS dispatcher with a `Notifier` interface, Twilio adapter in production, recording fake in tests.
+_Examples_: a Python billing module that takes a `PaymentGateway` protocol, `StripePaymentGateway` in production, a recording fake asserting observable outcomes in tests; a Go SMS dispatcher with a `Notifier` interface, Twilio adapter in production, recording fake in tests.
 
 ## Seam discipline
 

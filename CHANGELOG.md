@@ -5,6 +5,17 @@ All notable changes to the ODIN Claude Plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.7] - 2026-10-30
+### Added
+- `autoplan-and-autopilot` (`odin-run`): combined planning and execution workflow
+  that autoplans via `/autoplan` and then executes with `/autopilot`, bringing
+  `odin-run` to 27 skills and total skills to 365.
+- `humanizer-korean-plain` (`odin-writing`): restored from the retired set as
+  plain Korean humanizer, reversing the removal of `plain-korean` and bringing
+  `odin-writing` to 21 skills.
+### Changed
+- `ste-korean` (`odin-writing`) renamed to `humanizer-korean-ste`.
+
 ## [2.1.6] - 2026-10-30
 ### Changed
 - Skill library reorganization: 657 skills across 28 plugins become 363

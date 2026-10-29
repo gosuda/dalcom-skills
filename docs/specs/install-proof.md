@@ -1,11 +1,14 @@
 # Install proof
 
-Each supported surface, exercised against this tree rather than read from a document. The tree is
-28 job-named plugins and 543 skills on branch `feat/prompt-stack-2.1` at `releaseVersion` 2.1.0.
+Each supported surface, exercised against this tree rather than read from a document. These runs
+were recorded against 28 job-named plugins and 543 skills on branch `feat/prompt-stack-2.1` at
+`releaseVersion` 2.1.0; for the current topology see `catalog/plugins.json` and the generated
+`docs/specs/skill-index.md`.
 
-The Agent Skills validation below was re-run 2026-09-05 against the current tree. Every other
-section keeps the run it recorded, with its own date where one was captured. A section that gives
-a command shape rather than a run, or names a lane nobody could exercise here, says which.
+The Agent Skills validation below was re-run 2026-09-05 against the tree as it then stood.
+Every other section keeps the run it recorded, with its own date where one was captured. A
+section that gives a command shape rather than a run, or names a lane nobody could exercise
+here, says which.
 
 `docs/specs/distribution-surfaces.md` carries the specifications and their citations. This file
 carries what was executed and what it returned, plus any command shape it labels as such.
@@ -14,8 +17,8 @@ carries what was executed and what it returned, plus any command shape it labels
 
 The GitHub CLI validates every skill against the Agent Skills specification. (The retired Agent Plugins specification adopted the same skill format; the skill tree is unchanged by the surface retirement.)
 
-Run 2026-09-05. The counts are that run's own, and they match the tree as it stands:
-`check-plugin-surfaces` prints the same 543.
+Run 2026-09-05. The counts are that run's own, and on 2026-09-05 they matched the tree as it
+then stood: `check-plugin-surfaces` printed the same 543.
 
 ```shell
 $ gh skill publish --dry-run
@@ -44,8 +47,8 @@ GitHub settings, not tree content; they belong to the repository owner.
 
 ## Per-skill install
 
-`gh skill install` accepts an exact repository path, which skips a full tree traversal. At 543
-skills that matters.
+`gh skill install` accepts an exact repository path, which skips a full tree traversal. At a tree
+of this scale that matters; the current count is in the generated `docs/specs/skill-index.md`.
 
 Command shape rather than a run record: no output or exit code is captured below.
 

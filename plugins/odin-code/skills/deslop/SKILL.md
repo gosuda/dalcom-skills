@@ -75,6 +75,8 @@ Compress one padded but fully binding prose artifact in place. Every rule presen
 
 Done when: every prior rule and claim remains, the artifact is materially denser, and non-bloat problems are handed off.
 
+For a long artifact, section-scoped read-only review may identify cuts, but the owner must reconcile the complete artifact before applying them. Every claim that a passage is already carried elsewhere must name and inspect that surviving location within this artifact. Preserve conditions, numeric bounds, tables, wire formats, unique examples, and context required by independently consumed sections. Use before-to-after claim tracing and a final semantic read; word counts, MUST counts, and phrase searches cannot prove that every binding claim survived. Do not replace the entire file merely to make a local cut.
+
 ## Tidy mode
 
 Remove constructs that do not earn their keep from code in the working tree, then verify. Branch-specific detection patterns: `references/dead-fields.md` (dead fields and members), `references/dead-config.md` (dead flags, env vars, branches), `references/redundant-wrappers.md` (inline-then-delete wrappers).

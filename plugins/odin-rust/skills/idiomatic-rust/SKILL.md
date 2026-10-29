@@ -50,6 +50,8 @@ Chapter content is inherited from the pinned handbook sources; the headline Rust
 | `references/chapter_07.md` | Compile-time state safety with the type-state pattern |
 | `references/chapter_08.md` | When to comment, doc comments, rustdoc |
 | `references/chapter_09.md` | Thread safety, `Send`/`Sync`, pointer types |
+| `references/retention-contracts.md` | Admission, ownership, and retained memory bounds for caches and decoded representations. |
+| `references/json-boundaries.md` | JSON representation migration, raw tagged decoding, and lossless value preservation at service boundaries. |
 
 ## Failure and recovery
 

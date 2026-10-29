@@ -185,7 +185,7 @@ The name-parity rule exists because Codex resolves a plugin's namespace from the
 alone. Five manifests with different names load one plugin's components under another's namespace,
 and nothing else reports it.
 
-Passing output: `plugin surfaces ok: 25 plugins, 363 skills`.
+Passing output: `plugin surfaces ok: 25 plugins, 365 skills`.
 
 ### check-skill-routes.mjs
 
@@ -204,8 +204,8 @@ working.
 
 A trigger is one of these phrases, case-insensitive, with the trailing space load-bearing: `use when `,
 `use this `, `use for `, `use to `, `use after `, `use on `, `use during `, `runs /`, `invoked `,
-`invoke `, `asks to `, `asks for `, `says `. Without the space, the "not for X, use to-spec" pointer
-most descriptions carry would match `use to` and pass a description that never states its own
+`invoke `, `asks to `, `asks for `, `says `. Without the space, a "not for X, use ..." pointer
+such as "use to-greenfield" would match `use to` and pass a description that never states its own
 trigger. A bare imperative such as "Design non-trivial code" says what the skill does and never
 when to reach for it, so it fails.
 
@@ -262,8 +262,8 @@ carrier is skipped with a notice. A carrier that exists but cannot be written is
 fails the run if it carries findings, because they cannot be repaired from here. Passing file
 arguments gates only those files.
 
-Scope comes from the index on purpose. A directory walk with an exclusion list reported clean in one
-checkout and 3725 findings in another, because an untracked staging tree sat inside the repository.
+Scope comes from the index on purpose; `docs/specs/voice.md` (Scope) records the untracked-tree
+incident that motivates this rule.
 When `git` is missing or the path is not a work tree, the gate exits 1 rather than falling back to a
 walk that would change its scope silently.
 

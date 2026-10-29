@@ -1,6 +1,6 @@
 ---
 name: reorder
-description: 'Use when asked to reorder a drifted listing under one stated principle, moving items only and rewording nothing. Not for deliberately ranked listings: use reorder-respect-deliberate.'
+description: 'Use when asked to reorder a drifted listing under one stated principle, moving items only and rewording nothing. Not for deliberately ranked listings.'
 ---
 
 # Reorder
@@ -16,7 +16,7 @@ description: 'Use when asked to reorder a drifted listing under one stated princ
 
 ## Refusals
 
-- Listings with intentionally ranked items: use `reorder-respect-deliberate`. This skill does not preserve explicit ranks.
+- Listings with intentionally ranked items: out of scope. This skill does not preserve explicit ranks.
 - Rewording, adding, or removing content: rejected. Items are moved only.
 - **Remote, credential, publish, deploy, or irreversible changes**: rejected.
 

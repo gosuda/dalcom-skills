@@ -1,6 +1,6 @@
 ---
 name: offense
-description: 'Use when a human says "overhaul", "rebuild this subsystem", or "rewrite it from scratch". Not for thin-slice features: use incremental-implementation. Not for root-cause repair: use strike-the-root.'
+description: 'Use when a human says "overhaul", "rebuild this subsystem", or "rewrite it from scratch". Not for thin-slice features: use incremental-implementation. Not for root-cause repair: use grill-core.'
 ---
 
 # Offense

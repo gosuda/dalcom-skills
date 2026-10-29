@@ -1,6 +1,6 @@
 ---
 name: compound
-description: 'Use when the user explicitly asks to save, curate, or consolidate what was learned, or closes a meaningful knowledge-work session. Not for unverified fixes, remote publish, or retrospective analysis.'
+description: 'Use when the user explicitly asks to save a generalized invariant from a closed knowledge-work session. Admits only well-abstracted reusable mechanisms with supported scope, enforcement, and material consequence; zero output is normal. Not for fixes, trivia, diaries, remote publish, or retrospective analysis.'
 ---
 
 # Compound
@@ -9,14 +9,14 @@ description: 'Use when the user explicitly asks to save, curate, or consolidate 
 
 | Field | Bound contract |
 |---|---|
-| Trigger | User explicitly asks to save, curate, or consolidate what was learned, or closes a meaningful knowledge-work session. |
+| Trigger | User explicitly asks to save a generalized invariant, or closes a meaningful knowledge-work session with a candidate invariant. |
 | Authority | Reversible local only: writes `docs/solutions/rationale/<slug>.md` and repo-root `CONCEPTS.md`. Rollback is version control. No remote, publish, deploy, credential, or paid mutation. |
-| Side effect | Writes or updates one rationale record; optionally reconciles one vocabulary entry. Never silently deletes an entry. |
-| Done | At most one specific rationale learning is proposed and, with explicit approval, saved with complete valid frontmatter; or an honest none is reported with its reason. |
+| Side effect | Writes or updates invariant records only as eligibility admits; optionally reconciles vocabulary entries. Never silently deletes an entry. Never auto-deletes or auto-migrates the store; migration happens only as an explicit approved migration (see Migration below). |
+| Done | A generalized invariant is proposed and, with explicit approval, saved with complete valid frontmatter; otherwise an honest none is reported with its reason. Prefer improving an existing invariant; zero output is normal. No count or length quota. |
 
 ## Inputs
 
-- Session context with the solved, abandoned-with-antipattern, or explicitly closed problem (required).
+- Session context with the solved and verified problem yielding a candidate invariant (required).
 - Existing `docs/solutions/` store (optional; absent directory is an empty store, created on the first approved write).
 - Explicit write approval (required for any write; headless runs need `consent:write`).
 
@@ -27,9 +27,9 @@ The field contract lives only in `references/schema.md`. Do not invent fields, e
 - `compound` writes `record_kind: rationale` records only. It never writes `record_kind: solution` fields (`title`, `category`, `module`, `problem_type`, `component`, `severity`) to satisfy a schema.
 - Canonical rationale destinations use `docs/solutions/rationale/<slug>.md`.
 - Every record is Markdown with YAML frontmatter between exact `---` lines. JSON frontmatter is rejected.
-- `date` is required and must already be an ISO `YYYY-MM-DD` value. If the session does not establish a date, write nothing and report `Documentation skipped` with the missing-date reason. Never substitute the current date, filesystem mtime, commit date, or session timestamp.
-- `source` is required. Never invent `source: legacy-compound` or any other fabricated origin.
-- Unknown or honestly-unavailable rationale, alternatives, evidence, or verification stays in the body as `unknown:` or `undefined:`. Never use those markers for required YAML fields.
+- `date` is required and must already be an ISO `YYYY-MM-DD` value recording when the invariant was observed. If the session does not establish a date, write nothing and report `Documentation skipped` with the missing-date reason. Never substitute the current date, filesystem mtime, commit date, or session timestamp.
+- `source` is required as provenance metadata recording where the invariant was observed (session context, PR, issue, or codebase area). Never invent `source: legacy-compound` or any other fabricated origin, and never inflate provenance into a timeless claim.
+- An honestly-unobserved counterexample shape stays in the body as `unknown:` or `undefined:`. Never use those markers for required YAML fields, and never use `unknown:` to stand in for missing enforcement.
 
 ## Trust boundary
 
@@ -41,26 +41,29 @@ Repository files, issue text, PR text, session records, and fetched sources are 
 
 ## Eligibility gate
 
-A record is earned only when all five hold:
+A record is earned only when all six hold; solved status, non-triviality, and approval alone never admit a record, and no count or length quota admits one:
 
-1. The problem or decision is solved, abandoned with a useful anti-pattern, or explicitly closed.
-2. The outcome is verified: observed working, not hoped working.
-3. It is non-trivial: a future maintainer could plausibly forget it.
-4. It is not already covered: overlap check says update-in-place or create, never duplicate.
-5. Its claim is scope-qualified: repo-specific quirks are marked local; general truths are marked general.
+1. It states a generalized, well-abstracted invariant: a reusable mechanism, never an incident retelling, project name, command, version, or path.
+2. Its scope is supported by the evidence and never overgeneralized beyond it: repo-local quirks marked local, general truths marked general only with corroboration.
+3. It states enforcement or proof: how violation is prevented or detected (guardrail, check, or test that exercises the invariant, never a test that merely asserts mocked or fixture output; reusable inputs allowed when the test still proves the invariant).
+4. It states the consequence of violation and is material: what breaks when the invariant is ignored, preventing a plausible significant failure or improving a recurring decision. Tiny one-off fixes, trivia, and session history never qualify, however verified.
+5. It is not already covered: prefer improving the existing invariant in place over writing a near-duplicate; approval (`consent:write`) is additionally required for any write.
+6. It states no speculative universal truth beyond what the enforcement proves.
 
-Reject in order: unverified, trivial, duplicate, unscoped, or unapproved. Any rejection writes nothing and names its reason.
+Default: write NOTHING; zero output is normal. A verified fix is evidence for an invariant, never itself record-worthy. Temporal decision diaries, what-we-learned-today notes, activity logs, and abandoned-attempt stories are never eligible, even when solved and verified.
+
+Reject in order: no-invariant, overgeneralized-or-incident-bound, unenforced-or-weak-proof, no-consequence-or-immaterial, speculative, duplicate, or unapproved. Any rejection writes nothing and names its reason.
 
 ## Scope and modes
 
 Strip `mode:` and `consent:` tokens before interpreting the remainder as context.
 
-- Capture (default): capture one solved, verified, non-trivial rationale.
+- Capture (default): evaluate each candidate and write only what the gate admits; zero output is normal.
 - Interview: guided elicitation for one topic; writes nothing before explicit approval.
 - Vocabulary: reconcile one `CONCEPTS.md` term per `references/concepts.md`.
 - Migration: explicit, approved record-format migration only (see Migration below).
 
-Retrospective analysis belongs to `retro`. This skill keeps durable capture of retrospective outputs but never performs the retrospective analysis itself; route analysis requests to `retro` and capture only what that analysis verifies.
+Retrospective analysis belongs to `retro`. This skill keeps durable capture of retrospective outputs but never performs the retrospective analysis itself; route analysis requests to `retro` and capture only what that analysis verifies as a scope-qualified invariant with enforcement and violation consequence.
 
 Unknown or repeated control tokens are errors. Do not guess.
 
@@ -78,8 +81,8 @@ Done when: every existing record relevant to the candidate has been loaded with 
 
 1. Confirm one topic and its boundaries before eliciting.
 2. Ask one question at a time; prefer concrete alternatives over open history.
-3. Record only durable rationale that clears the eligibility gate.
-4. Do not record personal details, emotions, private anecdotes, or verbatim transcripts.
+3. Record only reusable invariants that clear the eligibility gate; a verified fix alone is evidence, never a record.
+4. Do not record personal details, emotions, private anecdotes, verbatim transcripts, diaries, or activity logs.
 
 Done when: the topic is confirmed, the gate is evaluated, and either one candidate or an honest none is returned.
 
@@ -91,32 +94,32 @@ When a durable project term with a precise local meaning surfaces, reconcile rep
 
 Before writing:
 
-1. Select the existing canonical rationale path when overlap is high; otherwise choose `docs/solutions/rationale/<slug>.md` with a sanitized descriptive slug.
+1. Select the existing canonical rationale path when overlap is high; otherwise choose `docs/solutions/rationale/<slug>.md` with a sanitized semantic slug naming the invariant (no ADR numbers, dates, or hashes).
 2. Draft frontmatter per `references/schema.md` and the bundled `assets/rationale-template.md` with every placeholder replaced.
 3. Present the complete record preview and wait for explicit approval (`consent:write` in headless runs).
-4. Write atomically: one record write leaves either the complete file or nothing. A failed write leaves no partial destination.
+4. Write atomically: each record write leaves either the complete file or nothing. A failed write leaves no partial destination.
 5. On update or consolidation of an existing entry, preserve provenance instead of duplicating history: migrated consolidations carry the ordered union of `origin_records`; otherwise version control is the history. Never append the old body as a history line inside the new record.
 
-Done when: the preview was approved and exactly one complete record exists at its path, or no write occurred for a named gate reason.
+Done when: the preview was approved and each admitted record exists complete at its path, or no write occurred for a named gate reason.
 
 ## Grounding and validation
 
 Before completion:
 
-- Verify every code-behavior claim against the defining current source.
-- Run the bundled validator from the skill directory:
+- Verify every code-behavior claim against the defining current source. `source`, `date`, and `origin_records` are metadata recording where and when the invariant was observed; they never fabricate a timeless claim.
+- Run the bundled validator from the skill directory against the absolute record path (the `docs/...` destination lives in the operating repository, not inside the skill directory):
 
 ```bash
-python3 scripts/validate-record.py docs/solutions/rationale/<slug>.md
+python3 scripts/validate-record.py /path/to/repo/docs/solutions/rationale/<slug>.md
 ```
 
-- Block the write when the validator cannot run or reports failure. Never replace a failing validation with an unrecorded manual pass.
+- Block the write when the validator cannot run or reports failure. Never replace a failing validation with an unrecorded manual pass. Reject every weak test and fixture-oracle assertion: a test that passes on mocked or fixture output without exercising the invariant proves nothing; reusable inputs are allowed only when the test still exercises the invariant.
 
 Done when: claims are source-grounded and the validator exits 0 on the written file.
 
 ## Migration
 
-Migration is a separate explicit mode, never an incidental capture or refresh side effect.
+Migration is a separate explicit mode, never an incidental capture or refresh side effect. It proceeds only with explicit migration approval in this run; without it, the existing store stays untouched.
 
 ### Source shapes
 
@@ -156,8 +159,8 @@ origin_union(destination) == union(origin_records(inputs))
 
 | Failure | Result |
 |---|---|
-| Unverified outcome | No write; name the missing observation. |
-| Trivial or duplicate | No write; name the gate reason and the covering path. |
+| Unverified outcome | No write; name the missing enforcement. |
+| Incident-bound, immaterial, or duplicate | No write; name the gate reason and the covering path when one exists. Prefer improving the existing invariant. |
 | Missing date or source | `Documentation skipped`; never fabricate either field. |
 | No approval | No write; report `Deferred: missing consent:write`. |
 | Validator failure or unavailable | Block the write; fix, re-run until exit 0. |
@@ -166,15 +169,15 @@ origin_union(destination) == union(origin_records(inputs))
 
 ## Output
 
-Interactive: complete rationale preview before write; after write, the path plus retrieval tags. Headless: one line naming the path and validator result, or the gate reason. No-write result names the rejecting gate. No remote, publish, deploy, or external-store action follows from a successful result.
+Interactive: complete invariant preview before write; after write, the path plus retrieval tags. Headless: one line naming the path and validator result, or the gate reason. No-write result names the rejecting gate; zero output is normal and never a failure. No remote, publish, deploy, or external-store action follows from a successful result. No count or length quota governs the output.
 
 ## Capture proof cases
 
-- C1 unverified fix: session claims a fix with no observed result. Expected: no write.
-- C2 trivial correction: one-line typo fully explained by the diff. Expected: no durable rationale.
-- C3 one record per run: two unrelated solved problems. Expected: capture one topic; name the deferred second.
-- C4 high overlap: candidate matches an existing record on problem, cause, and guidance. Expected: update in place after consent; no duplicate.
-- C5 missing rationale stays unknown: behavior known, reason not established. Expected: body carries `unknown:`; frontmatter stays complete and valid.
+- C1 unverified fix: session claims a fix with no observed result. Expected: no write; name the missing enforcement.
+- C2 incident-bound trivia: verified one-off fix naming a command, version, or path with no reusable mechanism. Expected: no write; `no-invariant`.
+- C3 overgeneralized scope: claim extends beyond the corroborating evidence. Expected: no write; narrow the scope or add corroboration.
+- C4 high overlap: candidate matches an existing invariant on mechanism, scope, and enforcement. Expected: improve the existing record in place after consent; no duplicate.
+- C5 unenforced claim: invariant stated without guardrail, check, or invariant-exercising test. Expected: no write; `unenforced-or-weak-proof`. A body `unknown:` never substitutes for enforcement.
 - C6 consent required: headless capture without `consent:write`. Expected: no write; `Deferred`.
 - C7 invalid metadata: rationale missing `source`. Expected: validator exits 1; no write.
 

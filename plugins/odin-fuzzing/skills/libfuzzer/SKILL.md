@@ -1,6 +1,6 @@
 ---
 name: libfuzzer
-description: 'Use when asked to build, run, or triage a coverage-guided C/C++ fuzz campaign on the libFuzzer or AFL++ engine. Not for harness design: use fuzz-harness-writing.'
+description: 'Use when asked to build, run, or triage a coverage-guided C/C++ fuzz campaign on the libFuzzer or AFL++ engine. Not for harness design: use fuzzing.'
 ---
 
 # libFuzzer and AFL++
@@ -22,7 +22,8 @@ description: 'Use when asked to build, run, or triage a coverage-guided C/C++ fu
 - Required (afl engine): `afl-fuzz` on the host or the `aflplusplus/aflplusplus` Docker image, and a harness or a program that reads stdin, files, or argv.
 - Optional: Seed corpus directory. It may be empty; when omitted, create `./corpus/` (libfuzzer) or `seeds/` with one non-empty file (afl).
 - Optional: Fuzzing dictionary file (see Dictionary format below).
-- Optional (libfuzzer): Clang build flags: `-fsanitize=address`, `-fsanitize=undefined`, `-g`, `-O2`, `-max_len`, `-dict`, `-timeout`, `-close_fd_mask`, `-fork`, `-ignore_crashes`.
+- Optional (libfuzzer): Clang build flags: `-fsanitize=address`, `-fsanitize=undefined`, `-g`, `-O2`.
+- Optional (libfuzzer): libFuzzer runtime flags passed to the built binary: `-max_len`, `-dict`, `-timeout`, `-close_fd_mask`, `-fork`, `-ignore_crashes` (see Run the campaign below).
 - Optional (afl): run location host or Docker (default Docker); instrumentation mode LTO, LLVM, or GCC (default tries LTO, falls back to LLVM); core count (default single instance); sanitizer selection ASan, UBSan, or none (default none).
 
 ## Procedure

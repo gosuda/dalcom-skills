@@ -81,8 +81,7 @@ than silently changing the verdict.
 
 5. Prove the repair.
 
-   Add or update regression coverage for the reported behavior and the boundaries implicated by the cause. Derive regression expectations from the governing behavior, not from the faulty implementation. Establish that the regression distinguishes the unfixed behavior from the repaired behavior; record how that distinction was demonstrated.
-
+   Add or update regression coverage for the reported fault class, including the reported behavior and the boundaries implicated by the cause. Derive regression expectations from the governing behavior, not from the faulty implementation. Establish fail-before/pass-after: show the regression fails on the unfixed behavior and passes after the repair; record how that distinction was demonstrated.
    Before a temporary mutation, snapshot the exact current bytes of every file it will change, including uncommitted sibling edits. Restore only those files from those snapshots; a restore to HEAD is not equivalent. Confirm the restored content matches the snapshots and the sibling changes remain. File presence in status is not content preservation.
 
    Run the original reproduction or an equivalent proof of the reported behavior after the repair, targeted checks, and the repository-required validation. Report the exact commands, relevant outcomes, and any missing checks. If the assignment reserves execution for another agent, provide the proof inputs and expected results and return unverified; do not claim fixed-and-verified.

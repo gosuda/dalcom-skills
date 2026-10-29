@@ -1,6 +1,6 @@
 ---
 name: fuzzing
-description: 'Use when planning an end-to-end fuzzing program for a project: engine and target selection, corpus management, and CI or nightly wiring. Not for harness design: use fuzz-harness-writing. Not for engine operation or triage: use libfuzzer. Not for sanitizer flag reference: use sanitizers.'
+description: 'Use when planning an end-to-end fuzzing program for a project: engine and target selection, corpus management, and CI or nightly wiring. Harness design follows the step 1 contract inline (function of arbitrary bytes; no filtering or early return; deterministic re-runs). Not for engine operation or triage: use libfuzzer. Not for sanitizer flag reference: use sanitizers.'
 ---
 
 # Fuzzing
@@ -41,7 +41,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
 }
 ```
 
-Rules: return 0 for uninteresting input instead of exiting; never call `abort` or `exit`; never read or write outside `[data, data + size)`; keep no state between calls; stay fast, since the fuzzer calls it millions of times. Done when: the harness passes a review against each rule.
+Rules: return 0 for uninteresting input instead of exiting; never call `abort` or `exit`; never read or write outside `[data, data + size)`; keep no state between calls; stay fast, since the fuzzer calls it millions of times. Feed converted input directly to the target with no filtering, normalization, or early return; seed random sources, disable clocks and timeouts on the harness path, and isolate global state so repeated runs reproduce. Done when: the harness passes a review against each rule.
 2. Build with libFuzzer and the sanitizer set. `-fsanitize=fuzzer` links libFuzzer and supplies `main`, so the target must not define one:
 
 ```bash
@@ -158,6 +158,7 @@ Harness templates and the full flag tables live in references/targets.md.
 | AFL++ target dies at startup | Memory limit too low for the target. Raise `-m` or add `-t` for slow inputs. |
 | CI run too slow | Shrink `-max_total_time`, run `-workers=$(nproc)`, and cache the corpus between runs. |
 | Fuzzer slows to a crawl mid-run | The target leaks or retains state between calls. Audit the harness against the step 1 rules. |
+| Harness fault versus target crash | Fix the harness, never the target, for harness faults; preserve each target crash with its input, stack trace, and environment verbatim and report it without suppressing or repairing it in the harness. |
 
 ## Output
 

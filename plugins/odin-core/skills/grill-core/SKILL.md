@@ -44,9 +44,9 @@ description: 'Use when the cause is unknown, the fault recurs as a class, or a r
 
 2. Name the core fault.
 
-   Open the evidence ledger and record the first entry: symptom, observed versus expected, reproduction command, and the narrowed repro. State one root-cause hypothesis tied to the narrowed repro, in the ledger, before reading or changing any source. Bound the read set to the smallest file set that could satisfy the hypothesis and read only those files. Add tagged instrumentation only around the suspected path to confirm or refute the hypothesis; tag every probe so it can be found and removed. Name the core fault in one sentence: the wrong assumption, the missing invariant, or the misplaced responsibility. If the best available sentence names only the symptom, keep reading. Validate that the identified root cause is sufficient: removing or correcting it must prevent the defect from occurring.
+   Open the evidence ledger and record the first entry: symptom, observed versus expected, reproduction command, and the narrowed repro. State one root-cause hypothesis tied to the narrowed repro, in the ledger, before reading further or changing any source. Bound the read set to the smallest file set that could satisfy the hypothesis and read only those files. Add tagged instrumentation only around the suspected path to confirm or refute the hypothesis; tag every probe so it can be found and removed. Name the core fault in one sentence: the wrong assumption, the missing invariant, or the misplaced responsibility. If the best available sentence names only the symptom, keep reading. Validate that the identified root cause is sufficient: removing or correcting it must prevent the defect from occurring.
 
-   Done when: the ledger first entry records symptom, expected, and reproduction command; one hypothesis is recorded before any source read or change; the read set is bounded; tagged probes are in place; and the core fault is named in one design-level sentence tied to the narrowed repro.
+   Done when: the ledger first entry records symptom, expected, and reproduction command; one hypothesis is recorded before any further source read or change; the read set is bounded; tagged probes are in place; and the core fault is named in one design-level sentence tied to the narrowed repro.
 
 3. Repair at the root.
 
@@ -189,21 +189,11 @@ two revisions.
    terminal status:
    ```
 
-## Shared failure rules
-
-- A hypothesis without a forced or independently grounded probe is unproven.
-- A relaxed timeout, retry, weaker assertion, skip, or quarantined test is reported as
-  a gate relaxation, not as a root-cause fix.
-- A failed or unavailable evaluator remains failed or unavailable in the report.
-- Evidence sample counts are reported as observations, not loop limits.
-- When evidence no longer distinguishes competing causes, stop with the named
-  non-converged result and preserve the evidence already collected.
-````
-
+## Pin, verify, and report
 
 4. Pin with a regression test and verify the full check set.
 
-   Add a regression test that must fail against the unfixed code and pass after the fix. Run the original repro and confirm it no longer triggers; asserting absence without re-running the reproduction is not permitted. For flaky tests, the proof standard is N consecutive comparable full-suite runs: all N runs must be green using the same hardware, build, test suite, and environment. A single green run is not proof; fewer than N consecutive green runs is not proof. If a run fails, revisit the root cause.
+   Add a regression test that must fail against the unfixed code and pass after the fix. Cover the fault class with a second variant input beyond the reported instance. Run the original repro and confirm it no longer triggers; asserting absence without re-running the reproduction is not permitted. For flaky tests, declare N before the first run and keep it fixed. The proof standard is N consecutive comparable full-suite runs: all N runs must be green using the same hardware, build, test suite, and environment. A single green run is not proof; fewer than N consecutive green runs is not proof. If a run fails, revisit the root cause.
 
    Run the project existing test suite for the touched file or module, then the full project check set. Confirm it passes with no monkey patch, shim, special-cased input, or suppressed error left in the diff. If an unrelated test regresses, record it and stop without widening the fix. Remove all tagged instrumentation and confirm the regression test still passes with instrumentation gone.
 
@@ -222,6 +212,16 @@ two revisions.
    Write one line stating why the fault class named at the core can no longer produce the reported bug family: the invariant now enforced, the boundary now closed, or the assumption now corrected. Return the confirmed root cause, the root-shape fix, the passing regression test, the clean tree state, the durability line, and each review-comment verdict on the touched surface, ordered locate, prove, repair, pin, verify, verdicts, durability. For flaky tests include the root cause, the repair applied, and the N consecutive run results. For tickets include reproduction and root-cause evidence, the patch, regression results, and reviewer evidence. On non-convergence, report blocked with the irreproducible symptom or unisolated cause plus the last captures, hypothesis, and artifacts tried.
 
    Done when: the durability line is written and the done predicate holds, or a blocked report names the unmet cause and evidence.
+
+## Shared failure rules
+
+- A hypothesis without a forced or independently grounded probe is unproven.
+- A relaxed timeout, retry, weaker assertion, skip, or quarantined test is reported as
+  a gate relaxation, not as a root-cause fix.
+- A failed or unavailable evaluator remains failed or unavailable in the report.
+- Evidence sample counts are reported as observations, not loop limits.
+- When evidence no longer distinguishes competing causes, stop with the named
+  non-converged result and preserve the evidence already collected.
 
 ## Failure and recovery
 

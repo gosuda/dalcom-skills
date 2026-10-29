@@ -1,8 +1,8 @@
 # TypeScript, jest/vitest deletion patterns
 
-TypeScript with `strict: true` is a static-guarantee language. The compiler proves that interfaces have the fields they declare, that functions return their declared types (modulo `any`/`unknown`/casts), and that exhaustive matches handle every case. **Tests that assert these properties catch no bug the compiler does not**; delete them.
+TypeScript with `strict: true` is a static-guarantee language. The compiler proves that interfaces have the fields they declare, that functions return their declared types (modulo `any`/`unknown`/casts), and that matches guarded by a `never` exhaustiveness check handle every case. **Tests that assert these properties catch no bug the compiler does not**; delete them.
 
-The carve-out: if the codebase uses `any`, `unknown`, or unchecked JSON parses, the static guarantee leaks and shape tests at the leak boundary become real-bug tests. Use Zod or io-ts at the boundary instead, then delete the shape tests.
+The carve-out: if the codebase uses `any`, `unknown`, or unchecked JSON parses, the static guarantee leaks and shape tests at the leak boundary become real-bug tests. Use Zod or io-ts at the boundary instead, then replace ad-hoc shape tests with one boundary-validation test for the schema guard; keep that guard test.
 
 ## Delete
 

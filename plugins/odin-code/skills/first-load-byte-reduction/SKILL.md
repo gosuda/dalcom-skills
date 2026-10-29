@@ -29,7 +29,7 @@ disable-model-invocation: true
 3. Execute byte reduction inside the bound. Apply asset and bundle optimizations that preserve visual and behavioral identity: compress and resize images to the display dimensions, subset fonts to the used glyphs, tree-shake unused JavaScript, split bundles by route, inline critical CSS, defer non-critical resources, compress text assets with Brotli or gzip. Ask before adding or upgrading a dependency. Done when: the reduced screen transfers fewer compressed bytes than the baseline.
 4. Prove pixel identity. Render the reduced screen at the same viewport as the baseline. Compare the full-page screenshot pixel-by-pixel against the baseline screenshot. Tolerances: zero pixel difference for static content; animated or lazy-loaded content must reach the same final rendered state. Run the test suite to confirm no behavioral regression. Done when: pixel identity is confirmed and tests pass.
 5. Stop at success (fewer bytes with pixel identity and passing tests), any non-success terminal, or the bound. Done when: a terminal class is reached and named.
-6. Persist the run record to `.outline/loops/first-load-byte-reduction/<run_id>/` when durable. Emit `receipt.json` before return. Done when: the receipt is written with before/after byte counts, pixel-identity confirmation, and test result.
+6. Persist the run record to `.outline/loops/first-load-byte-reduction/<run_id>/` when durable, including `receipt.json`. Return the receipt content in every run. Done when: the receipt content is returned with before/after byte counts, pixel-identity confirmation, and test result, and is written to `receipt.json` whenever the run is persisted.
 
 ## Failure and recovery
 
@@ -40,4 +40,4 @@ disable-model-invocation: true
 
 ## Output
 
-A terminal classification (`success`, `capped`, `stalled`, `blocked`, or `pending`) plus the before/after compressed byte counts, per-resource breakdown, pixel-identity confirmation, test result, and the run receipt.
+A terminal classification (`success`, `capped`, `stalled`, or `blocked`) plus the before/after compressed byte counts, per-resource breakdown, pixel-identity confirmation, test result, and the run receipt content (written to `receipt.json` only when the run is persisted).

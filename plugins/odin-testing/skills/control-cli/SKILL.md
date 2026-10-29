@@ -36,5 +36,17 @@ description: 'Use when asked to reproduce, profile, or verify CLI/TUI behavior. 
 - Non-deterministic output: run a second capture, record the observed variance, mark the proof non-deterministic, and return blocked rather than asserting a false pass.
 - Any failure: terminate the PTY or tmux process and remove its runtime scratch before returning; if no artifact was captured, delete the whole temp session directory. Never swallow errors or claim the done predicate holds when the proof is missing or inconclusive.
 
+Use temporary credential-free HOME, configuration, data, and session roots when the application supports them. Record the executable, arguments, environment relevant to the scenario, terminal geometry, and launch identity. If concurrent rebuilding could replace the executable, launch a permission-preserving snapshot under the existing temporary-artifact authority. Do not modify source, initialize a repository, repair an installation, enable paid calls, or alter the user's session store.
+
+Declare the terminal capability profile. Answer only the queries appropriate to that profile and record the replies; a copied capability table can invalidate a legacy-terminal test. Wait for the actual painted input surface, send one contract-correct input, drain output, and capture the settled rendered state before the next action.
+
+Retain raw bytes and rendered frames with input and byte-offset attribution. Use raw-stream assertions for byte claims and terminal-emulated rows and cursor state for paint claims. Redraw fragmentation can defeat a phrase search without proving absent paint. A distinctive token may locate a frame but does not replace the scenario's complete rendered predicate.
+
+For synthetic approval fixtures, interact only with the currently visible permitted question and answer row. Do not infer real user consent or disable production approval policy. Derive idle predicates from state-bearing output and test them against a known busy frame. Exercise resize after startup when making a resize claim.
+
+When the claim is normal exit, invoke the application's exit action and observe and reap its child status before cleanup termination. Terminate only still-live processes owned by this session in cleanup. Retain failed captures and remove runtime scratch without deleting unrelated processes or user data.
+
 ## Output
 Transcript or profile artifact containing captured terminal evidence, plus final classification: reproduced, profiled, verified-pass, verified-fail, blocked, or non-deterministic. Live PTY session terminated and runtime scratch removed before return.
+
+When the requested evidence is a terminal animation, retain a deterministic input script or transcript and record the actual terminal geometry. Inspect representative rendered frames, including a post-paint frame, before claiming that the animation shows the intended behavior. Record blank startup frames or nondeterminism honestly. Keep the recording local; commits, orphan asset branches, uploads, and hosted URLs require a separate publication owner and grant.

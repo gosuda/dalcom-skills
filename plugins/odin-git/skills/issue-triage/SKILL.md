@@ -35,10 +35,10 @@ disable-model-invocation: true
    - `close`: invalid, already resolved, or not actionable. The report duplicates a resolved issue, describes expected behavior, or lacks reproducible information. Cite the resolution, expected-behavior reference, or the missing-information gap.
    - `track`: actionable work that must persist, warranting a tracker issue. The report describes a reproducible problem that is not yet tracked. Cite the reproduction evidence.
    The produced verdict must cite the report evidence satisfying its criterion. Produce a single classified verdict. Done when: one verdict from the accepted set is selected with its evidence citation.
-4. **Check for duplicates.** Query the tracker for any existing issues that reference this Slack report. If a duplicate issue exists and the verdict is `track`, skip creation and mark the existing issue as the target. Done when: the duplicate check is complete and the target issue is identified or confirmed absent.
+4. **Check for duplicates.** If `tracker_token` and `tracker_base_url` are supplied, query the tracker for any existing issues that reference this Slack report. If no tracker credentials are supplied, skip the query and record the check as skipped. If a duplicate issue exists and the verdict is `track`, skip creation and use the existing issue URL as the target. Done when: the duplicate check is complete, skipped for missing credentials, or the target issue is identified or confirmed absent.
 5. **Post the verdict to Slack.** Post exactly one thread reply containing the classified verdict and its evidence citation. Stop on failure. Do not post a second reply. Done when: one Slack reply is posted and its timestamp is captured.
 6. **Create tracker issue if warranted.** If the verdict is `track` and no duplicate exists, create exactly one tracker issue linked to the Slack report. Stop on failure. Done when: one tracker issue is created (or skipped as duplicate or not warranted).
-7. **Confirm state.** Verify the Slack reply was posted and the tracker state reflects at most one issue per report. Mark done. Done when: the Slack reply exists and the tracker has at most one issue per report.
+7. **Confirm state.** Verify the Slack reply was posted and, if the tracker was queried, the tracker state reflects at most one issue per report. Mark done. Done when: the Slack reply exists and, if queried, the tracker has at most one issue per report.
 
 ## Failure and recovery
 | Failure class | Rule |
@@ -53,4 +53,4 @@ Partial-result rule: if Slack post succeeded but tracker issue creation failed, 
 
 ## Output
 
-One JSON object: verdict (ack|defer|escalate|close|track), evidence_citation, slack_reply_ts, tracker_issue_url (null when verdict is not track or creation was skipped as duplicate), and is_duplicate.
+One JSON object: verdict (ack|defer|escalate|close|track), evidence_citation, slack_reply_ts, tracker_issue_url (the created or existing duplicate issue URL when verdict is `track`; null when verdict is not `track`), and is_duplicate.

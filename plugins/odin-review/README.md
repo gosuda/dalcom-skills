@@ -2,7 +2,7 @@
 
 ODIN workflows for reviewing diffs, branches, and implementations against their specs.
 
-17 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
+15 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -44,11 +44,9 @@ Each row states when to reach for the skill. Invoke one as `/odin-review:<name>`
 | perspective-complete-review | Use when one named review viewpoint must run fix cycles until a fresh reviewer finds nothing. |
 | pr-impact-quiz | Use when the user invokes this skill to generate targeted questions proving the author understands the change's codebase effect. |
 | review | Use when asked to review a pull request, examine code changes, find bugs, or audit a branch, in standard or depth mode. |
-| review-speedread | Use when a human asks for the change shape before reading a diff. |
 | sarif-parsing | Use when a user supplies existing SARIF to inspect, filter, aggregate, deduplicate, diff, convert, or gate findings. |
 | show-review | Use when the user wants a per-finding visual walk through a diff or PR. |
 | spec-to-code-compliance | Use when implementation must be checked against an authoritative specification, or during PR review for spec drift against checked-in specs. |
-| validate-changes-match-specs | Use when asked to compare implementation against repository specs, report mismatches, resolve by user decision, or check PR-review commitments. |
 | visual-diff-review | Use when asked to review a diff and produce a 7-section visual page. |
 
 ## Workflows

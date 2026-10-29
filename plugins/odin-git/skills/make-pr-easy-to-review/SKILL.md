@@ -43,3 +43,7 @@ Required: the pull request or local branch, its base ref, and the human's reques
 ## Output
 
 Return the proposed pull request title and description, an ordered reviewer path, a risk-to-path-and-evidence table, and a terminal classification. For an approved successful rewrite, also return the original and rewritten tip identifiers, recovery ref, identical pre- and post-rewrite tree identifier, and `ready-local`. For annotation-only work, return `annotated`. For failure, return exactly the applicable `blocked`, `not-authorized`, or `tree-mismatch` result with recovery status.
+
+## Provider note
+
+This skill makes no forge call: it consumes only the local branch and base refs, so it is provider-neutral by construction and needs no MR counterpart operation. Its title and description output feeds creation or update owned elsewhere: on GitHub `gh pr create` / `gh pr edit`, on GitLab `glab mr create --source-branch <branch> --target-branch <base> --title <title> --description-file <file>` / `glab mr update --description-file <file>` (body file plus `-y`, only after the exact-write preview is approved; `glab mr create` has no `--dry-run`). Bind the GitLab host, project, and IID from the verified remote or request URL; on a fork the head and target projects differ. Ambiguity stops before any forge command.

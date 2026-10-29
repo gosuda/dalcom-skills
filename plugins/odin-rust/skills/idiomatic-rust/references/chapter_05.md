@@ -387,3 +387,7 @@ fn endpoint_get_user_data() {
 ```
 * Commit your snapshots into git. They will be stored in `snapshots/` alongside your tests.
 * Review changes carefully before accepting.
+
+### Prove that the intended branch executed
+
+A green test does not prove a rare collision or retry branch executed. Arrange the precondition deterministically and require an observable branch witness plus the expected final behavior. For PID-derived names, exec preserves the PID only for the process that is replaced; a test runner that spawns another process changes the argument. Use an isolated namespace owned by the test, observe the actual process topology, and distinguish the direct-binary proof from coverage through the normal runner. Do not leave artifacts solely to manufacture a witness.

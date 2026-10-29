@@ -1,6 +1,6 @@
 ---
 name: security-finding-verification
-description: 'Use when a named security allegation needs a true-positive or false-positive verdict. Not for discovering bugs: use security-review. Not for adding controls: use security-hardening.'
+description: 'Use when a named security allegation needs a true-positive or false-positive verdict. Not for discovering bugs: use security-review. Not for adding controls.'
 ---
 
 # Security finding verification
@@ -17,7 +17,7 @@ description: 'Use when a named security allegation needs a true-positive or fals
 ## Not for
 
 - Discovering new vulnerabilities in a change set: use security-review.
-- Adding security controls during construction: use security-hardening.
+- Adding security controls during construction.
 
 ## Inputs
 

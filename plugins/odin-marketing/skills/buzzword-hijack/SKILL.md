@@ -1,6 +1,6 @@
 ---
 name: buzzword-hijack
-description: 'Use when a user wants to choose and execute a bounded positioning move that rides a jargon wave. Not for describing the jargon weather of a domain: use buzzword-analysis.'
+description: 'Use when a user wants to choose and execute a bounded positioning move that rides a jargon wave. Not for describing the jargon weather of a domain.'
 ---
 
 # Buzzword hijack
@@ -10,7 +10,7 @@ description: 'Use when a user wants to choose and execute a bounded positioning 
 | Field | Bound contract |
 |---|---|
 | Trigger | User wants to choose and execute a bounded positioning move that rides a jargon wave without confusing trend with truth. |
-| Authority | Reversible local: writes only the named local positioning artifact (copy, landing, or messaging); rollback is delete or revert of the written artifact. No publication, posting, outreach, campaign execution, or remote mutation. Trend evidence comes from user-supplied material or the read-only `buzzword-analysis` owner, never from social-feed discovery performed here. Requires explicit target and content consent before producing a channel-facing artifact. |
+| Authority | Reversible local: writes only the named local positioning artifact (copy, landing, or messaging); rollback is delete or revert of the written artifact. No publication, posting, outreach, campaign execution, or remote mutation. Trend evidence comes from user-supplied material only, never from social-feed discovery performed here. Requires explicit target and content consent before producing a channel-facing artifact. |
 | Side effect | A bounded positioning move artifact written to a local file. No publish, deploy, or remote mutation. |
 | Done | A bounded positioning move is executed and the artifact is written without confusing trend with truth; every factual claim stands without the jargon. |
 

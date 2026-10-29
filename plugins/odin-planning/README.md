@@ -2,7 +2,7 @@
 
 ODIN workflows for shaping intent into approved plans, specs, and task lists.
 
-36 skills, category Productivity. Install the whole plugin below, or take a single skill with `gh skill install`.
+39 skills, category Productivity. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -34,41 +34,44 @@ Each row states when to reach for the skill. Invoke one as `/odin-planning:<name
 | Skill | Trigger |
 |---|---|
 | abstract-well | Use when the user wants to classify abstractions as useful, bad, or busy and keep one shallow level. |
-| askme | Use when eliciting intent/scope/referents or gating long/bundled/high-stakes/hard-to-undo work: exhaustive/collaborative/adversarial/gate/batch/interview/scan/proposal. |
-| autoplan | Use when the user runs /autoplan on a plan or idea. |
-| backlog | Use when asked to park an undecided idea without representing it as decided or active work. |
-| brainstorm | Use when the user begins knowledge work with notes, a transcript, or a brain dump, asks for divergent ideas (mode: ideate), or wants options shown in a local browser (mode: visual). |
-| converge | Use when the user wants to collapse an open decision field to one decision and record its rationale locally. |
+| attack-shape | Use when the user wants adversarial stress-testing of a proposed architecture, structure, or shape. |
+| bakeoff | Use when choosing well needs developing competing solutions to a defined brief beyond their current form. |
+| brainstorm | Use when capturing or refining notes, a transcript, a brain dump, or an existing idea, or when a concrete visual question is clearer shown in a local browser. |
+| council | Use when the user asks for a council, second opinions, or parallel investigation. |
+| cross-critique | Use when independent proposals on a contested decision need cross-critique before choosing, reusing the original authors. |
+| cross-lens-converge | Use when one reviewer is not enough because failure modes are heterogeneous, or a claim needs cross-lens pressure before it ships. |
 | decide | Use when the user has a fork and wants it resolved and applied, not explored: "decide this", "choose the path", or "decide and fix it". |
+| decision-rationale-gaps | Use when a current decision needs pressure-testing until the rationale is clear to a skeptic. |
 | define-goalstate | Use when the user wants the finished-system contract for a piece of work: behavior, protocols, allowed, forbidden, and impossible states with a state-space proof. |
-| diverge | Use when the user wants to expand a decision field with additional options and dimensions. |
-| entropy-assisted-planning | Use when the user explicitly requests a Tarot draw or casually delegates an ambiguous choice among multiple valid approaches. |
-| fail-design | Use when a user wants to define failure states, recovery actions, bypasses, and degraded modes for a component during design. |
+| doubt-driven | Use when a non-trivial decision sits under uncertainty and correctness matters more than speed. |
+| frame | Use when a vague or ambitious product idea needs framing into a right-sized requirements-only plan before implementation. |
 | from-first-principle | Use when a user wants to rebuild a design, organization, or API from primitives. |
+| from-perspective | Use when an answer is wanted from one named seat only: breaking, business, career, codebase, human, impact, innovation, moat, rent-seeking, skeptic, or stability. |
 | generalize | Use when asked to derive the general rule a request carries as examples instead of a stated rule, then bound it. |
-| goal-init | Use when a durable effort needs an approved, checkable success predicate before work starts. |
 | graph-backbone | Use when defining, revising, or gate-replanning the project structural backbone in project-root graph.yaml. |
-| idea-sparkbox | Use when the user asks to park ideas or inspiration for later. |
+| ideate-multiple-agents | Use when the user wants divergent ideas or an independently generated candidate pool grounded in the working repository. |
+| influence-and-negotiation | Use when an agreement-seeking interaction arises, including mid-conversation moments the model detects. |
 | leave-only-first-principle | Use when asked to prune a design or codebase until only primitives remain, producing a first-principles map. |
+| let-fate-decide | Use when the user says let fate decide, YOLO, dealer choice, surprise me, whatever, or delegates a vague choice in a casual or playful tone, or when you are about to pick arbitrarily between valid options. |
+| load-bearing-assumption-test | Use when the user asks why a plan is wrong or says "poke holes in this". |
 | loop-me | Use when the user says "loop me" or asks to design a recurring workflow. |
 | minimap | Use when the user needs a compact read-only current-work view from Git state, recorded test evidence, and optional graph.yaml. |
-| next-best-action | Use when a project is between phases, the author asks what to do next, too many threads are open, or work needs re-entry. |
-| plan | Use when a user commits to a direction and asks to plan, brief, research, or operationalize it; or wants to enumerate designs, configurations, scenarios, and paths, audit a supplied plan, tune the review flow, or a plan-mode enforcement hook intercepts a plan review, or lock a greenfield architecture and interfaces. |
+| plan | Use when multi-step work needs a structured implementation plan that preserves outcomes and constraints. |
 | possible-worlds | Use when a design dispute has at least two live interpretations and the caller wants worlds made explicit or a plain-language recommendation. |
-| pov | Use when asked to judge whether to adopt, switch, reject, or revisit technology, library, pattern, or architecture, or a second opinion. |
+| pov | Use when a supplied question, document, or approach set needs a project-grounded judgment with attribution. |
+| prism | Use when one reviewer angle is insufficient or the user suspects a direction is tunnel-visioned or inherited its framing. |
+| punishing-practices | Use when a workflow, plan, diff, or completed work cycle must be checked for practices that punish the project later. |
 | readiness-assessment | Use when a user asks for a gut-check on a decision or action, or asks whether enough is known to proceed. |
-| show-way | Use when the user asks for a flattened view of roadmaps and next actions. |
-| solidate | Use when the user wants to harden a chosen but tentative artifact into one durable result. |
 | spec-driven | Use when starting a project or feature, requirements are unclear, or a change crosses modules. |
 | state-machine-workflow | Use when work has distinct modes and the user wants states, events, guards, outcomes, illegal transitions, not a prose todo list. |
+| taste | Use when asking "overkill?", "elegant?", "audit", or "taste-test this", or setting a taste register. |
 | tasty-abstraction | Use when a user wants to design an abstraction boundary that collapses a complex implementation into a simpler interface without leaking internal state. |
-| to-questionnaire | Use when user wants an async questionnaire, a discovery questionnaire, or a knowledge gap needs answers outside the repo. |
 | to-spec | Use when settled conversation decisions need synthesis into an agent-ready implementation spec, stopping before publication. |
 | to-tickets | Use when a settled plan needs implementation tickets published as blocker-linked slices, tracer bullets, or expand-contract sequencing. |
 | todo-add | Use when a message contains `TODO ADD: <requirement>`. |
 | todos-enhance | Use when tasks are too vague, read as headings, or the user asks to sophisticate the todos. |
 | todos-update | Use when user asks to update todos, resync the task list, say what to do next, or plan and tree have drifted apart. |
-| wayfinder | Use when a greenfield project or large feature build will not fit in a single agent session. |
+| wayfinder | Use when a greenfield project or large feature build will not fit in a single agent session and the route must be charted as decision tickets first. |
 
 ## Workflows
 

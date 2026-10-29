@@ -1,6 +1,6 @@
 ---
 name: cpu-kernel-authoring
-description: 'Use when writing, optimizing, or benchmarking a C++ CPU kernel with AVX2 or AVX512 intrinsics for the Hugging Face kernels ecosystem. Not for CUDA kernels: use cuda.'
+description: 'Use when writing, optimizing, or benchmarking a C++ CPU kernel with AVX2 or AVX512 intrinsics for the Hugging Face kernels ecosystem. Not for CUDA kernels.'
 disable-model-invocation: true
 ---
 

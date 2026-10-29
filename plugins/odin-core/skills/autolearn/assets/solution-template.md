@@ -1,6 +1,6 @@
 # Solution doc templates
 
-Pick the template for the `problem_type` track (see `references/schema.md`). Replace every bracketed placeholder. Delete sections with no real content instead of leaving placeholders. The template itself is not a record: run the validator only after all placeholders are replaced.
+Pick the template for the `problem_type` track (see `references/schema.md`). Each doc records one generalized, well-abstracted invariant: a reusable mechanism (never an incident, project name, command, version, or path) with stated supported scope, actual enforcement or proof, and a material consequence (prevents a plausible significant failure or improves a recurring decision). Tiny one-off fixes, trivia, and session history never qualify; no non-trivial-fix shortcut; no speculative universal truths. Replace every bracketed placeholder. Delete sections with no real content instead of leaving placeholders. Never add, rename, or drop frontmatter fields: the stored `odin-learning/v1` shape is fixed. The template itself is not a record: run the validator only after all placeholders are replaced.
 
 ## Bug track
 
@@ -37,13 +37,13 @@ tags:
 - [Attempted fix and why it failed]
 
 ## Solution
-[The fix that worked, with code snippets when they carry weight]
+[The fix that worked, with code snippets when they carry weight. State the generalized mechanism with its supported scope, never the incident retelling and never broader than the evidence.]
 
 ## Why This Works
-[Root cause, and why the fix addresses it, the WHY, not a restatement of the diff]
+[The mechanism, its enforcement or proof, and the material fault consequence if violated. The WHY, not a restatement of the diff and not a fixture snapshot.]
 
 ## Prevention
-- [Concrete practice, test, or guardrail that stops a recurrence]
+- [Concrete reusable guardrail, check, or test that enforces the invariant and stops a recurrence]
 
 ## Related
 - [Related docs or issues, if any]
@@ -76,16 +76,16 @@ tags:
 [What situation, gap, or friction prompted this guidance]
 
 ## Guidance
-[The practice or recommendation, with code examples when useful]
+[The invariant mechanism as a reusable practice, with code examples when useful. Never an incident, project name, command, version, or path.]
 
 ## Why This Matters
-[Rationale and impact of following, or not following, this]
+[Material rationale: the plausible significant failure prevented or the recurring decision improved by following this]
 
 ## When to Apply
-- [Conditions or situations where this applies]
+- [Supported scope where this applies, no broader than the evidence]
 
 ## Examples
-[Concrete before/after or usage example showing the practice in action]
+[Concrete reusable input or setup showing the practice in action, not a session log]
 
 ## Related
 [Related docs or issues, if any]

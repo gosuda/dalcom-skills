@@ -30,6 +30,7 @@ MACHINE_MARKER = "machine-contract"
 DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 SHA_RE = re.compile(r"^[0-9a-f]{64}$")
 TAG_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+NUM_RE = re.compile(r"^[-+]?(?:[0-9][0-9_]*(?:\.[0-9_]*)?(?:[eE][-+]?[0-9]+)?|\.[0-9][0-9_]*(?:[eE][-+]?[0-9]+)?)$")
 KEY_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 PLAIN_LEAD_BAD = set("[]{}&*!|>%@`\"'#,")
 DOUBLE_ESCAPES = set("0abtnvfre \"\\/N_LP")
@@ -244,6 +245,12 @@ def _parse_scalar(token, field):
         return (t == "true"), None
     if t in ("null", "~"):
         return None, "null value not allowed for '%s'" % field
+    if t.lower() == "null":
+        return None, "null value not allowed for '%s'" % field
+    if t.lower() in ("true", "false"):
+        return None, "value for '%s' looks like a boolean; quote it" % field
+    if NUM_RE.match(t) or t.lower() in (".inf", "-.inf", "+.inf", ".nan"):
+        return None, "value for '%s' looks like a number; quote it" % field
     if t[0] in PLAIN_LEAD_BAD:
         return None, "value for '%s' starts with reserved indicator; quote it" % field
     if t[0] in "-?:":
@@ -333,7 +340,8 @@ def _parse_mapping(lines):
                 break
             stripped = c2.strip()
             if not stripped.startswith("-"):
-                if key == "origin_records":
+                if (key == "origin_records" and item_lines
+                        and ind2 > item_lines[0][1]):
                     if ":" not in stripped:
                         errors.append("line %d: origin field must be 'key: value'" % l2)
                         j += 1
@@ -668,6 +676,15 @@ def _validate(data, cfg, doc_path):
                 e = _check_date(data["stale_date"], "stale_date")
                 if e is not None:
                     problems.append(e)
+        if data.get("status") != "stale":
+            if "stale_reason" in data and (
+                    not isinstance(data["stale_reason"], str)
+                    or data["stale_reason"] == ""):
+                problems.append("field 'stale_reason' must be a non-empty string")
+            if "stale_date" in data:
+                e = _check_date(data["stale_date"], "stale_date")
+                if e is not None:
+                    problems.append(e)
         if "last_updated" in data:
             e = _check_date(data["last_updated"], "last_updated")
             if e is not None:
@@ -834,6 +851,39 @@ def _self_cases():
         "---\n"
         "Body.\n"
     )
+    s_stale_no_pair = s_base.replace(
+        "severity: high\n", "severity: high\nstatus: stale\n")
+    s_stale_supersedes_no_pair = s_base.replace(
+        "severity: high\n",
+        "severity: high\nstatus: stale\nsupersedes: docs/solutions/old.md\n")
+    s_active_bad_stale_date = s_base.replace(
+        "severity: high\n", "severity: high\nstatus: active\nstale_date: nope\n")
+    s_active_valid_stale_pair = s_base.replace(
+        "severity: high\n",
+        "severity: high\nstatus: active\n"
+        "stale_reason: revisit after migration\nstale_date: 2026-10-29\n")
+    s_numeric_title = s_base.replace(
+        "title: 'Fix: restore the build graph'\n", "title: 404\n")
+    s_quoted_numeric_title = s_base.replace(
+        "title: 'Fix: restore the build graph'\n", "title: '404'\n")
+    r_null_source = r_base.replace(
+        "source: session context 2026-10-29\n", "source: Null\n")
+    r_origin_mapping = (
+        "---\n"
+        "schema: odin-learning/v1\n"
+        "record_kind: rationale\n"
+        "date: 2026-10-01\n"
+        "type: lesson\n"
+        "confidence: medium\n"
+        "source: session context 2026-10-29\n"
+        "origin_records:\n"
+        "  path: docs/solutions/old-a.md\n"
+        "    sha256: " + a64 + "\n"
+        "    migration_origin: legacy-compound-v0\n"
+        "    historical: true\n"
+        "---\n"
+        "Body.\n"
+    )
     return [
         ("valid rationale with plain and block-list scalars", r_base, True),
         ("valid rationale with nested origin_records list", r_origin_two, True),
@@ -850,6 +900,17 @@ def _self_cases():
         ("origin item missing historical is rejected", r_origin_no_historical, False),
         ("duplicate origin tuple is rejected", r_origin_duplicate, False),
         ("non-ISO date is rejected", r_bad_date, False),
+        ("stale record without stale pair is rejected", s_stale_no_pair, False),
+        ("stale record with supersedes but no stale pair is rejected",
+         s_stale_supersedes_no_pair, False),
+        ("non-stale record with mistyped stale_date is rejected",
+         s_active_bad_stale_date, False),
+        ("non-stale record carrying a valid stale pair is accepted",
+         s_active_valid_stale_pair, True),
+        ("unquoted numeric title is rejected", s_numeric_title, False),
+        ("quoted numeric title is accepted", s_quoted_numeric_title, True),
+        ("unquoted Null source is rejected", r_null_source, False),
+        ("mapping-shaped origin_records is rejected", r_origin_mapping, False),
         ("JSON object without delimiters is rejected",
          '{"schema": "odin-learning/v1"}\n', False),
     ]
@@ -894,7 +955,9 @@ def run_self_test():
 
 def main(argv):
     if "--self-test" in argv:
-        return run_self_test()
+        if len(argv) == 2:
+            return run_self_test()
+        return _usage("--self-test takes no file argument")
     if len(argv) != 2:
         sys.stderr.write("validate-record: usage: %s <doc-path>\n" % os.path.basename(argv[0]))
         return EXIT_USAGE

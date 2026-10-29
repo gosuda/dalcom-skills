@@ -16,7 +16,7 @@ Work with collaborative markdown documents on the hosted Proof service through i
 | Side effect | Creates, reads, edits, comments, suggests, or pulls one hosted markdown document; optionally deletes it on explicit cleanup. Local pull overwrites the named local file atomically. |
 | Done | Create is confirmed by the returned `tokenUrl`; mutation by `ok: true` (on `202` or `partial: true`, by re-reading `v3/document`); pull by the local file written; read by the content returned; plus a short summary and the result link or path. |
 
-Parnas boundary: owns Proof share, read, review, edit, and pull plumbing. Does not own durable learning (`compound`, `autolearn`), PR bodies (`create-pull-request`), or local doc authoring (`docs-writing`, `doc-coauthoring`). It publishes source-file bytes; it never hand-writes the shared body.
+Ownership boundary: owns Proof share, read, review, edit, and pull plumbing. Does not own durable learning (`compound`, `autolearn`), PR bodies (`create-pull-request`), or local doc authoring (`docs-writing`, `doc-coauthoring`). It publishes source-file bytes; it never hand-writes the shared body.
 
 Source: `EveryInc/compound-engineering-plugin` pinned `fbd794f329f5b65d0ea00a5e6487336c385ff2be`, `skills/ce-proof/SKILL.md` plus `references/api.md` and `references/workflows.md`. Identity `ai:compound-engineering` and display `Compound Engineering` are preserved as wire defaults; a caller may pass a distinct sub-agent identity pair when that agent owns the doc. No trademark SVG is reused as branding.
 

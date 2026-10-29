@@ -1,6 +1,6 @@
 ---
 name: dynamic-linking
-description: 'Use when debugging shared library load failures, setting RPATH or RUNPATH, applying soname versioning, writing dlopen plugins, or intercepting with LD_PRELOAD. Not for static archives: use binutils.'
+description: 'Use when debugging shared library load failures, setting RPATH or RUNPATH, applying soname versioning, writing dlopen plugins, or intercepting with LD_PRELOAD. Not for static archives.'
 ---
 
 # Dynamic linking

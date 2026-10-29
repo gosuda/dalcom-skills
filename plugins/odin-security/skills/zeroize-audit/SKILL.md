@@ -1,6 +1,6 @@
 ---
 name: zeroize-audit
-description: 'Use when auditing C, C++, or Rust secret-handling code to verify zeroization survives compiler optimization. Not for test vectors: use wycheproof.'
+description: 'Use when auditing C, C++, or Rust secret-handling code to verify zeroization survives compiler optimization. Not for test vectors.'
 ---
 
 # Zeroize audit

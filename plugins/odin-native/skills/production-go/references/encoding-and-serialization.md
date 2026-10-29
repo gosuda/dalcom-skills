@@ -243,7 +243,7 @@ Trap: one `Decode` reads *one* value and stops at the next token boundary: it do
 
 ## JSON v2 [1.27, standard] {#json-v2}
 
-`encoding/json/v2` is a ground-up redesign (RFC 8259) fixing v1's worst defaults and adding true streaming. It exists **only** with `GOEXPERIMENT=jsonv2`; the overview states it is standard in Go 1.27 and **not** under the Go 1 compatibility promise. It ships with `encoding/json/jsontext`, a low-level format-only tokenizer.
+`encoding/json/v2` is a ground-up redesign (RFC 8259) fixing v1's worst defaults and adding true streaming. It is standard in Go 1.27 (with `encoding/json/jsontext`); the v1 `encoding/json` API is retained and is backed by the v2 implementation. It ships with `encoding/json/jsontext`, a low-level format-only tokenizer.
 
 ```bash
 GOEXPERIMENT=jsonv2 go build ./...
@@ -286,7 +286,7 @@ func (t *MyType) UnmarshalJSONFrom(dec *jsontext.Decoder) error { /* read tokens
 
 Useful options: `json.Deterministic(true)` (sorted map keys → reproducible/signable output), `json.OmitZeroStructFields(true)`, `json.StringifyNumbers(true)`, and `json.WithMarshalers(...)`/`WithUnmarshalers(...)` to register type behavior *without* modifying the type; combine via `json.JoinOptions(...)`.
 
-Status & guidance: the pre-Go-1.27 experimental restriction no longer applies; Go 1.27 makes encoding/json/v2 and encoding/json/jsontext standard packages (GOEXPERIMENT=nojsonv2 is the opt-out). The dev repo `github.com/go-json-experiment/json` mirrors the API but **must not** appear in published `go.mod`. [verify: GA target; whether v1 is internally reimplemented on v2: the v2 doc does not assert this, treat as unconfirmed.]
+Status & guidance: the pre-Go-1.27 experimental restriction no longer applies; Go 1.27 makes encoding/json/v2 and encoding/json/jsontext standard packages (GOEXPERIMENT=nojsonv2 is the opt-out).
 
 ---
 
@@ -532,7 +532,7 @@ Rules: protobuf is the gold standard: never reuse a retired field number (`reser
 | **1.24** | **`omitzero` struct tag**; **`encoding.TextAppender`/`BinaryAppender`** |
 | **1.25** | `encoding/json/v2` available as an experiment (early form) |
 | **1.26** | **`encoding/json/v2` + `encoding/json/jsontext`** under `GOEXPERIMENT=jsonv2` (experimental); `new(expr)` aids optional pointer fields; (`slog.NewMultiHandler`, `NotifyContext` cause: adjacent) |
-| **1.27** | json/v2 progress toward GA [verify]; generic methods (enable generic marshaler helpers). Treat as draft until GA. |
+| **1.27** | json/v2 + jsontext standard; generic methods stable (interface methods still excluded). |
 
 ---
 

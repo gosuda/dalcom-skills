@@ -1,6 +1,6 @@
 ---
 name: fuzz-harness-writing
-description: 'Use when a user needs to create or improve a deterministic, engine-agnostic fuzz harness for raw or structured target inputs. Not for coverage measurement: use fuzzing-coverage-analysis.'
+description: 'Use when a user needs to create or improve a deterministic, engine-agnostic fuzz harness for raw or structured target inputs. Not for coverage measurement.'
 ---
 
 # Fuzz harness writing
@@ -16,7 +16,7 @@ description: 'Use when a user needs to create or improve a deterministic, engine
 
 ## Not for
 
-- Coverage measurement or plateau analysis: use fuzzing-coverage-analysis.
+- Coverage measurement or plateau analysis.
 - Patching the system under test to bypass obstacles: use fuzzing-obstacles.
 - Remote, credential, publish, deploy, or irreversible changes.
 

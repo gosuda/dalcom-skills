@@ -20,11 +20,9 @@ Each file carries a `# Concept Name` heading, a `Decision:` line, a `Reason:` li
 ```markdown
 # Dark Mode
 
-This project does not support user-facing theming.
+Decision: Declined, this project does not support user-facing theming.
 
-## Why this is out of scope
-
-The rendering pipeline assumes a single palette resolved at build time.
+Reason: The rendering pipeline assumes a single palette resolved at build time.
 Supporting runtime themes would require a context provider wrapping the
 whole tree plus per-component resolution and a persistence layer, which
 does not align with this project focus on content authoring.

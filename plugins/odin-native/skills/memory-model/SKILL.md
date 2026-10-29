@@ -1,6 +1,6 @@
 ---
 name: memory-model
-description: 'Use when choosing memory orderings for C++ or Rust atomics, reasoning about happens-before, writing lock-free patterns, or diagnosing data races. Not for lock-based design: use kernel-concurrency.'
+description: 'Use when choosing memory orderings for C++ or Rust atomics, reasoning about happens-before, writing lock-free patterns, or diagnosing data races. Not for lock-based design.'
 ---
 
 # Memory model

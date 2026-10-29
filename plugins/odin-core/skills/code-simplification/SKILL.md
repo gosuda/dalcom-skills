@@ -5,7 +5,7 @@ description: 'Use when the user names a module, file set, or dependency slice an
 
 # Code simplification (offensive structural default)
 
-Anchors: Dieter Rams (every remaining element earns its place), David Parnas (a module hides decisions behind its contract; migrating affected callers is part of the cut, not a separate favor).
+Standards: every remaining element earns its place. A module hides decisions behind its contract, migrating affected callers is part of the cut.
 
 Aggressive by default. The scope is the complete authorized module or dependency surface: every module, file, and edge in scope is classified and challenged, not only lines recently touched. Shallow layers (forwarding tiers, single-use layers, pass-through modules, depth without a decision boundary) are challenged first and collapsed into their surviving owners; all in-scope callers are migrated in the same change. Real invariants (protocol, error, security, persistence, and compatibility contracts) are retained, and boundary cuts need an explicit recorded yes.
 
@@ -32,7 +32,7 @@ Two modes share this contract. `module` takes one named scope and reduces its in
 
 2. **Classify every divergence, challenging shallow layers first.** Walk the old shape function by function and branch by branch: essential (fold into the general case, one-line reason) or residue (cut, one-line reason). Challenge shallow layers first: forwarding tiers, single-use layers, pass-through modules, and depth without a decision boundary are residue unless a named invariant requires them, and collapse into their surviving owners. Further residue covers dead state, forwarding-only wrappers, single-use generics with one concrete use, factories with one real implementation, always-on or always-off flags whose losing branch is deletable, and redundant nesting with no behavioral cause. A swappable-implementation contract counts only when more than one real implementation ships today; single use or zero branching alone never proves a wrapper is unnecessary. A live invariant never counts as residue even when it looks like ceremony. Done when: nothing reachable in scope is unclassified, and every shallow layer has a keep-with-invariant-reason or a collapse target.
 
-3. **Gate the boundary before cutting.** Interior (every caller in-tree, nothing persisted, shipped, configured in someone else's deployment, or promised against a version) is demolished without asking once the scope is named. Boundary (public API, wire or on-disk format, configuration running in someone else's deployment, plugin point, documented example consumers import, anything a version was promised against) needs a recorded yes before cutting; on silence or no, keep it permanently as contract and hand the compat cut to `refactor-break-compat` or `deprecate-and-migrate` with file, line, contract evidence, and reason. Never cut a boundary surface on silence, and never cut a real invariant to make the structure smaller. Done when: every boundary surface has a yes or a no, every invariant has its check, and nothing protected is cut on silence.
+3. **Gate the boundary before cutting.** Interior (every caller in-tree, nothing persisted, shipped, configured in someone else's deployment, or promised against a version) is demolished without asking once the scope is named. Boundary (public API, wire or on-disk format, configuration running in someone else's deployment, plugin point, documented example consumers import, anything a version was promised against) needs a recorded yes before cutting; on silence or no, keep it permanently as contract and hand the compat cut to `refactor-break-compat` with file, line, contract evidence, and reason. Never cut a boundary surface on silence, and never cut a real invariant to make the structure smaller. Done when: every boundary surface has a yes or a no, every invariant has its check, and nothing protected is cut on silence.
 
 4. **Cut and migrate in the same change.** Delete residue; collapse special cases into the general case; collapse condemned shallow layers into their surviving owners; inline single-use indirection at every call site, then delete the wrapper. Migrate all in-scope callers, test references, and doc pointers in the same change: imports, call sites, fixture wiring, renamed symbols, module doc pointers, navigation entries. Never leave a caller on a removed surface; never leave a shim, alias, tombstone, dual path, or deprecated wrapper. Done when: residue search returns nothing and no reference to a removed surface remains.
 
@@ -45,14 +45,13 @@ Two modes share this contract. `module` takes one named scope and reduces its in
 | Owner | When it owns the job, not this skill |
 |---|---|
 | This skill | One named scope, consumer contract and real invariants preserved. Aggressive reduction of the complete authorized surface with all in-scope caller migration in the same change. No blind re-derivation, no contract rewrite. |
-| `breaking-driven` | The module is bloated enough to derive blind from call-site evidence and audit every old behavior as essential-or-residue. Replacement derived from the stated contract alone. Route when the divergence walk shows the old structure reproduces itself under fresh names. |
-| `offense` | A human explicitly says overhaul, rebuild, or rewrite-from-scratch. Demolish-and-re-derive from contracts; contracts themselves may change with approval. Never self-initiated from this skill. |
+| `breaking-driven` | The module is bloated enough to derive blind from call-site evidence and audit every old behavior as essential-or-residue. Replacement derived from the stated contract alone. Route when the divergence walk shows the old structure reproduces itself under fresh names. Human-explicit overhaul, rebuild, or rewrite-from-scratch intent is handled here through the same contract-first replacement with boundary approval, never self-initiated from this skill. |
 | `guillotine` | Residue spans more than one artifact class (code plus docs, tests, config, workflows, or generated sources) with the observable boundary unchanged. Requires a candidate ledger plus bidirectional consumer proof. Route when the cut crosses artifact classes. |
 | `architect` | Crate, module, or dependency-graph layout planning across scopes. This skill executes an approved slice at a time; `architect` owns the plan. |
 | `deps-upgrade` | Drop or upgrade of a third-party dependency for semantic, version, or policy reasons. |
 | `tests-purge-unneeded` | Any test deletion. Only owner with a mutation-proof contract. |
 | `purge-slop-docs` | Doc-only purges, hierarchy reorders, whole-doc deletion (separate yes per file). |
-| `refactor-break-compat` / `deprecate-and-migrate` | Any consumer-facing surface cut. Explicit recorded yes only. |
+| `refactor-break-compat` | Any consumer-facing surface cut. Explicit recorded yes only. |
 
 This skill never renames itself into a rebuild to avoid a handoff.
 

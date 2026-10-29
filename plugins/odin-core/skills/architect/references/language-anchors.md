@@ -1,6 +1,6 @@
 # Per-language anchors
 
-Each language maps the shared vocabulary (module, interface, seam, adapter) to its own constructs. Use the row matching the target language when anchoring terms in step 8 of the procedure.
+Each language maps the shared vocabulary (module, interface, seam, adapter) to its own constructs. Use the row matching the target language when anchoring terms in Targeted-module step 8.
 
 ## Rust
 

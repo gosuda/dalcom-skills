@@ -6,7 +6,7 @@ Type the skill's name before a request, in the form your harness uses:
 
 | Harness | Explicit invocation | Example |
 |---|---|---|
-| Claude Code | `/<plugin>:<slug>`; plugin skills are namespaced by plugin id | `/odin-planning:todos-update` |
+| Claude Code | `/<plugin>:<slug>`; plugin skills are namespaced by plugin id | `/odin-core:todos-update` |
 | Codex | `$<slug>`, or `/skills` to pick from a list | `$todos-update` |
 | Cursor | Type `/` and pick the skill by name | `/todos-update` |
 
@@ -16,24 +16,24 @@ Names are exact: `todos-update` loads one skill, and a near miss loads nothing.
 
 ## Stack invocations
 
-Several invocations in one message stack in the order you wrote them. This is the dominant pattern in real use: transcripts show 96 distinct multi-skill stacks, up to 20 skills in one message. Order them the way you want them applied.
+Several invocations in one message stack in the order you wrote them. Order them the way you want them applied.
 
 ## Match by trigger
 
 A skill can also load when your request matches its description trigger. Every description opens with a routing phrase such as `Use when`, and `scripts/check-skill-routes.mjs` rejects a description that states no trigger. When you phrase a request as the situation a skill names, that skill loads without an explicit invocation.
 
-The exception is the skills whose frontmatter sets `disable-model-invocation: true`, such as `work`, `commit-push-current`, and `commit-push-pr`: these run only when you invoke them by name, so the model never starts a side-effecting workflow on a phrase match.
+The exception is a skill whose frontmatter sets `disable-model-invocation: true`, for example `commit-push-current`: it runs only when you invoke it by name, so the model never starts a side-effecting workflow on a phrase match.
 
 ## Pass arguments
 
 Words after the invocation pass through to the skill, including file references. Two shapes from real transcripts:
 
 ```text
-/odin-writing:unslop @skills/
+/odin-core:unslop @skills/
 ```
 
 ```text
-/odin-writing:unslop clean this draft local://skill-foundry-plan.md
+/odin-core:unslop clean this draft local://skill-foundry-plan.md
 ```
 
 Point the skill at the material and state the job in the same line.
@@ -44,7 +44,7 @@ Most descriptions end with a `Not for ...` clause that names the narrower skill.
 
 `todos-update` resyncs a task list that drifted from the tree. `todos-enhance` sharpens tasks that read as vague headings. Each names the other as out of scope, so a stale list calls for the first and a coarse list calls for the second.
 
-`unslop` cleans AI tells from prose. `deslop` removes dead code and config from a diff. Prose calls for the first and code debris calls for the second.
+`unslop` cleans AI tells from prose.
 
 ## Prove a gap
 
@@ -55,7 +55,7 @@ When no skill fits, run `skill-gap-finder`. It names the owning skill or writes 
 `gh skill install` installs a single skill by its exact repository path, per the Individual lane of the root README Install section:
 
 ```shell
-gh skill install OutlineDriven/odin-claude-plugin plugins/odin-planning/skills/askme \
+gh skill install OutlineDriven/odin-claude-plugin plugins/odin-core/skills/askme \
   --agent <agent> --scope user
 ```
 

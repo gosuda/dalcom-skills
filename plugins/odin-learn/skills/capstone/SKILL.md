@@ -1,6 +1,6 @@
 ---
 name: capstone
-description: 'Use when the learner is ready to apply cleared concepts in a real project. Not for exercises or quizzes: use drill.'
+description: 'Use when the learner is ready to apply cleared concepts in a real project. Not for exercises or quizzes.'
 disable-model-invocation: true
 ---
 
@@ -17,7 +17,7 @@ disable-model-invocation: true
 
 ## Inputs
 
-- `PROGRESS.md` at the workspace root listing cleared concepts. Required for scoping; a concept counts as cleared only when its independent rung passed with no hints.
+- `PROGRESS.md` at the workspace root listing cleared concepts. Preferred source for scoping; when absent, the learner's one answer in step 1 supplies the cleared set. A concept counts as cleared only when its independent rung passed with no hints.
 - The domain or goal the project serves. Required; take it from the invocation argument when the argument carries it, otherwise ask once.
 - The learner's finished work. Required only for the review stage, which happens when the learner returns with it.
 

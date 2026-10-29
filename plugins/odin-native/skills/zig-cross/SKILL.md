@@ -1,6 +1,6 @@
 ---
 name: zig-cross
-description: 'Use when building Zig or C for another platform with Zig: target triples, -mcpu features, zig cc cross-compiles, multi-target build.zig, bare-metal Cortex-M, or WebAssembly. Not GCC: use cross-gcc.'
+description: 'Use when building Zig or C for another platform with Zig: target triples, -mcpu features, zig cc cross-compiles, multi-target build.zig, bare-metal Cortex-M, or WebAssembly. Not GCC.'
 ---
 
 # Zig cross-compilation
@@ -63,7 +63,7 @@ description: 'Use when building Zig or C for another platform with Zig: target t
 | Feature warnings such as `is not a recognized feature` | Distribution Zig builds against a different LLVM; the build still completes. Report it as noise, not failure. |
 | `Unsupported operating system freestanding` | An std call needs an OS; remove it from the freestanding path. |
 | macOS build needs frameworks | Provide the SDK via `--sysroot` and framework paths; a plain executable needs nothing. |
-| System cross toolchain required by the build | GCC triplets, sysroots, and QEMU: use cross-gcc. Rust's equivalent: use rust-cross. |
+| System cross toolchain required by the build | GCC triplets, sysroots, and QEMU. Rust's equivalent: use rust-cross. |
 
 ## Output
 

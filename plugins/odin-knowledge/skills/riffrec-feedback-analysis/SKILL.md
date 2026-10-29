@@ -5,7 +5,7 @@ description: 'Use when a Riffrec capture or other screen, voice, or notes artifa
 
 # Riffrec feedback analysis
 
-Anchors: David Parnas (raw capture and interpreted evidence are separate artifacts with an explicit boundary), Dieter Rams (keep every artifact its consumer needs, nothing it does not).
+Standards: raw capture and interpreted evidence are separate artifacts with an explicit boundary. Keep every artifact its consumer needs, nothing it does not.
 
 ## Contract
 

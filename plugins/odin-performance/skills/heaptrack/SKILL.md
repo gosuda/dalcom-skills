@@ -1,6 +1,6 @@
 ---
 name: heaptrack
-description: 'Use when tracking heap allocations on Linux with heaptrack: allocation hotspots, peak heap, temporary allocations, leaks, or a diff of two runs via heaptrack_print. Not for heap errors: use valgrind.'
+description: 'Use when tracking heap allocations on Linux with heaptrack: allocation hotspots, peak heap, temporary allocations, leaks, or a diff of two runs via heaptrack_print. Not for heap errors.'
 ---
 
 # heaptrack

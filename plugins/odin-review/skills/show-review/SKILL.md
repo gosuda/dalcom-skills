@@ -1,6 +1,6 @@
 ---
 name: show-review
-description: 'Use when the user wants a per-finding visual walk through a diff or PR. Not for written review reports: use review. Not for codebase tours: use show-me.'
+description: 'Use when the user wants a per-finding visual walk through a diff, PR, or MR. Not for written review reports: use review. Not for codebase tours: use show-me.'
 ---
 
 # Show review
@@ -9,18 +9,18 @@ description: 'Use when the user wants a per-finding visual walk through a diff o
 
 | Field | Bound contract |
 |---|---|
-| Trigger | User asks to be walked through a review or diff one finding at a time: "walk me through this review/PR", "show-review", or "review this interactively". |
+| Trigger | User asks to be walked through a review or diff one finding at a time: "walk me through this review/PR/MR", "show-review", or "review this interactively". |
 | Authority | Read-only. No file, VCS, credential, paid, published, deployed, or remote mutation. |
 | Side effect | Per-finding visuals and the close tally render in chat; nothing is written to disk. |
 | Done | Every finding carries Keep or Skip (the remainder explicitly skipped) and the close message reports a kept/skipped/discussed tally. |
 
 ## Inputs
 
-- Change-set to walk (required): named files, a PR number (read via `gh pr diff`), the working tree, or a branch against its base. Supplied by the human at invocation.
+- Change-set to walk (required): named files, a PR number (read via `gh pr diff`), an MR IID (read via read-only `glab mr diff <iid>`, scoped with `-R GROUP/PROJECT` when outside the default repo), the working tree, or a branch against its base. Supplied by the human at invocation. Select GitHub or GitLab from the verified request URL or repository remote and bind host, project, and PR number or MR IID separately; an MR is addressed by its project-scoped IID, never the global ID. When the evidence is ambiguous, stop and ask; never default to GitHub.
 
 ## Procedure
 
-1. Bound the change-set. Read the diff for the named files, PR, working tree, or branch against its base. For an empty change-set, report `0 findings.` and stop. Binary, lockfile, and generated paths are not findings. Done when: the diff is read and the change-set boundary is named.
+1. Bound the change-set. Read the diff for the named files, PR/MR, working tree, or branch against its base. For an empty change-set, report `0 findings.` and stop. Binary, lockfile, and generated paths are not findings. Done when: the diff is read and the change-set boundary is named.
 2. Rank findings in place by reachable impact: ship-blocker and wrong-on-plausible-input first, degraded uncommon path next, no-behavioral-impact last. Nits take the same Keep/Skip path, Skip first. A line that is not a defect is not a finding. Read enough of the change-set to name the current highest finding; do not write a findings list. Done when: the current highest finding is named without a written list.
 3. Emit one finding per message, highest remaining first. Keep remaining titles unsaid. Done when: one finding is emitted with its visual and single-select.
 4. Each finding turn has three parts: (a) the smallest view that carries the defect; (b) one or two lines naming what is wrong, the reachable impact, and `file:line`; (c) one single-select: Keep / Skip / Discuss, with `(Recommended)` on the first option. Print the visual in the message body beside the two lines, not in the question-tool preview. Use the harness question tool when it exists (labels only); otherwise number the three options. Done when: the finding turn carries its view, impact lines, and single-select.
@@ -44,7 +44,7 @@ description: 'Use when the user wants a per-finding visual walk through a diff o
 ## Failure and recovery
 - Empty change-set: report `0 findings.` and stop. Do not invent findings.
 - User stops early: close the walk with whatever was covered. Count unseen findings as skipped. Report the partial tally honestly; do not pretend every finding was decided.
-- Wrong route: if the user wants a written sectioned report rather than a per-finding walk, stop: this skill emits one finding per turn, not a report. If the user wants a GitHub PR sectioned report, stop: this is an interactive chat walk, not a PR comment report. If the target is a topic shown without reviewing it, stop: this skill reviews a diff. If the user wants a grill-until-clean pass without a visual walk, stop: this walks findings one at a time. If the target is unfamiliar code with no diff, stop: this walks a change-set, it does not tour a codebase.
+- Wrong route: if the user wants a written sectioned report rather than a per-finding walk, stop: this skill emits one finding per turn, not a report. If the user wants a forge-hosted sectioned report (GitHub PR or GitLab MR), stop: this is an interactive chat walk, not a PR or MR comment report. If the target is a topic shown without reviewing it, stop: this skill reviews a diff. If the user wants a grill-until-clean pass without a visual walk, stop: this walks findings one at a time. If the target is unfamiliar code with no diff, stop: this walks a change-set, it does not tour a codebase.
 - Non-mutation rule: nothing lands on disk. The walk never patches; the Close single-select only records the user's choice of what to do next with kept findings.
 
 ## Output

@@ -40,5 +40,15 @@ description: 'Use when a measurable claim needs before/after proof. Not for fact
 - Partial results: If baseline succeeds but treatment fails, report the baseline measurement and classify as INCONCLUSIVE. Do not discard the baseline evidence.
 - Rollback: All written evidence artifacts are temporary. State their paths so the caller can delete them. No VCS, credential, published, deployed, or remote state is touched.
 
+Bind each baseline and treatment observation to its actual input population, target identity, relevant configuration, and measurement conditions. When targets need worktree creation, source edits, installation, paid requests, or other authority this skill lacks, require them to be provisioned separately; do not perform those actions here.
+
+For intermittent failures, compare prepared base and head targets with matching test populations, features, runner settings, and controlled non-overlapping conditions. Record prerequisites, artifact isolation, final completion status, failure shape, and observed confounds. Missing prerequisites, target drift, or contaminated artifacts make an observation invalid for attribution, not a scored failure.
+
+Group only comparable failure shapes. A matching failure observed on base establishes that the shape occurs on base; it does not by itself prove the change has no effect. Head-only failures leave an interaction unresolved. Unlike failures on the two targets do not establish a shared pre-existing cause. All-green observations mean non-reproduced with attribution unestablished, not 'flake, not ours'. This skill grants no push permission.
+
+Choose any repetition plan from the stated claim and an existing or explicitly supplied measurement bound; impose no fixed run count and do not retry automatically to obtain a pass. Report all observations and any unresolved confound.
+
+For corpus claims, state the population, predicate, denominator, subgroup boundaries, and missing attributes. For noisy measurements, separate observed deltas from noise and from subjective quality judgments. Use the specified contract threshold rather than inventing a universal acoustic, legibility, or timing threshold.
+
 ## Output
 A terminal classification (VERIFIED, NOT VERIFIED, or INCONCLUSIVE) with the hypothesis, baseline and treatment measurements, computed delta, evidence paths, and rollback path.

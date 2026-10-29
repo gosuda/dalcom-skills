@@ -1,6 +1,6 @@
 ---
 name: c-security-review
-description: 'Use when the user requests a userspace C or C++ security review with a threat model and severity filter and wants validated findings. Not for kernel or bare-metal code: use kernel-security.'
+description: 'Use when the user requests a userspace C or C++ security review with a threat model and severity filter and wants validated findings. Not for kernel or bare-metal code.'
 disable-model-invocation: true
 ---
 

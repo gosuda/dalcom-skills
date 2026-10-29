@@ -5,7 +5,9 @@
 # then returns the thread whose comments contain the target ID.
 # Per-thread comments are capped at 100 with totalCount retained; when the
 # target is not found and any thread reports truncation, the result is
-# incomplete input, never proof of absence.
+# incomplete input, never proof of absence. Top-level census (page errors,
+# missing pullRequest, still-open pageInfo) is validated before any hit is
+# selected: a hit inside a degraded fetch is never returned as success.
 
 set -e
 
@@ -74,10 +76,20 @@ query Threads($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
 }' > "$threads_file"
 
 jq -e --arg cid "$COMMENT_NODE_ID" '
-  ([.[].data.repository.pullRequest.reviewThreads.nodes[]]) as $threads |
-  ([$threads[] | select(.comments.nodes | map(.id) | index($cid))] | .[0]) as $hit |
-  if $hit != null then $hit
-  elif ([$threads[] | select((.comments.totalCount // (.comments.nodes | length)) > (.comments.nodes | length))] | length > 0)
-  then error("incomplete: comment \($cid) not found in first 100 per thread and truncated threads exist; fetch is incomplete, not absent")
-  else error("No thread found for comment \($cid)") end
+  if (type != "array" or length == 0) then
+    error("get-thread-for-comment: incomplete fetch: no pages returned")
+  elif ([.[] | select(type != "object"
+      or .data.repository.pullRequest == null
+      or ((.errors // []) | length > 0))] | length) > 0 then
+    error("get-thread-for-comment: incomplete fetch: a page is missing data or reports GraphQL errors")
+  elif ((.[-1].data.repository.pullRequest.reviewThreads.pageInfo.hasNextPage) != false) then
+    error("get-thread-for-comment: incomplete fetch: reviewThreads still hasNextPage on its last page (page dropped?)")
+  else
+    ([.[].data.repository.pullRequest.reviewThreads.nodes[]]) as $threads |
+    ([$threads[] | select(.comments.nodes | map(.id) | index($cid))] | .[0]) as $hit |
+    if $hit != null then $hit
+    elif ([$threads[] | select((.comments.totalCount // (.comments.nodes | length)) > (.comments.nodes | length))] | length > 0)
+    then error("incomplete: comment \($cid) not found in first 100 per thread and truncated threads exist; fetch is incomplete, not absent")
+    else error("No thread found for comment \($cid)") end
+  end
 ' "$threads_file"

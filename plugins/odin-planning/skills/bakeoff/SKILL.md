@@ -5,7 +5,7 @@ description: 'Use when choosing well needs developing competing solutions to a d
 
 # Bakeoff
 
-Anchors: David Parnas (competing implementations hide behind one brief; the comparison contract is the seam), Dieter Rams (only alternatives that earn their place survive).
+Standards: competing implementations hide behind one brief, the comparison contract is the seam. Only alternatives that earn their place survive.
 
 ## Contract
 

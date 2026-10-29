@@ -6,10 +6,10 @@ Go does not train models: it **serves** them. The 2026 stack is inference-first:
 
 ## TL;DR: the deltas models get wrong (read first)
 
-- `onnxruntime_go` is at v1.38.0 (pkg.go.dev, 2026-06-04), *not* the v1.21.0 some sources cite, but it still wraps **ORT C API 1.31.0** and "will probably only work with version 1.26.0 of the onnxruntime shared libraries." Binding version ≠ runtime version; **pin the shared lib to 1.26.0**.
+- `onnxruntime_go` is at v1.38.0 (pkg.go.dev, 2026-06-04), *not* the v1.21.0 some sources cite, but it still wraps **ORT C API 1.31.0** (upstream caveat originally worded "will probably only work with version 1.26.0 of the onnxruntime shared libraries."). Binding version ≠ runtime version; **pin the shared lib to 1.31.0**.
 - `NewSession`/`DynamicSession` are deprecated. Use `NewAdvancedSession`/`DynamicAdvancedSession`: explicit caller-owned tensors, no per-run realloc.
 - Every C-allocated handle (`Tensor`, `Session`, `*ProviderOptions`, `ArenaCfg`) must `Destroy()`: it lives outside the Go GC. Forgetting this is a C-heap leak, not a Go leak.
-- Vector clients all moved: Milvus → `milvus-io/milvus/client/v2/milvusclient` (old `milvus-sdk-go/v2` archived 2025-03-21), Weaviate → `/v5` (v6 alpha), Pinecone → `/v5`, Qdrant flattened to `qdrant.NewClient` with a unified `Query` API (not `Search`).
+- Vector clients all moved: Milvus → `milvus-io/milvus/client/v2/milvusclient` (old `milvus-sdk-go/v2` archived 2025-03-21), Weaviate → `/v6`, Pinecone → `/v5`, Qdrant flattened to `qdrant.NewClient` with a unified `Query` API (not `Search`).
 - gonum's default BLAS/LAPACK is pure Go: it does *not* need OpenBLAS/cgo to run. cgo (`gonum.org/v1/netlib`) is opt-in for large dense algebra only.
 - "cgo is too slow for per-request local inference" is stale [1.26]: baseline cgo overhead dropped ~30%, shifting the threshold for in-process ONNX.
 - `daulet/tokenizers` is CGO/Rust, not pure Go: it links `libtokenizers.a`. The pure-Go option is `sugarme/tokenizer` (different API).
@@ -105,7 +105,7 @@ import ort "github.com/yalue/onnxruntime_go"
 
 // 1. Point at the shared lib BEFORE init. Even if implicit resolution might work,
 //    set it explicitly — this is where container images fail (model present, .so absent).
-ort.SetSharedLibraryPath("/opt/onnxruntime/libonnxruntime.so.1.26.0") // .dll / .dylib
+ort.SetSharedLibraryPath("/opt/onnxruntime/libonnxruntime.so.1.31.0") // .dll / .dylib
 if err := ort.InitializeEnvironment(); err != nil { /* ... */ }       // process-global
 defer ort.DestroyEnvironment()
 
@@ -159,7 +159,7 @@ Every serious inference path here (`onnxruntime_go`, `daulet/tokenizers`, `gocv`
 - Build & portability: CGO disables pure cross-compilation. `CGO_ENABLED=1` ties the build to a C toolchain and target libc: a `scratch`/`distroless` image needs the `.so` and a compatible glibc/musl. Cross-compiling needs `zig cc` or a sysroot. (See `cgo-and-interop.md#cross-compile`.)
 - Runtime cost [1.26]: baseline cgo call overhead is down ~30%: meaningful because ORT crosses C on every `Run`, allocator setup, and provider call. The old "cgo is too slow for per-request local inference" heuristic needs re-evaluation; it doesn't make bad call patterns good (a per-element cgo loop is still a disaster), but a per-request `Run` is now firmly viable.
 - Memory ownership: C-allocated handles bypass the Go GC. Every `Destroy()` you skip is a leak `pprof` won't show you (it's not Go heap). Treat `defer x.Destroy()` as mandatory, and audit constructors that hide allocation.
-- Deployment recipe: static Go binary + the ORT shared library in the image; **pin the ORT version to the binding's C-header expectation (1.26.0)**; set `SetSharedLibraryPath` to the versioned SONAME (`libonnxruntime.so.1.26.0`, not the bare symlink). `ONNXRUNTIME_SHARED_LIBRARY_PATH` is honored in CI/tests.
+- Deployment recipe: static Go binary + the ORT shared library in the image; **pin the ORT version to the binding's C-header expectation (1.31.0)**; set `SetSharedLibraryPath` to the versioned SONAME (`libonnxruntime.so.1.31.0`, not the bare symlink). `ONNXRUNTIME_SHARED_LIBRARY_PATH` is honored in CI/tests.
 
 `onnxruntime_go` notably does NOT use cgo at the Go-compile level: it dlopens the library, so the *binding* is portable; the cost is shipping and version-matching the `.so` at runtime. The genuinely cgo-at-compile-time deps are `daulet/tokenizers`, `gocv`, `usearch`, and netlib.
 
@@ -225,7 +225,7 @@ Every client moved major versions or import paths: this is the densest stale-kno
 | Database | Current import path | Version (2026-06) | Protocol | Note |
 |---|---|---|---|---|
 | **Qdrant** | `github.com/qdrant/go-client/qdrant` | v1.20.1 | gRPC :6334 | Package flattened to `qdrant`; unified `Query` API |
-| **Weaviate** | `github.com/weaviate/weaviate-go-client/v5/weaviate` | v6.0.0 | HTTP+gRPC | v4 superseded; **v5.0.0 retracted → use ≥5.0.1**; v6 alpha |
+| **Weaviate** | `github.com/weaviate/weaviate-go-client/v6/weaviate` | v6.0.0 | HTTP+gRPC | v4 superseded; **v5.0.0 retracted → use ≥5.0.1** |
 | **Milvus** | `github.com/milvus-io/milvus/client/v2/milvusclient` | client/v2.6.5 | gRPC | Old `milvus-sdk-go/v2` **archived 2025-03-21** |
 | **Pinecone** | `github.com/pinecone-io/go-pinecone/v5/pinecone` | v5 | gRPC/HTTP | Managed-only; v3/v4 superseded |
 | **pgvector** | `github.com/pgvector/pgvector-go` + `pgx` | v0.4.0 | SQL | Use if Postgres is already in your stack |
@@ -342,7 +342,7 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 
 | Library | Import path | Status [2026] | CGO? | Use when |
 |---|---|---|---|---|
-| onnxruntime_go | `github.com/yalue/onnxruntime_go` | **Current** (v1.31.0; ORT C API 1.26.0) | dlopen (no cgo at compile; ships `.so`) | Default neural-net inference |
+| onnxruntime_go | `github.com/yalue/onnxruntime_go` | **Current** (v1.38.0; ORT C API 1.31.0) | dlopen (no cgo at compile; ships `.so`) | Default neural-net inference |
 | hugot | `github.com/knights-analytics/hugot` | **Current** (v0.8.3) | ORT/XLA backends cgo; pure-Go backend opt | HF pipelines from ONNX |
 | gocv | `gocv.io/x/gocv` | **Current** (OpenCV 4.12) | **Yes, heavy** | CV/DNN if already on OpenCV |
 | gonum | `gonum.org/v1/gonum` | **Current/stable** (v0.17.0, pre-v1) | No (pure Go default) | Linear algebra, stats, optimize |
@@ -350,9 +350,9 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 | GoMLX | `github.com/gomlx/gomlx` | **Current, niche** (v0.28.18) | XLA via gopjrt | Pure-Go/XLA training in-process |
 | daulet/tokenizers | `github.com/daulet/tokenizers` | **Current** | **Yes (Rust FFI)** | HF tokenization (fast) |
 | sugarme/tokenizer | `github.com/sugarme/tokenizer` | Current (alt) | No | Pure-Go tokenization |
-| Qdrant | `github.com/qdrant/go-client/qdrant` | **Current** (v1.18.2) | No | Self-hosted, rich retrieval |
-| Weaviate | `…/weaviate-go-client/v5/weaviate` | **Current** (v5.7.x; v6 alpha) | No | Hybrid search / managed |
-| Milvus (new) | `…/milvus/client/v2/milvusclient` | **Current** (v2.6.x) | No | Massive scale / BM25 |
+| Qdrant | `github.com/qdrant/go-client/qdrant` | **Current** (v1.20.1) | No | Self-hosted, rich retrieval |
+| Weaviate | `…/weaviate-go-client/v6/weaviate` | **Current** (v6.0.0) | No | Hybrid search / managed |
+| Milvus (new) | `…/milvus/client/v2/milvusclient` | **Current** (v2.6.5) | No | Massive scale / BM25 |
 | pgvector-go | `github.com/pgvector/pgvector-go` | **Current** (v0.4.0) | No | Already on Postgres |
 | chromem-go | `github.com/philippgille/chromem-go` | **Stable but quiet** (v0.7.0, 2024-09) | No | Embedded RAG, no infra |
 | usearch (Go) | `github.com/unum-cloud/usearch/golang` | **Experimental** (untagged) `[verify]` | **Yes** | In-proc HNSW, niche |
@@ -369,12 +369,12 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 |---|---|---|
 | **Go 1.26** | Stable | cgo overhead −~30%; Green Tea GC default; `goroutineleak` pprof (exp); `simd/archsimd` (exp, amd64) |
 | **Go 1.27 (RC)** | Pre-GA (~Aug 2026) | `goroutineleak` GA; `encoding/json/v2` GA (stricter defaults, error text differs: affects JSON-heavy ML APIs); macOS 13+ |
-| onnxruntime_go | v1.31.0 binding / **ORT 1.26.0** runtime | Pin shared lib to 1.26.0; `NewAdvancedSession` only |
+| onnxruntime_go | v1.38.0 binding / **ORT 1.31.0** runtime | Pin shared lib to 1.31.0; `NewAdvancedSession` only |
 | gonum | v0.17.0 (pre-v1) | No SemVer stability promise; supports 2 latest Go |
-| hugot | v0.7.5 | Pure-Go backend = convenience, not throughput |
-| GoMLX | v0.26.0 | Only live in-process training path |
+| hugot | v0.8.3 | Pure-Go backend = convenience, not throughput |
+| GoMLX | v0.28.18 | Only live in-process training path |
 | Qdrant client | v1.20.1 | Query API since Qdrant 1.10 |
-| Weaviate client | v6.0.0 (v6 alpha) | `models.Vector` is now `interface{}` (ColBERT), not `[]float32` |
+| Weaviate client | v6.0.0 | `models.Vector` is now `interface{}` (ColBERT), not `[]float32` |
 | Milvus client | client/v2.6.5 | Pin a tested tag; compat table drifts `[verify]` exact patch |
 | Pinecone client | v5 | API-version-pinned; v3/v4 each broke |
 | pgvector-go | v0.4.0 | half-precision + sparse codecs available |
@@ -384,7 +384,7 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 
 ## What models get wrong {#stale}
 
-1. Emitting `onnxruntime_go` v1.21.0 / assuming binding version == runtime version. It's **v1.31.0**, but pins to **ORT shared lib 1.26.0** regardless.
+1. Emitting `onnxruntime_go` v1.21.0 / assuming binding version == runtime version. It's **v1.38.0**, but pins to **ORT shared lib 1.31.0** regardless.
 2. Using deprecated `NewSession`/`DynamicSession` instead of `NewAdvancedSession`/`DynamicAdvancedSession`.
 3. Skipping `SetSharedLibraryPath` (load-time segfault) or shipping the bare `libonnxruntime.so` symlink instead of the versioned SONAME.
 4. Forgetting `Destroy()` on tensors/sessions/provider-options: a **C-heap** leak invisible to Go `pprof`.
@@ -411,7 +411,7 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 |---|---|
 | Training models in Go | Train in Python, export ONNX, infer in Go |
 | Gorgonia / tensorflow/go in production | ONNX Runtime (inference) or GoMLX (in-process training) |
-| Assuming binding version == ORT runtime version | Pin shared lib to the binding's C-header (1.26.0) |
+| Assuming binding version == ORT runtime version | Pin shared lib to the binding's C-header (1.31.0) |
 | Deprecated `NewSession` | `NewAdvancedSession` / `DynamicAdvancedSession` |
 | Skipping `Destroy()` on C handles | `defer x.Destroy()` on every tensor/session/options |
 | One bound session shared across goroutines | `DynamicAdvancedSession` + pool, or serialize |
@@ -435,7 +435,7 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 
 ## Sources {#sources}
 
-- pkg.go.dev: `yalue/onnxruntime_go` (v1.31.0; ORT C API 1.26.0; deprecated `NewSession`; `IsTrainingSupported`), `knights-analytics/hugot` (v0.7.5; pure-Go backend caveat), `philippgille/chromem-go` (v0.7.0; "zero third-party dependencies"), `unum-cloud/usearch/golang` (untagged, CGO), `gonum.org/v1/gonum` (v0.17.0)
+- pkg.go.dev: `yalue/onnxruntime_go` (v1.38.0; ORT C API 1.31.0; deprecated `NewSession`; `IsTrainingSupported`), `knights-analytics/hugot` (v0.8.3; pure-Go backend caveat), `philippgille/chromem-go` (v0.7.0; "zero third-party dependencies"), `unum-cloud/usearch/golang` (untagged, CGO), `gonum.org/v1/gonum` (v0.17.0)
 - Repos/docs: yalue/onnxruntime_go README (shared-lib version match; training-API stubs), Qdrant Go client + Query API docs, Weaviate v5/v6 docs, milvus-io/milvus client/v2 docs, pgvector-go, daulet/tokenizers, james-bowman/sparse
 - go.dev/doc/go1.23 to go1.27 release notes (cgo −~30% [1.26]; iterators [1.23]; `tool` directives [1.24]; `testing/synctest` [1.25]; `encoding/json/v2`, `goroutineleak` [1.27])
 - Official deprecation notices: `tensorflow/go` ("no longer supported by the TensorFlow team"), `milvus-sdk-go` (archived 2025-03-21)

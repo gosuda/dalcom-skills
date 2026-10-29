@@ -1,6 +1,6 @@
 ---
 name: copywriting
-description: 'Use when asked to write or fix product/marketing copy, landing pages, UI strings, brand voice, AI tells, an end-of-article CTA, or a hook/lede. Not for whole articles: use technical-article-writer.'
+description: 'Use when asked to write or fix product/marketing copy, landing pages, UI strings, brand voice, AI tells, an end-of-article CTA, or a hook/lede. Not for whole articles.'
 ---
 
 # Copywriting

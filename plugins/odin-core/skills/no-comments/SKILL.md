@@ -7,7 +7,7 @@ description: 'Use when asked to remove source comments by replacing them with cl
 
 Remove the dependence on comments, then remove the comments. Preserve the knowledge and behavior that still matter.
 
-Anchors: Dieter Rams (nothing left that the code or its documentation does not already carry), David Parnas (a comment describing a hidden decision moves into the module, its contract, its test, or its design record, never into the void).
+Standards: nothing left that the code or its documentation does not already carry. A comment describing a hidden decision moves into the module, its contract, its test, or its design record.
 
 ## Scope and authority
 

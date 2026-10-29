@@ -1,6 +1,6 @@
 ---
 name: smart-contract-guidelines-advisor
-description: 'Use when a smart-contract project needs architecture, testing, or a maturity scorecard. Use `guidelines` or `maturity` mode. Not for audits: use smart-contract-audit-prep.'
+description: 'Use when a smart-contract project needs architecture, testing, or a maturity scorecard. Use `guidelines` or `maturity` mode. Not for audits.'
 ---
 
 # Smart contract guidelines and maturity advisor

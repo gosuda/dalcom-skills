@@ -58,5 +58,5 @@ Protected rows protect meaningful coverage, not every file. A redundant protecte
 | Tautology tests | Asserting a value immediately after constructing it with that value |
 | Implementation tests | Asserting which private methods ran instead of what public behavior resulted |
 | Coverage-driven tests | Written to hit a line, not to catch a bug |
-| Snapshot tests of trivial output | Any deliberate change requires updating the snapshot anyway |
+| Snapshot or saved-output pins | The verdict repeats a saved output instead of checking an independent property; any deliberate change requires updating the pin anyway |
 | Just-in-case tests | Written without a named failure mode they would catch |

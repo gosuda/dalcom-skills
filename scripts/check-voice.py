@@ -55,7 +55,6 @@ BANNED = re.compile(
 BAN_LIST_SUBJECTS = frozenset(
     {
         "docs/specs/voice.md",
-        "plugins/odin-knowledge/skills/knowledge-refresh/SKILL.md",
         "plugins/odin-writing/skills/copywriting/SKILL.md",
         "plugins/odin-writing/skills/copywriting-prose-creator/SKILL.md",
     }

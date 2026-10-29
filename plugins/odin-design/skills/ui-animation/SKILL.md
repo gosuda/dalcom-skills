@@ -29,14 +29,14 @@ disable-model-invocation: true
 4. **Select animation type.** Choose from: entrance, exit, state transition, scroll-linked, gesture-driven, or continuous ambient. Reject compound multi-type animations unless the user splits them. **Done when:** exactly one animation type is selected.
 5. **Design the animation.** For each moving element:
    - Pick a physics model: spring (mass–stiffness–damping), easing curve (CSS cubic-bezier or equivalent), or keyframe sequence.
-   - Choose a duration and easing. Default to fast (150–250 ms) for micro-interactions, medium (250–400 ms) for transitions.
-   - For spring animations, compute or estimate stiffness, damping, and mass. Never hard-code arbitrary numbers without rationale.
+   - For easing-curve or keyframe animations, choose a duration and easing. Default to fast (150–250 ms) for micro-interactions, medium (250–400 ms) for transitions.
+   - For spring animations, compute or estimate stiffness, damping, and mass, and state the settling criterion. Never hard-code arbitrary numbers without rationale.
    - For gesture-driven animations, model the drag axis, snap points, and release velocity.
-   **Done when:** every moving element has a physics model, duration, and easing.
+   **Done when:** every moving element has a physics model and its model-specific parameters (springs: stiffness, damping, mass, settling criterion; easing/keyframes: duration and easing; gesture-driven: drag axis, snap points, release velocity).
 6. **Apply choreography.** When multiple elements move together, define the sequence, stagger interval, and overlap. State the choreography logic explicitly. **Done when:** the sequence and stagger are defined for every concurrent element.
-7. **Respect reduced motion.** If the user request or the `prefers-reduced-motion` media query is detected, replace physics-based or continuous animations with instant state changes or opacity-only fades. Document this substitution. **Done when:** reduced-motion handling is present and documented.
-8. **Write the animation code.** Produce code in the target framework or library. Annotate each transition with the curve name, duration, and the element it affects. Inline the animation; do not assume a shared motion library exists. **Done when:** every animation block has a named curve, duration, and target.
-9. **Validate the output.** Confirm every animation block has a defined curve, duration, and target. Confirm reduced-motion is handled. If a Python script was run to extract motion, note the script name and what it produced. **Done when:** all blocks pass the validation checks.
+7. **Respect reduced motion.** If the user requests reduced motion or the `prefers-reduced-motion` media query is detected, replace physics-based or continuous animations with instant state changes or opacity-only fades. Document this substitution. **Done when:** reduced-motion handling is present and documented.
+8. **Write the animation code.** Produce code in the target framework or library. Annotate each transition with the element it affects and its model-specific parameters (curve name and duration, or spring stiffness, damping, mass). Inline the animation; do not assume a shared motion library exists. **Done when:** every animation block names its target and parameters.
+9. **Validate the output.** Confirm every animation block names its target and parameters. Confirm reduced-motion is handled. If a Python script was run to extract motion, note the script name and what it produced. **Done when:** all blocks pass the validation checks.
 
 ## Failure and recovery
 - Scope violation: the request targets a non-local or credential-protected resource. Stop immediately. Return the classification that was blocked and the reason.

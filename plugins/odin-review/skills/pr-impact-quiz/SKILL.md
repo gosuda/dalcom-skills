@@ -19,13 +19,14 @@ disable-model-invocation: true
 
 The skill requires:
 
-- PR description: The authored description of the change, including motivation, scope, and expected behavior. Required.
-- Diff or change summary: The diff or a structured summary of what changed. Required.
+- PR/MR description: The authored description of the change (GitHub PR or GitLab MR, author-supplied; this skill makes no forge call), including motivation, scope, and expected behavior. Required.
+- Diff or change summary: The diff or a structured summary of what changed, from either provider. Required.
 - Codebase context: The language, primary modules, and key patterns in the affected area. Required.
+- MR context (GitLab only, optional): source and target branch names plus draft state, supplied by the author. When present, one question must probe target-branch compatibility (fork MRs bind source and target projects separately). Provider ambiguity never triggers a remote read, since the author supplies the text.
 
 ## Procedure
 
-1. Read the PR description and diff or change summary. Done when: the description and diff are read.
+1. Read the supplied PR/MR description and diff or change summary. Done when: the description and diff are read.
 2. Identify the primary modules, interfaces, and data flows the change touches. Done when: the touched modules, interfaces, and data flows are identified.
 3. Identify possible effects on callers, downstream consumers, or shared state. Done when: possible effects on callers, consumers, and shared state are identified.
 4. Write three impact questions that require the author to confirm how the change affects the existing codebase. Each question must target a specific area of the codebase (not a generic concern), require a concrete answer (not a yes/no or "I checked"), and probe a different impact axis (call-site behavior, data invariants, or backward compatibility). Done when: three concrete, non-generic questions probing distinct impact axes are written.

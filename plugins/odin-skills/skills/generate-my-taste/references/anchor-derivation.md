@@ -61,7 +61,7 @@ Good concept shapes:
 
 Bad concept shapes:
 
-- "The user likes Dieter Rams."
+- "The user likes restraint."
 - "This is inspired by high-quality design."
 - "Be elegant and thoughtful."
 
@@ -97,7 +97,7 @@ Before writing, preview a table with exactly five rows:
 
 Evidence rationale should cite source classes, not dump content. Example:
 
-"Memory bans generic validation openers; session corrections repeatedly demand direct recommendations; maps to Feynman-Clarity over Orwell because the dominant signal is explanation clarity across code and prose."
+"Memory bans generic validation openers; session corrections repeatedly demand direct recommendations; maps to Explanation Clarity over Orwell because the dominant signal is explanation clarity across code and prose."
 
 ## Ranking rules
 
@@ -113,7 +113,7 @@ Do not use numeric weights. Use ordinal ranking and written rationale.
 
 ## Collision and update derivation
 
-When updating an existing `spine` or `*-taste` skill:
+When updating an existing `*-taste` skill:
 
 1. Treat existing anchors as evidence, not as immutable truth.
 2. Preserve anchors with strong current evidence and high contrast.

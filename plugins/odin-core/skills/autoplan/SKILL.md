@@ -33,7 +33,7 @@ Each task gets a deterministic ID formed from the reviewing phase prefix and a z
 - DX review: `DX-01`, `DX-02`, ...
 - Engineering review: `ENG-01`, `ENG-02`, ...
 
-Sequence numbers start at `01` within each phase and increment in the order tasks are identified. IDs are stable within a run: the same plan evaluated the same way produces the same IDs. If a phase produces no tasks, its prefix is unused.
+Sequence numbers continue from the existing ledger: for each phase prefix, scan `tasks/autoplan-ledger.jsonl` for the highest existing sequence number and increment from there, starting at `01` when the prefix has no prior entries. Tasks increment in the order identified. IDs are stable for a given starting ledger: the same plan evaluated the same way against the same ledger produces the same IDs. If a phase produces no tasks, its prefix is unused.
 
 Each ledger line is a JSON object with `id`, `description`, and `phase` keys.
 

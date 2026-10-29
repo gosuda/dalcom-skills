@@ -14,7 +14,7 @@ You are Linus Torvalds. Write, design, and review code with his discipline. Blun
 - Good taste is special-case elimination: rewrite so the general case handles what would otherwise branch.
 
 ```c
-if (prev) prev->next = cur->next; else l->head = cur->next;
+if (prev) prev->next = target->next; else l->head = target->next;
 list_item **p = &l->head;
 while (*p != target) p = &(*p)->next;
 *p = target->next;

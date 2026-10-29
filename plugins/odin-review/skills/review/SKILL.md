@@ -1,6 +1,6 @@
 ---
 name: review
-description: 'Use when asked to review a pull request, examine code changes, find bugs, or audit a branch, in standard or depth mode. Not for an iterative review-and-fix loop: use audit-project.'
+description: 'Use when asked to review a pull request or merge request, examine code changes, find bugs, or audit a branch, in standard or depth mode. Not for an iterative review-and-fix loop: use audit-project.'
 ---
 
 # Severity-graded review
@@ -11,18 +11,20 @@ Two modes share one authority (read-only) and one evidence bar: every finding ci
 
 | Field | Bound contract |
 |---|---|
-| Trigger | User asks to review a pull request, examine code changes, find bugs, run a security review, audit code on the current branch, or run combined bug/security and code-quality branch audits. |
+| Trigger | User asks to review a pull request or merge request, examine code changes, find bugs, run a security review, audit code on the current branch, or run combined bug/security and code-quality branch audits. |
 | Authority | Read-only. No file, VCS, credential, paid, published, deployed, or remote mutation. |
 | Side effect | Chat output: a review report with findings (standard) or a unified audit report (depth). |
 | Done | Standard: validated findings with severity, evidence, and concrete fixes; no style-only or invented findings. Depth: a single deduplicated prioritized synthesis as a unified verdict ordered by severity. |
 
 ## Inputs
 
-Required: a PR URL, diff content, code snippet, or branch to review (standard); the diff range, PR number, or commit range to audit (depth).
+Required: a PR URL, MR URL, diff content, code snippet, or branch to review (standard); the diff range, PR number, MR IID, or commit range to audit (depth).
 
 Optional: a stated focus area (e.g., security, performance, correctness); specific files, directories, or a focus area to narrow scope.
 
-The skill operates entirely within the current session context. No file system, repository, credential, or remote access is required or authorized.
+Provider selection: select GitHub or GitLab from the verified request URL or repository remote. Bind host, project, and PR number or MR IID separately. When the evidence is ambiguous, stop and ask; never default to GitHub. Address a GitLab MR by its project-scoped IID, never the global ID; the project is `GROUP/PROJECT` (URL-encoded for API paths, `-R GROUP/PROJECT` or a full URL for CLI reads). Self-managed hosts and fork provenance (source project versus target project) bind from the same verified evidence.
+
+The skill operates entirely within the current session context. No file system, repository, credential, or remote mutation is required or authorized. Diff acquisition for a named PR or MR is a read-only read.
 
 ## Mode selection
 
@@ -31,7 +33,7 @@ The skill operates entirely within the current session context. No file system, 
 | review this PR, examine these changes, find bugs, security review, audit this branch | standard | Severity-graded findings report |
 | deep review, combined bug/security and quality audit, full branch audit | depth | Unified deduplicated verdict from parallel reviewers |
 
-When the user names a single PR or diff, use standard mode. When the user asks for a combined bug/security and quality audit or a full branch audit, use depth mode.
+When the user names a single PR, MR, or diff, use standard mode. When the user asks for a combined bug/security and quality audit or a full branch audit, use depth mode.
 
 ## Shared evidence bar
 
@@ -39,8 +41,8 @@ Every finding, in either mode, must cite specific code locations, line ranges, o
 
 ## Standard mode
 
-1. **Acquire diff.** Receive the PR URL, diff text, or code snippet from the user; or determine the change set from the current branch diff against its base when the user does not name one. If no code change is supplied, ask for it. Done when: the change set is determined and scoped.
-2. **Fetch changes.** Use the available tools to retrieve diff or file content for the target revision range. If the user named files, directories, or a focus area, restrict scope to those. Do not assume write access. Done when: the diff or file content is retrieved and scope is restricted.
+1. **Acquire diff.** Receive the PR/MR URL, diff text, or code snippet from the user; or determine the change set from the current branch diff against its base when the user does not name one. For a named GitLab MR, read the change set with read-only `glab mr diff <iid>` (scope with `-R GROUP/PROJECT` when outside the default repo); use `glab mr view <iid> -F json` for MR identity and head SHA. If no code change is supplied, ask for it. Done when: the change set is determined and scoped.
+2. **Fetch changes.** Use the available tools to retrieve diff or file content for the target revision range. If the user named files, directories, or a focus area, restrict scope to those. For prior-comment context on a GitLab MR, read `glab mr view <iid> --comments` (add `--resolved` or `--unresolved` to filter) or the paginated discussions API, enumerating every page; a complete census is also available as read output from the `resolve`-owned `scripts/gitlab-mr.py --host <host> --project <GROUP/PROJECT> --mr <iid> list`. Do not assume write access. Done when: the diff or file content is retrieved and scope is restricted.
 3. **Bound scope.** Limit analysis to the supplied diff or code range. Do not widen scope to surrounding code or unrelated files. Done when: scope is bounded.
 4. **Read changed regions with context.** Read each changed region and the immediate callers and surrounding state needed to reason about its behavior. Do not read unrelated code. Done when: every changed region is read with its callers and surrounding state.
 5. **Categorize findings.** Assign each finding to one of: Correctness, Security, Performance, Maintainability, Robustness, Logic, or API Usage. Done when: every finding is categorized.
@@ -62,9 +64,9 @@ but preserves the existing ODIN persona and finding schemas.
 
 ### 1. Confirm the scope
 
-Require a resolvable diff, PR range, commit range, or explicit changed-file
+Require a resolvable diff, PR/MR range, MR IID, commit range, or explicit changed-file
 set. If the scope cannot be resolved, return `scope-unresolvable` and do not
-invent a diff.
+invent a diff. For a GitLab MR, bind host, project, IID, and head SHA separately from the verified MR URL or remote; treat the read-back `sha` as the reviewed commit and invalidate the scope when the head moves.
 
 Record:
 
@@ -88,14 +90,14 @@ Use this static assignment:
 
 | Isolated pass | Existing persona files |
 |---|---|
-| Correctness | `personas-correctness.md`, `personas-reliability-reviewer.md`, `personas-testing.md`, `personas-api-contract.md`, `personas-data-migration-reviewer.md`, `personas-deployment-verification.md` |
-| Security | `personas-security.md`, `personas-adversarial.md` |
-| Quality and conventions | `personas-maintainability.md`, `personas-performance.md`, `personas-project-standards.md`, `personas-previous-comments-reviewer.md`, `personas-learnings-researcher.md` |
+| Correctness | `references/personas-correctness.md`, `references/personas-reliability-reviewer.md`, `references/personas-testing.md`, `references/personas-api-contract.md`, `references/personas-data-migration-reviewer.md`, `references/personas-deployment-verification.md` |
+| Security | `references/personas-security.md`, `references/personas-adversarial.md` |
+| Quality and conventions | `references/personas-maintainability.md`, `references/personas-performance.md`, `references/personas-project-standards.md`, `references/personas-previous-comments-reviewer.md`, `references/personas-learnings-researcher.md` |
 
 Each persona keeps its existing gated-dispatch rules. For example, testing is
 skipped for a documentation-only diff, API-contract runs only for a changed
 public surface, and previous-comments-reviewer returns no findings without PR
-context.
+or MR context (on GitLab, the MR discussions census with resolved state kept per thread).
 
 The passes are isolated by construction:
 
@@ -196,7 +198,7 @@ Use the existing rubric:
 
 ### 7. Return the existing ODIN report
 
-Use the existing `review-output-template.md`:
+Use the existing `references/review-output-template.md`:
 
 - P0 -- Critical;
 - P1 -- High;
@@ -216,7 +218,9 @@ The report MUST state:
 
 Do not route findings into `resolve` automatically. A later explicit repair
 request may select one batch for `resolve`; repeated review belongs to
-`review-fix-loop`.
+`review-fix-loop`. GitLab MR discussion writes (reply, resolve) belong to that later explicit `resolve`
+request, never to this read-only skill; GitLab has no review-verdict object, so source-level
+blocking or advisory language maps through the existing rubric in §6 instead.
 ```
 
 
@@ -224,12 +228,12 @@ request may select one batch for `resolve`; repeated review belongs to
 
 | Failure class | Condition | Result |
 |---|---|---|
-| `empty-diff` | No diff or code supplied | Ask the user for the PR or code to review; do not produce a report |
-| `review-blocked` | Cannot access the target PR or revision | Report the access failure explicitly; do not fabricate content |
+| `empty-diff` | No diff or code supplied | Ask the user for the PR/MR or code to review; do not produce a report |
+| `review-blocked` | Cannot access the target PR/MR or revision | Report the access failure explicitly; do not fabricate content |
 | `partial-result` | Some files or hunks are inaccessible | List accessible findings; state which parts were skipped and why |
 | `scope-widening` | Analysis extends beyond supplied diff | Discard widened findings; report only bounded results |
 | `style-only-report` | All findings are style-only | State that no actionable findings were found; describe what was evaluated |
-| `scope-unresolvable` (depth) | Diff, PR, or commit range cannot be determined | Stop. Report that the scope could not be determined |
+| `scope-unresolvable` (depth) | Diff, PR/MR, or commit range cannot be determined | Stop. Report that the scope could not be determined |
 | `reviewer-failure` (depth) | A reviewer fails after retry | Return the surviving reviewer's findings with the failure stated. Do not synthesize from a missing reviewer |
 | `synthesis-empty` (depth) | No synthesis was possible | Return the exact partial result each reviewer produced; state that no synthesis was possible |
 
@@ -242,7 +246,7 @@ Partial-result rule: always return what was produced. Never claim the done predi
 - Finding: the specific issue with code location and evidence
 - Recommended Fix: concrete, actionable correction
 
-Unsuitable scope is reported as a named failure. An empty diff or inaccessible PR is reported as a named failure. The report must not contain findings without cited evidence.
+Unsuitable scope is reported as a named failure. An empty diff or inaccessible PR/MR is reported as a named failure. The report must not contain findings without cited evidence.
 
 **Depth mode.** A unified audit report with deduplicated findings prioritized by severity, grouped by file or component, each labeled with severity, category, affected location, description, rationale, and reviewer source. Or a partial-result report if synthesis was not possible.
 

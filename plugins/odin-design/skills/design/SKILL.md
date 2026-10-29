@@ -1,6 +1,6 @@
 ---
 name: design
-description: 'Use when starting UI work, defining palettes or tokens, fixing AI-generic UI, or persisting a design system to DESIGN.md (modes: implement, persist). Not for live URLs: use web-design-review.'
+description: 'Use when starting UI work, defining palettes or tokens, fixing AI-generic UI, or persisting a design system to DESIGN.md (modes: implement, persist). Not for live URLs.'
 ---
 
 # Design

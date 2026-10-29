@@ -20,12 +20,12 @@ Finish the complete authorized scope. Internal sequencing organizes the work; it
 
 - The ask (required): the requested outcomes and every named acceptance criterion, including integration, consumer migration, documentation, and proof the ask puts in scope.
 - The authorized backlog (as available): active todos, task lists, undone implementation, claimed blockers, and worker outputs. Refreshing this backlog never expands scope beyond what the ask authorizes.
-- The current plan and relevant implementation (as available): collapse phased steps into one execution order rather than executing them as separate deliveries.
+- The current specification or plan and relevant implementation (as available): use a sufficiently clear specification or plan directly. Collapse phased steps into one execution order rather than separate deliveries. Do not require a new planning or question workflow.
 - Approval boundaries (as applicable): which actions need human approval before they run, such as publish, deploy, credential use, payment, data deletion, or public contract changes.
 
 ## Procedure
 
-1. Refresh the whole authorized backlog before acting. Collect active todos, open tasks, undone implementation, claimed blockers, and usable worker outputs from the task list, plan, and working tree. Resolve details obtainable from the repository or tools instead of asking the user to repeat them.
+1. Use the existing specification or plan when it establishes the scope, constraints, and acceptance criteria. Execute authorized work without asking for reconfirmation. Refresh active todos, open tasks, undone implementation, blockers, and usable worker outputs from the task list, plan, and working tree. Resolve repository and tool facts directly. Ask only when an unresolved choice materially changes the outcome or the next action needs authority the user has not granted.
 2. Verify and close what is already done. Check each claimed-complete item against its actual state and acceptance evidence, not its list status. Close only items the evidence supports. Reopen items whose evidence is stale, partial, or contradicted, and carry them as open work below.
 3. Clear stale blockers with available evidence. Re-examine each claimed blocker against the current tree, configuration, captured output, and completed work above. A blocker whose condition no longer holds is cleared with the evidence that clears it. A blocker held only by an outdated status, an old log, or a superseded assumption is re-tested through an authorized observation before it is allowed to stop anything.
 4. Account for the whole remaining ask. List requested outcomes, acceptance criteria, affected consumers, and approval boundaries. Do not redefine the task around the subset that was easiest to implement.

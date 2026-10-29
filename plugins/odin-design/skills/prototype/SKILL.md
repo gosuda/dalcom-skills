@@ -5,7 +5,7 @@ description: 'Use when committing the wrong product answer would be expensive to
 
 # Prototype
 
-Anchors: David Parnas (a throwaway hides the product behind one tested question; nothing about it is load-bearing), Dieter Rams (fidelity follows the question, never habit).
+Standards: a throwaway hides the product behind one tested question, nothing about it is load bearing. Fidelity follows the question, never habit.
 
 ## Contract
 

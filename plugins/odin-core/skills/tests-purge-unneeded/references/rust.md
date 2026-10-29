@@ -1,6 +1,6 @@
 # Rust, cargo test deletion patterns
 
-Rust checks ownership and lifetimes, requires exhaustive matching, and has no implicit conversions or null. **A test that asserts a struct has the fields the compiler proved it has catches nothing.** The compiler is the test for structure; `cargo test` is for behavior at boundaries.
+Rust checks ownership and lifetimes, requires exhaustive matching, and has no implicit conversions or null. **A test that asserts a plain struct has the fields the compiler proved it has, without validation or fallible work in construction, catches nothing.** The compiler is the test for structure; `cargo test` is for behavior at boundaries.
 
 ## Delete
 
@@ -21,7 +21,7 @@ fn user_constructor_sets_fields() {
 }
 ```
 
-The compiler proves that `User { id: 1, name: "alice".into() }` constructs a `User` with those exact fields. The test is a tautology.
+The compiler proves that `User { id: 1, name: "alice".into() }` constructs a `User` with those exact fields when construction only assigns the given fields without validation, fallible conversion, or logic that can panic or return `Err`. The test is a tautology. When field construction can panic, return `Err`, or run validation, keep the test as a real-bug test.
 
 ### Identity / passthrough functions
 
@@ -144,7 +144,11 @@ Tests the contract of `unsafe` code at its boundary, exactly where the compiler 
 ```rust
 #[test]
 fn channel_drops_remaining_messages_on_close() {
-    // tests the actual concurrency contract, compiler cannot prove this
+    let (tx, rx) = std::sync::mpsc::channel();
+    tx.send(1).unwrap();
+    drop(tx);
+    assert_eq!(rx.recv(), Ok(1));
+    assert!(rx.recv().is_err());
 }
 ```
 

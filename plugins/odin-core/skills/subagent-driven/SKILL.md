@@ -1,7 +1,6 @@
 ---
 name: subagent-driven
 description: 'Use when a user says execute with subagents or hands over an ordered multi-task plan. Not for credential, paid, or deployment work, or any mutation outside the skill''s designated workspace.'
-disable-model-invocation: true
 ---
 
 # Subagent-driven development
@@ -52,6 +51,8 @@ Required: an ordered multi-task plan file. The plan defines task boundaries, fil
 ## Failure modes
 
 - Mid-task worker death: recover from the ledger file (`scripts/sd-workspace` → `.outline/sdd/progress.md`): the commits it names exist in git. Trust the ledger and `git log` over recollection. `git clean -fdx` destroys the ledger; recover from `git log`.
+
+Before retrying a failed worker, inspect its designated workspace, actual commit objects, dirty and untracked state, report, and ledger. Verify which task outcomes exist and which are incomplete. Continue only the remaining work in that preserved workspace with a brief naming completed work that must not be repeated. A provider or quota failure with no productive execution is a resource blocker, not evidence that a different full-task dispatch will help. Retain partial work and ownership; recovery grants no new push, merge, or publication authority.
 - Partial ledger recovery: if the ledger is missing, reconstruct from `git log` using the plan's task order and the timestamps of commits that match each task's concern.
 
 ## Output

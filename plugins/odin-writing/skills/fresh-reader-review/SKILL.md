@@ -1,6 +1,6 @@
 ---
 name: fresh-reader-review
-description: 'Use when asked to cold-read an artifact with fresh zero-context eyes and cut whatever a stranger cannot follow. Not for criteria-review of requirements docs: use doc-review.'
+description: 'Use when asked to cold-read an artifact with fresh zero-context eyes and cut whatever a stranger cannot follow. Not for criteria-review of requirements docs.'
 disable-model-invocation: true
 ---
 

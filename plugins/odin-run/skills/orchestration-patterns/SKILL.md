@@ -1,6 +1,6 @@
 ---
 name: orchestration-patterns
-description: 'Use when work decomposes across subagents or role panels and needs coupling-based orchestration. Not for cloud-agent task-graph orchestration: use cloud-task-orchestrator.'
+description: 'Use when work decomposes across subagents or role panels and needs coupling-based orchestration. Not for cloud-agent task-graph orchestration.'
 ---
 
 # Orchestration patterns
@@ -72,6 +72,9 @@ description: 'Use when work decomposes across subagents or role panels and needs
 - Disagreement without evidence: artifacts conflict and their citations do not resolve the conflict. Return the conflicting claims and missing evidence; do not invent a deciding fact.
 - Context overflow risk: verified artifacts will not fit for owner-side reconciliation. Replace each unstarted large-input unit with the bounded digest mechanism from Step 2; if already-returned artifacts still cannot be reconciled, stop without synthesis and report the unprocessed set.
 - Rollback: if synthesis began before all artifacts verified and received dispositions, remove that partial synthesis, retain the verified source artifacts, and resume at Step 6.
+- If the user changes an active assignment to review-only or approval-gated analysis, stop authorizing writes and ask active writers to stop after their current atomic operation. Preserve partial state; do not finish, format, revert, or commit it merely to make the pause tidy.
+- Bind review evidence to a stable version. Confirm the writer stop, record the covered paths and content identities, and use immutable local evidence artifacts when needed. A read-only review does not authorize source repairs or execution outside the review's tool permissions.
+- Before reporting, establish whether the reviewed source version remained unchanged. If it drifted, identify the affected scope rather than presenting the old review as current. Report implementation status separately from review coverage. Automated notices, timeout defaults, and reviewer results are not user approval to resume writes.
 
 ## Output
 

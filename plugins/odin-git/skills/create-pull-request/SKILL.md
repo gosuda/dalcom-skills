@@ -1,6 +1,6 @@
 ---
 name: create-pull-request
-description: 'Use when asked to create or update a PR, shape or revise its description, or link issue references to its body. Not for multi-PR stacks: use gate-and-merge. Not for releases: use git-workflow-and-versioning.'
+description: 'Use when asked to create or update a PR, shape or revise its description, or link issue references to its body. Not for multi-PR stacks: use gate-and-merge. Not for releases.'
 disable-model-invocation: true
 ---
 
@@ -59,6 +59,12 @@ Full mode fires when the user asks to create a PR, write a PR description, summa
 9. Push all commits: `git push origin HEAD` (use `--force-with-lease` only after a rebase the user authorized). Done when: all commits are pushed to the remote.
 10. Preview the title, base, draft status, and body to the user. Create or update the PR only after the user confirms: `gh pr create --title "PR_TITLE" --body "PR_BODY" --base <base>` for a new PR, or `gh pr edit <PR_NUMBER> --title "PR_TITLE" --body "PR_BODY"` for an update (append `--draft` when applicable). When the body contains quotes, backticks, or `$`, write it to a temporary file and pass `--body-file <tmp>` instead of an inline `--body`, then delete the file. Done when: the user confirms the preview and the PR is created or updated.
 11. Query the remote PR after publication and confirm its URL, draft state, head and base branches, title, and body. For an update, success requires all values to match the preview. Open the PR in the browser to verify: `gh pr view --web`. Done when: the PR is open in the browser and all remote values match the preview.
+
+Resolve the actual intended target repository and base from the request and PR/dependency context; a remote default pointer is a candidate, not authority to override an explicit target. Record full base/head identities and inspect the merge-base-to-head delta, branch-only commits, and forge compare result. A branch may validly be behind its base; merge-base equality with the current base tip is not a universal PR requirement.
+
+Explain every commit and file in the proposed range, including prerequisite stack content and unrelated payload. Counts are reconciliation checks, not semantic proof. Re-read remote base/head and compare information after opening or changing the PR; distinguish stale PR metadata from ref evidence without guessing its cause.
+
+A polluted range requires a separately approved reconstruction plan retaining the original tips and intended final content. Do not silently flip the base, rewrite an open branch, close/recreate a PR, delete payload history, or force-push. Re-prove the range and relevant behavior after any authorized reconstruction.
 
 ### Mode quick
 
@@ -120,6 +126,8 @@ Link-issues mode fires when the user explicitly asks to link a GitHub issue and 
 - PR not found (describe): stop and report; no write attempted.
 - Invalid input, unresolved target, authentication failure, read failure, or Issues-block conflict (link-issues): make no mutation and return `blocked` with the failing class and command error or conflicting body condition.
 - Submission or GitHub API failure: stop and report the error; the remote PR remains unchanged. Do not claim or retry the mutation without first fetching the remote body again.
+
+  Retain the exact approved body and target through transport failures. Before an equivalent supported API path is used, confirm the prior write did not already land and that the response is a transport or endpoint issue, not an explicit rate-limit, abuse restriction, or permission denial. Do not switch transports to bypass such restrictions. Read back the complete body and target identity; a matching phrase or URL alone is not body verification. If the outcome is uncertain, preserve the draft and report partial-result without a compensating overwrite.
 - Verification mismatch: report the observed title, body, draft state, head, and base values that differ from the preview. Do not broaden the operation or claim the done predicate holds.
 - Submission may have succeeded but verification fails (link-issues): return `partial-result` with the pull request URL and observed remote state; do not issue a compensating edit because the prior body may have changed concurrently. Recovery is a fresh invocation on a newly fetched body; never overwrite concurrent remote changes.
 - Partial result rule: if PR creation fails after push, the branch is pushed but no PR exists; report the exact `gh` error and leave the remote branch in place for retry. If creation succeeded but confirmation failed, report the PR URL and the exact mismatches; do not delete the PR. Never leave a half-created or half-updated PR.

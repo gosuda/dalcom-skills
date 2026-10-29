@@ -1,6 +1,6 @@
 # Project setup and testing
 
-Set up a project structure before using ast-grep to lint or scan a codebase.
+Set up a project structure before using YAML rules to lint or scan a codebase.
 
 ## Scaffolding
 

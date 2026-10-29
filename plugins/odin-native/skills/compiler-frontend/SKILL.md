@@ -1,6 +1,6 @@
 ---
 name: compiler-frontend
-description: 'Use when building a lexer, Pratt or recursive-descent parser, AST, symbol table, type checker, or LLVM IR emitter for a language or DSL. Not for optimizing IR: use llvm-passes.'
+description: 'Use when building a lexer, Pratt or recursive-descent parser, AST, symbol table, type checker, or LLVM IR emitter for a language or DSL. Not for optimizing IR.'
 ---
 
 # Compiler frontend

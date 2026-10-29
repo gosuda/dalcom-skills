@@ -20,8 +20,6 @@ Order shallow modules by:
 - Refactoring effort: how many call sites or dependents would need to change. Lower effort ranks higher.
 - Architectural gain: how much internal depth the module would gain from decomposition. Higher gain ranks higher.
 
-Higher gain and lower effort ranks higher.
-
 ## Report plan
 
 - Ranked list of all shallow modules with their effort and gain scores.

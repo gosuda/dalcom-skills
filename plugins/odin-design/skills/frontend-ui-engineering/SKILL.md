@@ -1,6 +1,6 @@
 ---
 name: frontend-ui-engineering
-description: 'Use when asked to build or modify production-quality components, layouts, state, and pages with WCAG 2.1 AA and real content. Not for token-system design: use frontend-design-deslop.'
+description: 'Use when asked to build or modify production-quality components, layouts, state, and pages with WCAG 2.1 AA and real content. Not for token-system design.'
 ---
 
 # Frontend UI engineering
@@ -16,7 +16,7 @@ description: 'Use when asked to build or modify production-quality components, l
 
 ## Not for
 
-- Token-system design with slop-audit gates: use frontend-design-deslop.
+- Token-system design with slop-audit gates.
 - Remote, credential, publish, deploy, or irreversible changes.
 
 ## Inputs
@@ -36,7 +36,7 @@ Optional:
 
 1. Bound scope before writing: list every component and page file that will be created or modified. Colocate each component with its tests and local types. Do not touch files outside that list. Done when: the file list is stated and bounded.
 2. Read the project design system and use its tokens exclusively: spacing scale, semantic color tokens such as text-primary, bg-surface, and border-default, type hierarchy, and border-radius scale. Never use raw hex values, off-scale pixel values, or invented spacing. Done when: every value traces to a design-system token.
-3. When the product needs a distinct visual direction, collect evidence before choosing a layout. Study two or three relevant trusted screens, record decisions about hierarchy, density, navigation, controls, responsive behavior, and interaction states, and turn those decisions into a short design contract naming the screen job, primary action, required states, responsive rules, and patterns to reject. Rebuild the useful structure in the product own components, tokens, content, and visual language. Never copy another product branding, proprietary text, imagery, or exact layout. When references are unavailable, document the assumptions and verify the result against the existing design system. Done when: layout choices trace to recorded evidence or to documented assumptions checked against the system.
+3. When the product needs a distinct visual direction, collect evidence before choosing a layout. Study two or three relevant trusted screens, record decisions about hierarchy, density, navigation, controls, responsive behavior, and interaction states, and turn those decisions into a short design contract naming the screen job, primary action, required states, responsive rules, and patterns to reject. Rebuild the useful structure in the product's own components, tokens, content, and visual language. Never copy another product branding, proprietary text, imagery, or exact layout. When references are unavailable, document the assumptions and verify the result against the existing design system. Done when: layout choices trace to recorded evidence or to documented assumptions checked against the system.
 4. Compose small focused components rather than over-configured ones. Keep each component under roughly 200 lines and focused on one concern; split larger components by composition. Done when: no component exceeds 200 lines and each has one concern.
 5. Separate data fetching from presentation: a container component handles loading, error, and empty states; a presentational component receives resolved data and renders it. Done when: data fetching and presentation are in separate components.
 6. Choose the narrowest state category that fits, in order: local component state, lifted to the parent, context, URL, server-state library, global store. Use local state for component UI, lifted state shared between two or three siblings, context for read-heavy write-rare values such as theme, auth, and locale, URL state for shareable filters and pagination, a server-state library for remote cached data, and a global store only for complex app-wide client state. Lift state or use context before prop-drilling past one level, and never prop-drill deeper than three levels. Done when: the state approach is the narrowest that fits and prop-drilling stays within its limits.

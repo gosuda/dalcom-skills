@@ -1,6 +1,6 @@
 # Rationale template
 
-Copy this template to `docs/solutions/rationale/<slug>.md`, replace every bracketed placeholder, and delete sections with no real content. The template itself is not a record: validate only after all placeholders are replaced.
+Copy this template to `docs/solutions/rationale/<slug>.md`, where `<slug>` is a sanitized semantic name for the invariant (no ADR numbers, dates, or hashes). Replace every bracketed placeholder and delete sections with no real content. The template itself is not a record: validate only after all placeholders are replaced.
 
 ```markdown
 ---
@@ -18,34 +18,22 @@ evidence: [observed | corroborated | single-source | unknown]
 retire_when: [condition that should trigger a revisit, or delete this line]
 ---
 
-# [Short durable claim]
+# [Invariant statement: reusable mechanism that must always or never hold, never an incident retelling]
 
-## Context
-[What situation, decision, or failure produced this learning]
+## Scope
+[Supported scope: where the invariant holds and where it does not; never beyond the corroborating evidence. Repo-local quirks marked local; general claims only with corroboration]
 
-## Decision
-[What was chosen]
+## Enforcement
+[Guardrail, check, or test that exercises the invariant and would fail on violation; never a test that merely asserts mocked or fixture output. Reusable inputs are allowed when the test still proves the invariant]
 
-## Rationale
-[Why this won over the alternatives, grounded in the observed evidence]
-
-## Rejected alternatives
-[What was considered and the specific reason each lost; use unknown: when the reason was never established]
-
-## Consequences
-[What changes as a result: practice, guardrail, or follow-up]
-
-## Verification
-[How the outcome was observed to work]
-
-## Related
-[Related records or sources, if any]
+## Counterexample
+[Concrete violation and its material consequence: the significant failure prevented or the recurring decision improved. Use unknown: only for an honestly-unobserved violation shape, never as a stand-in for missing enforcement]
 ```
 
-After assembling, run from the skill directory:
+After assembling, run from the skill directory against the absolute record path (the `docs/...` destination lives in the operating repository, not inside the skill directory):
 
 ```bash
-python3 scripts/validate-record.py docs/solutions/rationale/<slug>.md
+python3 scripts/validate-record.py /path/to/repo/docs/solutions/rationale/<slug>.md
 ```
 
 A non-zero exit blocks publication. `type: caveat` stays `caveat`; never convert it into another type to look more classified.

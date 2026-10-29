@@ -34,6 +34,8 @@ description: 'Use when building Rust binaries for a different target architectur
 4. **Configure the linker and runner.** In `.cargo/config.toml`, add a `[target.<triple>]` section with `linker`, `runner`, and `rustflags` as needed. For a static musl build, set `rustflags = ["-C", "target-feature=+crt-static"]`. For bare metal, set the default target and runner. Done when: `.cargo/config.toml` contains a valid target section.
 5. **Build and verify the output.** Run the build, then use `file <binary>` or `readelf -h <binary>` to confirm the ELF machine type and linking mode. For Windows or macOS targets, use `file` or `objdump -f`. Done when: the output reports the intended architecture and the build exits 0.
 
+Record host, exact target and ABI, driver, feature set, native dependencies, and the level actually verified: type checking, linking, or execution. A GNU Windows target is not MSVC coverage, and a cross-check is not native filesystem or runtime proof. Gate helper definitions and tests to their actual use-site configurations; check that required tests remain selected rather than hiding failures with cfg or lint suppression. An optional cargo-xwin route requires checking the installed driver's interface and prerequisites and obtaining the owner's SDK/CRT license acceptance before any download. Report the actual output locations from effective Cargo configuration. If native execution is unavailable, retain that gap explicitly; do not manufacture parity through a substitute target or automatically skip a failing platform fixture.
+
 ## Failure and recovery
 
 | Failure class | Behavior |

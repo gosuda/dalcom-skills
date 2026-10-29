@@ -17,7 +17,7 @@ description: 'Use when asked to identify and bypass checksums, nondeterminism, o
 ## Not for
 
 - Dictionary creation for fixed-token gates: use fuzzing-dictionary.
-- Coverage measurement or plateau analysis: use fuzzing-coverage-analysis.
+- Coverage measurement or plateau analysis.
 - Remote, credential, publish, deploy, or irreversible changes.
 
 ## Inputs
@@ -36,7 +36,7 @@ Optional:
 3. Patch incrementally. Bypass one obstacle at a time. Keep cheap validation (magic bytes, size checks) that guides the fuzzer at low cost; skip only the specific check that blocks coverage. Done when: one obstacle is bypassed and cheap validation is retained.
 4. Provide safe defaults when downstream code assumes validated state. If code after the skipped check depends on a validated property (e.g., a divisor is nonzero), supply a safe fallback value under the fuzzing branch instead of skipping wholesale. See `references/patch-patterns.md` for the safe-default pattern. Done when: downstream assumptions are satisfied under the fuzzing branch.
 5. Verify coverage improvement. Rebuild with fuzzing instrumentation, run the fuzzer for a short time, and compare line/basic-block/function coverage and corpus diversity against the unpatched baseline. Confirm new code paths are reachable. Done when: coverage improves over the unpatched baseline.
-6. Assess false-positive risk. For each patch, determine whether skipping the check introduces program states impossible in production: does downstream code assume validated properties; could skipping cause crashes that cannot occur in production; is there implicit state dependency. Classify risk (LOW / MEDIUM / MITIGATED) and record it. If risk is high, narrow the patch or restore validation with safe defaults rather than skipping. Done when: each patch has a risk classification with rationale.
+6. Assess false-positive risk. For each patch, determine whether skipping the check introduces program states impossible in production: does downstream code assume validated properties; could skipping cause crashes that cannot occur in production; is there implicit state dependency. Classify risk (LOW / MEDIUM / HIGH / MITIGATED) and record it. If risk is high, narrow the patch or restore validation with safe defaults rather than skipping. Done when: each patch has a risk classification with rationale.
 7. Document each patch so the fuzzing-vs-production divergence is visible to future maintainers. Done when: every patch is documented.
 
 ## Failure and recovery
@@ -50,4 +50,4 @@ Rollback: delete the conditional compilation block (or remove the fuzz build con
 
 ## Output
 
-Conditional-compilation patches in the System Under Test (each gated on the fuzzing build flag and documented), a coverage delta showing improved reachability over the unpatched baseline, and a per-patch false-positive risk classification (LOW / MEDIUM / MITIGATED) with rationale, unresolved obstacles reported as such with evidence rather than marked done.
+Conditional-compilation patches in the System Under Test (each gated on the fuzzing build flag and documented), a coverage delta showing improved reachability over the unpatched baseline, and a per-patch false-positive risk classification (LOW / MEDIUM / HIGH / MITIGATED) with rationale, unresolved obstacles reported as such with evidence rather than marked done.

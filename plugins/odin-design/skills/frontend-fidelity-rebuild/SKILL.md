@@ -44,4 +44,4 @@ description: 'Use when an authorized reference surface needs a clean-room fronte
 
 ## Output
 
-An immutable K11 receipt with every K11 field, recording the terminal class (success, capped, stalled, or blocked) and the per-gate fidelity comparison evidence: static pixel difference, motion timing deviation, responsive layout shift, and whether each gate passed its tolerance.
+An immutable receipt.json with every required field, recording the terminal class (success, capped, stalled, or blocked) and the per-gate fidelity comparison evidence: static pixel difference, motion timing deviation, responsive layout shift, and whether each gate passed its tolerance.

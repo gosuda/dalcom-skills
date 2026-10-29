@@ -1,6 +1,6 @@
 ---
 name: code-generation-and-backends
-description: 'Use when reading llc output, tracing IR through legalization and instruction selection, or scoping a new LLVM target. Not for IR-level passes: use llvm-ir-and-passes.'
+description: 'Use when reading llc output, tracing IR through legalization and instruction selection, or scoping a new LLVM target. Not for IR-level passes.'
 ---
 
 # Code generation and backends
@@ -38,7 +38,7 @@ description: 'Use when reading llc output, tracing IR through legalization and i
 4. For extra operations you did not write, read them as legalization. A type the target has no register for (an `i64` on a 32-bit core, a vector type without a matching unit) is split, promoted, or expanded into a libcall; an operation without a pattern is expanded into a sequence. The fix is either a target feature that makes the type or operation legal, or an IR change that avoids it. Done when: each unexpected instruction sequence is tied to a type or operation the target cannot represent directly.
 5. For a `Cannot select` fatal error, identify the IR operation and type in the message, then decide between marking it legal in the target (a backend change), adding a custom lowering hook in `TargetLowering`, or rewriting the IR so the operation is not produced. Done when: one of the three paths is chosen and stated with the operation and type.
 6. For wrong soft-float or calling-convention behaviour, check the ABI in the triple (`gnueabi` versus `gnueabihf`) and the float ABI flag passed to `clang`; the target's calling convention lives in TableGen (`CC_AArch64`, `CC_X86_64`) and is selected by the triple. Done when: the triple and float ABI match the ABI the linked objects use. For the ABI rules themselves, use `abi-and-calling-conventions`.
-7. For a large stack frame or spill-heavy assembly, treat it as register pressure that survived to allocation, not as a backend defect. Reduce live ranges at the IR or source level. Done when: the spill count changes with the source change, which confirms the diagnosis. For the allocation mechanism, use `compiler-optimizations-deep`.
+7. For a large stack frame or spill-heavy assembly, treat it as register pressure that survived to allocation, not as a backend defect. Reduce live ranges at the IR or source level. Done when: the spill count changes with the source change, which confirms the diagnosis.
 8. For a question about adding a target, give the outline and the effort: define register classes and instruction formats in TableGen `.td` files; implement lowering hooks in `TargetLowering`; implement the `AsmPrinter` and the MC layer with relocations; implement the calling convention and the object writer for the target format. Patterns such as `Pat<(add i32 GPR:$a, GPR:$b), (ADD32rr GPR:$a, GPR:$b)>` map DAG nodes to machine instructions. Start from the in-tree backend closest to the architecture. A TableGen syntax error is reported by `llvm-tblgen` with the `.td` line. Done when: the four parts and the closest existing backend are named.
 
 ## Failure and recovery
@@ -48,7 +48,7 @@ description: 'Use when reading llc output, tracing IR through legalization and i
 | Target not registered in the installed `llc` | Report the `llc --version` target list. Stop; a rebuilt LLVM with the target enabled is a prerequisite. |
 | Bitcode from a different LLVM major than `llc` | Report both versions. Regenerate the bitcode with the matching `clang`; bitcode is not stable across majors. |
 | Triple unknown and not inferrable from the build | Report the ambiguity with the evidence examined. Do not guess a triple. |
-| Symptom is at the IR level, not the machine level | Hand off to `llvm-ir-and-passes` and say so; do not narrate a codegen cause for an IR effect. |
+| Symptom is at the IR level, not the machine level | Out of scope for this skill; do not narrate a codegen cause for an IR effect. |
 
 No partial result is claimed complete. If a step cannot finish, the report states which steps ran and which are blocked.
 

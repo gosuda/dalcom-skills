@@ -477,9 +477,9 @@ Continuous profiling: Pyroscope (`grafana/pyroscope-go`, push) or Parca (pull/eB
 | Library / module | Current (mid-2026) | Status | Note |
 |---|---|---|---|
 | `go.opentelemetry.io/otel` (+ `sdk`, `trace`, `metric`, `sdk/metric`) | v1.47.0 | **Stable** | Traces + metrics GA |
-| `otel/log`, `otel/sdk/log`, `otel/log/global` | v1.47.0 | **Beta** | Logs signal experimental: adopt consciously |
+| `otel/log`, `otel/sdk/log`, `otel/log/global` | v1.47.0 | **Stable** | Logs signal experimental: adopt consciously |
 | OTLP exporters `otlp{trace,metric}{http,grpc}` | v1.47.0 | Stable | HTTP fixed ≥ v1.43.0 (GHSA advisory) |
-| `otel/exporters/prometheus` | v0.72.0 | **Experimental** | OTel→Prometheus bridge; older `exporters/metric/prometheus` is frozen |
+| `otel/exporters/prometheus` | v0.69.0 | **Experimental** | OTel→Prometheus bridge; older `exporters/metric/prometheus` is frozen |
 | `otel/semconv/v1.43.0` | versioned path | Stable | Pin **one** version per binary; v1.39.0 RPC renames |
 | contrib `otelhttp`, `otelgrpc`, `propagators/autoprop` | v0.72.0 | Stable instrumentation | Use `stats.Handler`; avoid interceptors / `WithRouteTag` |
 | contrib `bridges/otelslog` | v0.x | Beta (needs Logs SDK) | Or custom handler + Collector |

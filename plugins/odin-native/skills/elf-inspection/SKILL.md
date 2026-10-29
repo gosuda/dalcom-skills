@@ -1,11 +1,11 @@
 ---
 name: elf-inspection
-description: 'Use when examining ELF binaries with readelf, objdump, nm, or ldd: dependencies, symbols, sections, relocations, build IDs, or hardening, or when enabling RELRO, PIE, stack canaries, FORTIFY_SOURCE, CET, CFI, or seccomp filters, or checking a binary with checksec. Not for modifying binaries: use binutils. Not for runtime sanitizer builds: use sanitizers.'
+description: 'Use when examining ELF binaries with readelf, objdump, nm, or ldd: dependencies, symbols, sections, relocations, build IDs, or hardening, or when enabling RELRO, PIE, stack canaries, FORTIFY_SOURCE, CET, CFI, or seccomp filters, or checking a binary with checksec. Not for modifying binaries. Not for runtime sanitizer builds: use sanitizers.'
 ---
 
 # ELF inspection
 
-An ELF binary reports its own structure. Every question about dependencies, symbols, sections, or hardening is one `readelf`, `objdump`, `nm`, or `ldd` query away, and every hardening gap has a concrete, toolchain-gated flag set. This skill is read-only: it inspects binaries and emits flag sets and verification commands; transformation of binaries belongs to `binutils`, and runtime sanitizer builds belong to `sanitizers`.
+An ELF binary reports its own structure. Every question about dependencies, symbols, sections, or hardening is one `readelf`, `objdump`, `nm`, or `ldd` query away, and every hardening gap has a concrete, toolchain-gated flag set. This skill is read-only: it inspects binaries and emits flag sets and verification commands; runtime sanitizer builds belong to `sanitizers`.
 
 ## Contract
 

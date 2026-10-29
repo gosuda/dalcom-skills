@@ -82,7 +82,7 @@ A redesigned **parallel marking** algorithm that is *memory-aware*. The classic 
 
 ### Fundamentals that stay true (and models get wrong)
 
-- Hybrid write barrier [1.8]: a Yuasa-style deletion barrier (shade the overwritten referent) + a Dijkstra-style insertion barrier (shade the new referent). This **eliminated STW stack re-scanning**. Barriers are active **only during the mark phase**; they are not free, which is why allocation-during-mark has cost.
+- Hybrid write barrier [1.8]: a Yuasa-style deletion barrier (shade the overwritten referent) + an insertion barrier (shade the new referent). This **eliminated STW stack re-scanning**. Barriers are active **only during the mark phase**; they are not free, which is why allocation-during-mark has cost.
 - GC pacing / `GOGC` (default 100): target heap ≈ live heap + (live heap + GC roots) × GOGC/100. Since **[1.18]** the formula includes the **root set** (stacks + globals), not just live heap. `GOGC=off` disables pacing.
 - `GOMEMLIMIT` [1.19]: a **soft** limit over the Go heap + runtime-managed memory (excludes binary mappings, C/cgo memory). GC picks the lower of the GOGC trigger and the limit-derived trigger; pairs with `GOGC=off` for "GC only near the limit." A 50% GC-CPU cap (excluding idle) mitigates death spirals. The pre-1.19 GOGC-only + virtual-memory "ballast" hack is **obsolete**.
 - Mutator assist: an allocating goroutine that outruns background GC must do proportional mark work, preventing heap overshoot.

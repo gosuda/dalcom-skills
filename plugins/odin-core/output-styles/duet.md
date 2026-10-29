@@ -4,8 +4,8 @@ description: >
   Output style for the duet working posture (user as director, agent as executor).
   Minimizes cognitive load between picks: decisions before prose, structural/taste
   framing first, jargon on demand, batched questions with concrete previews, short
-  execution updates, no validation language, no recap. The goal is to eliminate the review
-  bottleneck and prevent codebase-understanding debt by distributing review across
+  execution updates, no validation language, no recap. The goal is to reduce the review
+  bottleneck and limit codebase-understanding debt by distributing review across
   the task at pick-time.
 ---
 
@@ -47,7 +47,7 @@ Every rule below exists to make picking cheap and remembering automatic.
 
 # Decisions before prose
 
-When a response reaches a fork, lead with the decision, not the build-up. The first thing the user sees is either (a) a compressed VS block (per the duet skill's VS-gated question protocol) followed immediately by an `AskUserQuestion` call, or (b) a one-line statement of the pick that is about to happen. No *other* preamble in either case: no "let me walk you through my thinking" paragraph before the question.
+When a response reaches a fork, lead with the decision, not the build-up. The first thing the user sees is either (a) a compressed VS block (per the VS-gated question protocol below) followed immediately by an `AskUserQuestion` call, or (b) a one-line statement of the pick that is about to happen. No *other* preamble in either case: no "let me walk you through my thinking" paragraph before the question.
 
 Prose explaining *why* an option is recommended belongs *inside* the option's description, not above the question. The user should be able to read three lines and pick, not read a screen of reasoning before finding the decision.
 

@@ -27,33 +27,33 @@ a tenth.
 
 NINE PATTERNS:
 
-1. REDUNDANT STATE [Excess]
+1. REDUNDANT STATE [Excess-surface]
    Duplicated state, cached values that could be derived on read,
    observers/effects that could be direct calls. Detector: a variable
    that mirrors another variable; an effect whose entire body is one
    `set(...)` of a value computable from the deps.
 
-2. PARAMETER SPRAWL [Excess]
+2. PARAMETER SPRAWL [Excess-surface]
    A function adds new parameters instead of generalizing or restructuring.
    Detector: same function gained ≥ 2 params in the diff; or a param is
    used in exactly one call site and could be a constant there.
 
-3. COPY-PASTE WITH SLIGHT VARIATION [Sprawl]
+3. COPY-PASTE WITH SLIGHT VARIATION [Structure]
    Near-duplicate blocks (two branches, two functions, two cases) that
    differ only in a constant, a key, or a type. Detector: two diff hunks
    with structural similarity > ~70%.
 
-4. LEAKY ABSTRACTIONS [Sprawl]
+4. LEAKY ABSTRACTIONS [Structure]
    Internal details exposed across a boundary the rest of the code respects.
    Detector: a public function returns an internal type; a module's caller
    reaches through to a private collaborator.
 
-5. STRINGLY-TYPED CODE [Excess]
+5. STRINGLY-TYPED CODE [Excess-surface]
    Raw strings used where a constant, enum, or a closed/nominal type
    already exists nearby. Detector: a literal string appears ≥ 2 times
    in the diff or matches an existing enum value verbatim.
 
-6. REDUNDANT STRUCTURAL NESTING [Sprawl]
+6. REDUNDANT STRUCTURAL NESTING [Structure]
    A container node (wrapper component, layout element, grouping
    construct) that adds no layout, semantic, or behavioral value over
    its single child. Detector: a container with exactly one child and no
@@ -63,7 +63,7 @@ NINE PATTERNS:
    `alignItems`) the child doesn't already carry; SwiftUI `Group`/
    `VStack` wrapping one child with no `.frame()`/`.padding()` applied.
 
-7. NESTED CONDITIONALS [Sprawl]
+7. NESTED CONDITIONALS [Structure]
    Conditional branches nested 3+ levels deep, regardless of surface
    syntax — ternary chains (`a ? x : b ? y : ...`), if/else trees, match/
    switch blocks. Fix shape: early returns, guard clauses, a lookup
@@ -71,13 +71,13 @@ NINE PATTERNS:
    conditional nesting depth ≥ 3 in any diff hunk (C-family `?:` chains,
    Python `if`/`else` expressions, and Rust `match` arms all count).
 
-8. UNNECESSARY COMMENTS [Excess]
+8. UNNECESSARY COMMENTS [Excess-surface]
    Comments explaining WHAT the code does (well-named identifiers already
    say that), narrating the change, or referencing the task/caller. Keep
    only non-obvious WHY (hidden constraints, subtle invariants, workarounds).
    Detector: the comment paraphrases the immediately-following expression.
 
-9. DEAD CODE / UNUSED IMPORTS / UNUSED EXPORTS [Excess]
+9. DEAD CODE / UNUSED IMPORTS / UNUSED EXPORTS [Excess-surface]
    Code paths no longer reachable, imports not referenced by the changed
    file, exports no longer consumed by any caller in the codebase. To
    verify "unused" across the codebase, derive the check from the

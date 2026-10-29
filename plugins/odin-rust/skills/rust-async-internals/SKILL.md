@@ -31,6 +31,8 @@ description: 'Use when understanding the Rust Future poll model, Pin and Unpin, 
 7. Find and fix blocking in async. Replace `std::thread::sleep` with `tokio::time::sleep(...).await`, `std::fs` reads with `tokio::fs`, and heavy CPU calls with `tokio::task::spawn_blocking`. Done when: the async task no longer blocks a runtime thread.
 8. Diagnose `select!` and `join!` pitfalls. Explain that `select!` completes when the first branch wins and drops the others, `join!` waits for all, `biased;` changes polling order, and `Fuse` is needed for polling a future repeatedly. Done when: the user can rewrite the branch or loop safely.
 
+For a factory that starts background work before returning, define who owns cleanup while construction is pending and after success or failure. Keep the cleanup guard armed across every fallible or cancellable suspension and disarm only after ownership transfers successfully. Cleanup in Drop must not await or block. Prove pending cancellation, successful transfer, and failure through the actual construction seam, then establish that the public factory uses that seam. A guard-only test does not prove factory wiring. If termination is required, observe task completion or a drop witness after a rendezvous proving the task started; a cancelled token alone is insufficient. Record killed and surviving mutations separately, and do not claim the wiring closed while a bypass survives.
+
 ## Failure and recovery
 
 | Failure class | Behavior |

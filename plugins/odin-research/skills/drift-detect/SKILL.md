@@ -83,7 +83,7 @@ description: 'Use when roadmap, plans, or docs may have drifted from code, or wh
    ```
 
    Done when: the synthesis pass emits the report with every finding evidence-cited.
-8. **Emit the Reality Check Report** using the report template in `references/drift-taxonomy.md`. Done when: the report is emitted with executive summary, drift analysis, gap analysis, cross-reference table, prioritized reconstruction plan, quick wins, and unknowns.
+8. **Emit the Reality Check Report** using the report template in `references/drift-taxonomy.md`. When two documents contradict each other, record the conflict naming both documents and quoting or paraphrasing both passages; keep it unresolved in the cross-reference table rather than synthesizing over it. Done when: the report is emitted with executive summary, drift analysis, gap analysis, cross-reference table, prioritized reconstruction plan, quick wins, and unknowns.
 
 ## Failure and recovery
 - gh unavailable or unauthenticated: mark GitHub `unavailable`, continue with docs/code. Never invent issue state.

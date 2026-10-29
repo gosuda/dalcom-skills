@@ -5,7 +5,7 @@ description: 'Use when a vague or ambitious product idea needs framing into a ri
 
 # Frame a product idea
 
-Anchors: David Parnas (WHAT the product must do is a separate contract from HOW it is built), Dieter Rams (the smallest plan that prevents invention downstream wins).
+Standards: WHAT the product must do is a separate contract from HOW it is built. The smallest plan that prevents invention downstream wins.
 
 This is the product-WHAT owner sourced from ce-brainstorm. The `brainstorm` slug stays with knowledge capture and refinement; this skill owns vague-to-requirements framing. Verdict questions about a named external candidate route to pov.
 
