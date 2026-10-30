@@ -39,7 +39,7 @@ Each row states when to reach for the skill. Invoke one as `/dstack-writing:<nam
 | docs-writing | Use when asked to write, restructure, or audit documentation with Diataxis types, or to draft a feature docs page or diagram source. |
 | good-readme | Use when the user asks to create, rewrite, review, or polish an open-source README. |
 | humaniseur-fr | Use when the user supplies French text that reads like AI output and asks to naturalize it. |
-| humanizer-korean-plain | Use when Korean prose reads as AI-generated, translated, or bureaucratic and needs plain, natural Korean while keeping meaning. |
+| humanizer-korean-plain | Use when Korean prose reads as machine-generated, machine-translated, or bureaucratic and must be rewritten as plain, natural Korean without changing its meaning. |
 | humanizer-korean-ste | Use when Korean technical documents such as runbooks, procedures, manuals, or operating guides need controlled wording: one action per step, conditions before actions, unified terms, and warnings placed before risky steps. |
 | humanizer-plain-english | Use when asked to make English plain, clear, natural, and readable while keeping its meaning and voice. |
 | humanizer-simple-english-asd-ste100 | Use when asked to rewrite technical English toward ASD-STE100 Simplified Technical English: short, unambiguous sentences, one instruction per step, consistent terms, and AI-style padding removed. |

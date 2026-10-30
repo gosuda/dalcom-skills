@@ -1,3 +1,3 @@
 interface:
   display_name: "Humanizer Korean Plain"
-  short_description: "Use when Korean prose reads as AI-generated, translated, or bureaucratic and needs plain, natural Korean while keeping meaning."
+  short_description: "Use when Korean prose reads as machine-generated, machine-translated, or bureaucratic and must be rewritten as plain, natural Korean without changing its meaning."
