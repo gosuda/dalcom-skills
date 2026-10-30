@@ -10,7 +10,7 @@ supported client discovers them from that same layout, so nothing is copied or r
 Methodology: [dstack](https://github.com/gosuda/dstack)
 · Site: [outlinedriven.github.io](https://outlinedriven.github.io)
 
-- Five harness surfaces from one tree: Claude Code, Codex, Cursor, Grok, and Kimi
+- Six harness surfaces from one tree: Claude Code, Codex, Cursor, Grok, Kimi, and Hermes Agent
 - No package manager for the tooling; every script is dependency-free Node ESM or standard-library Python
 - Six output styles in dstack-core, each embedding the canonical doctrine byte-identically
 - Pre-commit gates that audit the whole tree on every commit, listed in `.pre-commit-config.yaml`
@@ -45,6 +45,7 @@ plugins/dstack-core/
   .cursor-plugin/plugin.json   Cursor manifest
   .grok-plugin/plugin.json     Grok manifest
   .kimi-plugin/plugin.json     Kimi manifest
+  plugin.yaml, __init__.py     Hermes Agent manifest and skill loader
   skills/necessary-work/SKILL.md        authored skill
   skills/necessary-work/agents/openai.yaml   generated from the frontmatter
   mcp.json                     MCP servers, dstack-core only
@@ -64,7 +65,7 @@ plugins/dstack-core/
 
 ## Install
 
-Six install surfaces are supported; each installs from this repository.
+Seven install surfaces are supported; each installs from this repository.
 
 ### Claude Code
 
@@ -143,6 +144,19 @@ From a local clone; Kimi cannot install a subdirectory of a GitHub repository.
 ```
 
 Both paths are absolute: Kimi rejects a relative plugin root.
+
+### Hermes Agent
+
+```shell
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-core --enable --force
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-code --enable --force
+```
+
+Each plugin directory is a native Hermes plugin: `plugin.yaml` names it, and `__init__.py` registers
+every `skills/<slug>/SKILL.md` as `<plugin>:<slug>`, for example `dstack-core:askme`. Hermes scans
+community plugins on install and blocks a caution verdict, which the helper scripts in these skills
+trigger, so `--force` is required. Hermes does not load `mcp.json` or the output styles from a
+native plugin; add the `dstack-core` MCP servers with `hermes mcp` if you want them.
 
 ## Choose your plugins
 

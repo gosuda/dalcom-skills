@@ -92,6 +92,8 @@ which the checks import too, so one module defines both what is generated and wh
 | `.cursor-plugin/plugin.json` | plugin | Identity only |
 | `.grok-plugin/plugin.json` | plugin | Adds `mcpServers: "./mcp.json"` when `mcp.json` exists |
 | `.kimi-plugin/plugin.json` | plugin | Always declares `skills: "./skills"`; inlines the `mcpServers` map from `mcp.json` |
+| `plugin.yaml` | plugin | Hermes Agent native manifest: `name`, `version`, `description`, `author`, `homepage`, `license`, `tags` as JSON-quoted YAML scalars |
+| `__init__.py` | plugin | Hermes Agent loader, a byte copy of `scripts/hermes-plugin-init.py`; registers each `skills/<slug>/SKILL.md` through `ctx.register_skill` |
 | `README.md`, `LICENSE`, `NOTICE` | plugin | README lists the skills; LICENSE and NOTICE are byte copies of the root `LICENSE` and `licenses/NOTICE` |
 | The table under `## Plugins` in the root `README.md` | tree | The only generated region of that file; the prose around it is authored |
 
@@ -189,6 +191,7 @@ this script holds the invariants no renderer can restate.
 | All five dotdir manifests exist, parse, and carry `name` equal to the catalog `id` | `<id>: missing <dotdir>/plugin.json` or `name is X, catalog id is Y` |
 | `.codex-plugin/plugin.json` declares no `$schema` | `must not declare $schema` |
 | `.kimi-plugin/plugin.json` declares `skills` | `must declare skills` |
+| Every plugin ships `plugin.yaml` with `name` equal to the catalog `id`, and `__init__.py` | `<id>: missing plugin.yaml`, `plugin.yaml name is X, catalog id is Y`, or `missing __init__.py` |
 | A plugin shipping `mcp.json` declares `mcpServers: "./mcp.json"` in its Codex and Grok manifests | `must declare mcpServers "./mcp.json"` |
 | Every skill directory holds `SKILL.md` and no nested `SKILL.md` one level down | `missing SKILL.md` or `nested SKILL.md at <dir>/ never loads` |
 | All five registries exist, list exactly as many plugins as the catalog, and every source starts with `./plugins/` (`../plugins/` for Kimi) | `missing registry`, `N plugins, catalog has M`, or `source is not a repository path` |

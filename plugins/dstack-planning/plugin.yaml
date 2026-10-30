@@ -1,0 +1,7 @@
+name: "dstack-planning"
+version: "2.1.9"
+description: "DStack workflows for shaping intent into approved plans, specs, and task lists."
+author: "gosuda"
+homepage: "https://github.com/gosuda/dalcom-skills"
+license: "SEE LICENSE IN LICENSE"
+tags: ["dstack", "dalcom", "agent-skills", "planning"]

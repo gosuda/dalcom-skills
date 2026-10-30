@@ -14,6 +14,9 @@ DStack workflows for CI, deployment, observability, cost, and infrastructure too
 # Codex
 codex plugin marketplace add gosuda/dalcom-skills
 codex plugin add dstack-infra@dstack
+
+# Hermes Agent
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-infra --enable --force
 ```
 
 ### Individual (gh skill)
@@ -29,7 +32,7 @@ Cursor, Grok, and Kimi install from this same tree. The repository README gives 
 
 ## Skills
 
-Each row states when to reach for the skill. Invoke one as `/dstack-infra:<name>` in Claude Code, `$<name>` in Codex, or type `/` and pick it in Cursor.
+Each row states when to reach for the skill. Invoke one as `/dstack-infra:<name>` in Claude Code or Hermes Agent, `$<name>` in Codex, or type `/` and pick it in Cursor.
 
 | Skill | Trigger |
 |---|---|

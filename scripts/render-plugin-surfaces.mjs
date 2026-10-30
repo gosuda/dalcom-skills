@@ -6,6 +6,7 @@ import { dirname, join } from "node:path";
 import {
   ROOT,
   loadCatalog,
+  renderHermesPluginManifest,
   renderPluginReadme,
   renderRootReadme,
   skillRows,
@@ -21,9 +22,12 @@ for (const [relative, value] of surfacePlan(catalog))
 
 const license = readFileSync(join(ROOT, "LICENSE"), "utf8");
 const notice = readFileSync(join(ROOT, "licenses/NOTICE"), "utf8");
+const hermesInit = readFileSync(join(ROOT, "scripts/hermes-plugin-init.py"), "utf8");
 for (const entry of catalog.entries) {
   wanted.set(`${entry.directory}/LICENSE`, license);
   wanted.set(`${entry.directory}/NOTICE`, notice);
+  wanted.set(`${entry.directory}/plugin.yaml`, renderHermesPluginManifest(catalog, entry));
+  wanted.set(`${entry.directory}/__init__.py`, hermesInit);
   wanted.set(
     `${entry.directory}/README.md`,
     renderPluginReadme(catalog, entry, skillRows(entry)),

@@ -1,0 +1,7 @@
+name: "dstack-knowledge"
+version: "2.1.9"
+description: "DStack workflows for memory, session continuity, decision records, and retrospectives."
+author: "gosuda"
+homepage: "https://github.com/gosuda/dalcom-skills"
+license: "SEE LICENSE IN LICENSE"
+tags: ["dstack", "dalcom", "agent-skills", "knowledge"]

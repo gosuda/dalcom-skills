@@ -101,6 +101,15 @@ for (const entry of catalog.entries) {
           `${entry.id}: ${dotdir}/plugin.json must declare mcpServers "./mcp.json"`,
         );
     }
+  const hermesManifest = join(ROOT, entry.directory, "plugin.yaml");
+  if (!existsSync(hermesManifest)) errors.push(`${entry.id}: missing plugin.yaml`);
+  else {
+    const name = /^name: (.*)$/m.exec(readFileSync(hermesManifest, "utf8"))?.[1];
+    if (name !== JSON.stringify(entry.id))
+      errors.push(`${entry.id}: plugin.yaml name is ${name}, catalog id is ${entry.id}`);
+  }
+  if (!existsSync(join(ROOT, entry.directory, "__init__.py")))
+    errors.push(`${entry.id}: missing __init__.py`);
   for (const slug of skills) {
     const skillDir = join(ROOT, entry.directory, "skills", slug);
     if (!existsSync(join(skillDir, "SKILL.md")))

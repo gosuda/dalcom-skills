@@ -14,6 +14,9 @@ DStack workflows for modern TypeScript development.
 # Codex
 codex plugin marketplace add gosuda/dalcom-skills
 codex plugin add dstack-typescript@dstack
+
+# Hermes Agent
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-typescript --enable --force
 ```
 
 ### Individual (gh skill)
@@ -29,7 +32,7 @@ Cursor, Grok, and Kimi install from this same tree. The repository README gives 
 
 ## Skills
 
-Each row states when to reach for the skill. Invoke one as `/dstack-typescript:<name>` in Claude Code, `$<name>` in Codex, or type `/` and pick it in Cursor.
+Each row states when to reach for the skill. Invoke one as `/dstack-typescript:<name>` in Claude Code or Hermes Agent, `$<name>` in Codex, or type `/` and pick it in Cursor.
 
 | Skill | Trigger |
 |---|---|

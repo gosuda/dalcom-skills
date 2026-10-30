@@ -1,0 +1,7 @@
+name: "dstack-writing"
+version: "2.1.9"
+description: "DStack workflows for documentation, editorial prose, and copy."
+author: "gosuda"
+homepage: "https://github.com/gosuda/dalcom-skills"
+license: "SEE LICENSE IN LICENSE"
+tags: ["dstack", "dalcom", "agent-skills", "writing"]

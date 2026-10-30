@@ -1,0 +1,7 @@
+name: "dstack-skills"
+version: "2.1.9"
+description: "DStack workflows for authoring, auditing, benchmarking, and publishing agent skills."
+author: "gosuda"
+homepage: "https://github.com/gosuda/dalcom-skills"
+license: "SEE LICENSE IN LICENSE"
+tags: ["dstack", "dalcom", "agent-skills", "skills"]

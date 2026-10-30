@@ -172,6 +172,23 @@ export function renderKimiPluginManifest(catalog, entry) {
   return manifest;
 }
 
+export function renderHermesPluginManifest(catalog, entry) {
+  const fields = [
+    ["name", entry.id],
+    ["version", catalog.releaseVersion],
+    ["description", entry.description],
+    ["author", catalog.owner.name],
+    ["homepage", entry.homepage],
+    ["license", catalog.license],
+  ];
+  const tags = entry.tags.map((tag) => JSON.stringify(tag)).join(", ");
+  return [
+    ...fields.map(([key, value]) => `${key}: ${JSON.stringify(value)}`),
+    `tags: [${tags}]`,
+    "",
+  ].join("\n");
+}
+
 export function renderClaudeMarketplace(catalog) {
   return {
     $schema: CLAUDE_MARKETPLACE_SCHEMA,
@@ -353,6 +370,9 @@ export function renderPluginReadme(catalog, entry, skills) {
     `# Codex`,
     `codex plugin marketplace add gosuda/dalcom-skills`,
     `codex plugin add ${entry.id}@${catalog.marketplace_name}`,
+    "",
+    `# Hermes Agent`,
+    `hermes plugins install ${repoSlug(catalog)}/${entry.directory} --enable --force`,
     "```",
     "",
     "### Individual (gh skill)",
@@ -368,7 +388,7 @@ export function renderPluginReadme(catalog, entry, skills) {
     "",
     "## Skills",
     "",
-    `Each row states when to reach for the skill. Invoke one as \`/${entry.id}:<name>\` in Claude Code, \`$<name>\` in Codex, or type \`/\` and pick it in Cursor.`,
+    `Each row states when to reach for the skill. Invoke one as \`/${entry.id}:<name>\` in Claude Code or Hermes Agent, \`$<name>\` in Codex, or type \`/\` and pick it in Cursor.`,
     "",
     "| Skill | Trigger |",
     "|---|---|",

@@ -4,15 +4,16 @@ Verified 2026-09-01 against vendor specifications, vendor source code, vendor do
 
 ## Purpose
 
-This repository dropped npm distribution. It now ships one skill tree through exactly five harness surfaces, plus per-skill install:
+This repository dropped npm distribution. It now ships one skill tree through exactly six harness surfaces, plus per-skill install:
 
 1. The Claude Code plugin marketplace
 2. The OpenAI Codex plugin marketplace
 3. The Cursor plugin marketplace
 4. The Grok plugin marketplace
 5. The Kimi Code plugin marketplace
+6. Hermes Agent native plugins, one `hermes plugins install` per plugin directory
 
-The Agent Plugins standard surface was retired on 2026-09-03; no root `plugins/<id>/plugin.json` ships anymore. This document records what each surface requires, the repository layout that satisfies all five at once, and the toolchain versions the gates run on.
+The Agent Plugins standard surface was retired on 2026-09-03; no root `plugins/<id>/plugin.json` ships anymore. This document records what each surface requires, the repository layout that satisfies all six at once, and the toolchain versions the gates run on.
 
 ## How to read the evidence
 
@@ -209,6 +210,26 @@ From a local clone (Tier 1, sources: `source.ts` and `marketplace.ts`, verified 
 - `/plugins marketplace <abs-clone>/.kimi-plugin/marketplace.json`
 - `/plugins install <abs-clone>/plugins/<plugin>`
 
+## Hermes Agent plugins
+
+Hermes Agent (NousResearch/hermes-agent, `main` at b1d7c5b2, read 2026-10-30) installs a plugin from a repository subdirectory: `hermes plugins install owner/repo/path/to/plugin` clones and keeps only that folder (Tier 1, source: `_resolve_git_url` in `hermes_cli/plugins_cmd.py`, verified 2026-10-30).
+
+### Manifest choice
+
+Hermes loads two directory formats: a native `plugin.yaml` with a `register(ctx)` module, and an Agent Plugins v1 root `plugin.json` (Tier 1, source: `hermes_cli/plugins_manifest.py` and `hermes_cli/agent_plugins.py`, verified 2026-10-30). This tree uses the native format. A root `plugin.json` would reintroduce the retired Agent Plugins surface and become the first manifest Codex resolves (see Manifest precedence above). Hermes skips the foreign `.claude-plugin`, `.codex-plugin`, `.cursor-plugin`, and `.kimi-plugin` dotdirs (`_FOREIGN_HARNESS_MANIFEST_DIRS` in `hermes_cli/plugins_discovery.py`, Tier 1, verified 2026-10-30).
+
+### Skill registration
+
+`__init__.py` registers every `skills/<slug>/SKILL.md` with `ctx.register_skill(slug, path, description, frontmatter)`. Hermes namespaces each as `<plugin>:<slug>`, lists it in `skills_list` and the system prompt's skill index, serves it read-only through `skill_view`, and projects it as the `/<plugin>:<slug>` slash command (Tier 1, source: `hermes_cli/plugins_content.py`, `tools/skills_tool.py`, `agent/prompt_builder.py`, verified 2026-10-30). The loader parses frontmatter with the standard library only, matching the single-line scalar forms the skill gates allow.
+
+### What does not load
+
+A native plugin carries no `mcp.json` or output styles: Hermes reads portable MCP entries only from Agent Plugins packages (Tier 1, source: `_load_portable_plugin` in `hermes_cli/plugins_loader.py`, verified 2026-10-30). `dstack-core` users add its MCP servers through `hermes mcp`.
+
+### Install scan
+
+`hermes plugins install` scans community sources and blocks a caution verdict. The helper scripts under `dstack-git` (subprocess calls, git commands in skill prose) produce one, so the documented commands pass `--force`; a `dangerous` verdict stays blocked regardless (Tier 1, executed locally against `dstack-git`, 2026-10-30).
+
 ## Per-skill install with gh skill
 
 `gh skill` is built into the GitHub CLI and is in preview: the command help states "Working with agent skills in the GitHub CLI is in preview and subject to change without notice" (Tier 1, source: `gh skill --help` on this machine, verified). Installed version: `gh version 2.98.0 (2026-08-20)` (Tier 1, source: `gh --version`, verified).
@@ -262,7 +283,7 @@ The 543 license warnings from that run are advisory and do not fail the run.
 
 ## Repository layout
 
-The current layout satisfies all five surfaces from one tree (Tier 1, source: repository files; shape verified 2026-09-03, counts per `catalog/plugins.json` at `releaseVersion` 2.1.7):
+The current layout satisfies all six surfaces from one tree (Tier 1, source: repository files; shape verified 2026-09-03, counts per `catalog/plugins.json` at `releaseVersion` 2.1.7):
 
 ```
 .
@@ -278,6 +299,8 @@ The current layout satisfies all five surfaces from one tree (Tier 1, source: re
 │       ├── .cursor-plugin/plugin.json   # Cursor manifest, identity only
 │       ├── .grok-plugin/plugin.json     # Grok manifest
 │       ├── .kimi-plugin/plugin.json     # Kimi manifest, skills declared
+│       ├── plugin.yaml                  # Hermes Agent native manifest
+│       ├── __init__.py                  # Hermes Agent skill loader
 │       ├── mcp.json                     # optional; only dstack-core ships one
 │       └── skills/<slug>/SKILL.md       # 304 skills total; see the generated docs/specs/skill-index.md
 ├── catalog/                             # registry and membership data
@@ -293,6 +316,7 @@ Why this shape works for each surface:
 - Cursor reads `.cursor-plugin/marketplace.json` with the same relative sources, and would walk each `skills/` root recursively if nested skills ever appear.
 - Grok reads `.grok-plugin/marketplace.json` with `{"type": "local", "path": "./plugins/<module>"}` sources resolving against the marketplace root.
 - Kimi reads `.kimi-plugin/marketplace.json` from a local clone; each `../plugins/<module>` source resolves against the registry's own directory.
+- Hermes Agent installs `owner/repo/plugins/<module>`, reads `plugin.yaml`, and imports `__init__.py`, which registers `skills/*/SKILL.md`.
 - `gh skill` discovers the fourth convention `plugins/{scope}/skills/*/SKILL.md`, so per-skill install works without any manifest.
 
 ## Toolchain set
