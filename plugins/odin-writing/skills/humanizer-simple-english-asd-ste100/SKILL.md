@@ -1,6 +1,6 @@
 ---
 name: humanizer-simple-english-asd-ste100
-description: 'Use when asked to rewrite technical English for STE compliance, stripping ambiguity and AI-style patterns. English only; not for French: use humaniseur-fr, not for Korean: use humanizer-korean-plain or humanizer-korean-ste.'
+description: 'Use when asked to rewrite technical English for STE compliance, stripping ambiguity and AI-style patterns. English only; not for Korean: use humanizer-korean-plain or humanizer-korean-ste.'
 ---
 
 # Humanizer Simple English ASD-STE100
@@ -11,7 +11,7 @@ Rewrites technical English toward ASD-STE100: short, explicit, one-meaning sente
 
 Use it when the user asks for a technical English rewrite, STE compliance, a controlled-language pass, disambiguation, or de-slopping of a manual or document. Source text is required, inline or as a file path the user names.
 
-Do not use it for creative or persuasive copy where voice is the mechanism. If the source is marketing or literary prose, say so plainly: "STE is not applicable to creative or persuasive copy; this text uses voice and nuance as its mechanism and should not be flattened." Do not use it for French or Korean text; hand those to the French or Korean humanizers instead.
+Do not use it for creative or persuasive copy where voice is the mechanism. If the source is marketing or literary prose, say so plainly: "STE is not applicable to creative or persuasive copy; this text uses voice and nuance as its mechanism and should not be flattened." Do not use it for Korean text; hand Korean to the Korean humanizers instead.
 
 ## Pick rewrite or write
 
