@@ -139,7 +139,7 @@ The done predicate for page mode is that every line handed back is free of AI te
 
 These words never appear in copy you write, unless a voice file or shipped copy uses one as a signature: delve, leverage (verb), robust, seamless, holistic, paradigm, game-changing, cutting-edge, innovative, synergy, revolutionary, effortless, world-class, powerful, showcase, unlock. "Simple" is banned as a claim ("our simple onboarding"): it is never earned upfront and reads as a promise the product has to keep.
 
-The banned set for your own copy is this list plus every Tier 1 word in `references/ai-patterns.md`. Tier 2 and Tier 3 words follow their density rules. When auditing someone else's copy, a word from this list counts as Tier 1 and is always flagged.
+This list is the whole banned set; a draft containing one of these words is not an option to present. The tiers in `references/ai-patterns.md` are audit rules, not a second ban list: when your own draft trips one, treat it as the same P0, P1, or P2 hit it would be in someone else's copy. When auditing, a word from this list counts as Tier 1 and is always flagged.
 
 ## Voice chart for VOICE.md
 

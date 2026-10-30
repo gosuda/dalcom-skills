@@ -37,11 +37,11 @@ Every README uses this order. Archetypes change only the core sections.
 | 1 | Title block (no heading of its own) | Project name, one-line tagline, optional badge row, opening paragraph, facts list, short example |
 | 2 | Install | Copy-pasteable commands to add the project to a machine or an existing project |
 | 3 | Quick start | The shortest path from installed to a working result |
-| 4 | Core sections | Archetype-specific, from `references/section-templates.md` |
-| 5 | Development | Local setup, test, build, and how to contribute (or a link to `CONTRIBUTING.md`) |
+| 4 | Core sections | Features and Usage first, then the archetype-specific sections from `references/section-templates.md` |
+| 5 | Development | Local setup, test, and build, with a Contributing subsection (or a link to `CONTRIBUTING.md`) |
 | 6 | License | License name and a link to its full text |
 
-No top-level section goes before Install or after License. Development may be omitted when the project accepts no outside contributions and needs no build; Install, Quick start, and License are never omitted. Add a table of contents after the title block when the file runs past about two screens.
+No top-level section goes before Install or after License. Install, Quick start, Features, Usage, Contributing, and License are never omitted. Features lists what the reader can do, beyond the few facts in the title block; Usage shows real use. When the project takes no outside contributions, the Contributing subsection says so in one line. Add a table of contents after the title block when the file runs past about two screens.
 
 ## Write the title block
 

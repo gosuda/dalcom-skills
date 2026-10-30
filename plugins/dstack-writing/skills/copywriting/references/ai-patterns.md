@@ -4,7 +4,7 @@ Read this in page mode when the user asks for AI-tell removal, and when auditing
 
 ## Words
 
-Tier 1 words are always replaced. The banned words in the main skill file count as Tier 1 too.
+Tier 1 words are always replaced when auditing. The banned words in the main skill file count as Tier 1 too; they are the only words banned outright in new copy.
 
 `delve`, `landscape` (as a metaphor), `tapestry`, `realm`, `paradigm`, `embark`, `beacon`, `testament to`, `robust`, `comprehensive`, `cutting-edge`, `leverage` (as a verb), `pivotal`, `underscores`, `meticulous`, `seamless`, `game-changer`, `utilise`, `nestled`, `vibrant`, `deep dive`, `unpack`, `showcase`, `unlock`, `intricate`, `holistic`, `actionable`, `impactful`, `learnings`, `thought leadership`, `best practices`, `synergy`, `in order to`, `due to the fact that`, `serve as`, `commence`, `keen` (as an intensifier).
 
