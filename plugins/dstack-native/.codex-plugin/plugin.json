@@ -1,6 +1,6 @@
 {
   "name": "dstack-native",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "DStack workflows for native systems, toolchains, and performance.",
   "keywords": [
     "dstack",

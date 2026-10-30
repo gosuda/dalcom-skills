@@ -1,6 +1,6 @@
 {
   "name": "dstack-knowledge",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "DStack workflows for memory, session continuity, decision records, and retrospectives.",
   "author": {
     "name": "gosuda",

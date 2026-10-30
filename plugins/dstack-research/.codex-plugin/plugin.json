@@ -1,6 +1,6 @@
 {
   "name": "dstack-research",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "DStack workflows for source-backed investigation, verification, and design rationale.",
   "keywords": [
     "dstack",

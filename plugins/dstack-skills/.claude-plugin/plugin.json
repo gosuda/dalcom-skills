@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dstack-skills",
   "displayName": "DStack Skills",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "DStack workflows for authoring, auditing, benchmarking, and publishing agent skills.",
   "author": {
     "name": "gosuda",

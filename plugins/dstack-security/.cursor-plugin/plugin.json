@@ -1,6 +1,6 @@
 {
   "name": "dstack-security",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "DStack workflows for security review, vulnerability triage, and defensive implementation.",
   "author": {
     "name": "gosuda",

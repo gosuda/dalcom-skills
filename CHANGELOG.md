@@ -5,6 +5,18 @@ All notable changes to Dalcom Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.9] - 2026-10-30
+### Changed
+- `sync-outline-skills.mjs` now defaults to the sibling checkout `../dstack`, the renamed
+  methodology repository. Pass `--target` for any other location.
+- The brainstorm visual probe reads `DSTACK_VISUAL_PROBE_IDLE_TIMEOUT_MS` and
+  `DSTACK_VISUAL_PROBE_LIFECYCLE_CHECK_MS`; the `ODIN_*` names are no longer read.
+- PR-comment helper scripts create their temporary directories with a `dstack-` prefix.
+- Generated skill tables escape backslashes in triggers before escaping `|`.
+- Machine schema identifiers (`odin-learning/v1`, `odin.graph/v1`,
+  `odin-plugin-catalog/v1`, `odin-slice-packet-v1`, `odin-devin-skill-mirror/v1`) and the
+  `odin-spec-*` plan anchors keep their names so existing records and plans stay valid.
+
 ## [2.1.8] - 2026-10-30
 ### Changed
 - The project is now Dalcom Skills, built on the DStack methodology. The marketplace

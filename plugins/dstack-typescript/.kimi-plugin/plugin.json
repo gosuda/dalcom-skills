@@ -1,6 +1,6 @@
 {
   "name": "dstack-typescript",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "DStack workflows for modern TypeScript development.",
   "keywords": [
     "dstack",

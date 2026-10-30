@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dstack-rust",
   "displayName": "DStack Rust",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "DStack workflows for Rust development: cargo, async, FFI, cross-compilation, debugging, and unsafe review.",
   "author": {
     "name": "gosuda",
