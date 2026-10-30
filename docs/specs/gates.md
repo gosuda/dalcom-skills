@@ -65,7 +65,7 @@ the tree is mid-edit. Any other invocation processes every skill the catalog rea
 
 ### sync-knowledge-copies.mjs
 
-Mirrors authored canonical source files into destination skills as byte-identical copies with executable permissions preserved so standalone and plugin installs keep working without cross-skill path traversal. Covers both knowledge contracts (such as compound schemas and concepts mirrored into autolearn) and runtime review/CI helpers (canonical resolve review scripts and ci-fix inspect_mr_checks.py mirrored into consuming skill bundles across `odin-core`, `odin-git`, `odin-review`, `odin-run`, and `odin-infra`).
+Mirrors authored canonical source files into destination skills as byte-identical copies with executable permissions preserved so standalone and plugin installs keep working without cross-skill path traversal. Covers both knowledge contracts (such as compound schemas and concepts mirrored into autolearn) and runtime review/CI helpers (canonical resolve review scripts and ci-fix inspect_mr_checks.py mirrored into consuming skill bundles across `dstack-core`, `dstack-git`, `dstack-review`, `dstack-run`, and `dstack-infra`).
 
 Direction is strictly one-way: canonical sources are authored and never overwritten; destinations are generated mirrors. Default mode writes missing or drifted destinations with exact source bytes and preserves source permissions (`chmod` matching source mode). `--check` reports missing or drifted files and exits 1 without writing, which is how the pre-commit hook runs it.
 
@@ -112,7 +112,7 @@ render` writes it.
 
 ### sync-baseline.py
 
-Regenerates the doctrine cascade at the tail of every file in `plugins/odin-core/output-styles/`.
+Regenerates the doctrine cascade at the tail of every file in `plugins/dstack-core/output-styles/`.
 Each style is a persona preamble followed by a byte-identical copy of `system-prompt-baseline.md`
 from its `<role>` line onward. The split point is the style's second whole-line `<role>`: the first
 opens the persona voice, the second opens the canonical charter.
@@ -202,7 +202,7 @@ Passing output: `plugin surfaces ok: 22 plugins, 304 skills`.
 ### check-skill-routes.mjs
 
 Proves each skill resolves on both install routes, `gh skill install <repo> plugins/<plugin>/skills/<slug>`
-and `plugin install <plugin>@odin-marketplace`. Both read `<dir>/SKILL.md` and expect the frontmatter
+and `plugin install <plugin>@dstack`. Both read `<dir>/SKILL.md` and expect the frontmatter
 `name` to equal the directory, so a mismatch drops the skill from one route while the other keeps
 working.
 
@@ -282,7 +282,7 @@ walk that would change its scope silently.
 
 The inventory is the 92 byte-identical fate assets (78 cards, 12 houses,
 `INTERPRETATION_GUIDE.md`, `TECHNICAL_CONTEXT_LENSES.md`) pinned in
-`plugins/odin-core/skills/let-fate-decide/references/SOURCE-MAP.md` ("Files to copy
+`plugins/dstack-core/skills/let-fate-decide/references/SOURCE-MAP.md` ("Files to copy
 byte-identically") from `trailofbits/skills` at `2be6433b39e009cd2b6fd3be1895f6b1faa5af9a`,
 loaded via standard library `runpy` from the skill's public `expected_asset_files()`
 (`scripts/draw.py`). It is an exact path set, not a directory or suffix exclusion, so a new

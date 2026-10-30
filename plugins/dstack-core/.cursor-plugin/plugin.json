@@ -1,0 +1,19 @@
+{
+  "name": "dstack-core",
+  "version": "2.1.8",
+  "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "repository": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "core"
+  ],
+  "category": "Coding"
+}

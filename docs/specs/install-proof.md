@@ -53,7 +53,7 @@ of this scale that matters; the current count is in the generated `docs/specs/sk
 Command shape rather than a run record: no output or exit code is captured below.
 
 ```shell
-gh skill install OutlineDriven/odin-claude-plugin plugins/odin-planning/skills/askme \
+gh skill install gosuda/dalcom-skills plugins/dstack-planning/skills/askme \
   --agent claude-code --scope user
 ```
 
@@ -66,24 +66,24 @@ finding.
 
 ```shell
 $ codex plugin marketplace add /home/alpha/.claude/claude/.outline/worktree/prompt-stack
-Added marketplace `odin-marketplace` from /home/alpha/.claude/claude/.outline/worktree/prompt-stack.
+Added marketplace `dstack` from /home/alpha/.claude/claude/.outline/worktree/prompt-stack.
 Installed marketplace root: /home/alpha/.claude/claude/.outline/worktree/prompt-stack
 
-$ codex plugin add odin-core@odin-marketplace --json
+$ codex plugin add dstack-core@dstack --json
 {
-  "pluginId": "odin-core@odin-marketplace",
-  "name": "odin-core",
-  "marketplaceName": "odin-marketplace",
+  "pluginId": "dstack-core@dstack",
+  "name": "dstack-core",
+  "marketplaceName": "dstack",
   "version": "2.1.0",
-  "installedPath": ".../plugins/cache/odin-marketplace/odin-core/2.1.0",
+  "installedPath": ".../plugins/cache/dstack/dstack-core/2.1.0",
   "authPolicy": "ON_USE"
 }
 ```
 
-All 8 `odin-core` skills materialized under the install cache, which proves Codex resolved the
+All 8 `dstack-core` skills materialized under the install cache, which proves Codex resolved the
 fixed `skills/` location through `.codex-plugin/plugin.json` in Legacy format without the manifest
 declaring it. `codex plugin list --json` then reported the plugin installed and enabled, with
-`installPolicy: AVAILABLE` and `source.path` pointing at `plugins/odin-core` under the marketplace
+`installPolicy: AVAILABLE` and `source.path` pointing at `plugins/dstack-core` under the marketplace
 root.
 
 One quirk worth recording: `codex plugin list` reports `available: []` for a local marketplace
@@ -97,15 +97,15 @@ run 2026-09-04 against this tree at `releaseVersion` 2.1.0. Output below is verb
 
 ```shell
 $ claude plugin marketplace add /home/alpha/.claude/claude/.outline/worktree/prompt-stack
-✔ Successfully added marketplace: odin-marketplace (declared in user settings)
+✔ Successfully added marketplace: dstack (declared in user settings)
 
-$ claude plugin install odin-core@odin-marketplace
-✔ Successfully installed plugin: odin-core@odin-marketplace (scope: user)
+$ claude plugin install dstack-core@dstack
+✔ Successfully installed plugin: dstack-core@dstack (scope: user)
 
 $ claude plugin list
 Installed plugins:
 
-  ❯ odin-core@odin-marketplace
+  ❯ dstack-core@dstack
     Version: 2.1.0
     Scope: user
     Status: ✔ enabled
@@ -125,15 +125,15 @@ Against the remote, Cursor accepts the repository. `cursor-agent plugin marketpl
 entry:
 
 ```
-odin-marketplace    user    https://github.com/OutlineDriven/odin-claude-plugin
+dstack    user    https://github.com/gosuda/dalcom-skills
 ```
 
 The fetch does not complete on this host. It stops at a filesystem permission, not at anything in
 the tree:
 
 ```shell
-$ cursor-agent plugin marketplace add github.com/OutlineDriven/odin-claude-plugin
-Fetching plugins from github.com/OutlineDriven/odin-claude-plugin...
+$ cursor-agent plugin marketplace add github.com/gosuda/dalcom-skills
+Fetching plugins from github.com/gosuda/dalcom-skills...
 EACCES: permission denied, mkdir '/home/alpha/.cursor/plugins'
 ```
 
@@ -145,7 +145,7 @@ by `check-plugin-surfaces`. What remains untested is Cursor's own parse of it, b
 plugin cache still holds the entry it indexed from the feature branch, at
 `7f996aac4a86a8d8378d73c1bd6afa541d134447`. That SHA is reachable from the default branch, since the
 merge was a fast-forward, so the pin is stale rather than broken. Re-indexing is one command,
-`cursor-agent plugin marketplace update odin-marketplace`, and it belongs to whoever owns the
+`cursor-agent plugin marketplace update dstack`, and it belongs to whoever owns the
 machine: it mutates a consumer cache outside this repository, so no gate here runs it.
 
 ## Manifest name parity

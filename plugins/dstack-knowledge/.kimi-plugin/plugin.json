@@ -1,0 +1,21 @@
+{
+  "name": "dstack-knowledge",
+  "version": "2.1.8",
+  "description": "DStack workflows for memory, session continuity, decision records, and retrospectives.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "knowledge"
+  ],
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "gosuda"
+  },
+  "skills": "./skills",
+  "interface": {
+    "displayName": "DStack Knowledge",
+    "shortDescription": "DStack workflows for memory, session continuity, decision records, and retrospectives."
+  }
+}

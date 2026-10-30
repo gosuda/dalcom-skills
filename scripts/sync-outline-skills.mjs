@@ -137,9 +137,9 @@ wanted.set(`${DEST}/LICENSE`, { render: licenseText });
 wanted.set(`${DEST}/NOTICE`, { render: noticeText });
 wanted.set(`${DEST}/README.md`, {
   render: [
-    "# ODIN skills (generated mirror)",
+    "# DStack skills (generated mirror)",
     "",
-    `${skillCount} ODIN skills, flattened from the plugin tree of`,
+    `${skillCount} DStack skills, flattened from the plugin tree of`,
     `${catalog.repository} at release ${catalog.releaseVersion}.`,
     "",
     "Devin reads every immediate child directory here as a project skill",

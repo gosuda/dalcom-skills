@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "dstack-skills",
+  "displayName": "DStack Skills",
+  "version": "2.1.8",
+  "description": "DStack workflows for authoring, auditing, benchmarking, and publishing agent skills.",
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "repository": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "skills"
+  ]
+}

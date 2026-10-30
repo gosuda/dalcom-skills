@@ -2,180 +2,180 @@
   "version": "2",
   "plugins": [
     {
-      "id": "odin-core",
-      "displayName": "ODIN Core",
+      "id": "dstack-core",
+      "displayName": "DStack Core",
       "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-core"
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-core"
     },
     {
-      "id": "odin-planning",
-      "displayName": "ODIN Planning",
-      "description": "ODIN workflows for shaping intent into approved plans, specs, and task lists.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-planning"
+      "id": "dstack-planning",
+      "displayName": "DStack Planning",
+      "description": "DStack workflows for shaping intent into approved plans, specs, and task lists.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-planning"
     },
     {
-      "id": "odin-code",
-      "displayName": "ODIN Code",
-      "description": "ODIN workflows for writing, changing, and simplifying code.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-code"
+      "id": "dstack-code",
+      "displayName": "DStack Code",
+      "description": "DStack workflows for writing, changing, and simplifying code.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-code"
     },
     {
-      "id": "odin-review",
-      "displayName": "ODIN Review",
-      "description": "ODIN workflows for reviewing diffs, branches, and implementations against their specs.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-review"
+      "id": "dstack-review",
+      "displayName": "DStack Review",
+      "description": "DStack workflows for reviewing diffs, branches, and implementations against their specs.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-review"
     },
     {
-      "id": "odin-testing",
-      "displayName": "ODIN Testing",
-      "description": "ODIN workflows for tests, properties, mutation, and behavioral verification.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-testing"
+      "id": "dstack-testing",
+      "displayName": "DStack Testing",
+      "description": "DStack workflows for tests, properties, mutation, and behavioral verification.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-testing"
     },
     {
-      "id": "odin-git",
-      "displayName": "ODIN Git",
+      "id": "dstack-git",
+      "displayName": "DStack Git",
       "description": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-git"
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-git"
     },
     {
-      "id": "odin-run",
-      "displayName": "ODIN Run",
-      "description": "ODIN workflows for executing plans, orchestrating subagents, and bounded autonomous loops.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-run"
+      "id": "dstack-run",
+      "displayName": "DStack Run",
+      "description": "DStack workflows for executing plans, orchestrating subagents, and bounded autonomous loops.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-run"
     },
     {
-      "id": "odin-infra",
-      "displayName": "ODIN Infra",
-      "description": "ODIN workflows for CI, deployment, observability, cost, and infrastructure tooling.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-infra"
+      "id": "dstack-infra",
+      "displayName": "DStack Infra",
+      "description": "DStack workflows for CI, deployment, observability, cost, and infrastructure tooling.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-infra"
     },
     {
-      "id": "odin-security",
-      "displayName": "ODIN Security",
-      "description": "ODIN workflows for security review, vulnerability triage, and defensive implementation.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-security"
+      "id": "dstack-security",
+      "displayName": "DStack Security",
+      "description": "DStack workflows for security review, vulnerability triage, and defensive implementation.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-security"
     },
     {
-      "id": "odin-fuzzing",
-      "displayName": "ODIN Fuzzing",
-      "description": "ODIN workflows for fuzz harnesses, fuzzer setup, sanitizers, and coverage analysis.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-fuzzing"
+      "id": "dstack-fuzzing",
+      "displayName": "DStack Fuzzing",
+      "description": "DStack workflows for fuzz harnesses, fuzzer setup, sanitizers, and coverage analysis.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-fuzzing"
     },
     {
-      "id": "odin-research",
-      "displayName": "ODIN Research",
-      "description": "ODIN workflows for source-backed investigation, verification, and design rationale.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-research"
+      "id": "dstack-research",
+      "displayName": "DStack Research",
+      "description": "DStack workflows for source-backed investigation, verification, and design rationale.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-research"
     },
     {
-      "id": "odin-knowledge",
-      "displayName": "ODIN Knowledge",
-      "description": "ODIN workflows for memory, session continuity, decision records, and retrospectives.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-knowledge"
+      "id": "dstack-knowledge",
+      "displayName": "DStack Knowledge",
+      "description": "DStack workflows for memory, session continuity, decision records, and retrospectives.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-knowledge"
     },
     {
-      "id": "odin-learn",
-      "displayName": "ODIN Learn",
-      "description": "ODIN workflows for teaching, explaining, drilling, and onboarding.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-learn"
+      "id": "dstack-learn",
+      "displayName": "DStack Learn",
+      "description": "DStack workflows for teaching, explaining, drilling, and onboarding.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-learn"
     },
     {
-      "id": "odin-skills",
-      "displayName": "ODIN Skills",
-      "description": "ODIN workflows for authoring, auditing, benchmarking, and publishing agent skills.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-skills"
+      "id": "dstack-skills",
+      "displayName": "DStack Skills",
+      "description": "DStack workflows for authoring, auditing, benchmarking, and publishing agent skills.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-skills"
     },
     {
-      "id": "odin-writing",
-      "displayName": "ODIN Writing",
-      "description": "ODIN workflows for documentation, editorial prose, and copy.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-writing"
+      "id": "dstack-writing",
+      "displayName": "DStack Writing",
+      "description": "DStack workflows for documentation, editorial prose, and copy.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-writing"
     },
     {
-      "id": "odin-visual",
-      "displayName": "ODIN Visual",
-      "description": "ODIN workflows for diagrams, decks, canvases, and visual explainers.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-visual"
+      "id": "dstack-visual",
+      "displayName": "DStack Visual",
+      "description": "DStack workflows for diagrams, decks, canvases, and visual explainers.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-visual"
     },
     {
-      "id": "odin-design",
-      "displayName": "ODIN Design",
-      "description": "ODIN workflows for interface design, prototypes, and visual fidelity.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-design"
+      "id": "dstack-design",
+      "displayName": "DStack Design",
+      "description": "DStack workflows for interface design, prototypes, and visual fidelity.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-design"
     },
     {
-      "id": "odin-typescript",
-      "displayName": "ODIN TypeScript",
-      "description": "ODIN workflows for modern TypeScript development.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-typescript"
+      "id": "dstack-typescript",
+      "displayName": "DStack TypeScript",
+      "description": "DStack workflows for modern TypeScript development.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-typescript"
     },
     {
-      "id": "odin-native",
-      "displayName": "ODIN Native",
-      "description": "ODIN workflows for native systems, toolchains, and performance.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-native"
+      "id": "dstack-native",
+      "displayName": "DStack Native",
+      "description": "DStack workflows for native systems, toolchains, and performance.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-native"
     },
     {
-      "id": "odin-rust",
-      "displayName": "ODIN Rust",
-      "description": "ODIN workflows for Rust development: cargo, async, FFI, cross-compilation, debugging, and unsafe review.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-rust"
+      "id": "dstack-rust",
+      "displayName": "DStack Rust",
+      "description": "DStack workflows for Rust development: cargo, async, FFI, cross-compilation, debugging, and unsafe review.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-rust"
     },
     {
-      "id": "odin-performance",
-      "displayName": "ODIN Performance",
-      "description": "ODIN workflows for measured performance: hardware kernels, profilers, byte budgets, and optimization proof.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-performance"
+      "id": "dstack-performance",
+      "displayName": "DStack Performance",
+      "description": "DStack workflows for measured performance: hardware kernels, profilers, byte budgets, and optimization proof.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-performance"
     },
     {
-      "id": "odin-marketing",
-      "displayName": "ODIN Marketing",
-      "description": "ODIN workflows for marketing and viral growth, from audience research to opportunity scouting.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-marketing"
+      "id": "dstack-marketing",
+      "displayName": "DStack Marketing",
+      "description": "DStack workflows for marketing and viral growth, from audience research to opportunity scouting.",
+      "version": "2.1.8",
+      "homepage": "https://github.com/gosuda/dalcom-skills",
+      "source": "../plugins/dstack-marketing"
     }
   ]
 }

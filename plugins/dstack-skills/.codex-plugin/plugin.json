@@ -1,0 +1,20 @@
+{
+  "name": "dstack-skills",
+  "version": "2.1.8",
+  "description": "DStack workflows for authoring, auditing, benchmarking, and publishing agent skills.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "skills"
+  ],
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "interface": {
+    "displayName": "DStack Skills",
+    "shortDescription": "DStack workflows for authoring, auditing, benchmarking, and publishing agent skills.",
+    "category": "Productivity"
+  }
+}

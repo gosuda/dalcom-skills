@@ -1,7 +1,7 @@
 // Verify every authored skill satisfies the install routes it is published on.
 //
-//   gh skill install OutlineDriven/odin-claude-plugin plugins/<plugin>/skills/<slug>
-//   plugin install <plugin>@odin-marketplace   (Claude, Codex, Cursor marketplaces)
+//   gh skill install gosuda/dalcom-skills plugins/<plugin>/skills/<slug>
+//   plugin install <plugin>@dstack   (Claude, Codex, Cursor marketplaces)
 //
 // Both resolve a skill as <dir>/SKILL.md whose frontmatter name equals the
 // directory name, so a mismatch silently drops the skill from one route while

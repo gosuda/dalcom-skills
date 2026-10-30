@@ -39,8 +39,8 @@ BANNED = re.compile(
 BAN_LIST_SUBJECTS = frozenset(
     {
         "docs/specs/voice.md",
-        "plugins/odin-writing/skills/copywriting/SKILL.md",
-        "plugins/odin-writing/skills/copywriting-prose-creator/SKILL.md",
+        "plugins/dstack-writing/skills/copywriting/SKILL.md",
+        "plugins/dstack-writing/skills/copywriting-prose-creator/SKILL.md",
     }
 )
 BOLD_LABEL = re.compile(
@@ -104,7 +104,7 @@ def carrier_targets(carriers):
     return present
 
 
-_FATE = "plugins/odin-core/skills/let-fate-decide"
+_FATE = "plugins/dstack-core/skills/let-fate-decide"
 
 
 def _fate_vendored():

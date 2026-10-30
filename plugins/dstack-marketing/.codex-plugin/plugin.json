@@ -1,0 +1,20 @@
+{
+  "name": "dstack-marketing",
+  "version": "2.1.8",
+  "description": "DStack workflows for marketing and viral growth, from audience research to opportunity scouting.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "marketing"
+  ],
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "interface": {
+    "displayName": "DStack Marketing",
+    "shortDescription": "DStack workflows for marketing and viral growth, from audience research to opportunity scouting.",
+    "category": "Marketing"
+  }
+}

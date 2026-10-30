@@ -1,9 +1,21 @@
 # Changelog
 
-All notable changes to the ODIN Claude Plugin will be documented in this file.
+All notable changes to Dalcom Skills will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [2.1.8] - 2026-10-30
+### Changed
+- The project is now Dalcom Skills, built on the DStack methodology. The marketplace
+  is `dstack`, and all 22 plugins renamed from `odin-*` to `dstack-*`.
+- Install commands changed: `plugin marketplace add gosuda/dalcom-skills`, then
+  `plugin install dstack-core@dstack`. Existing `odin-*` plugin IDs and
+  `@odin-marketplace` no longer resolve.
+- The default output style renamed from `odin` to `dstack`. Map `odin` to `dstack`
+  in client settings.
+- Catalog tags now use `dalcom` and `dstack`, and the repository metadata points to
+  `gosuda/dalcom-skills`.
 
 ## [2.1.7] - 2026-10-30
 ### Added

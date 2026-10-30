@@ -2,7 +2,7 @@
 
 The authoring register for every skill in this tree.
 
-Two sources define it. The ODIN doctrine in `system-prompt-baseline.md` sets the engineering
+Two sources define it. The DStack doctrine in `system-prompt-baseline.md` sets the engineering
 register: opinion rather than options, special-case elimination, cleanup on the touched surface. The
 spine sets the taste register through sixteen ranked anchors and a two-sided ban list.
 

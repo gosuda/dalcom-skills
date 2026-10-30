@@ -1,0 +1,20 @@
+{
+  "name": "dstack-infra",
+  "version": "2.1.8",
+  "description": "DStack workflows for CI, deployment, observability, cost, and infrastructure tooling.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "infra"
+  ],
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "interface": {
+    "displayName": "DStack Infra",
+    "shortDescription": "DStack workflows for CI, deployment, observability, cost, and infrastructure tooling.",
+    "category": "Infrastructure"
+  }
+}

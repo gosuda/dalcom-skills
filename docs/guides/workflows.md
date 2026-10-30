@@ -15,3 +15,24 @@ Chains are written in the harness-neutral form `/skill:<slug>`. Type each step a
 | Use when agents **should** do same as user's intent, make the result match to every shape in user's directed specifications | `/skill:exhaustive` → `/skill:validation-first-driven` → `/skill:tests-purge-unneeded` | No contract exists yet, as in an early exploratory spike. |
 | Run a clean **documentation** pass | `/skill:good-readme` → `/skill:docs-writing` → `/skill:sync-docs` → `/skill:unslop` → `/skill:purge-slop-docs` | One file changed and no index or guide points at it. |
 | Author a new **skill** | `/skill:skill-gap-finder` → `/skill:writing-for-agents` → `/skill:unslop` → `/skill:humanizer-simple-english-asd-ste100` → `/skill:taste` | The skill index already holds a skill that covers the job. |
+
+## Example workflow invocations
+Install the plugins for these workflows from the `dstack` marketplace added from `gosuda/dalcom-skills`:
+
+```shell
+claude plugin marketplace add gosuda/dalcom-skills
+claude plugin install dstack-core@dstack
+claude plugin install dstack-planning@dstack
+claude plugin install dstack-code@dstack
+claude plugin install dstack-run@dstack
+claude plugin install dstack-knowledge@dstack
+```
+
+In Claude Code, invoke workflow steps using each plugin's verified namespace:
+
+- Clarify, plan, and refine: `/dstack-core:askme` → `/dstack-core:plan` → `/dstack-core:todo-add` → `/dstack-core:todos-enhance`
+- Map structure and options: `/dstack-planning:minimap`
+- Structural AST edits: `/dstack-code:ast-grep`
+- Execute with subagents: `/dstack-core:subagent-driven` → `/dstack-core:verification-before-completion`
+- Partition large issues: `/dstack-run:diamond-task`
+- Sync mental models: `/dstack-knowledge:mutual-sync`

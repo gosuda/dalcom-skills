@@ -202,7 +202,7 @@ export function renderClaudeMarketplace(catalog) {
 export function renderCodexMarketplace(catalog) {
   return {
     name: catalog.marketplace_name,
-    interface: { displayName: "ODIN" },
+    interface: { displayName: "DStack" },
     plugins: catalog.entries.map((entry) => ({
       name: entry.id,
       source: { source: "local", path: `./${entry.directory}` },
@@ -217,7 +217,7 @@ export function renderCursorMarketplace(catalog) {
     name: catalog.marketplace_name,
     owner: catalog.owner,
     metadata: {
-      description: "ODIN skill plugins for agent harnesses.",
+      description: "DStack skill plugins for agent harnesses.",
       version: catalog.releaseVersion,
     },
     plugins: catalog.entries.map((entry) => ({
@@ -241,7 +241,7 @@ export function renderCursorMarketplace(catalog) {
 export function renderGrokMarketplace(catalog) {
   return {
     name: catalog.marketplace_name,
-    description: "ODIN skill plugins for agent harnesses.",
+    description: "DStack skill plugins for agent harnesses.",
     owner: { name: catalog.owner.name },
     plugins: catalog.entries.map((entry) => ({
       name: entry.id,
@@ -347,11 +347,11 @@ export function renderPluginReadme(catalog, entry, skills) {
     "",
     "```bash",
     `# Claude Code`,
-    `/plugin marketplace add OutlineDriven/odin-claude-plugin`,
+    `/plugin marketplace add gosuda/dalcom-skills`,
     `/plugin install ${entry.id}@${catalog.marketplace_name}`,
     "",
     `# Codex`,
-    `codex plugin marketplace add OutlineDriven/odin-claude-plugin`,
+    `codex plugin marketplace add gosuda/dalcom-skills`,
     `codex plugin add ${entry.id}@${catalog.marketplace_name}`,
     "```",
     "",

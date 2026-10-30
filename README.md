@@ -1,8 +1,8 @@
-# Outline-Driven Development
+# Dalcom Skills
 
-> Formerly the ODIN Claude Plugin. The repository URL is unchanged.
+> Formerly the ODIN Claude Plugin. The repository moved to gosuda/dalcom-skills.
 
-Outline-Driven Development, nicknamed ODIN, is a highly opinionated code-agent skill library: principles-first
+Dalcom Skills, built on the DStack methodology, is a highly opinionated code-agent skill library: principles-first
 engineering, surgical editing, and workflow automation, published as installable plugins. It gives
 you a drop-in skill set with five discipline layers. Skills are authored once in-tree, and every
 supported client discovers them from that same layout, so nothing is copied or republished.
@@ -12,7 +12,7 @@ Methodology: [outline-driven-development](https://github.com/OutlineDriven/outli
 
 - Five harness surfaces from one tree: Claude Code, Codex, Cursor, Grok, and Kimi
 - No package manager for the tooling; every script is dependency-free Node ESM or standard-library Python
-- Six output styles in odin-core, each embedding the canonical doctrine byte-identically
+- Six output styles in dstack-core, each embedding the canonical doctrine byte-identically
 - Pre-commit gates that audit the whole tree on every commit, listed in `.pre-commit-config.yaml`
 
 ## Contents
@@ -32,14 +32,14 @@ Methodology: [outline-driven-development](https://github.com/OutlineDriven/outli
 304 skills in 22 plugins. A skill is authored once, at
 `plugins/<plugin>/skills/<slug>/SKILL.md`, and that path is its only home. The directory states
 which plugin owns the skill, so no registry has to answer that question. Every plugin and
-marketplace ships at one `releaseVersion`, currently 2.1.7, held in `catalog/plugins.json`.
+marketplace ships at one `releaseVersion`, currently 2.1.8, held in `catalog/plugins.json`.
 
 Each harness resolves components from fixed conventions at the plugin root, so this layout is the
 one every supported client already discovers. Nothing is copied at publish time, and nothing is
 published to a package registry.
 
 ```
-plugins/odin-core/
+plugins/dstack-core/
   .claude-plugin/plugin.json   Claude Code manifest
   .codex-plugin/plugin.json    Codex manifest
   .cursor-plugin/plugin.json   Cursor manifest
@@ -47,11 +47,11 @@ plugins/odin-core/
   .kimi-plugin/plugin.json     Kimi manifest
   skills/necessary-work/SKILL.md        authored skill
   skills/necessary-work/agents/openai.yaml   generated from the frontmatter
-  mcp.json                     MCP servers, odin-core only
-  output-styles/               Claude output styles, odin-core only
+  mcp.json                     MCP servers, dstack-core only
+  output-styles/               Claude output styles, dstack-core only
 ```
 
-> `odin-core` carries the six output styles and the core session gates; `odin-planning` carries the planning skills. `odin-code` carries the day-to-day engineering skills. Install the rest by working domain.
+> `dstack-core` carries the six output styles and the core session gates; `dstack-planning` carries the planning skills. `dstack-code` carries the day-to-day engineering skills. Install the rest by working domain.
 
 
 ## Core philosophy
@@ -69,14 +69,14 @@ Six install surfaces are supported; each installs from this repository.
 ### Claude Code
 
 ```shell
-claude plugin marketplace add OutlineDriven/odin-claude-plugin
-claude plugin install odin-core@odin-marketplace
+claude plugin marketplace add gosuda/dalcom-skills
+claude plugin install dstack-core@dstack
 
 # Your selected plugin modules; Keep it lean, only for you.
-claude plugin install odin-code@odin-marketplace
-claude plugin install odin-run@odin-marketplace
-claude plugin install odin-planning@odin-marketplace
-claude plugin install odin-knowledge@odin-marketplace
+claude plugin install dstack-code@dstack
+claude plugin install dstack-run@dstack
+claude plugin install dstack-planning@dstack
+claude plugin install dstack-knowledge@dstack
 
 # More ...
 ```
@@ -84,31 +84,31 @@ claude plugin install odin-knowledge@odin-marketplace
 ### Codex
 
 ```shell
-codex plugin marketplace add OutlineDriven/odin-claude-plugin
-codex plugin add odin-core@odin-marketplace
+codex plugin marketplace add gosuda/dalcom-skills
+codex plugin add dstack-core@dstack
 
 # Your selected plugin modules; Keep it lean, only for you.
-codex plugin add odin-code@odin-marketplace
-codex plugin add odin-run@odin-marketplace
-codex plugin add odin-planning@odin-marketplace
-codex plugin add odin-knowledge@odin-marketplace
+codex plugin add dstack-code@dstack
+codex plugin add dstack-run@dstack
+codex plugin add dstack-planning@dstack
+codex plugin add dstack-knowledge@dstack
 
 # More ...
 ```
 
 ### Cursor
 
-Add the marketplace, then `/plugin install odin-core`. Cursor reads the
+Add the marketplace, then `/plugin install dstack-core`. Cursor reads the
 `.cursor-plugin/plugin.json` manifest at each plugin root.
 
 ```
-/plugin install odin-core
+/plugin install dstack-core
 
 # Your selected plugin modules; Keep it lean, only for you.
-/plugin install odin-code
-/plugin install odin-run
-/plugin install odin-planning
-/plugin install odin-knowledge
+/plugin install dstack-code
+/plugin install dstack-run
+/plugin install dstack-planning
+/plugin install dstack-knowledge
 
 # More ...
 ```
@@ -117,9 +117,8 @@ Add the marketplace, then `/plugin install odin-core`. Cursor reads the
 
 `gh skill` installs a single skill for any of its supported agents. Passing the exact path skips a
 full tree traversal, which matters at this repository's size.
-
 ```shell
-gh skill install OutlineDriven/odin-claude-plugin plugins/odin-planning/skills/askme \
+gh skill install gosuda/dalcom-skills plugins/dstack-core/skills/askme \
   --agent <agent> --scope user
 ```
 
@@ -128,8 +127,8 @@ gh skill install OutlineDriven/odin-claude-plugin plugins/odin-planning/skills/a
 ### Grok
 
 ```shell
-grok plugin marketplace add OutlineDriven/odin-claude-plugin
-grok plugin install OutlineDriven/odin-claude-plugin#plugins/odin-core
+grok plugin marketplace add gosuda/dalcom-skills
+grok plugin install gosuda/dalcom-skills#plugins/dstack-core
 ```
 
 The `#plugins/<plugin>` suffix selects one plugin subdirectory from the repository.
@@ -139,37 +138,37 @@ The `#plugins/<plugin>` suffix selects one plugin subdirectory from the reposito
 From a local clone; Kimi cannot install a subdirectory of a GitHub repository.
 
 ```shell
-/plugins marketplace /path/to/odin-claude-plugin/.kimi-plugin/marketplace.json
-/plugins install /path/to/odin-claude-plugin/plugins/odin-core
+/plugins marketplace /path/to/dalcom-skills/.kimi-plugin/marketplace.json
+/plugins install /path/to/dalcom-skills/plugins/dstack-core
 ```
 
 Both paths are absolute: Kimi rejects a relative plugin root.
 
 ## Choose your plugins
 
-Nothing here is all-or-nothing. `odin-core` and `odin-code` are the base from Install; every
+Nothing here is all-or-nothing. `dstack-core` and `dstack-code` are the base from Install; every
 row below is what you add on top for that kind of work, and unselected plugins stay uninstalled.
 
 | Working on | Add |
 |---|---|
-| Everyday code changes | `odin-run`, `odin-git` |
-| Tests and verification | `odin-testing` |
-| Large refactors, audits, bounded iteration | `odin-code`, `odin-review` |
-| A specific language | `odin-native`, `odin-typescript`, or `odin-rust` |
-| Web and interface work | `odin-typescript`, `odin-design` |
-| Security review and hardening | `odin-security`, `odin-fuzzing` |
-| Research and technical writing | `odin-research`, `odin-knowledge`, `odin-writing` |
-| Product, planning, and new artifacts | `odin-planning`, `odin-visual` |
-| Building agents | `odin-skills` |
-| Infrastructure and data | `odin-infra` |
+| Everyday code changes | `dstack-run`, `dstack-git` |
+| Tests and verification | `dstack-testing` |
+| Large refactors, audits, bounded iteration | `dstack-code`, `dstack-review` |
+| A specific language | `dstack-native`, `dstack-typescript`, or `dstack-rust` |
+| Web and interface work | `dstack-typescript`, `dstack-design` |
+| Security review and hardening | `dstack-security`, `dstack-fuzzing` |
+| Research and technical writing | `dstack-research`, `dstack-knowledge`, `dstack-writing` |
+| Product, planning, and new artifacts | `dstack-planning`, `dstack-visual` |
+| Building agents | `dstack-skills` |
+| Infrastructure and data | `dstack-infra` |
 
 Each name installs with the same command:
 
 ```shell
-/plugin install odin-security@odin-marketplace
+/plugin install dstack-security@dstack
 ```
 
-The largest plugins are `odin-core` at 83, `odin-marketing` at 28, and `odin-run` at 20.
+The largest plugins are `dstack-core` at 83, `dstack-marketing` at 28, and `dstack-run` at 20.
 Install one skill instead of a whole plugin with `gh skill install`, shown under Install above.
 
 ## Using the skills
@@ -180,17 +179,17 @@ You install plugins once and invoke skills every day. Start with the [getting-st
 
 | Plugin | Category | Plugin | Category |
 |---|---|---|---|
-| odin-core | Coding | odin-knowledge | Productivity |
-| odin-planning | Productivity | odin-learn | Productivity |
-| odin-code | Coding | odin-skills | Productivity |
-| odin-review | Coding | odin-writing | Writing |
-| odin-testing | Coding | odin-visual | Design |
-| odin-git | Coding | odin-design | Design |
-| odin-run | Coding | odin-typescript | Coding |
-| odin-infra | Infrastructure | odin-native | Coding |
-| odin-security | Security | odin-rust | Coding |
-| odin-fuzzing | Security | odin-performance | Coding |
-| odin-research | Research | odin-marketing | Marketing |
+| dstack-core | Coding | dstack-knowledge | Productivity |
+| dstack-planning | Productivity | dstack-learn | Productivity |
+| dstack-code | Coding | dstack-skills | Productivity |
+| dstack-review | Coding | dstack-writing | Writing |
+| dstack-testing | Coding | dstack-visual | Design |
+| dstack-git | Coding | dstack-design | Design |
+| dstack-run | Coding | dstack-typescript | Coding |
+| dstack-infra | Infrastructure | dstack-native | Coding |
+| dstack-security | Security | dstack-rust | Coding |
+| dstack-fuzzing | Security | dstack-performance | Coding |
+| dstack-research | Research | dstack-marketing | Marketing |
 
 `catalog/plugins.json` is the identity ledger: it holds each plugin's name, description, category,
 and tags, and every manifest and registry is generated from it.
@@ -198,9 +197,9 @@ and tags, and every manifest and registry is generated from it.
 ## Output styles
 
 Output styles shape how the agent communicates. Switch through Claude Code's `/config` or by
-setting `outputStyle` in `settings.json`. They ship in `odin-core`.
+setting `outputStyle` in `settings.json`. They ship in `dstack-core`.
 
-- `ODIN`: default. Skeptic register, scope discipline, no reflexive validation.
+- `DStack`: default. Skeptic register, scope discipline, no reflexive validation.
 - `AxiomMode`: formal-logic English with predicate-form claims and ASCII keywords.
 - `Builder`: for non-technical builders. Outcome-first, plain language, progressive disclosure.
 - `Duet`: companion to the `duet` skill. Decisions before prose, forks stated loudly.
@@ -230,4 +229,4 @@ explains what each generator writes, what each gate proves, and how to read a fa
 
 See LICENSE. Third-party attribution is in `licenses/NOTICE`.
 
-Issues: https://github.com/OutlineDriven/odin-claude-plugin/issues
+Issues: https://github.com/gosuda/dalcom-skills/issues

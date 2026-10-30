@@ -1,0 +1,21 @@
+{
+  "name": "dstack-native",
+  "version": "2.1.8",
+  "description": "DStack workflows for native systems, toolchains, and performance.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "native"
+  ],
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "gosuda"
+  },
+  "skills": "./skills",
+  "interface": {
+    "displayName": "DStack Native",
+    "shortDescription": "DStack workflows for native systems, toolchains, and performance."
+  }
+}

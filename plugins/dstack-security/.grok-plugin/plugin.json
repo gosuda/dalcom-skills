@@ -1,0 +1,18 @@
+{
+  "name": "dstack-security",
+  "version": "2.1.8",
+  "description": "DStack workflows for security review, vulnerability triage, and defensive implementation.",
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "repository": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "security"
+  ]
+}

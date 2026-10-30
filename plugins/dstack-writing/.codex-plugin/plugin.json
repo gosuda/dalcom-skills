@@ -1,0 +1,20 @@
+{
+  "name": "dstack-writing",
+  "version": "2.1.8",
+  "description": "DStack workflows for documentation, editorial prose, and copy.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "writing"
+  ],
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "interface": {
+    "displayName": "DStack Writing",
+    "shortDescription": "DStack workflows for documentation, editorial prose, and copy.",
+    "category": "Writing"
+  }
+}

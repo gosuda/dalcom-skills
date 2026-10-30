@@ -1,0 +1,21 @@
+{
+  "name": "dstack-core",
+  "version": "2.1.8",
+  "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "core"
+  ],
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "mcpServers": "./mcp.json",
+  "interface": {
+    "displayName": "DStack Core",
+    "shortDescription": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
+    "category": "Coding"
+  }
+}

@@ -26,7 +26,7 @@ Source: https://github.com/EveryInc/compound-engineering-plugin/tree/fbd794f329f
 License: MIT (https://opensource.org/licenses/MIT)
 Copyright: Copyright (c) 2025 Every
 Local adaptations: compound, autolearn, plan
-Scope: `plugins/odin-core/skills/compound/SKILL.md` (ce-compound + keep-why rationale folds), `plugins/odin-core/skills/autolearn/SKILL.md` (ce-compound-refresh merge), `plugins/odin-core/skills/plan/SKILL.md` (selective ce-plan insertions). No new skill. keep-why MIT attribution + nine adaptation names preserved; keep-why-setup-wizard body unavailable, not ported.
+Scope: `plugins/dstack-core/skills/compound/SKILL.md` (ce-compound + keep-why rationale folds), `plugins/dstack-core/skills/autolearn/SKILL.md` (ce-compound-refresh merge), `plugins/dstack-core/skills/plan/SKILL.md` (selective ce-plan insertions). No new skill. keep-why MIT attribution + nine adaptation names preserved; keep-why-setup-wizard body unavailable, not ported.
 
 Jia-Ethan/github-solution-research
 Source: https://github.com/Jia-Ethan/github-solution-research
@@ -73,7 +73,7 @@ Source: https://github.com/addyosmani/agent-skills/tree/aeac41d4d005999432bb7312
 License: MIT (https://opensource.org/licenses/MIT)
 Copyright: Copyright (c) 2025 Addy Osmani
 Local adaptations: askme, grill-core, ideate-multiple-agents, optimize, review, tests-practices (formerly tdd)
-Scope: `plugins/odin-core/skills/askme/SKILL.md`, `plugins/odin-core/skills/grill-core/SKILL.md` (debugging fold), `plugins/odin-planning/skills/ideate-multiple-agents/SKILL.md`, `plugins/odin-performance/skills/optimize/SKILL.md`, `plugins/odin-review/skills/review/SKILL.md`, `plugins/odin-core/skills/tests-practices/SKILL.md`. `brainstorm` excluded — ideation adaptation belongs to `ideate-multiple-agents` only.
+Scope: `plugins/dstack-core/skills/askme/SKILL.md`, `plugins/dstack-core/skills/grill-core/SKILL.md` (debugging fold), `plugins/dstack-planning/skills/ideate-multiple-agents/SKILL.md`, `plugins/dstack-performance/skills/optimize/SKILL.md`, `plugins/dstack-review/skills/review/SKILL.md`, `plugins/dstack-core/skills/tests-practices/SKILL.md`. `brainstorm` excluded — ideation adaptation belongs to `ideate-multiple-agents` only.
 
 agent-sh
 Source: https://github.com/agent-sh
@@ -139,7 +139,7 @@ Source: https://github.com/garrytan/gstack/tree/4729f4752ba6aa6524f52fa49f51c287
 License: MIT (https://opensource.org/licenses/MIT)
 Copyright: Copyright (c) 2026 Garry Tan
 Local adaptations: modernize, plan-complete, grill-core
-Scope: `plugins/odin-git/skills/modernize/SKILL.md`, `plugins/odin-core/skills/plan-complete/SKILL.md`, insertion into surviving `plugins/odin-core/skills/grill-core/SKILL.md` (prior `odin-planning/plan-complete` and `odin-code/strike-the-root` paths superseded; strike-the-root folds, no shadow copy)
+Scope: `plugins/dstack-git/skills/modernize/SKILL.md`, `plugins/dstack-core/skills/plan-complete/SKILL.md`, insertion into surviving `plugins/dstack-core/skills/grill-core/SKILL.md` (prior `odin-planning/plan-complete` and `odin-code/strike-the-root` paths superseded; strike-the-root folds, no shadow copy)
 The MODERNIZE / REWORK / CLOSE verdict names are credited as ideas-not-text from tstack at https://github.com/t3dotgg/tstack, `skills/modernize`, revision `7de017b3`. No tstack sentence copied, no tstack file distributed, so tstack MIT text not bundled.
 
 humanlayer/skills
@@ -179,7 +179,7 @@ Reviewed source paths:
   skills/engineering/improve-codebase-architecture/SKILL.md
   skills/engineering/improve-codebase-architecture/HTML-REPORT.md
 Local adaptation:
-  architect — current-source incorporation of portable deepening and YAGNI-scoped survey behavior (`plugins/odin-core/skills/architect/SKILL.md`)
+  architect — current-source incorporation of portable deepening and YAGNI-scoped survey behavior (`plugins/dstack-core/skills/architect/SKILL.md`)
 ODIN-authored (not Pocock): plan-complete — new completion/readiness owner grounded in settled ODIN plan + four PlanCompletion reviews; current Matt source has no plan-complete path. resolve-merge-conflicts retained as historical provenance only; current revision removed it.
 
 mblode/agent-skills
@@ -347,7 +347,7 @@ ast-grep catalog
 Source: https://ast-grep.github.io/catalog/
 License: MIT (https://opensource.org/licenses/MIT)
 Copyright: Copyright (c) 2022-2026 Herrington Darkholme
-Local adaptations: ast-grep (recipes reference: plugins/odin-code/skills/ast-grep/references/recipes.md)
+Local adaptations: ast-grep (recipes reference: plugins/dstack-code/skills/ast-grep/references/recipes.md)
 
 The MIT permission text below applies to every work in the preceding section. Each work retains the
 copyright notice shown with its source. bentossell/visualise declares MIT in its README but supplies
@@ -423,7 +423,7 @@ Apache Groovy
 Copyright 2003-2026 The Apache Software Foundation
 
 Local adaptations: resolve (one-batch audit-finding route), review (three-pass correctness/security/conventions merge), review-fix-loop, supply-chain-risk-auditor (dependency-audit enrichment), workflow-capacity-audit, license-compliance-audit (folded into security-review)
-Scope: `plugins/odin-core/skills/resolve/SKILL.md`, `plugins/odin-review/skills/review/SKILL.md`, `plugins/odin-core/skills/review-fix-loop/SKILL.md`, `plugins/odin-security/skills/supply-chain-risk-auditor/SKILL.md`, `plugins/odin-infra/skills/workflow-capacity-audit/SKILL.md`, `plugins/odin-core/skills/security-review/SKILL.md` (license-compliance-audit fold). No Magpie scripts bundled; Magpie vetted-ops/ASF-config/external-reviewer machinery rejected.
+Scope: `plugins/dstack-core/skills/resolve/SKILL.md`, `plugins/dstack-review/skills/review/SKILL.md`, `plugins/dstack-core/skills/review-fix-loop/SKILL.md`, `plugins/dstack-security/skills/supply-chain-risk-auditor/SKILL.md`, `plugins/dstack-infra/skills/workflow-capacity-audit/SKILL.md`, `plugins/dstack-core/skills/security-review/SKILL.md` (license-compliance-audit fold). No Magpie scripts bundled; Magpie vetted-ops/ASF-config/external-reviewer machinery rejected.
 
 The Apache License, Version 2.0 applies to the preceding works. The full license is included in this
 distribution as LICENSE and is also available at https://www.apache.org/licenses/LICENSE-2.0.
@@ -463,8 +463,8 @@ Source: https://github.com/trailofbits/skills/tree/2be6433b39e009cd2b6fd3be1895f
 License: CC-BY-SA-4.0 (https://creativecommons.org/licenses/by-sa/4.0/legalcode)
 Copyright: Made by Trail of Bits
 Scope delimitation: the historical d1f1575… row records adaptations made for ODIN 2.0 and covers only its own Local adaptations line (including prior project-findings-onto-graph work at that revision). Current 2be6433… entry covers only: (a) rebuilt entry-point-analyzer and variant-hunt modes, (b) restored /fix security-proof matrix, (c) let-fate-decide port — and no other project-findings-onto-graph, /fix, or Trail-derived material. Neither entry re-attributes the other's work; review-fix-loop attributed to neither Trail entry.
-Local adaptations (scope group 1, security, substantially rewritten): project-findings-onto-graph entry-point-analyzer mode, variant-hunt mode, restored /fix security-sensitive repair-proof material. ODIN destinations: plugins/odin-security/skills/project-findings-onto-graph/SKILL.md, plugins/odin-core/skills/fix/SKILL.md (historical code-improver stays on d1f1575...). Upstream source paths for project-findings-onto-graph: plugins/entry-point-analyzer/skills/entry-point-analyzer/SKILL.md, plugins/variant-analysis/skills/variant-analysis/SKILL.md.
-Local adaptations (scope group 2, let-fate-decide port): let-fate-decide (plugins/odin-core/skills/let-fate-decide/; SKILL.md, scripts/draw.py stdlib replacement, agents/draw.md, references/SOURCE-MAP.md; 92-file corpus: 78 cards + 12 houses + 2 references, byte-identical to the pinned source). Upstream plugin author named upstream as Scott Arciszewski; version 1.2.6. Modifications: odin-core home, stdlib python3 instead of uv, always-on fail-closed asset verification, isolated test-only --seed, dropped --legacy, no bundled trademark (trail-of-bits-mark.svg excluded per Section 2(b)(2)). Patent and trademark rights are not licensed; upstream trail-of-bits-mark.svg is explicitly excluded and must not be copied, recolored, or used as branding.
+Local adaptations (scope group 1, security, substantially rewritten): project-findings-onto-graph entry-point-analyzer mode, variant-hunt mode, restored /fix security-sensitive repair-proof material. ODIN destinations: plugins/dstack-security/skills/project-findings-onto-graph/SKILL.md, plugins/dstack-core/skills/fix/SKILL.md (historical code-improver stays on d1f1575...). Upstream source paths for project-findings-onto-graph: plugins/entry-point-analyzer/skills/entry-point-analyzer/SKILL.md, plugins/variant-analysis/skills/variant-analysis/SKILL.md.
+Local adaptations (scope group 2, let-fate-decide port): let-fate-decide (plugins/dstack-core/skills/let-fate-decide/; SKILL.md, scripts/draw.py stdlib replacement, agents/draw.md, references/SOURCE-MAP.md; 92-file corpus: 78 cards + 12 houses + 2 references, byte-identical to the pinned source). Upstream plugin author named upstream as Scott Arciszewski; version 1.2.6. Modifications: odin-core home, stdlib python3 instead of uv, always-on fail-closed asset verification, isolated test-only --seed, dropped --legacy, no bundled trademark (trail-of-bits-mark.svg excluded per Section 2(b)(2)). Patent and trademark rights are not licensed; upstream trail-of-bits-mark.svg is explicitly excluded and must not be copied, recolored, or used as branding.
 Distributed under CC-BY-SA-4.0. No Trail sponsorship or endorsement implied. No Trail of Bits logo, mark, brand color, or marketplace metadata is included.
 
 The preceding material is attributed to Trail of Bits and was modified for ODIN. It is
