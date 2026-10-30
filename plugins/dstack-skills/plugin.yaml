@@ -1,5 +1,5 @@
 name: "dstack-skills"
-version: "2.1.11"
+version: "2.1.12"
 description: "DStack workflows for authoring, auditing, benchmarking, and publishing agent skills."
 author: "gosuda"
 manifest_version: 2

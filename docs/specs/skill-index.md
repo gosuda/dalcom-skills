@@ -192,8 +192,8 @@
 | parallel-launch | dstack-core | Coding | Use when work splits into independent sub-tasks or cross-domain research. |
 | partition-scopes-to-subagents | dstack-run | Coding | Use when asked to partition non-overlapping scopes across subagents and drive each to completion. |
 | perspective-complete-review | dstack-review | Coding | Use when one named review viewpoint must run fix cycles until a fresh reviewer finds nothing. |
-| plan | dstack-core | Coding | Use when multi-step work needs a structured implementation plan that preserves outcomes and constraints. |
-| plan-complete | dstack-core | Coding | Use when a plan must be proven complete before implementation begins. |
+| plans | dstack-core | Coding | Use when multi-step work needs a structured implementation plan that preserves outcomes and constraints. |
+| plans-complete | dstack-core | Coding | Use when a plan must be proven complete before implementation begins. |
 | possible-worlds | dstack-planning | Productivity | Use when a design dispute has at least two live interpretations and the caller wants worlds made explicit or a plain-language recommendation. |
 | post-merge-cleanup | dstack-git | Coding | Use when a landed merge, release, or completed change needs its cleanup surface reconciled. |
 | pr-impact-quiz | dstack-review | Coding | Use when the user invokes this skill to generate targeted questions proving the author understands the change's codebase effect. |
