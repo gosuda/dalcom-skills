@@ -1,14 +1,14 @@
 {
-  "name": "odin-marketplace",
+  "name": "dstack",
   "interface": {
-    "displayName": "ODIN"
+    "displayName": "DStack"
   },
   "plugins": [
     {
-      "name": "odin-core",
+      "name": "dstack-core",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-core"
+        "path": "./plugins/dstack-core"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -17,10 +17,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-planning",
+      "name": "dstack-planning",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-planning"
+        "path": "./plugins/dstack-planning"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -29,10 +29,10 @@
       "category": "Productivity"
     },
     {
-      "name": "odin-code",
+      "name": "dstack-code",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-code"
+        "path": "./plugins/dstack-code"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -41,10 +41,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-review",
+      "name": "dstack-review",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-review"
+        "path": "./plugins/dstack-review"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -53,10 +53,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-testing",
+      "name": "dstack-testing",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-testing"
+        "path": "./plugins/dstack-testing"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -65,10 +65,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-git",
+      "name": "dstack-git",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-git"
+        "path": "./plugins/dstack-git"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -77,10 +77,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-run",
+      "name": "dstack-run",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-run"
+        "path": "./plugins/dstack-run"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -89,10 +89,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-infra",
+      "name": "dstack-infra",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-infra"
+        "path": "./plugins/dstack-infra"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -101,10 +101,10 @@
       "category": "Infrastructure"
     },
     {
-      "name": "odin-security",
+      "name": "dstack-security",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-security"
+        "path": "./plugins/dstack-security"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -113,10 +113,10 @@
       "category": "Security"
     },
     {
-      "name": "odin-fuzzing",
+      "name": "dstack-fuzzing",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-fuzzing"
+        "path": "./plugins/dstack-fuzzing"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -125,10 +125,10 @@
       "category": "Security"
     },
     {
-      "name": "odin-research",
+      "name": "dstack-research",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-research"
+        "path": "./plugins/dstack-research"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -137,10 +137,10 @@
       "category": "Research"
     },
     {
-      "name": "odin-knowledge",
+      "name": "dstack-knowledge",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-knowledge"
+        "path": "./plugins/dstack-knowledge"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -149,10 +149,10 @@
       "category": "Productivity"
     },
     {
-      "name": "odin-learn",
+      "name": "dstack-learn",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-learn"
+        "path": "./plugins/dstack-learn"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -161,10 +161,10 @@
       "category": "Productivity"
     },
     {
-      "name": "odin-skills",
+      "name": "dstack-skills",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-skills"
+        "path": "./plugins/dstack-skills"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -173,10 +173,10 @@
       "category": "Productivity"
     },
     {
-      "name": "odin-writing",
+      "name": "dstack-writing",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-writing"
+        "path": "./plugins/dstack-writing"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -185,10 +185,10 @@
       "category": "Writing"
     },
     {
-      "name": "odin-visual",
+      "name": "dstack-visual",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-visual"
+        "path": "./plugins/dstack-visual"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -197,10 +197,10 @@
       "category": "Design"
     },
     {
-      "name": "odin-design",
+      "name": "dstack-design",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-design"
+        "path": "./plugins/dstack-design"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -209,10 +209,10 @@
       "category": "Design"
     },
     {
-      "name": "odin-typescript",
+      "name": "dstack-typescript",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-typescript"
+        "path": "./plugins/dstack-typescript"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -221,10 +221,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-native",
+      "name": "dstack-native",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-native"
+        "path": "./plugins/dstack-native"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -233,10 +233,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-rust",
+      "name": "dstack-rust",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-rust"
+        "path": "./plugins/dstack-rust"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -245,10 +245,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-performance",
+      "name": "dstack-performance",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-performance"
+        "path": "./plugins/dstack-performance"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -257,10 +257,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-marketing",
+      "name": "dstack-marketing",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-marketing"
+        "path": "./plugins/dstack-marketing"
       },
       "policy": {
         "installation": "AVAILABLE",

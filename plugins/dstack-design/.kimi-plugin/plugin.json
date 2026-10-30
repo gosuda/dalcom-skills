@@ -1,0 +1,21 @@
+{
+  "name": "dstack-design",
+  "version": "2.1.8",
+  "description": "DStack workflows for interface design, prototypes, and visual fidelity.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "design"
+  ],
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "gosuda"
+  },
+  "skills": "./skills",
+  "interface": {
+    "displayName": "DStack Design",
+    "shortDescription": "DStack workflows for interface design, prototypes, and visual fidelity."
+  }
+}

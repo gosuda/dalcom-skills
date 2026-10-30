@@ -1,0 +1,21 @@
+{
+  "name": "dstack-testing",
+  "version": "2.1.8",
+  "description": "DStack workflows for tests, properties, mutation, and behavioral verification.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "testing"
+  ],
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "gosuda"
+  },
+  "skills": "./skills",
+  "interface": {
+    "displayName": "DStack Testing",
+    "shortDescription": "DStack workflows for tests, properties, mutation, and behavioral verification."
+  }
+}

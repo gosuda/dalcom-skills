@@ -14,102 +14,102 @@ const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
 const PAIRS = [
   [
-    "plugins/odin-core/skills/compound/references/schema.md",
-    "plugins/odin-core/skills/autolearn/references/schema.md",
+    "plugins/dstack-core/skills/compound/references/schema.md",
+    "plugins/dstack-core/skills/autolearn/references/schema.md",
   ],
   [
-    "plugins/odin-core/skills/compound/references/concepts.md",
-    "plugins/odin-core/skills/autolearn/references/concepts.md",
+    "plugins/dstack-core/skills/compound/references/concepts.md",
+    "plugins/dstack-core/skills/autolearn/references/concepts.md",
   ],
   [
-    "plugins/odin-core/skills/compound/scripts/validate-record.py",
-    "plugins/odin-core/skills/autolearn/scripts/validate-record.py",
-  ],
-
-  [
-    "plugins/odin-core/skills/resolve/scripts/get-pr-comments",
-    "plugins/odin-core/skills/resolve-pr-comments/scripts/get-pr-comments",
-  ],
-  [
-    "plugins/odin-core/skills/resolve/scripts/get-thread-for-comment",
-    "plugins/odin-core/skills/resolve-pr-comments/scripts/get-thread-for-comment",
-  ],
-  [
-    "plugins/odin-core/skills/resolve/scripts/reply-to-pr-thread",
-    "plugins/odin-core/skills/resolve-pr-comments/scripts/reply-to-pr-thread",
-  ],
-  [
-    "plugins/odin-core/skills/resolve/scripts/resolve-pr-thread",
-    "plugins/odin-core/skills/resolve-pr-comments/scripts/resolve-pr-thread",
-  ],
-  [
-    "plugins/odin-core/skills/resolve/scripts/gitlab-mr.py",
-    "plugins/odin-core/skills/resolve-pr-comments/scripts/gitlab-mr.py",
+    "plugins/dstack-core/skills/compound/scripts/validate-record.py",
+    "plugins/dstack-core/skills/autolearn/scripts/validate-record.py",
   ],
 
   [
-    "plugins/odin-core/skills/resolve/scripts/get-pr-comments",
-    "plugins/odin-git/skills/gate-and-merge/scripts/get-pr-comments",
+    "plugins/dstack-core/skills/resolve/scripts/get-pr-comments",
+    "plugins/dstack-core/skills/resolve-pr-comments/scripts/get-pr-comments",
   ],
   [
-    "plugins/odin-core/skills/resolve/scripts/get-thread-for-comment",
-    "plugins/odin-git/skills/gate-and-merge/scripts/get-thread-for-comment",
+    "plugins/dstack-core/skills/resolve/scripts/get-thread-for-comment",
+    "plugins/dstack-core/skills/resolve-pr-comments/scripts/get-thread-for-comment",
   ],
   [
-    "plugins/odin-core/skills/resolve/scripts/reply-to-pr-thread",
-    "plugins/odin-git/skills/gate-and-merge/scripts/reply-to-pr-thread",
+    "plugins/dstack-core/skills/resolve/scripts/reply-to-pr-thread",
+    "plugins/dstack-core/skills/resolve-pr-comments/scripts/reply-to-pr-thread",
   ],
   [
-    "plugins/odin-core/skills/resolve/scripts/resolve-pr-thread",
-    "plugins/odin-git/skills/gate-and-merge/scripts/resolve-pr-thread",
+    "plugins/dstack-core/skills/resolve/scripts/resolve-pr-thread",
+    "plugins/dstack-core/skills/resolve-pr-comments/scripts/resolve-pr-thread",
   ],
   [
-    "plugins/odin-core/skills/resolve/scripts/gitlab-mr.py",
-    "plugins/odin-git/skills/gate-and-merge/scripts/gitlab-mr.py",
-  ],
-
-  [
-    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
-    "plugins/odin-core/skills/audit-project/scripts/inspect_mr_checks.py",
-  ],
-  [
-    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
-    "plugins/odin-core/skills/commit-push-pr/scripts/inspect_mr_checks.py",
-  ],
-  [
-    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
-    "plugins/odin-core/skills/resolve-pr-comments/scripts/inspect_mr_checks.py",
-  ],
-  [
-    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
-    "plugins/odin-core/skills/review-fix-loop/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/resolve/scripts/gitlab-mr.py",
+    "plugins/dstack-core/skills/resolve-pr-comments/scripts/gitlab-mr.py",
   ],
 
   [
-    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
-    "plugins/odin-git/skills/modernize/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/resolve/scripts/get-pr-comments",
+    "plugins/dstack-git/skills/gate-and-merge/scripts/get-pr-comments",
   ],
   [
-    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
-    "plugins/odin-git/skills/watch-and-repair-pr/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/resolve/scripts/get-thread-for-comment",
+    "plugins/dstack-git/skills/gate-and-merge/scripts/get-thread-for-comment",
   ],
   [
-    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
-    "plugins/odin-git/skills/gate-and-merge/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/resolve/scripts/reply-to-pr-thread",
+    "plugins/dstack-git/skills/gate-and-merge/scripts/reply-to-pr-thread",
+  ],
+  [
+    "plugins/dstack-core/skills/resolve/scripts/resolve-pr-thread",
+    "plugins/dstack-git/skills/gate-and-merge/scripts/resolve-pr-thread",
+  ],
+  [
+    "plugins/dstack-core/skills/resolve/scripts/gitlab-mr.py",
+    "plugins/dstack-git/skills/gate-and-merge/scripts/gitlab-mr.py",
   ],
 
   [
-    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
-    "plugins/odin-run/skills/implement-spec/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/audit-project/scripts/inspect_mr_checks.py",
   ],
   [
-    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
-    "plugins/odin-infra/skills/ci-cd/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/commit-push-pr/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/dstack-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/resolve-pr-comments/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/dstack-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/dstack-core/skills/review-fix-loop/scripts/inspect_mr_checks.py",
   ],
 
   [
-    "plugins/odin-core/skills/resolve/scripts/gitlab-mr.py",
-    "plugins/odin-review/skills/review/scripts/gitlab-mr.py",
+    "plugins/dstack-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/dstack-git/skills/modernize/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/dstack-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/dstack-git/skills/watch-and-repair-pr/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/dstack-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/dstack-git/skills/gate-and-merge/scripts/inspect_mr_checks.py",
+  ],
+
+  [
+    "plugins/dstack-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/dstack-run/skills/implement-spec/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/dstack-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/dstack-infra/skills/ci-cd/scripts/inspect_mr_checks.py",
+  ],
+
+  [
+    "plugins/dstack-core/skills/resolve/scripts/gitlab-mr.py",
+    "plugins/dstack-review/skills/review/scripts/gitlab-mr.py",
   ],
 ];
 

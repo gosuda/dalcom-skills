@@ -1,0 +1,21 @@
+{
+  "name": "dstack-rust",
+  "version": "2.1.8",
+  "description": "DStack workflows for Rust development: cargo, async, FFI, cross-compilation, debugging, and unsafe review.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "rust"
+  ],
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "gosuda"
+  },
+  "skills": "./skills",
+  "interface": {
+    "displayName": "DStack Rust",
+    "shortDescription": "DStack workflows for Rust development: cargo, async, FFI, cross-compilation, debugging, and unsafe review."
+  }
+}

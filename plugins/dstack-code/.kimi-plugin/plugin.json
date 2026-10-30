@@ -1,0 +1,21 @@
+{
+  "name": "dstack-code",
+  "version": "2.1.8",
+  "description": "DStack workflows for writing, changing, and simplifying code.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "code"
+  ],
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "gosuda"
+  },
+  "skills": "./skills",
+  "interface": {
+    "displayName": "DStack Code",
+    "shortDescription": "DStack workflows for writing, changing, and simplifying code."
+  }
+}

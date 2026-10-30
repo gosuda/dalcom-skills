@@ -1,0 +1,20 @@
+{
+  "name": "dstack-git",
+  "version": "2.1.8",
+  "description": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "git"
+  ],
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "interface": {
+    "displayName": "DStack Git",
+    "shortDescription": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
+    "category": "Coding"
+  }
+}

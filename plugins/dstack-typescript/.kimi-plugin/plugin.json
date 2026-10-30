@@ -1,0 +1,21 @@
+{
+  "name": "dstack-typescript",
+  "version": "2.1.8",
+  "description": "DStack workflows for modern TypeScript development.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "typescript"
+  ],
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "gosuda"
+  },
+  "skills": "./skills",
+  "interface": {
+    "displayName": "DStack TypeScript",
+    "shortDescription": "DStack workflows for modern TypeScript development."
+  }
+}

@@ -121,7 +121,7 @@ The manifest `mcpServers` field accepts a path: type `string|array|object`, desc
 
 Shared-file claim, stated precisely: one shared `mcp.json` serves Claude Code, Codex, and Grok, but only through an explicit `mcpServers` entry, because all three default to the dotted `.mcp.json`. Without the manifest entry, none of the three loads the dotless file. Kimi takes the servers inline instead: its `mcpServers` is a server map, not a path, so the generator reads `mcp.json` and inlines its `mcpServers` value verbatim. Mechanism verified at Tier 2 for Claude Code and Tier 1 for Codex and Grok.
 
-Repository state as read 2026-09-03: `plugins/odin-core/.claude-plugin/plugin.json`, `plugins/odin-core/.codex-plugin/plugin.json`, and `plugins/odin-core/.grok-plugin/plugin.json` all declare `"mcpServers": "./mcp.json"`, and `plugins/odin-core/.kimi-plugin/plugin.json` carries the inlined server map. No other plugin ships `mcp.json`, so the other 21 manifests omit the key (re-verified against the 2.1.7 tree). The renderers add the entry whenever a plugin ships an `mcp.json` (Tier 1, source: repository files and `scripts/plugin-surfaces.mjs`, verified 2026-09-03).
+Repository state as read 2026-09-03: `plugins/dstack-core/.claude-plugin/plugin.json`, `plugins/dstack-core/.codex-plugin/plugin.json`, and `plugins/dstack-core/.grok-plugin/plugin.json` all declare `"mcpServers": "./mcp.json"`, and `plugins/dstack-core/.kimi-plugin/plugin.json` carries the inlined server map. No other plugin ships `mcp.json`, so the other 21 manifests omit the key (re-verified against the 2.1.7 tree). The renderers add the entry whenever a plugin ships an `mcp.json` (Tier 1, source: repository files and `scripts/plugin-surfaces.mjs`, verified 2026-09-03).
 
 ### Skill discovery
 
@@ -278,7 +278,7 @@ The current layout satisfies all five surfaces from one tree (Tier 1, source: re
 │       ├── .cursor-plugin/plugin.json   # Cursor manifest, identity only
 │       ├── .grok-plugin/plugin.json     # Grok manifest
 │       ├── .kimi-plugin/plugin.json     # Kimi manifest, skills declared
-│       ├── mcp.json                     # optional; only odin-core ships one
+│       ├── mcp.json                     # optional; only dstack-core ships one
 │       └── skills/<slug>/SKILL.md       # 304 skills total; see the generated docs/specs/skill-index.md
 ├── catalog/                             # registry and membership data
 ├── scripts/                             # dependency-free Node ESM and stdlib Python
@@ -331,5 +331,5 @@ Notes:
 
 Two questions from the first draft are now closed against the tree rather than left open. Node
 carries no pin and no enforcement point, which the toolchain section states outright. Claude Code
-does load the shared MCP file, because `plugins/odin-core/.claude-plugin/plugin.json` declares
+does load the shared MCP file, because `plugins/dstack-core/.claude-plugin/plugin.json` declares
 `"mcpServers": "./mcp.json"`.

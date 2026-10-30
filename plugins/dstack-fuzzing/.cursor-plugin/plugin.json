@@ -1,0 +1,19 @@
+{
+  "name": "dstack-fuzzing",
+  "version": "2.1.8",
+  "description": "DStack workflows for fuzz harnesses, fuzzer setup, sanitizers, and coverage analysis.",
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "repository": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "fuzzing"
+  ],
+  "category": "Security"
+}

@@ -22,7 +22,7 @@ Replace the embedded span in each output style by running `python3 scripts/sync-
 
 Verify alignment with `python3 scripts/sync-baseline.py --check` before committing; exit 0 means all styles match, exit 1 names drifted files, and exit 2 means the canonical file or a required two-`<role>` layout is missing. [Tony Hoare]
 
-Never hand-edit `plugins/odin-core/output-styles/benchmark.md`; changing its runner preamble requires explicit user authorization, and baseline regeneration may change only the embedded cascade below that preamble. [Tony Hoare]
+Never hand-edit `plugins/dstack-core/output-styles/benchmark.md`; changing its runner preamble requires explicit user authorization, and baseline regeneration may change only the embedded cascade below that preamble. [Tony Hoare]
 
 ## Submodule publishing
 
@@ -50,7 +50,7 @@ Balance session-wide essentials and frequently used cross-project workflows in c
 
 Preserve consent and host-policy boundaries when placing remote publishing workflows in core; placement grants no additional authority. [Tony Hoare]
 
-Keep native development and toolchains in `odin-native`, Rust in `odin-rust`, and hardware performance in `odin-performance`; fold singleton systems and Zig skills into `odin-native`. The Apple plugin has no retained skills and is retired. [Tony Hoare]
+Keep native development and toolchains in `dstack-native`, Rust in `dstack-rust`, and hardware performance in `dstack-performance`; fold singleton systems and Zig skills into `dstack-native`. The Apple plugin has no retained skills and is retired. [Tony Hoare]
 
 Measure explicit user invocation and genuine autonomous task use separately; exclude catalog exposure, inherited replay, and audit-only reads, and leave uncertain intent unresolved. [J.R.R. Tolkien]
 
@@ -62,7 +62,7 @@ Keep upstream source checkouts under `.references/<owner>/<repo>` and treat them
 
 Adapt upstream procedures and necessary narrow scripts selectively with provenance; propose substantial runtime or service dependencies separately. [J.R.R. Tolkien]
 
-Leave managed-source libraries unchanged and promote general lessons into ODIN. [Tony Hoare]
+Leave managed-source libraries unchanged and promote general lessons into DStack. [Tony Hoare]
 
 ## Distribution surfaces
 
@@ -78,7 +78,7 @@ Change generated output through its generator or catalog input, regenerate with 
 
 Declare only harness components that defaults do not resolve: Kimi needs `skills`, and Codex and Grok need `mcpServers` where a plugin ships dotless `mcp.json`. [Tony Hoare]
 
-Keep every plugin and marketplace version aligned with `releaseVersion`, currently `2.1.7`. [Tony Hoare]
+Keep every plugin and marketplace version aligned with `releaseVersion`, currently `2.1.8`. [Tony Hoare]
 
 Bump `releaseVersion` by one patch when shipping a skill, output style, manifest, or attribution change; bump the minor version only on explicit request. [Tony Hoare]
 
@@ -92,7 +92,7 @@ Name plugins for a job or stack, not a tier such as `-advanced` or a miscellaneo
 
 ## Devin skill mirror
 
-Never hand-edit the outline repository's `.devin/skills/<slug>/` mirror; edit the owning ODIN skill and regenerate the export. [Tony Hoare]
+Never hand-edit the outline repository's `.devin/skills/<slug>/` mirror; edit the owning DStack skill and regenerate the export. [Tony Hoare]
 
 From a clone under `.outline/worktree/`, give the mirror script an explicit `--target` pointing to the real outline checkout; its default sibling path is not that checkout. [Tony Hoare]
 

@@ -1,0 +1,20 @@
+{
+  "name": "dstack-performance",
+  "version": "2.1.8",
+  "description": "DStack workflows for measured performance: hardware kernels, profilers, byte budgets, and optimization proof.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "performance"
+  ],
+  "author": {
+    "name": "gosuda",
+    "url": "https://github.com/gosuda"
+  },
+  "interface": {
+    "displayName": "DStack Performance",
+    "shortDescription": "DStack workflows for measured performance: hardware kernels, profilers, byte budgets, and optimization proof.",
+    "category": "Coding"
+  }
+}

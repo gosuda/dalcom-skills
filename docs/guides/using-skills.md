@@ -6,9 +6,9 @@ Type the skill's name before a request, in the form your harness uses:
 
 | Harness | Explicit invocation | Example |
 |---|---|---|
-| Claude Code | `/<plugin>:<slug>`; plugin skills are namespaced by plugin id | `/odin-core:todos-update` |
-| Codex | `$<slug>`, or `/skills` to pick from a list | `$todos-update` |
-| Cursor | Type `/` and pick the skill by name | `/todos-update` |
+| Claude Code | `/<plugin>:<slug>`; plugin skills are namespaced by plugin id | `/dstack-core:todos-update`, `/dstack-planning:minimap`, `/dstack-code:ast-grep`, `/dstack-run:diamond-task`, `/dstack-knowledge:mutual-sync` |
+| Codex | `$<slug>`, or `/skills` to pick from a list | `$todos-update`, `$minimap`, `$ast-grep`, `$diamond-task`, `$mutual-sync` |
+| Cursor | Type `/` and pick the skill by name | `/todos-update`, `/minimap`, `/ast-grep`, `/diamond-task`, `/mutual-sync` |
 
 Grok and Kimi load the same skill tree; each harness's own documentation gives its explicit-invocation form. The guides in this directory write a step as `/skill:<slug>` when the harness does not matter.
 
@@ -29,11 +29,11 @@ The exception is a skill whose frontmatter sets `disable-model-invocation: true`
 Words after the invocation pass through to the skill, including file references. Two shapes from real transcripts:
 
 ```text
-/odin-core:unslop @skills/
+/dstack-core:unslop @skills/
 ```
 
 ```text
-/odin-core:unslop clean this draft local://skill-foundry-plan.md
+/dstack-core:unslop clean this draft local://skill-foundry-plan.md
 ```
 
 Point the skill at the material and state the job in the same line.
@@ -50,12 +50,23 @@ Most descriptions end with a `Not for ...` clause that names the narrower skill.
 
 When no skill fits, run `skill-gap-finder`. It names the owning skill or writes a missing-skill brief that proves the gap. It never invokes the match; you decide what to do with the answer.
 
-## Install one skill
+## Install plugins and skills
 
-`gh skill install` installs a single skill by its exact repository path, per the Individual lane of the root README Install section:
+Install plugins from the `dstack` marketplace added from repository `gosuda/dalcom-skills`:
 
 ```shell
-gh skill install OutlineDriven/odin-claude-plugin plugins/odin-core/skills/askme \
+claude plugin marketplace add gosuda/dalcom-skills
+claude plugin install dstack-core@dstack
+claude plugin install dstack-planning@dstack
+claude plugin install dstack-code@dstack
+claude plugin install dstack-run@dstack
+claude plugin install dstack-knowledge@dstack
+```
+
+To install a single skill without installing an entire plugin, use `gh skill install` with the exact repository path in `gosuda/dalcom-skills`:
+
+```shell
+gh skill install gosuda/dalcom-skills plugins/dstack-core/skills/askme \
   --agent <agent> --scope user
 ```
 

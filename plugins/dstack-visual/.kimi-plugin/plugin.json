@@ -1,0 +1,21 @@
+{
+  "name": "dstack-visual",
+  "version": "2.1.8",
+  "description": "DStack workflows for diagrams, decks, canvases, and visual explainers.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "visual"
+  ],
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "gosuda"
+  },
+  "skills": "./skills",
+  "interface": {
+    "displayName": "DStack Visual",
+    "shortDescription": "DStack workflows for diagrams, decks, canvases, and visual explainers."
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "dstack-research",
+  "version": "2.1.8",
+  "description": "DStack workflows for source-backed investigation, verification, and design rationale.",
+  "keywords": [
+    "dstack",
+    "dalcom",
+    "agent-skills",
+    "research"
+  ],
+  "homepage": "https://github.com/gosuda/dalcom-skills",
+  "license": "SEE LICENSE IN LICENSE",
+  "author": {
+    "name": "gosuda"
+  },
+  "skills": "./skills",
+  "interface": {
+    "displayName": "DStack Research",
+    "shortDescription": "DStack workflows for source-backed investigation, verification, and design rationale."
+  }
+}
