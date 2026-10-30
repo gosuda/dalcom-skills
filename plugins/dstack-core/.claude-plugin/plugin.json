@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dstack-core",
   "displayName": "DStack Core",
-  "version": "2.1.10",
+  "version": "2.1.11",
   "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
   "author": {
     "name": "gosuda",

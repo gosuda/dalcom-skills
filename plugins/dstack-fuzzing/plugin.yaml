@@ -1,5 +1,5 @@
 name: "dstack-fuzzing"
-version: "2.1.10"
+version: "2.1.11"
 description: "DStack workflows for fuzz harnesses, fuzzer setup, sanitizers, and coverage analysis."
 author: "gosuda"
 manifest_version: 2
