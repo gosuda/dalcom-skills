@@ -66,7 +66,7 @@ Leave managed-source libraries unchanged and promote general lessons into DStack
 
 ## Distribution surfaces
 
-Keep distribution limited to Claude Code, Codex, Cursor, Grok, and Kimi; do not add package-registry publication or npm artifacts. A flat Devin mirror of these same skills is exported to the outline repository, which publishes nothing and installs nothing; it is not a sixth distribution surface. [Tony Hoare]
+Keep distribution limited to Claude Code, Codex, Cursor, Grok, Kimi, and Hermes Agent; do not add package-registry publication or npm artifacts. A flat Devin mirror of these same skills is exported to the outline repository, which publishes nothing and installs nothing; it is not a seventh distribution surface. [Tony Hoare]
 
 Change plugin identity in `catalog/plugins.json`, not generated manifests or registries. [Tony Hoare]
 
@@ -78,7 +78,9 @@ Change generated output through its generator or catalog input, regenerate with 
 
 Declare only harness components that defaults do not resolve: Kimi needs `skills`, and Codex and Grok need `mcpServers` where a plugin ships dotless `mcp.json`. [Tony Hoare]
 
-Keep every plugin and marketplace version aligned with `releaseVersion`, currently `2.1.9`. [Tony Hoare]
+Give Hermes Agent a native `plugin.yaml` and the shared `scripts/hermes-plugin-init.py` loader, never a root `plugin.json`; a root Agent Plugins manifest changes how Codex and Cursor resolve the same directory. [Tony Hoare]
+
+Keep every plugin and marketplace version aligned with `releaseVersion`, currently `2.1.10`. [Tony Hoare]
 
 Bump `releaseVersion` by one patch when shipping a skill, output style, manifest, or attribution change; bump the minor version only on explicit request. [Tony Hoare]
 

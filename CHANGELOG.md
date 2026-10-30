@@ -5,6 +5,12 @@ All notable changes to Dalcom Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.10] - 2026-10-30
+### Added
+- Hermes Agent support: every plugin directory ships a native `plugin.yaml` and an
+  `__init__.py` loader that registers its skills as `<plugin>:<slug>`. Install with
+  `hermes plugins install gosuda/dalcom-skills/plugins/<plugin> --enable --force`.
+
 ## [2.1.9] - 2026-10-30
 ### Changed
 - `sync-outline-skills.mjs` now defaults to the sibling checkout `../dstack`, the renamed

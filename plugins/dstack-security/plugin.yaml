@@ -1,5 +1,5 @@
 name: "dstack-security"
-version: "2.1.9"
+version: "2.1.10"
 description: "DStack workflows for security review, vulnerability triage, and defensive implementation."
 author: "gosuda"
 homepage: "https://github.com/gosuda/dalcom-skills"

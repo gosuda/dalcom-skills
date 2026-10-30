@@ -1,5 +1,5 @@
 name: "dstack-run"
-version: "2.1.9"
+version: "2.1.10"
 description: "DStack workflows for executing plans, orchestrating subagents, and bounded autonomous loops."
 author: "gosuda"
 homepage: "https://github.com/gosuda/dalcom-skills"

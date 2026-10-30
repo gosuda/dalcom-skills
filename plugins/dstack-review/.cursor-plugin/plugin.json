@@ -1,6 +1,6 @@
 {
   "name": "dstack-review",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "DStack workflows for reviewing diffs, branches, and implementations against their specs.",
   "author": {
     "name": "gosuda",

@@ -1,5 +1,5 @@
 name: "dstack-research"
-version: "2.1.9"
+version: "2.1.10"
 description: "DStack workflows for source-backed investigation, verification, and design rationale."
 author: "gosuda"
 homepage: "https://github.com/gosuda/dalcom-skills"
