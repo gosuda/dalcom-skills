@@ -161,20 +161,3 @@ Write the variant report with root cause; original location; analyzed scope and 
 * `entry-point-analyzer`: the scoped markdown entry point report with summary and per category tables, file accounting, restriction evidence, callbacks, and warnings.
 * `graph-evolution`: `GRAPH_EVOLUTION_{project}_{before_ref}_{after_ref}.md` with metrics, all structural and security relevant changes, severity, source context, and cleanup methodology.
 * `variant-hunt`: a local variant report with root cause, original location, analyzed scope and coverage, methodology table, exact and generalized patterns, confirmed findings with quoted code, grouped safe look alikes, unreachable, unreadable, and out of scope candidates, graph seeding details when selected, an explicit `variants found: N` or `no confirmed variants found in the analyzed scope` conclusion naming scope and unreadable remainder, and a CI ready regression rule recommendation; states that reachability is not data flow proof.
-
-## Provenance
-
-This skill contains substantially rewritten adaptations of material from:
-
-* `trailofbits/skills`
-* revision `2be6433b39e009cd2b6fd3be1895f6b1faa5af9a`
-* source paths:
-  * `plugins/entry-point-analyzer/skills/entry-point-analyzer/SKILL.md`
-  * `plugins/variant-analysis/skills/variant-analysis/SKILL.md`
-
-Copyright: Made by Trail of Bits.
-
-The adapted entry point and variant hunt procedures are modified for ODIN's existing graph backed security owner, tool boundaries, report formats, and failure semantics. They are distributed under CC-BY-SA-4.0:
-https://creativecommons.org/licenses/by-sa/4.0/legalcode
-
-The surrounding ODIN authored material remains covered by the repository's existing license and notice structure. This provenance does not imply Trail of Bits sponsorship, endorsement, or official status. No Trail of Bits logo, mark, brand color, or marketplace metadata is included.

@@ -1,18 +1,9 @@
 # let-fate-decide source map
 
-## Provenance status
+## Upstream source pin
 
 - Pinned source: [Trail of Bits skills](https://github.com/trailofbits/skills/tree/2be6433b39e009cd2b6fd3be1895f6b1faa5af9a/plugins/let-fate-decide/skills/let-fate-decide) at commit `2be6433b39e009cd2b6fd3be1895f6b1faa5af9a`. The upstream `SKILL.md` blob is `f515da195a5beab2e525d56e73352e133a09d6ae`.
 - The 92 bundled assets (78 cards, 12 houses, 2 reference documents) match the pinned source byte for byte.
-- Canonical attribution is recorded in `licenses/NOTICE` under CC-BY-SA-4.0, including Scott Arciszewski's authorship, the modifications, and the trademark exclusion.
-
-## License and reuse terms
-
-- Upstream license: [Creative Commons Attribution-ShareAlike 4.0 International](https://creativecommons.org/licenses/by-sa/4.0/legalcode), verified in the pinned repository's `LICENSE`.
-- Attribution: Trail of Bits `skills` project, `plugins/let-fate-decide`; plugin author named upstream as Scott Arciszewski; source URI `https://github.com/trailofbits/skills`.
-- This port states its modifications (new `odin-core` home, stdlib `python3` runner instead of `uv`, always-on fail-closed asset verification, isolated test-only `--seed`, dropped `--legacy` mode, no bundled trademark).
-- Adapted material stays under CC-BY-SA-4.0 or a BY-SA-compatible license with attribution and license notice preserved.
-- Trademark: patent and trademark rights are not licensed. `skills/let-fate-decide/assets/trail-of-bits-mark.svg` is explicitly excluded and must not be copied, recolored, or used as branding.
 
 ## Adapted files
 

@@ -91,7 +91,3 @@ Unseeded draws use `secrets.randbelow()` for two independent Fisher-Yates shuffl
 | Major Arcana overrides the user. | Requirements always take priority over readings. |
 | Keep drawing until the spread agrees. | One draw per decision point. Accept the spread. |
 | The reading says the risk is fine. | Only evidence dismisses a security or correctness concern. |
-
-## Provenance
-
-Adapted from Trail of Bits `skills` (`plugins/let-fate-decide`) at `2be6433b39e009cd2b6fd3be1895f6b1faa5af9a`, CC-BY-SA-4.0; see `references/SOURCE-MAP.md` for the manifest, copy map, and license terms. The upstream trademark SVG is deliberately not reused. Upstream `uv` invocation is replaced here by stdlib `python3` with no dependencies. The upstream `--legacy` hand mode is dropped (no aliases after cutover); only the 12-house spread ships.

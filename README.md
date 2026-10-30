@@ -169,7 +169,7 @@ Each name installs with the same command:
 /plugin install odin-security@odin-marketplace
 ```
 
-The largest plugins are `odin-core` at 84, `odin-marketing` at 28, and `odin-run` at 20.
+The largest plugins are `odin-core` at 83, `odin-marketing` at 28, and `odin-run` at 20.
 Install one skill instead of a whole plugin with `gh skill install`, shown under Install above.
 
 ## Using the skills

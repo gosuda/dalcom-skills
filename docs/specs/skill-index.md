@@ -15,7 +15,7 @@
 | atomic-issues-prs | odin-git | Coding | Use when the user says "atomic PRs" or requests one issue or PR per logical change. |
 | audit-project | odin-core | Coding | Use when the user says "audit my code", "find all the bugs", "review until clean", or "grill my changes". |
 | autolearn | odin-core | Coding | Use when a verified fix yields a generalized well-abstracted invariant with enforcement or proof, or existing solution docs need bounded refresh. |
-| automatic-freeform-graphs-design | odin-core | Coding | Use when a user wants a looser conceptual graph for exploratory work. |
+| automatic-freeform-graphs-design | odin-planning | Productivity | Use when a user wants a looser conceptual graph for exploratory work. |
 | autopilot | odin-core | Coding | Use when a human has an approved delivery plan and wants the full chain run under phase gates. |
 | autoplan | odin-core | Coding | Use when the user runs /autoplan on a plan or idea. |
 | autoplan-and-autopilot | odin-core | Coding | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present for approval, and execute under verified phase gates. |
@@ -239,7 +239,7 @@
 | scheduler | odin-run | Coding | Use when asked to set, list, pause, update, or delete a reminder or local task that fires at a confirmed time or interval. |
 | security-finding-verification | odin-security | Security | Use when a named security allegation needs a true-positive or false-positive verdict. |
 | security-review | odin-core | Coding | Use when changes touch auth, parsing, dependencies, network, or pre-release, or a diff or baseline needs regression review, or the user asks for a security review, vulnerability audit, or OWASP review of a supplied file, diff, or component, covering injection, XSS, auth, or crypto, with high-confidence findings only (mode: confirmed), or an API, configuration schema, cryptographic interface, authentication surface, or library design is audited for misuse resistance or footguns at a caller-named target (mode: edges, inline or delegated specialist). |
-| setup-repo | odin-core | Coding | Use when the user asks to set up a repository: deterministic gitignore, repository-native pre-commit hooks, or REVIEW.md and CONTRIBUTE.md rules. |
+| setup-repo | odin-core | Coding | Use when the user asks to set up a repository: deterministic gitignore, repository-native pre-commit hooks, or REVIEW.md and CONTRIBUTE.md rules that enforce anti-slop, anti-spaghetti, and offensive-minimalism defaults. |
 | show-me | odin-core | Coding | Use when asked to show/diagram: comparison table, data record, metric card, stepper, mockup, numeric chart, interactive explainer. |
 | show-me-your-work | odin-run | Coding | Use when the user invokes it to append a structured decision record to an append-only TSV log, ending with an Attention section for reviewers. |
 | show-review | odin-review | Coding | Use when the user wants a per-finding visual walk through a diff, PR, or MR. |

@@ -2,7 +2,7 @@
 
 Cross-project workflows for planning, implementation, review, verification, and delivery.
 
-84 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
+83 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -39,7 +39,6 @@ Each row states when to reach for the skill. Invoke one as `/odin-core:<name>` i
 | askme | Use when eliciting intent/scope/referents or gating long/bundled/high-stakes/hard-to-undo work: exhaustive/collaborative/adversarial/grill/gate/batch/interview/proposal/pairing. |
 | audit-project | Use when the user says "audit my code", "find all the bugs", "review until clean", or "grill my changes". |
 | autolearn | Use when a verified fix yields a generalized well-abstracted invariant with enforcement or proof, or existing solution docs need bounded refresh. |
-| automatic-freeform-graphs-design | Use when a user wants a looser conceptual graph for exploratory work. |
 | autopilot | Use when a human has an approved delivery plan and wants the full chain run under phase gates. |
 | autoplan | Use when the user runs /autoplan on a plan or idea. |
 | autoplan-and-autopilot | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present for approval, and execute under verified phase gates. |
@@ -94,7 +93,7 @@ Each row states when to reach for the skill. Invoke one as `/odin-core:<name>` i
 | retune | Use when a skill corpus degrades on a new model and needs measurement-first retuning against a registered bar. |
 | review-fix-loop | Use when review and repair must repeat to an evidenced end state, locally or across one or more GitHub PRs or GitLab MRs. |
 | security-review | Use when changes touch auth, parsing, dependencies, network, or pre-release, or a diff or baseline needs regression review, or the user asks for a security review, vulnerability audit, or OWASP review of a supplied file, diff, or component, covering injection, XSS, auth, or crypto, with high-confidence findings only (mode: confirmed), or an API, configuration schema, cryptographic interface, authentication surface, or library design is audited for misuse resistance or footguns at a caller-named target (mode: edges, inline or delegated specialist). |
-| setup-repo | Use when the user asks to set up a repository: deterministic gitignore, repository-native pre-commit hooks, or REVIEW.md and CONTRIBUTE.md rules. |
+| setup-repo | Use when the user asks to set up a repository: deterministic gitignore, repository-native pre-commit hooks, or REVIEW.md and CONTRIBUTE.md rules that enforce anti-slop, anti-spaghetti, and offensive-minimalism defaults. |
 | show-me | Use when asked to show/diagram: comparison table, data record, metric card, stepper, mockup, numeric chart, interactive explainer. |
 | simplify | Use when the user asks to simplify a change-set, diff, branch, or module and the right level is not yet decided; routes each cut to the simplification skill that owns it. |
 | source-driven | Use when writing or verifying framework-specific code, boilerplate, or a documented, correct implementation. |

@@ -18,9 +18,29 @@ A single device is a choice, not a tell. Flag a passage when patterns accumulate
 | Formatting noise | 29 rhythm-crutch dash, 30 bold label restating its line, 31 bold sprinkled for emphasis, 32 title-case headings, 33 decorative emoji, 34 bullets where prose reads better, 35 mixed straight and curly quotes | Use a period or a comma; convert restating labels to prose; use sentence case; remove decorative emoji; let format follow content |
 | Chat and report artifacts | 36 chatbot openers and closers, 37 sycophancy, 38 announcing the next point, 39 process narration in a report, 40 knowledge-limit gap-filling, 41 manufactured thoroughness | Remove openers, closers, and narration; state what was decided and why; state what the source does not show or cut the sentence; never present a guess as a fact |
 | Actor and reader | 23 passive hiding the actor, plus reader, decision-first, one-idea, and portability tests | Name the actor when the source says who; keep the passive only when naming adds nothing; gloss identifiers or name the consequence so a reader without the document or code can act; carry the outcome in the first sentence |
+| Opaque schemes and labels | opaque labels (such as A0, DEL1, ENG-01, DES-02, T3, or invented letter-number codes) | Replace with a short semantic readable name describing the work; build a link map before mass renames; preserve externally fixed machine or standard identifiers, legal notices, and numbered procedure steps; if intent cannot be recovered, report without altering |
 
 Promotional and model-vocabulary examples that the voice gate bans as prose are named here only in code spans and are stripped before that gate runs: `seamless`, `seamlessly`, `delve`, `delving`, `holistic`, `synergy`, `underscoring`, `leveraging`.
 
 ## Terminology
 
-Keep exact identifiers, paths, commands, thresholds, and technical terms needed for precision. Explain an unfamiliar technical term when the reader needs it to understand or act. Replace internal workflow jargon and cryptic labels such as A0 or DEL1 with concise semantic names stating the action or consequence they mean, unless the caller requires that exact wording; after each rename verify every affected link and path resolves. Never touch code blocks, quoted text, frontmatter, link targets, identifiers, or a caller-required token unless the user names that content as the thing to fix.
+Keep exact identifiers, paths, commands, thresholds, and technical terms needed for precision. Explain an unfamiliar technical term when the reader needs it to understand or act.
+
+By default, every human-facing filename, heading, section, phase, task label, and finding label must use a short semantic readable name describing the work. Replace opaque schemes such as A0, DEL1, ENG-01, DES-02, T3, or invented letter-number codes with the concise semantic name stating the action or consequence they mean.
+
+Preserve externally fixed machine or standard identifiers (such as RFC numbers, CVE IDs, protocol constants, git commit hashes, and API symbols), legal notices, and numbered procedure steps (such as step 1, 2, 3 in an ordered sequence).
+
+Require a link map before any mass rename. The link map must record every occurrence of the label or filename, all incoming Markdown links, outgoing targets, heading anchors, and relative paths across the documentation tree, ensuring all references update simultaneously.
+
+Detect opaque labels by scanning human-facing filenames, headings, sections, phases, task labels, and finding labels for:
+- Single letters followed by numbers (such as A0, T3).
+- Capitalized acronym prefixes followed by numeric counters or hyphens (such as DEL1, ENG-01, DES-02).
+- Synthetic alphanumeric codes or letter-number combinations that lack plain descriptive language.
+
+On a hit:
+1. Check whether the token is a preserved machine identifier, legal notice, or numbered procedure step. If preserved, leave it intact.
+2. If the token is human-facing and opaque, inspect the surrounding section, task description, or repository context to identify the concrete work or purpose.
+3. If semantic intent is clear, construct the link map and rename the label across all occurrences and references to the short semantic readable name.
+4. If semantic intent cannot be recovered from the documentation tree or repository evidence, do not invent an arbitrary name. Leave the existing label unchanged, classify the candidate as an unrecovered finding with MEDIUM certainty, and record it in the purge report for human clarification.
+
+Never touch code blocks, quoted text, frontmatter, link targets, identifiers, or a caller-required token unless the user names that content as the thing to fix.

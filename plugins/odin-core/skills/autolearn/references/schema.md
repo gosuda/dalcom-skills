@@ -148,7 +148,7 @@ A solution record must not contain rationale-only `type` or `confidence`. The va
 
 Solution body uses the track sections from the owning solution skill's `assets/solution-template.md` (`autolearn`; `compound` writes rationale records only and never emits a solution body) (bug: Problem, Symptoms, What Did Not Work, Solution, Why This Works, Prevention; knowledge: Context, Guidance, Why This Matters, When To Apply, Examples). Delete sections with no real content instead of leaving placeholders.
 
-## Provenance
+## Origin records
 
 Every migrated record contains a non-empty ordered list:
 

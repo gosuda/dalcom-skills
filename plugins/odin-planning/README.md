@@ -2,7 +2,7 @@
 
 ODIN workflows for shaping intent into approved plans, specs, and task lists.
 
-18 skills, category Productivity. Install the whole plugin below, or take a single skill with `gh skill install`.
+19 skills, category Productivity. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -33,6 +33,7 @@ Each row states when to reach for the skill. Invoke one as `/odin-planning:<name
 
 | Skill | Trigger |
 |---|---|
+| automatic-freeform-graphs-design | Use when a user wants a looser conceptual graph for exploratory work. |
 | bakeoff | Use when choosing well needs developing competing solutions to a defined brief beyond their current form. |
 | council | Use when the user asks for a council, second opinions, or parallel investigation. |
 | cross-critique | Use when independent proposals on a contested decision need cross-critique before choosing, reusing the original authors. |
