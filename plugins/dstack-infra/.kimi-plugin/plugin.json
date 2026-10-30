@@ -1,6 +1,6 @@
 {
   "name": "dstack-infra",
-  "version": "2.1.11",
+  "version": "2.1.12",
   "description": "DStack workflows for CI, deployment, observability, cost, and infrastructure tooling.",
   "keywords": [
     "dstack",

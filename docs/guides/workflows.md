@@ -6,7 +6,7 @@ Chains are written in the harness-neutral form `/skill:<slug>`. Type each step a
 
 | Workflow | Chain | When not to use it |
 |---|---|---|
-| Clarify an ambiguous request, then plan (usually inside harness plan mode) | `/skill:askme` → `/skill:plan` or `/skill:autoplan` → `/skill:todo-add` → `/skill:todos-enhance` | The request already states sharp acceptance criteria and fits one session. |
+| Clarify an ambiguous request, then plan (usually inside harness plan mode) | `/skill:askme` → `/skill:plans` or `/skill:autoplan` → `/skill:todo-add` → `/skill:todos-enhance` | The request already states sharp acceptance criteria and fits one session. |
 | Plan a build that outgrows one session (usually when working without plan mode) | `/skill:wayfinder` → `/skill:todo-add` → `/skill:todos-update` | One agent finishes the work in one session with no handoff. |
 | Execute the plans or tasks with subagents (daily execution driver after the planning phases) | `/skill:subagent-driven` → `/skill:verification-before-completion` | The plan fits one agent, and delegation costs more than it saves. |
 | Fan out independent work | `/skill:parallel-launch` → `/skill:do-it-now`, or `/skill:diamond-task` when one change is too large to split by worker | The tasks share mutable state or must run in a strict order. |
@@ -30,7 +30,7 @@ claude plugin install dstack-knowledge@dstack
 
 In Claude Code, invoke workflow steps using each plugin's verified namespace:
 
-- Clarify, plan, and refine: `/dstack-core:askme` → `/dstack-core:plan` → `/dstack-core:todo-add` → `/dstack-core:todos-enhance`
+- Clarify, plan, and refine: `/dstack-core:askme` → `/dstack-core:plans` → `/dstack-core:todo-add` → `/dstack-core:todos-enhance`
 - Map structure and options: `/dstack-planning:minimap`
 - Structural AST edits: `/dstack-code:ast-grep`
 - Execute with subagents: `/dstack-core:subagent-driven` → `/dstack-core:verification-before-completion`

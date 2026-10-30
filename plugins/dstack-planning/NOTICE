@@ -26,7 +26,7 @@ Source: https://github.com/EveryInc/compound-engineering-plugin/tree/fbd794f329f
 License: MIT (https://opensource.org/licenses/MIT)
 Copyright: Copyright (c) 2025 Every
 Local adaptations: compound, autolearn, plan
-Scope: `plugins/dstack-core/skills/compound/SKILL.md` (ce-compound + keep-why rationale folds), `plugins/dstack-core/skills/autolearn/SKILL.md` (ce-compound-refresh merge), `plugins/dstack-core/skills/plan/SKILL.md` (selective ce-plan insertions). No new skill. keep-why MIT attribution + nine adaptation names preserved; keep-why-setup-wizard body unavailable, not ported.
+Scope: `plugins/dstack-core/skills/compound/SKILL.md` (ce-compound + keep-why rationale folds), `plugins/dstack-core/skills/autolearn/SKILL.md` (ce-compound-refresh merge), `plugins/dstack-core/skills/plans/SKILL.md` (selective ce-plan insertions). No new skill. keep-why MIT attribution + nine adaptation names preserved; keep-why-setup-wizard body unavailable, not ported.
 
 Jia-Ethan/github-solution-research
 Source: https://github.com/Jia-Ethan/github-solution-research
@@ -138,8 +138,8 @@ garrytan/gstack (reviewed upstream-port additions)
 Source: https://github.com/garrytan/gstack/tree/4729f4752ba6aa6524f52fa49f51c28779a3ea24
 License: MIT (https://opensource.org/licenses/MIT)
 Copyright: Copyright (c) 2026 Garry Tan
-Local adaptations: modernize, plan-complete, grill-core
-Scope: `plugins/dstack-git/skills/modernize/SKILL.md`, `plugins/dstack-core/skills/plan-complete/SKILL.md`, insertion into surviving `plugins/dstack-core/skills/grill-core/SKILL.md` (prior `odin-planning/plan-complete` and `odin-code/strike-the-root` paths superseded; strike-the-root folds, no shadow copy)
+Local adaptations: modernize, plans-complete, grill-core
+Scope: `plugins/dstack-git/skills/modernize/SKILL.md`, `plugins/dstack-core/skills/plans-complete/SKILL.md`, insertion into surviving `plugins/dstack-core/skills/grill-core/SKILL.md` (prior `odin-planning/plan-complete` and `odin-code/strike-the-root` paths superseded; strike-the-root folds, no shadow copy)
 The MODERNIZE / REWORK / CLOSE verdict names are credited as ideas-not-text from tstack at https://github.com/t3dotgg/tstack, `skills/modernize`, revision `7de017b3`. No tstack sentence copied, no tstack file distributed, so tstack MIT text not bundled.
 
 humanlayer/skills
@@ -180,7 +180,7 @@ Reviewed source paths:
   skills/engineering/improve-codebase-architecture/HTML-REPORT.md
 Local adaptation:
   architect — current-source incorporation of portable deepening and YAGNI-scoped survey behavior (`plugins/dstack-core/skills/architect/SKILL.md`)
-ODIN-authored (not Pocock): plan-complete — new completion/readiness owner grounded in settled ODIN plan + four PlanCompletion reviews; current Matt source has no plan-complete path. resolve-merge-conflicts retained as historical provenance only; current revision removed it.
+ODIN-authored (not Pocock): plans-complete — new completion/readiness owner grounded in settled ODIN plan + four PlanCompletion reviews; current Matt source has no plan-complete path. resolve-merge-conflicts retained as historical provenance only; current revision removed it.
 
 mblode/agent-skills
 Source: https://github.com/mblode/agent-skills/tree/e97a3b383f5944f90d41eb92b24b4fb3b917a7f9

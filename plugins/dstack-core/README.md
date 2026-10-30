@@ -83,8 +83,8 @@ Each row states when to reach for the skill. Invoke one as `/dstack-core:<name>`
 | no-excuses | Use when a material claim rests on missing proof, an untested assumption, or unresolved counterevidence that investigation can still settle. |
 | offensive-driven | Use when the user explicitly asks for a replacement-first pass such as "rebuild it clean", "replace-first", or "offensive pass on <target>" spanning code, docs, plans, or research. |
 | parallel-launch | Use when work splits into independent sub-tasks or cross-domain research. |
-| plan | Use when multi-step work needs a structured implementation plan that preserves outcomes and constraints. |
-| plan-complete | Use when a plan must be proven complete before implementation begins. |
+| plans | Use when multi-step work needs a structured implementation plan that preserves outcomes and constraints. |
+| plans-complete | Use when a plan must be proven complete before implementation begins. |
 | proof-driven | Use when property-based testing, theorem proving, or formal proof tactics require zero unproven properties. |
 | purge-slop-docs | Use when a human asks to purge stale docs, clean Markdown, or reorder the documentation hierarchy. |
 | recall | Use when asked to recover prior work and current status before resuming. |
