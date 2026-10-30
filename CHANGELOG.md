@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   in client settings.
 - Catalog tags now use `dalcom` and `dstack`, and the repository metadata points to
   `gosuda/dalcom-skills`.
+- Runtime state moved from `.odin` to `.dstack` (including `.dstack/`,
+  `.context/dstack/`, and `/tmp/dstack/`); existing local state is not migrated
+  automatically.
 
 ## [2.1.7] - 2026-10-30
 ### Added
