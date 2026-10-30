@@ -16,7 +16,7 @@ if [ $# -eq 0 ]; then
 fi
 
 THREAD_ID=$1
-tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/odin-resolve-thread.XXXXXX}")
+tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/odin-resolve-thread.XXXXXX")
 trap 'rm -rf "$tmp_dir"' EXIT
 payload_file="$tmp_dir/payload.json"
 resp_file="$tmp_dir/resp.json"
@@ -27,10 +27,11 @@ jq -n --arg tid "$THREAD_ID" '
     variables: { threadId: $tid }
   }' > "$payload_file"
 
-gh api graphql --input-file "$payload_file" > "$resp_file"
+gh api graphql --input "$payload_file" > "$resp_file"
 
-jq -e '
+jq -e --arg tid "$THREAD_ID" '
   if (.errors != null and (.errors | length > 0)) then error("GraphQL errors: \(.errors)")
   elif (.data.resolveReviewThread.thread.isResolved != true) then error("thread not resolved: \(.data.resolveReviewThread.thread)")
+  elif (.data.resolveReviewThread.thread.id | (type == "string" and length > 0 and . == $tid) | not) then error("unexpected thread id: \(.data.resolveReviewThread.thread.id)")
   else .data.resolveReviewThread.thread | {id, isResolved} end
 ' "$resp_file"

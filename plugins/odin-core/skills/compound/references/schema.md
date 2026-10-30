@@ -14,13 +14,13 @@ record_kind: rationale
 date: 2026-10-01
 ```
 
-`schema` is always the exact literal `odin-learning/v1`. `record_kind` selects the branch. `date` is required for both branches and must already be a valid ISO `YYYY-MM-DD` calendar date.
+`schema` is always the exact literal `odin-learning/v1`. `record_kind` selects the branch. `date` is required for both branches and must already be a valid ISO `YYYY-MM-DD` calendar date. `schema` version, accepted fields, and enums are fixed by the machine contract below and never extended by prose.
 
-Direct captures use the capture-run date. Migrations preserve the legacy source date and never substitute the current date, filesystem mtime, commit date, or session timestamp. A missing or invalid source date leaves that source `unmigrated`.
+Direct captures use the capture-run date. Migrations preserve the legacy source date and never substitute the current date, filesystem mtime, commit date, or session timestamp. A missing or invalid source date leaves that source `unmigrated`. `date`, `source`, and `origin_records` are provenance metadata recording where and when the invariant was observed; they never fabricate a timeless claim and never substitute for enforcement.
 
 ## Rationale branch
 
-`record_kind: rationale` preserves a durable decision, workaround, caveat, concept, reference, fix, or lesson captured by `compound`.
+`record_kind: rationale` and its `type` values (`pattern`, `caveat`, `reference`, `decision`, `concept`, `fix`, `lesson`, `workaround`, `incident`, `constraint`) are serialization categories, not permission for narrative junk. They never authorize temporal decision diaries, what-we-learned-today notes, activity logs, or abandoned-attempt stories. Admission is governed by the owning skill invariant gate; the validator proves parser safety and field validity, never that a learning was worth recording. `record_kind: rationale` preserves a reusable scope-qualified invariant captured by `compound`.
 
 Required:
 
@@ -61,23 +61,19 @@ An unsupported legacy `type` leaves the source `unmigrated`. It is never silentl
 
 A rationale record must not require or emit solution-branch fields (`title`, `category`, `module`, `problem_type`, `component`, `severity`, `symptoms`, `root_cause`, `resolution_type`, `applies_when`). Legacy frontmatter `Context`/`Implication` move into body sections; they are not canonical frontmatter fields.
 
-Rationale body sections when applicable:
+Rationale body sections, only as applicable to the admitted invariant (delete the rest, never add diary or narrative sections):
 
 ```markdown
-## Context
-## Decision
-## Rationale
-## Rejected alternatives
-## Consequences
-## Verification
-## Related
+## Scope
+## Enforcement
+## Counterexample
 ```
 
-Missing rationale, alternatives, evidence, or verification stays in the body as `unknown:` or `undefined:`. Those markers never appear as YAML field values.
+The `#` title states the invariant; the body carries scope, enforcement, and counterexample only. An honestly-unobserved counterexample shape stays in the body as `unknown:` or `undefined:`; those markers never appear as YAML field values and never stand in for missing enforcement.
 
 ## Solution branch
 
-`record_kind: solution` preserves a bug or knowledge solution captured by `autolearn`.
+`record_kind: solution` is a serialization category for bug or knowledge solutions captured by `autolearn`, not permission for narrative junk: it never authorizes incident retellings, trivia, or session history as records. Admission is governed by the owning skill gate; the validator proves parser safety and field validity, never that a solution was worth recording.
 
 Required:
 
@@ -150,9 +146,9 @@ Category map (`problem_type` to `docs/solutions/` directory basename):
 
 A solution record must not contain rationale-only `type` or `confidence`. The validator rejects both on solution records, and migration never carries them over. Pre-existing knowledge-track docs carrying bug-track fields are harmless; leave them unless rewriting the doc for other reasons.
 
-Solution body uses the track sections from `assets/solution-template.md` (bug: Problem, Symptoms, What Did Not Work, Solution, Why This Works, Prevention; knowledge: Context, Guidance, Why This Matters, When To Apply, Examples). Delete sections with no real content instead of leaving placeholders.
+Solution body uses the track sections from the owning solution skill's `assets/solution-template.md` (`autolearn`; `compound` writes rationale records only and never emits a solution body) (bug: Problem, Symptoms, What Did Not Work, Solution, Why This Works, Prevention; knowledge: Context, Guidance, Why This Matters, When To Apply, Examples). Delete sections with no real content instead of leaving placeholders.
 
-## Provenance
+## Origin records
 
 Every migrated record contains a non-empty ordered list:
 
@@ -371,10 +367,10 @@ category_map:
 
 ## Parser validation
 
-Every canonical write, update, replacement, consolidation, or migration destination must pass, from the owning skill directory:
+Every canonical write, update, replacement, consolidation, or migration destination must pass. From the owning skill directory, pass the record by absolute path (a repository-relative `docs/...` path resolves only from the repository root, not from the skill directory):
 
 ```bash
-python3 scripts/validate-record.py <path>
+python3 scripts/validate-record.py /path/to/repo/docs/solutions/<area>/<slug>.md
 ```
 
 Exit 0 is parser-safe and schema-valid. Exit 1 names the failing field. Exit 2 is a usage or schema-load error. A non-zero exit blocks the write.

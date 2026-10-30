@@ -4,11 +4,11 @@
 
 ## §1. Posture
 
-Design systems are tokens + behavior, expressed as code. The token spec (DTCG) is now W3C-stable; the export tooling (Style Dictionary 5) is mature; the production exemplars (Radix Colors, Material 3 Expressive, Fluent 2, Apple HIG 2025-2026) each commit to a different *register*; pick by what the picked direction needs, not by familiarity. Direction comes first, framework second; see `references/paradigms.md` for paradigm-to-system fit before reaching for a library. A system imported without a direction yields the default-Material-palette tell; recognizable to anyone who has seen Compose's defaults more than twice.
+Design systems are tokens + behavior, expressed as code. The token spec (DTCG) reached its first stable report (Final Community Group Report, 28 Oct 2025), stable but not a W3C Standard; the export tooling (Style Dictionary 5) is mature; the production exemplars (Radix Colors, Material 3 Expressive, Fluent 2, Apple HIG 2025-2026) each commit to a different *register*; pick by what the picked direction needs, not by familiarity. Direction comes first, framework second; see `references/paradigms.md` for paradigm-to-system fit before reaching for a library. A system imported without a direction yields the default-Material-palette tell; recognizable to anyone who has seen Compose's defaults more than twice.
 
-## §2. DTCG W3C Tokens 2025.10
+## §2. DTCG tokens 2025.10
 
-The W3C Design Tokens Format Module (DTCG) reached its first stable spec on **Oct 28 2025**. **10+ tools** ship support: Figma, Sketch, Framer, Penpot, Tokens Studio, Style Dictionary, and others. File extension: `.tokens.json`.
+The Design Tokens Community Group's Format Module (DTCG) reached its first stable report (Final Community Group Report) on **Oct 28 2025**, stable but not a W3C Standard. **10+ tools** ship support: Figma, Sketch, Framer, Penpot, Tokens Studio, Style Dictionary, and others. File extension: `.tokens.json`.
 
 Shape: JSON with `$type` discriminator (`color`, `dimension`, `typography`, `shadow`, `gradient`, `cubicBezier`, `duration`, `fontFamily`, `fontWeight`, `number`, `strokeStyle`, `transition`), `$value`, `$description`. Aliases reference siblings via `{group.name}` braces. Groups nest arbitrarily.
 
@@ -17,7 +17,7 @@ Shape: JSON with `$type` discriminator (`color`, `dimension`, `typography`, `sha
   "color": {
     "brand": {
       "primary": { "$type": "color", "$value": "#5B5BD6", "$description": "Brand primary, step 9" },
-      "primary-hover": { "$type": "color", "$value": "{color.brand.primary}" }
+      "primary-hover": { "$type": "color", "$value": "{color.brand.primary}", "$description": "Self-alias is intentional in this sample only; ship a distinct hover step (see the Radix 9-vs-10 split in §4)" }
     },
     "text": {
       "default": { "$type": "color", "$value": "#1B1B18" }
@@ -169,7 +169,7 @@ Color swap alone does not produce a working dark theme. Dark mode requires diffe
 | Axis | Light mode posture | Dark mode posture |
 |------|-------------------|-------------------|
 | Depth | Shadows | Surface-lightness layering, no shadows |
-| Text | Dark on light, normal weight | Light on dark, *reduced* weight (e.g. 350 instead of 400), light-on-dark reads heavier |
+| Text | Dark on light, normal weight | Light on dark, check optical weight per typeface (light text can read heavier on dark grounds, so verify and compensate rather than applying a universal step up or down) |
 | Accents | Vibrant chroma | Slightly desaturated; high chroma on dark backgrounds glares |
 | Background | Pure or near-pure white | Never pure black; use dark gray (oklch L 0.12–0.18) with the brand hue tint |
 
@@ -183,7 +183,7 @@ Define explicit overlay tokens for each context (`--surface-overlay-light`, `--s
 
 ## §5. Material 3 Expressive
 
-**Material 3 Expressive** is the current Material direction, but Compose support is not yet stable: the latest stable `androidx.compose.material3` is 1.4.x, and the Expressive APIs ship only in a 1.5.0 alpha behind `@ExperimentalMaterial3ExpressiveApi`. Adds emphasized motion curves, an expanded expressive type scale, and color-role tonal palettes generated from a seed via **HCT** (Hue / Chroma / Tone), perceptually uniform unlike HSL.
+**Material 3 Expressive** is the current Material direction, but Compose support is not yet stable: the latest stable `androidx.compose.material3` is 1.4.x, and the Expressive APIs ship only in a 1.5.0 pre-release (beta) behind `@ExperimentalMaterial3ExpressiveApi`. Adds emphasized motion curves, an expanded expressive type scale, and color-role tonal palettes generated from a seed via **HCT** (Hue / Chroma / Tone), perceptually uniform unlike HSL.
 
 Color roles: `primary`, `onPrimary`, `primaryContainer`, `onPrimaryContainer`, `secondary`, `tertiary`, `surface`, `surfaceVariant`, `surfaceContainer`, `error`, `outline`. Pair every fill with its `on*` for foreground; pair surfaces with their `surfaceVariant` for adjacency.
 
@@ -282,7 +282,7 @@ The 13 states are not optional. A button with default + hover only is ~15% compl
 
 ### Modular scale
 
-Too many sizes that are too close together produce muddy hierarchy. Commit to a 5-size system. Apply the ≥1.25 ratio rule to the *hierarchy* end of the scale (body → subheading → heading → display); the micro end (xs / sm / base) intentionally uses tighter ratios because those steps are functional differentiators (caption vs. metadata vs. body, different *roles*, not different hierarchy levels), not visual hierarchy steps.
+Too many sizes that are too close together produce muddy hierarchy. Commit to a small fixed system (5 sizes is a good default). As a heuristic default, apply the ≥1.25 ratio rule to the *hierarchy* end of the scale (body → subheading → heading → display); the micro end (xs / sm / base) intentionally uses tighter ratios because those steps are functional differentiators (caption vs. metadata vs. body, different *roles*, not different hierarchy levels), not visual hierarchy steps.
 
 | Role | Typical size | Use | Adjacent ratio |
 |------|--------------|-----|----------------|
@@ -296,7 +296,7 @@ Common ratios for the hierarchy end: 1.25 (major third), 1.333 (perfect fourth),
 
 ### Vertical rhythm
 
-Line-height is the base unit for *all* vertical spacing. If body text runs `font-size: 1rem` with `line-height: 1.5` (= 1.5rem effective), then spacing tokens should fall on multiples of 1.5rem (or its half: 0.75rem). Text and space share a mathematical foundation; anchor your `--space-*` scale to the body line-height unit, not to arbitrary pixel values.
+Line-height is the base unit for prose-internal vertical spacing. If body text runs `font-size: 1rem` with `line-height: 1.5` (= 1.5rem effective), then paragraph and list gaps inside running text should fall on multiples of 1.5rem (or its half: 0.75rem). Layout spacing between sections and components defers to the committed `--space-*` scale instead; conflating the two produces airless prose or chunky layouts.
 
 ### Paragraph rhythm
 
@@ -314,7 +314,7 @@ Real small-caps (`font-variant-caps: all-small-caps`) need the same treatment, s
 
 ### Fluid type, with bounds
 
-`clamp(min, preferred, max)` scales smoothly with the viewport, fine for headings and display on marketing surfaces where text dominates the layout. Keep `max ≤ ~2.5 × min`. Wider ratios break the browser's zoom and reflow behavior and make large viewports feel like the page is shouting.
+`clamp(min, preferred, max)` scales smoothly with the viewport, fine for headings and display on marketing surfaces where text dominates the layout. As a heuristic default, keep `max ≤ ~2.5 × min`. Wider ratios break the browser's zoom and reflow behavior and make large viewports feel like the page is shouting.
 
 ```css
 h1 { font-size: clamp(2rem, 5vw + 1rem, 5rem); } /* max/min = 2.5; OK */
@@ -361,6 +361,6 @@ Name typography tokens semantically, `--text-body`, `--text-heading-lg`, `--text
 
 ## §9. Cite-and-defer
 
-Citations: w3c.github.io/design-tokens, amzn.github.io/style-dictionary, www.radix-ui.com/colors, m3.material.io, fluent2.microsoft.design, developer.apple.com/design.
+Citations: https://www.designtokens.org/TR/2025.10/format/, amzn.github.io/style-dictionary, www.radix-ui.com/colors, m3.material.io, fluent2.microsoft.design, developer.apple.com/design.
 
 Specs and tooling here move quarterly; defer to upstream for current API surface before relying on a feature in production.

@@ -1,7 +1,7 @@
 {
   "name": "odin-core",
-  "version": "2.1.5",
-  "description": "Core ODIN gates every session runs: intent, scope, verification, and hand-off checks.",
+  "version": "2.1.7",
+  "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
   "author": {
     "name": "OutlineDriven",
     "url": "https://github.com/OutlineDriven"

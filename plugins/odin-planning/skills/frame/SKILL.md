@@ -5,42 +5,34 @@ description: 'Use when a vague or ambitious product idea needs framing into a ri
 
 # Frame a product idea
 
-Anchors: David Parnas (WHAT the product must do is a separate contract from HOW it is built), Dieter Rams (the smallest plan that prevents invention downstream wins).
+You turn a loose product idea into a requirements-only plan that a later planning step can build on without inventing product behavior, scope boundaries, or success criteria. WHAT the product must do stays separate from HOW it is built, and the smallest plan that prevents invention downstream wins.
 
-This is the product-WHAT owner sourced from ce-brainstorm. The `brainstorm` slug stays with knowledge capture and refinement; this skill owns vague-to-requirements framing. Verdict questions about a named external candidate route to pov.
+This skill owns vague-to-requirements framing. Polishing notes you were already given without making product decisions belongs elsewhere: refining supplied notes is knowledge capture (`brainstorm`), not framing. Judging which of several named external options wins is also out of scope here, so say so and stop rather than producing a verdict.
 
-## Contract
+You may research read-only and produce at most one requirements-only plan artifact when one is earned. You never implement, run tests, touch version control, credentials, paid services, published or deployed surfaces, or remote systems, and you make no destructive change. Beyond the one artifact (or a chat paragraph for light work) plus an explicit handoff, you produce no other requirements, plans, or code.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | The user wants to explore or scope what to build from a vague or ambitious idea, and the result must be sized so planning can build on it without inventing product behavior, scope boundaries, or success criteria. |
-| Authority | Read-only research plus one requirements-only plan artifact when one is earned. No implementation, no test execution, no VCS, credential, paid, published, deployed, remote, or destructive mutation. |
-| Side effect | A chat paragraph for lightweight work or a requirements-only plan file for durable work, plus an explicit handoff. No requirements, plans, or code beyond that. |
-| Done | The artifact or chat result is written and passes the ready check, or no file was earned and none was requested, and the handoff was presented. |
+## Lightweight or heavier: decide first
 
-## Inputs
+Some requests are small, well-bounded, and unambiguous. Those end in chat: a paragraph, no file, no repository grounding dispatch, no generated approaches. Everything else is heavier and may earn a plan file, but only through a real need: a decision a later reader must find under a stable ID, or an explicit user request for a file.
 
-- The feature idea or problem from the invocation or conversation. Required; when absent, ask for it and wait.
-- Output preference when supplied (markdown default, HTML only on explicit request). Exclusive: one format per run.
+Classify from the request plus bounded inline reads before dispatching anything. When uncertain, take the heavier path. Route out explicitly instead of forcing a plan: non-software work follows a different method, quick help and factual questions get answered directly, and single-step tasks just get done. None of them produce a plan artifact.
 
-Lightweight work (small, well-bounded, low ambiguity) ends in chat with no file, no grounding dispatch, and no approach generation. Heavier work earns a file only through a decision a later reader needs recorded under a stable ID, or through an explicit user file request.
+## Talking through the idea
 
-## Procedure
+Work through dialogue, one question at a time, and ask only about decisions the environment cannot settle for you. Once something is settled, keep it settled; never re-ask without new conflicting evidence.
 
-1. Classify before dispatching. Decide lightweight vs heavier from the request and bounded inline reads; when uncertain, take the heavier path. Route out explicitly: non-software work follows a different method; a verdict question about a named external candidate is offered as a pov handoff; quick help, factual questions, and single-step tasks are answered directly with no plan artifact.
-2. Understand the idea through dialogue. Ask one question at a time and only decisions the environment cannot settle. Preserve settled decisions; never re-ask them without new conflicting evidence. Scan current context and the smallest relevant repository surfaces for constraints and conflicts with existing concepts and verified code. Record scope as one coherent piece of work; split or stop when it is not.
-3. Generate approaches only for heavier work, then synthesize and verify claims against sources before writing. A function call never proves its uninspected guarantees; drop or qualify unsupported claims where they appear.
-4. Write the requirements-only plan when earned: goal capsule plus product contract with scope boundaries and success criteria, artifact identity fixed before writing, no implementation design. Run the ready check: every later-reader decision has a stable ID, scope and criteria are explicit, and no implementation choice is smuggled in. A failing check blocks the handoff claim.
-5. Hand off explicitly. Present the next action with its exact input (the plan path or the session as seed) without invoking it. Pipeline or headless runs return the plan state and handoff instead of a menu.
+Meanwhile, scan the current context and the smallest relevant repository surfaces for constraints and for conflicts with existing concepts and verified code. Hold the scope to one coherent piece of work. If the idea sprawls across unrelated work, split it or stop and say why rather than planning across it.
 
-## Failure and recovery
+For heavier work only, sketch candidate approaches, then synthesize, and verify every claim against its source before writing. An uninspected function call proves nothing about its guarantees, so drop or qualify claims you cannot support wherever they appear.
 
-- No idea supplied: ask and wait; invent no topic.
-- Incoherent scope: split or stop with the reason rather than planning across unrelated work.
-- Evidence contradicts a settled choice: reopen that choice and dependents; never leave contradictions labeled settled.
-- Ready check fails: repair the plan or return explicitly incomplete.
-- Explicit user limit reached: stop incomplete with evidence and remaining questions.
+## Writing the plan, when one is earned
 
-## Output
+Fix the artifact identity before writing. The plan carries a goal capsule plus the product contract (scope boundaries and success criteria) and nothing about implementation design. Every decision a later reader needs gets a stable ID. The plan defaults to Markdown; use HTML only on explicit request, with one format per run.
 
-Return the chat paragraph or the plan path with its ready-check state, the decisions recorded, open questions with why they stay open, and the explicit handoff. No implementation follows from framing alone.
+Before claiming you are done, run the ready check: every later-reader decision has its stable ID, scope and criteria are explicit, and no implementation choice slipped in. A failing check blocks the handoff, so repair the plan or return it explicitly incomplete.
+
+## Handing off
+
+Present the next action with its exact input (the plan path, or this session as seed) and stop there without invoking it. In a pipeline or headless run there is no menu to show: return the plan state and the handoff instead.
+
+You are finished when the chat paragraph or the plan file is written and passes the ready check (or when no file was earned, none was requested, and you presented the handoff). If the user supplied no idea at all, ask and wait rather than inventing a topic. If evidence contradicts a settled choice, reopen that choice and everything depending on it, and never leave a contradiction labeled settled. If you hit an explicit user limit, stop incomplete with your evidence and the questions still open. You return the chat paragraph or plan path with its ready-check state, the decisions recorded, open questions with why each stays open, and the explicit handoff. Framing alone never authorizes implementation.

@@ -22,11 +22,6 @@ if [ -n "$3" ]; then
     OWNER=$(echo "$3" | cut -d/ -f1)
     REPO=$(echo "$3" | cut -d/ -f2)
 else
-    # `|| true` is load-bearing: under `set -e`, a failed command substitution
-    # in an assignment aborts the script immediately. Run outside a git repo,
-    # `gh repo view` exits 1, its stderr is swallowed by `2>/dev/null`, and the
-    # script would die here with rc=1 and no output -- making the friendly error
-    # below unreachable. Keep `|| true` so detection failure falls through to it.
     OWNER=$(gh repo view --json owner -q .owner.login 2>/dev/null || true)
     REPO=$(gh repo view --json name -q .name 2>/dev/null || true)
 fi
@@ -36,7 +31,7 @@ if [ -z "$OWNER" ] || [ -z "$REPO" ]; then
     exit 1
 fi
 
-tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/odin-get-thread-for-comment.XXXXXX}")
+tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/odin-get-thread-for-comment.XXXXXX")
 trap 'rm -rf "$tmp_dir"' EXIT
 threads_file="$tmp_dir/threads.json"
 
@@ -74,10 +69,19 @@ query Threads($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
 }' > "$threads_file"
 
 jq -e --arg cid "$COMMENT_NODE_ID" '
-  ([.[].data.repository.pullRequest.reviewThreads.nodes[]]) as $threads |
-  ([$threads[] | select(.comments.nodes | map(.id) | index($cid))] | .[0]) as $hit |
-  if $hit != null then $hit
-  elif ([$threads[] | select((.comments.totalCount // (.comments.nodes | length)) > (.comments.nodes | length))] | length > 0)
-  then error("incomplete: comment \($cid) not found in first 100 per thread and truncated threads exist; fetch is incomplete, not absent")
-  else error("No thread found for comment \($cid)") end
+  (. // []) as $pages |
+  if (($pages | length) == 0) then error("incomplete: no pages fetched; fetch is incomplete, not absent")
+  elif ([$pages[] | select(type != "object")] | length > 0) then error("incomplete: non-object page present; fetch is incomplete, not absent")
+  elif ([$pages[] | select(((.errors // []) | length) > 0)] | length > 0) then error("incomplete: GraphQL errors present; fetch is incomplete, not absent")
+  elif ([$pages[] | select(.data == null or .data.repository == null or .data.repository.pullRequest == null)] | length > 0) then error("incomplete: missing pullRequest data; fetch is incomplete, not absent")
+  elif ([$pages[] | select(.data.repository.pullRequest.reviewThreads == null)] | length > 0) then error("incomplete: missing reviewThreads connection; fetch is incomplete, not absent")
+  elif (($pages[-1].data.repository.pullRequest.reviewThreads.pageInfo.hasNextPage) != false) then error("incomplete: final page still hasNextPage; fetch is incomplete, not absent")
+  else
+    ([$pages[].data.repository.pullRequest.reviewThreads.nodes[]]) as $threads |
+    ([$threads[] | select(.comments.nodes | map(.id) | index($cid))] | .[0]) as $hit |
+    if $hit != null then $hit
+    elif ([$threads[] | select((.comments.totalCount // (.comments.nodes | length)) > (.comments.nodes | length))] | length > 0)
+    then error("incomplete: comment \($cid) not found in first 100 per thread and truncated threads exist; fetch is incomplete, not absent")
+    else error("No thread found for comment \($cid)") end
+  end
 ' "$threads_file"

@@ -42,7 +42,7 @@ and commit again; the second run is clean. `just check` can therefore leave the 
 
 Each generator has a `--check` mode that diffs its output against the tree and exits 1 on drift
 instead of writing. The hooks run the check modes of all but `sync-baseline`, which repairs in
-place; `just render` runs the write modes of the three in-tree generators. `sync-carriers` is
+place; `just render` runs the write modes of the in-tree generators. `sync-carriers` is
 manual: a hook that rewrote home-directory files on every commit would fire on machines with no
 carriers to repair. Its `--self-test` is a hook, because the planner has shipped a wrong overlay
 rule and the fixtures catch that without touching a live carrier.
@@ -62,6 +62,18 @@ skill states its trigger, and a fragment that short states none.
 
 `--only <slug>[,<slug>...]` limits the run to named skills, which is how a fixture is checked while
 the tree is mid-edit. Any other invocation processes every skill the catalog reaches.
+
+### sync-knowledge-copies.mjs
+
+Mirrors authored canonical source files into destination skills as byte-identical copies with executable permissions preserved so standalone and plugin installs keep working without cross-skill path traversal. Covers both knowledge contracts (such as compound schemas and concepts mirrored into autolearn) and runtime review/CI helpers (canonical resolve review scripts and ci-fix inspect_mr_checks.py mirrored into consuming skill bundles across `odin-core`, `odin-git`, `odin-review`, `odin-run`, and `odin-infra`).
+
+Direction is strictly one-way: canonical sources are authored and never overwritten; destinations are generated mirrors. Default mode writes missing or drifted destinations with exact source bytes and preserves source permissions (`chmod` matching source mode). `--check` reports missing or drifted files and exits 1 without writing, which is how the pre-commit hook runs it.
+
+| Exit | Meaning |
+|---|---|
+| 0 | All destinations exist, match canonical source bytes, and match executable mode; or updated in write mode |
+| 1 | Drift under `--check` (missing or differing files), or an unreadable file |
+| 2 | Invalid command-line arguments |
 
 ### render-plugin-surfaces.mjs
 
@@ -185,7 +197,7 @@ The name-parity rule exists because Codex resolves a plugin's namespace from the
 alone. Five manifests with different names load one plugin's components under another's namespace,
 and nothing else reports it.
 
-Passing output: `plugin surfaces ok: 25 plugins, 363 skills`.
+Passing output: `plugin surfaces ok: 22 plugins, 304 skills`.
 
 ### check-skill-routes.mjs
 
@@ -204,8 +216,8 @@ working.
 
 A trigger is one of these phrases, case-insensitive, with the trailing space load-bearing: `use when `,
 `use this `, `use for `, `use to `, `use after `, `use on `, `use during `, `runs /`, `invoked `,
-`invoke `, `asks to `, `asks for `, `says `. Without the space, the "not for X, use to-spec" pointer
-most descriptions carry would match `use to` and pass a description that never states its own
+`invoke `, `asks to `, `asks for `, `says `. Without the space, a "not for X, use ..." pointer
+such as "use to-greenfield" would match `use to` and pass a description that never states its own
 trigger. A bare imperative such as "Design non-trivial code" says what the skill does and never
 when to reach for it, so it fails.
 
@@ -256,21 +268,34 @@ and hiding prose in backticks to silence a finding is gaming the gate.
 | Banned words | The filler senses of `delve`, `leverage`, `seamless`, `underscore`, plus `holistic` and `synergy` |
 | Curly quotes | Any of the four |
 
-Scope is every markdown file the git index tracks, generated files included, plus two external
-carriers named in `carriers.py`: `~/.codex/AGENTS.md` and `~/.omp/agent/AGENTS.md`. An absent
+Scope is every markdown file the git index tracks, generated files included, minus the
+pinned verbatim-upstream inventory `VENDORED_UPSTREAM`, plus two external carriers named
+in `carriers.py`: `~/.codex/AGENTS.md` and `~/.omp/agent/AGENTS.md`. An absent
 carrier is skipped with a notice. A carrier that exists but cannot be written is still gated and
 fails the run if it carries findings, because they cannot be repaired from here. Passing file
-arguments gates only those files.
+arguments gates only those files, including a vendored path named explicitly.
 
-Scope comes from the index on purpose. A directory walk with an exclusion list reported clean in one
-checkout and 3725 findings in another, because an untracked staging tree sat inside the repository.
+Scope comes from the index on purpose; `docs/specs/voice.md` (Scope) records the untracked-tree
+incident that motivates this rule.
 When `git` is missing or the path is not a work tree, the gate exits 1 rather than falling back to a
 walk that would change its scope silently.
+
+The inventory is the 92 byte-identical fate assets (78 cards, 12 houses,
+`INTERPRETATION_GUIDE.md`, `TECHNICAL_CONTEXT_LENSES.md`) pinned in
+`plugins/odin-core/skills/let-fate-decide/references/SOURCE-MAP.md` ("Files to copy
+byte-identically") from `trailofbits/skills` at `2be6433b39e009cd2b6fd3be1895f6b1faa5af9a`,
+loaded via standard library `runpy` from the skill's public `expected_asset_files()`
+(`scripts/draw.py`). It is an exact path set, not a directory or suffix exclusion, so a new
+file under the fate skill stays gated. The skill's authored files (`SKILL.md`, `agents/draw.md`,
+`SOURCE-MAP.md` itself) stay gated, and byte preservation remains the draw script's `--verify`
+proof, not this gate.
 
 A finding in a generated file, such as a plugin README, names the generator as the defect site.
 
 Passing output: `voice ok <N> files`. `--self-test` runs the inline classification and scope
-fixtures.
+fixtures, including the 92-path inventory count, repository target scope parity, controlled
+carrier present/absent checks without touching real user carriers, authored-sibling negative
+controls, and the explicit-argument pin.
 
 ### check-carriers.py
 
@@ -309,6 +334,7 @@ Compile-, syntax-, and self-checks shipped skill executables before commit. This
 | Script | 0 | 1 | 2 |
 |---|---|---|---|
 | `render-skill-manifests.mjs` | Written, or matched under `--check` | Generation error or drift | `--only` given no slug list |
+| `sync-knowledge-copies.mjs` | Written, or matched under `--check` | Drift under `--check`, or an unreadable file | Bad arguments |
 | `render-plugin-surfaces.mjs` | Written, or matched | Drift under `--check`; catalog failed to load | |
 | `sync-baseline.py` | Clean | Drift; also after repairing in write mode | Canonical file or two-`<role>` layout missing |
 | `sync-outline-skills.mjs` | Written, or matched, or target absent under `--check` | Slug collision, untracked `SKILL.md`, or drift | Bad arguments or an unusable target |

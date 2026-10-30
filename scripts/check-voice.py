@@ -1,24 +1,20 @@
 #!/usr/bin/env python3
-"""Enforce the measurable half of docs/specs/voice.md over authored prose.
+"""Enforce voice invariants over authored prose and external carriers.
 
-Five gates, each density-based, because one instance is usually fine and a run is the defect:
-
-  (a) a run of lines opening with a bold span: two or more colon-bearing labels, or five lead-ins
-  (b) five or more em or en dashes inside 600 characters
-  (c) a heading capitalizing a minor word past the first position
-  (d) AI-marker vocabulary
-  (e) curly quotes, which break when pasted into a shell
-
-Fenced blocks and inline spans are stripped before any gate runs, so a shell flag, a code
-sample, or this spec's own ban list never trips one. That exemption is why the spec writes its
-banned words in backticks.
-
-The gates catch formatting tells, not absent conviction. A file passing all five can still be
-slop; that judgment needs the spine audit and does not belong in a script.
+Invariants:
+- Bold runs: >= 2 consecutive labels or >= 5 consecutive lead-ins trip the gate.
+- Dashes: >= 5 em/en dashes within a 600-character window trip the gate.
+- Headings: title-cased minor words past position one trip the gate.
+- Banned vocabulary: AI-marker words outside exempt ban-list subjects trip the gate.
+- Quotes: curly quotes in prose trip the gate.
+- Scope: gate git-tracked markdown files excluding vendored assets, plus harness carriers.
 """
 
+import contextlib
+import io
 import os
 import re
+import runpy
 import shutil
 import subprocess
 import sys
@@ -28,19 +24,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-# Harness carriers live outside the repository, so git cannot enumerate them. The list is
-# defined once in carriers.py: a second hand-maintained copy here hardcoded an absolute
-# path with a username and resolved to nothing on any other machine.
 from carriers import CARRIERS
 
-# The doctrine bans delve, leverage, seamless, and underscore. Two of the four have legitimate
-# senses in this tree, so the pattern targets only the filler sense:
-#   leverage  - the verb ("leverage the framework"), never Ousterhout's noun ("high leverage
-#               through a small interface"), which codebase-design uses as vocabulary
-#   underscore - the verb ("this underscores the point"), never the character name
-# holistic and synergy join them: no sense of either earns a place here. robust stays out, because
-# Robustness is a finding-category label, and paradigm stays out, because the doctrine's design
-# block writes "Paradigms: Post-minimalism | Neo-brutalism" as its own vocabulary.
 BANNED = re.compile(
     r"\b(delve[sd]?|delving"
     r"|leverages|leveraging|leverage(?=\s+(?:the|a|an|this|that|these|those|our|your|its|their|existing)\b)"
@@ -51,39 +36,18 @@ BANNED = re.compile(
     re.I,
 )
 
-# Naming a banned word is not using it. These files carry the ban list as their subject.
 BAN_LIST_SUBJECTS = frozenset(
     {
         "docs/specs/voice.md",
-        "plugins/odin-knowledge/skills/knowledge-refresh/SKILL.md",
         "plugins/odin-writing/skills/copywriting/SKILL.md",
         "plugins/odin-writing/skills/copywriting-prose-creator/SKILL.md",
     }
 )
-# Three shapes are the same pseudo-list, so the pattern covers all three. The colon may sit
-# against the closing asterisks ("**Scope**:"), behind interposed text ("**Scope** (required):"),
-# or inside them ("**Scope:**"). A label is bold markup at line start whose closing asterisks are
-# followed by a colon, or whose label text ends in a colon just before them; that line-start-plus-
-# colon shape is what separates a label from mid-sentence emphasis like "you **MUST** use", which
-# has no colon after the closing asterisks and so matches neither branch. The label text itself may
-# contain a colon ("**Security (OWASP Top 10:2025, CWE Top 25 2025):**"), so the second branch no
-# longer forbids one inside the label; the earlier [^*\n:] class let such a label slip past the
-# gate, making the rule evadable by putting a colon in it. No upper bound anywhere: neither the
-# label span nor the interposed text carries one, because [^*\n] already stops at the closing
-# asterisks and a cap only moved the hole. The interposed region used to be capped at 30
-# characters, which let "**Label** long interposed clause: value" match BOLD_LEAD but not
-# BOLD_LABEL, so a pair of those counted as zero labels, classified as a lead run of two, and
-# passed under the lead threshold. A table row never matches, because no colon follows its closing
-# asterisks.
 BOLD_LABEL = re.compile(
     r"^\s*(?:[-*+]\s*)?\*\*"
     r"(?:[^*\n]{2,}\*\*[^*\n]*:"
     r"|[^*\n]{2,}:\s*\*\*)"
 )
-# Title case capitalizes the minor word AND the word after it, which is what separates
-# "Fixing The Bug" from sentence case ("1. The wall of options") and from a single-letter
-# label ("Task A: run locally", "Side A - slop"). Requiring an uppercase word after the minor
-# word settles all three without a per-heading exception list.
 MINOR_WORD = re.compile(
     r"^#{2,6} \S+ .*\b(?:The|A|An|Of|And|For|To|In|On|With|From|Is|Are|But|Or|As|At|By)\s+[A-Z]"
 )
@@ -93,34 +57,12 @@ DASH = re.compile(r"[\u2014\u2013]")
 DASH_WINDOW = 600
 DASH_RUN = 5
 BOLD_RUN = 2
-# A line that opens with a bold span is either a colon-bearing label ("**Scope:** text") or a
-# colon-less lead-in ("**Latency** is measured first"). Both are fake structure when they run, at
-# different densities: two labels in a row are a disguised definition list, while two lead-ins are
-# ordinary emphasis and only five in a row stop reading as prose.
-#
-# The two shapes are therefore one walk over their union, classified by what the finished run
-# contains. They were first built as two walks, each excluding the other's lines, and that split
-# was itself the evasion: five lines alternating label and lead scored one in each walk and the
-# gate reported clean, so mixing the forms became easier to slip past than either form alone. A
-# line belongs to exactly one run, and a run yields at most one finding, so nothing is counted
-# twice without anything being split.
-# No upper bound on the span: [^*\n] already stops at the closing asterisks and at the line end,
-# so a length cap was never doing work the character class does not already do. It only moved the
-# hole, exactly as the old 80-character label cap did before it was raised to 120. Both patterns
-# carry the same bound on purpose: if the union walk accepted a longer span than the label test
-# did, a pair of long colon-bearing labels would count as zero labels, get classified as a lead run
-# of two, and pass under the lead threshold. Membership and classification have to agree.
 BOLD_LEAD = re.compile(r"^\s*(?:[-*+]\s*)?\*\*[^*\n]{2,}\*\*")
 BOLD_LEAD_RUN = 5
 
 
 def writable(path):
-    """Whether a real write open succeeds, which is what Landlock actually gates.
-
-    os.access(path, os.W_OK) reports the file's permission bits and returns True for a
-    Landlock-jailed carrier, so it cannot be trusted here; only attempting the open sees the
-    denial. A write-only open on the existing file touches nothing and is closed immediately.
-    """
+    """Return True if path can be opened for writing, False otherwise."""
     try:
         os.close(os.open(path, os.O_WRONLY))
     except OSError:
@@ -129,13 +71,7 @@ def writable(path):
 
 
 def git_tracked(pathspecs):
-    """Repository-relative paths the index tracks, matched against these pathspecs.
-
-    The index is the scope. Untracked and ignored content is invisible to it, so no exclusion
-    list is needed and a new scratch directory cannot widen the gate by accident. Passing an
-    explicit pathspec list queries the index without touching the filesystem, which is what lets
-    the self-test assert that an ignored path is dropped without writing a fixture file.
-    """
+    """Repository-relative paths tracked by the git index matching pathspecs."""
     try:
         result = subprocess.run(
             ["git", "ls-files", "-z", "--", *pathspecs],
@@ -152,17 +88,7 @@ def git_tracked(pathspecs):
 
 
 def carrier_targets(carriers):
-    """The harness carriers to gate, with absent and unfixable kept apart.
-
-    An absent carrier is skipped with a notice, because a fresh clone on another machine has
-    neither and there is nothing there to repair. A carrier that exists but cannot be written is
-    still gated: if it is clean, nothing is lost by checking it, and dropping it would hide the
-    drift that reaching outside the repository exists to catch. If it carries findings, the run
-    fails outright and says why, because those findings cannot be repaired here and a notice
-    anyone can scroll past is how an unsatisfiable gate stops being a gate. The Landlock jail that
-    made a skip necessary is gone, so an unwritable carrier is now an environment defect worth
-    stopping on rather than working around.
-    """
+    """Filter carriers to present files; abort if an unwritable carrier has findings."""
     present = []
     for carrier in carriers:
         if not carrier.is_file():
@@ -178,19 +104,27 @@ def carrier_targets(carriers):
     return present
 
 
-def default_targets():
-    """Every tracked markdown file plus the two harness carriers.
+_FATE = "plugins/odin-core/skills/let-fate-decide"
 
-    Scope comes from the git index rather than a directory walk. The same script reported clean
-    in this worktree and 3725 findings across 3918 files in the source checkout, because an
-    untracked npm staging tree sat inside the repository. An exclusion list would have to grow
-    with every scratch directory that appears, and the three defects this rule has already shipped
-    were all exclusions.
 
-    The harness carriers live outside the repository, so git cannot enumerate them and they stay
-    explicit named additions.
-    """
-    return sorted(ROOT / path for path in git_tracked(["*.md"])) + carrier_targets(CARRIERS)
+def _fate_vendored():
+    """Pinned upstream inventory loaded from the fate skill's draw script."""
+    draw_module = runpy.run_path(str(ROOT / _FATE / "scripts" / "draw.py"), run_name="draw")
+    return frozenset(f"{_FATE}/{rel}" for rel in draw_module["expected_asset_files"]())
+
+
+VENDORED_UPSTREAM = _fate_vendored()
+
+
+def repo_targets():
+    """Every tracked markdown file, minus verbatim upstream."""
+    return sorted(ROOT / path for path in git_tracked(["*.md"])
+                  if path not in VENDORED_UPSTREAM)
+
+
+def default_targets(carriers=CARRIERS):
+    """Every tracked markdown file plus harness carriers, minus verbatim upstream."""
+    return repo_targets() + carrier_targets(carriers)
 
 
 def prose_only(text):
@@ -223,11 +157,7 @@ def dash_run(prose):
 
 
 def bold_runs(prose):
-    """Every maximal run of lines opening with a bold span, as (first line, length, label count).
-
-    Blank lines do not break a run. A non-blank line that does not open with a bold span does.
-    Fenced blocks and inline spans are already gone by the time this sees the text.
-    """
+    """Maximal runs of lines opening with a bold span, as (first line, length, label count)."""
     runs = []
     start = 0
     length = 0
@@ -249,27 +179,14 @@ def bold_runs(prose):
 
 
 def classify_run(labels):
-    """(kind, threshold) for a finished run, decided by what the run contains.
-
-    Two or more colon-bearing labels make it a label pseudo-list, which is a defect at two. Below
-    that the run is a density of lead-ins and needs five. A single colon inside a five-line run is
-    incidental emphasis, not a list of one, so such a run is caught at the lead threshold rather
-    than escaping between the two: adding a colon to one line can no longer drop a run below every
-    threshold.
-    """
+    """Classify a run: ('label', BOLD_RUN) if labels >= 2 else ('lead', BOLD_LEAD_RUN)."""
     if labels >= 2:
         return "label", BOLD_RUN
     return "lead", BOLD_LEAD_RUN
 
 
 def bold_findings(prose):
-    """One finding per tripping bold run, reported at the run's first line.
-
-    The label message names both numbers, because a mixed run is not all labels. Reporting the
-    run length as the label count told an author with three labels and two lead-ins to fix five
-    label lines, which is the wrong instruction; the run length is what tripped the threshold and
-    the label count is what makes it a pseudo-list rather than a density of emphasis.
-    """
+    """One finding per tripping bold run, reported at the run's first line."""
     found = []
     for start, length, labels in bold_runs(prose):
         kind, threshold = classify_run(labels)
@@ -320,20 +237,6 @@ def audit(path):
     return found
 
 
-# The bold rule has been silently wrong four times: first it could not see a label whose text held
-# a colon, then two separate walks each excluding the other's lines let a run that alternated the
-# two forms score one in each walk and pass clean, then an 80-character span bound exempted a
-# label whose parenthesized version list ran past it, then a 30-character cap on interposed text
-# made membership count zero labels where classification saw a lead run, so a pair of long
-# colon-bearing labels passed under the lead threshold. An evadable rule is worse than no rule,
-# because it reports clean. These cases are inline literals rather than fixture files on purpose:
-# markdown files inside the repository are gated, so a fixture that carries a finding by design
-# would need an exclusion, and an excluded directory is the same escape hatch the rule keeps
-# closing.
-#
-# Each case names the kind it must classify as when caught, because the two thresholds are
-# different and a run that trips the wrong one passes for the wrong reason. expect is
-# (caught, kind); kind is None when the run must not be caught at all.
 L1 = "**Latency** is the first thing to measure.\n"
 L2 = "**Throughput** follows from it.\n"
 L3 = "**Allocation** decides both.\n"
@@ -362,28 +265,21 @@ SELF_TEST = (
      "Watch **allocation**, which decides both.\nMind **locality**, which sets the ceiling.\n"
      "Tune **occupancy** last, if at all.\nReport **variance**, never a single run.\n",
      (False, None)),
-    # regression: the alternating run that the two-walk design let pass clean
     ("alternating label and lead run of five is caught",
      S1 + L1 + S2 + L2 + "**Allocation:** decides both.\n", (True, "label")),
-    # a lone colon inside a five-line run is incidental; the run is fake structure at five
     ("one label plus four leads is caught as a lead run",
      S1 + L1 + L2 + L3 + L4, (True, "lead")),
     ("two labels plus one lead is caught at the label threshold",
      S1 + S2 + L1, (True, "label")),
     ("one label plus three leads is not caught", S1 + L1 + L2 + L3, (False, None)),
-    # the remedy is a plain-labelled list, not a bulleted bold one: both patterns allow a leading
-    # "- ", so a bulleted pair is still a label run
     ("bulleted colon-bearing labels are caught", "- **Scope:** a.\n- **Domain:** b.\n",
      (True, "label")),
     ("bulleted plain labels are not caught", "- Scope: a.\n- Domain: b.\n", (False, None)),
-    # the case a {2,120} span bound silently exempted: five long lead-ins, each over 120 characters
     ("run of five over-long lead-ins is caught",
      "".join(f"**{w} {'padding ' * 18}** opens a long line {i}.\n"
              for i, w in enumerate(("Latency", "Throughput", "Allocation", "Locality",
                                     "Occupancy"))),
      (True, "lead")),
-    # and its label twin: two long colon-bearing labels must classify as a label run, not fall
-    # through to a lead run of two, which is what a bound on one pattern but not the other gives
     ("two over-long colon-bearing labels are caught as a label run",
      "".join(f"**{w} {'padding ' * 18}:** value {i}.\n" for i, w in enumerate(("Scope", "Domain"))),
      (True, "label")),
@@ -399,22 +295,8 @@ def run_verdict(prose):
     return False, None
 
 
-# Scope cases, driven against git_tracked with a fixture pathspec list so they create nothing on
-# disk. Creating an ignored fixture would mean writing into an ignored directory, and an ignored
-# directory the gate can see is the escape hatch this scope removes. Each case asserts its own
-# witness exists, so a witness that disappears fails the case rather than passing for nothing.
-#   AGENTS.md      tracked, so it is a target
-#   .git/config    on disk, not tracked; a directory walk claims it and the index does not
-#   ignored files  discovered live, since which ones exist is not something to hardcode
 def ignored_witness():
-    """An ignored file that exists in the tree, or None on a clean clone.
-
-    The ignored case needs a file that is both present and ignored, and creating one would mean
-    writing into an ignored directory, which is the escape hatch this scope removes. So the case
-    borrows whatever the tree already has. It prefers a witness outside the names the old
-    exclusion list spelled, because only such a witness separates the index from a walk that kept
-    that list; on a tree with neither, it falls back to any ignored file it can find.
-    """
+    """An ignored file that exists in the tree, or None on a clean clone."""
     result = subprocess.run(
         ["git", "ls-files", "-z", "--others", "--ignored", "--exclude-standard"],
         cwd=ROOT, capture_output=True, text=True, check=True)
@@ -426,35 +308,40 @@ def ignored_witness():
 
 
 def ignored_case(got):
-    """The index must return nothing for a path that exists but is ignored.
-
-    With a real ignored file the case is strong: the file is on disk and the index still drops it.
-    With none, as on a fresh clone, it falls back to a hypothetical path under an ignored
-    directory, which proves the rule is not suffix-based but is weaker, so it says so.
-    """
+    """Invariant: git index returns nothing for an existing ignored path."""
     witness = ignored_witness()
     return got == [] and (witness is None or Path(witness).is_file())
 
+
+def carrier_witness_probe():
+    """Controlled carrier inputs: present carrier is targeted, absent is skipped."""
+    dir_ = tempfile.mkdtemp()
+    try:
+        present = Path(dir_) / "present.md"
+        present.write_text("Controlled carrier prose.\n", encoding="utf-8")
+        absent = Path(dir_) / "absent.md"
+        buf = io.StringIO()
+        with contextlib.redirect_stderr(buf):
+            targets = [str(c) for c in carrier_targets([present, absent])]
+        return targets, str(present), str(absent), buf.getvalue()
+    finally:
+        shutil.rmtree(dir_, ignore_errors=True)
+
+
+def carrier_witness_case(probe):
+    targets, present, absent, notice = probe
+    return (present in targets and absent not in targets
+            and "skipping" in notice and "absent on this machine" in notice)
+
+
 def untracked_witness_probe():
-    """Gate an untracked, non-ignored markdown file that carries a finding by construction.
-
-    Created transiently inside the repository and removed in a finally block. This is the exact
-    class of file that caused the regression the scope rule removed: a retired npm staging tree
-    sat untracked and unignored inside the repository, and the directory walk gated it, so the
-    same script reported clean in one checkout and thousands of findings in another. A permanent
-    fixture cannot stand in for it: committing it makes it tracked, which is the thing under test,
-    and ignoring it makes the old walk blind to it too.
-
-    Returns whether the witness was picked up, the target count with and without it on disk, and
-    whether the witness really does carry a finding, so the case cannot pass by quietly testing a
-    file the rule would not flag anyway.
-    """
-    without = len(default_targets())
+    """Probe that untracked, non-ignored markdown files in the tree are not targeted."""
+    without = len(repo_targets())
     dir_ = tempfile.mkdtemp(dir=ROOT)
     try:
         witness = Path(dir_) / "witness.md"
         witness.write_text("**Scope:** a.\n**Domain:** b.\n", encoding="utf-8")
-        targets = default_targets()
+        targets = repo_targets()
         return (witness in targets, len(targets), without, bool(audit(witness)))
     finally:
         shutil.rmtree(dir_, ignore_errors=True)
@@ -465,26 +352,59 @@ def untracked_witness_case(probe):
     return not picked_up and with_count == without_count and carries
 
 
+def vendored_case(got):
+    """Invariant: all 92 vendored paths are tracked by git but excluded from repository targets."""
+    tracked = set(git_tracked(sorted(VENDORED_UPSTREAM)))
+    return (tracked == set(VENDORED_UPSTREAM)
+            and not any(str(ROOT / path) in got for path in VENDORED_UPSTREAM))
+
+
+def authored_sibling_case(got):
+    """Invariant: fate skill authored siblings remain repository targets."""
+    siblings = (f"{_FATE}/SKILL.md",
+                f"{_FATE}/agents/draw.md",
+                f"{_FATE}/references/SOURCE-MAP.md")
+    return all(str(ROOT / path) in got for path in siblings)
+
+
+def scope_parity_case(got):
+    """Invariant: target set equals tracked markdown files minus VENDORED_UPSTREAM."""
+    expected = {str(ROOT / path) for path in git_tracked(["*.md"])
+                if path not in VENDORED_UPSTREAM}
+    return set(got) == expected
+
+
 TARGET_CASES = (
     ("a tracked markdown file is a target",
      lambda: git_tracked(["AGENTS.md"]),
      lambda got: "AGENTS.md" in got),
-    # `.git` is the one path guaranteed to exist and guaranteed never to be tracked. Naming
-    # `.git/config` instead would pass only where `.git` is a directory: a linked worktree
-    # stores a gitlink file there, so the case's own precondition would fail and report a
-    # defect in the gate where there is none.
     ("a path that exists but is not tracked is not a target",
      lambda: git_tracked(["AGENTS.md", ".git"]),
      lambda got: Path(".git").exists() and ".git" not in got),
     ("an ignored file inside the repository is not a target",
      lambda: git_tracked([ignored_witness() or ".outline/whatever.md"]),
      ignored_case),
-    ("both harness carriers are targets when present",
-     lambda: [str(c) for c in carrier_targets(CARRIERS)],
-     lambda got: all(str(c) in got for c in CARRIERS if c.is_file())),
+    ("harness carriers are targets when present and skipped when absent",
+     carrier_witness_probe,
+     carrier_witness_case),
     ("an untracked non-ignored markdown file is not a target",
      untracked_witness_probe,
      untracked_witness_case),
+    ("the verbatim-upstream inventory holds exactly 92 paths",
+     lambda: list(VENDORED_UPSTREAM),
+     lambda got: len(got) == 92),
+    ("vendored fate assets are tracked but not repository targets",
+     lambda: [str(p) for p in repo_targets()],
+     vendored_case),
+    ("authored fate siblings stay repository targets",
+     lambda: [str(p) for p in repo_targets()],
+     authored_sibling_case),
+    ("every other tracked markdown file stays a repository target",
+     lambda: [str(p) for p in repo_targets()],
+     scope_parity_case),
+    ("explicit file arguments still gate a vendored path",
+     lambda: [str(p) for p in explicit_targets([sorted(VENDORED_UPSTREAM)[0]])],
+     lambda got: len(got) == 1 and got[0].endswith(sorted(VENDORED_UPSTREAM)[0])),
 )
 
 
@@ -509,11 +429,16 @@ def self_test():
     return 1 if failed else 0
 
 
+def explicit_targets(argv):
+    """Explicit file arguments gate whatever they name, including a vendored path."""
+    return [Path(a).resolve() for a in argv]
+
+
 def main(argv):
     if argv == ["--self-test"]:
         return self_test()
     if argv:
-        targets = [Path(a).resolve() for a in argv]
+        targets = explicit_targets(argv)
     else:
         targets = default_targets()
 

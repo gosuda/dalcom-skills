@@ -29,30 +29,6 @@
       "category": "Productivity"
     },
     {
-      "name": "odin-critique",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-critique"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Productivity"
-    },
-    {
-      "name": "odin-product",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-product"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Productivity"
-    },
-    {
       "name": "odin-code",
       "source": {
         "source": "local",
@@ -93,18 +69,6 @@
       "source": {
         "source": "local",
         "path": "./plugins/odin-git"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Coding"
-    },
-    {
-      "name": "odin-release",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-release"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -197,30 +161,6 @@
       "category": "Productivity"
     },
     {
-      "name": "odin-people",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-people"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Productivity"
-    },
-    {
-      "name": "odin-agent",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-agent"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Productivity"
-    },
-    {
       "name": "odin-skills",
       "source": {
         "source": "local",
@@ -269,34 +209,10 @@
       "category": "Design"
     },
     {
-      "name": "odin-web",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-web"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Coding"
-    },
-    {
       "name": "odin-typescript",
       "source": {
         "source": "local",
         "path": "./plugins/odin-typescript"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Coding"
-    },
-    {
-      "name": "odin-python",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-python"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -317,10 +233,10 @@
       "category": "Coding"
     },
     {
-      "name": "odin-apple",
+      "name": "odin-rust",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-apple"
+        "path": "./plugins/odin-rust"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -329,16 +245,28 @@
       "category": "Coding"
     },
     {
-      "name": "odin-formal",
+      "name": "odin-performance",
       "source": {
         "source": "local",
-        "path": "./plugins/odin-formal"
+        "path": "./plugins/odin-performance"
       },
       "policy": {
         "installation": "AVAILABLE",
         "authentication": "ON_USE"
       },
       "category": "Coding"
+    },
+    {
+      "name": "odin-marketing",
+      "source": {
+        "source": "local",
+        "path": "./plugins/odin-marketing"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Marketing"
     }
   ]
 }

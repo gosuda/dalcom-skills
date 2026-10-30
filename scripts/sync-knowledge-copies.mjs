@@ -1,21 +1,14 @@
 #!/usr/bin/env node
-// Mirror authored compound knowledge contracts into autolearn as byte-identical
-// copies so standalone installs keep working.
-//
-// Direction is fixed: compound sources are authored, autolearn destinations are
-// generated. Never hand-edit a destination; edit the compound source and render.
-//
-// Pairs:
-//   compound/references/schema.md        -> autolearn/references/schema.md
-//   compound/references/concepts.md      -> autolearn/references/concepts.md
-//   compound/scripts/validate-record.py  -> autolearn/scripts/validate-record.py
-//
-// Default mode writes missing or drifted destinations with the exact source
-// bytes. --check reports drift and exits 1 without writing, which is how the
-// pre-commit hook runs it.
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  statSync,
+  writeFileSync,
+} from "node:fs";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
 
@@ -32,7 +25,95 @@ const PAIRS = [
     "plugins/odin-core/skills/compound/scripts/validate-record.py",
     "plugins/odin-core/skills/autolearn/scripts/validate-record.py",
   ],
+
+  [
+    "plugins/odin-core/skills/resolve/scripts/get-pr-comments",
+    "plugins/odin-core/skills/resolve-pr-comments/scripts/get-pr-comments",
+  ],
+  [
+    "plugins/odin-core/skills/resolve/scripts/get-thread-for-comment",
+    "plugins/odin-core/skills/resolve-pr-comments/scripts/get-thread-for-comment",
+  ],
+  [
+    "plugins/odin-core/skills/resolve/scripts/reply-to-pr-thread",
+    "plugins/odin-core/skills/resolve-pr-comments/scripts/reply-to-pr-thread",
+  ],
+  [
+    "plugins/odin-core/skills/resolve/scripts/resolve-pr-thread",
+    "plugins/odin-core/skills/resolve-pr-comments/scripts/resolve-pr-thread",
+  ],
+  [
+    "plugins/odin-core/skills/resolve/scripts/gitlab-mr.py",
+    "plugins/odin-core/skills/resolve-pr-comments/scripts/gitlab-mr.py",
+  ],
+
+  [
+    "plugins/odin-core/skills/resolve/scripts/get-pr-comments",
+    "plugins/odin-git/skills/gate-and-merge/scripts/get-pr-comments",
+  ],
+  [
+    "plugins/odin-core/skills/resolve/scripts/get-thread-for-comment",
+    "plugins/odin-git/skills/gate-and-merge/scripts/get-thread-for-comment",
+  ],
+  [
+    "plugins/odin-core/skills/resolve/scripts/reply-to-pr-thread",
+    "plugins/odin-git/skills/gate-and-merge/scripts/reply-to-pr-thread",
+  ],
+  [
+    "plugins/odin-core/skills/resolve/scripts/resolve-pr-thread",
+    "plugins/odin-git/skills/gate-and-merge/scripts/resolve-pr-thread",
+  ],
+  [
+    "plugins/odin-core/skills/resolve/scripts/gitlab-mr.py",
+    "plugins/odin-git/skills/gate-and-merge/scripts/gitlab-mr.py",
+  ],
+
+  [
+    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/odin-core/skills/audit-project/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/odin-core/skills/commit-push-pr/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/odin-core/skills/resolve-pr-comments/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/odin-core/skills/review-fix-loop/scripts/inspect_mr_checks.py",
+  ],
+
+  [
+    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/odin-git/skills/modernize/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/odin-git/skills/watch-and-repair-pr/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/odin-git/skills/gate-and-merge/scripts/inspect_mr_checks.py",
+  ],
+
+  [
+    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/odin-run/skills/implement-spec/scripts/inspect_mr_checks.py",
+  ],
+  [
+    "plugins/odin-core/skills/ci-fix/scripts/inspect_mr_checks.py",
+    "plugins/odin-infra/skills/ci-cd/scripts/inspect_mr_checks.py",
+  ],
+
+  [
+    "plugins/odin-core/skills/resolve/scripts/gitlab-mr.py",
+    "plugins/odin-review/skills/review/scripts/gitlab-mr.py",
+  ],
 ];
+
+const CANONICAL_SOURCES = new Set(PAIRS.map(([src]) => src));
 
 function usage() {
   process.stderr.write(
@@ -52,25 +133,37 @@ const drifted = [];
 const errors = [];
 
 for (const [srcRel, destRel] of PAIRS) {
+  if (CANONICAL_SOURCES.has(destRel)) {
+    errors.push(destRel + " cannot overwrite canonical source");
+    continue;
+  }
   const src = join(ROOT, srcRel);
   const dest = join(ROOT, destRel);
   let srcBuf;
+  let srcStat;
   try {
     srcBuf = readFileSync(src);
+    srcStat = statSync(src);
   } catch (e) {
     errors.push(srcRel + " unreadable: " + e.message);
     continue;
   }
   let destBuf = null;
+  let destStat = null;
   if (existsSync(dest)) {
     try {
       destBuf = readFileSync(dest);
+      destStat = statSync(dest);
     } catch (e) {
       errors.push(destRel + " unreadable: " + e.message);
       continue;
     }
   }
-  if (destBuf !== null && destBuf.equals(srcBuf)) {
+
+  const srcExecuteBits = srcStat.mode & 0o111;
+  const destExecuteBits = destStat !== null ? destStat.mode & 0o111 : null;
+
+  if (destBuf !== null && destBuf.equals(srcBuf) && destExecuteBits === srcExecuteBits) {
     continue;
   }
   if (check) {
@@ -79,6 +172,7 @@ for (const [srcRel, destRel] of PAIRS) {
   }
   mkdirSync(dirname(dest), { recursive: true });
   writeFileSync(dest, srcBuf);
+  chmodSync(dest, srcStat.mode & 0o777);
   wrote += 1;
   process.stdout.write("sync-knowledge-copies: wrote " + destRel + "\n");
 }

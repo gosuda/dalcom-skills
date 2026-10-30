@@ -6,39 +6,38 @@ disable-model-invocation: true
 
 # Developer lifecycle messaging
 
-## Contract
+You draft lifecycle messages for developers from real product behavior. Use this for newsletter issues, onboarding steps, activation nudges, release updates, or re-engagement. This skill owns onboarding messaging drafts. Onboarding implementation stays with product and DX owners.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | User asks for newsletter, onboarding, activation, release-update, or re-engagement drafts for developers. This is the owner of onboarding messaging drafts; onboarding implementation stays with product and DX owners. |
-| Authority | Read-only drafting in chat. Consent-segmented: audience segment, suppression, stop-on-activation, unsubscribe mechanics required per draft set. No sending, list import, personal-data enrichment, unsolicited win-back, or vendor dependency. |
-| Side effect | Drafts with cadence, suppression, and factual-claim records in chat. Nothing sent or stored remotely. |
-| Done | Each draft has subject, body, segment, cadence, suppression and stop conditions, unsubscribe path, and claim provenance; churn diagnosis stays a separate product-feedback concern and no win-back contacts the unconsented. |
+Drafting happens in chat only. Nothing is sent or stored remotely. You do not send, schedule, import lists, enrich personal data, run unsolicited win-back, or depend on a vendor. The human sends through approved systems.
 
-## Not for
+## Lock purpose, segment, and consent first
 
-- Sending, scheduling, or managing lists. Drafts only; the human sends through approved systems.
+You need three facts before any draft:
 
-## Inputs
+- The purpose (`purpose`): newsletter issue, onboarding step, activation nudge, release update, or re-engagement, with the triggering behavior
+- The recipients (`segment`): who receives it and what consent covers them
+- The proof (`evidence`): the real product behavior, docs path, or release fact behind the message
 
-- `purpose` (required): newsletter issue, onboarding step, activation nudge, release update, or re-engagement, with the triggering behavior.
-- `segment` (required): who receives it and what consent covers them.
-- `evidence` (required): the real product behavior, docs path, or release fact behind the message.
+State suppression (who must not receive it) and stop on activation conditions alongside the segment. The setup is complete when segment, consent basis, suppression, and stop conditions are written down. If the consent basis is missing, stop and name it. Do not draft around it. If the promised outcome lacks evidence, narrow the promise or name the missing proof.
 
-## Procedure
+No draft targets a segment without stated consent.
 
-1. Fix purpose, segment, and consent basis. State suppression (who must not receive it) and stop-on-activation conditions. **Done when:** segment, consent, suppression, and stop conditions are written.
-2. Draft subject and body in plain developer language: one message per draft, outcome first, exact next step with path or command. **Done when:** each draft has one message and one next step.
-3. For onboarding and activation drafts, map each message to the product step it unblocks (signup, first key, first call, first deploy) without owning that step implementation. **Done when:** every onboarding message names its unblocked step and the owning surface.
-4. Record factual-claim provenance per draft: every claim beside its source. **Done when:** no claim lacks a source.
-5. Set cadence and unsubscribe mechanics: frequency cap, sequence length, exit on activation, one-step unsubscribe. **Done when:** each draft set has caps, exits, and unsubscribe.
-6. Refuse unsolicited win-back and enrichment: no reactivating the unconsented, no list imports, no personal-data enrichment. **Done when:** no draft targets a segment without stated consent.
+## Write one message with one next step
 
-## Failure and recovery
+Draft subject and body in plain developer language. Each draft carries a single message, outcome first, with the exact next step (path or command). A draft is complete when it holds one message and one next step.
 
-- Consent basis missing: stop and name it; do not draft around it.
-- Evidence missing for the promised outcome: narrow the promise or name the missing proof.
+## Map onboarding messages to product steps
 
-## Output
+For onboarding and activation drafts, map each message to the product step it unblocks (signup, first key, first call, first deploy) and name the surface that owns that step. The mapping is complete when every onboarding message names its unblocked step and the owning surface. You draft the message. You do not build the step.
 
-Draft set with subjects, bodies, segments, consent and suppression records, cadence and stop conditions, unsubscribe paths, onboarding step mapping, and claim provenance.
+Churn diagnosis stays a separate product feedback concern.
+
+## Prove every claim
+
+Record factual claim provenance per draft: each claim beside its source. The record is complete when no claim lacks a source.
+
+## Cap the cadence and keep the exit open
+
+Set frequency cap, sequence length, exit on activation, and one step unsubscribe for each draft set. The set is complete when it has caps, exits, and an unsubscribe path, with each draft carrying its subject, body, segment, cadence, suppression and stop conditions, unsubscribe path, and claim provenance.
+
+What you hand back: the draft set with subjects, bodies, segments, consent and suppression records, cadence and stop conditions, unsubscribe paths, onboarding step mapping, and claim provenance.

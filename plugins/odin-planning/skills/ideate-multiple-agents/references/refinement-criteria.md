@@ -1,6 +1,6 @@
 # Refinement and evaluation criteria
 
-Use this rubric during Evaluate and Converge. Not every criterion applies to every idea. Use judgment about which dimensions matter for the specific context.
+Use this rubric during Evaluate and Converge. No criterion fits every idea; judge which dimensions matter for the context at hand.
 
 ## Core evaluation dimensions
 
@@ -12,10 +12,10 @@ Painkiller against vitamin: a painkiller solves an acute, frequent problem. User
 
 Questions to ask:
 
-- Can three specific people with this problem be named right now.
+- Name three specific people with this problem right now.
 - What do they do today instead. The real competitor is the current workaround.
-- Would they switch from their current approach and what would make them switch.
-- How often they encounter the problem. Daily problems outweigh monthly ones.
+- Would they switch from their current approach, and what would make them switch.
+- How often they hit the problem. Daily problems outweigh monthly ones.
 - Whether this is a pull problem users ask for or a push problem they are told to want.
 
 Red flags: everyone could use this without a named user, like X but better with only marginal gain, or a real but rare problem with intensity but no frequency.

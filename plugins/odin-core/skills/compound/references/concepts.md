@@ -15,18 +15,18 @@ The count comes from the source and the bar below, never a fixed quantity.
 
 A term qualifies only when all three hold, in order:
 
-1. Its meaning here is precise enough that a new engineer needs it defined to follow conversations, tickets, or code.
+1. Its meaning here is precise and stable enough that a future engineer needs it defined to follow conversations, tickets, or code across sessions.
 2. It is not already defined there under any synonym. A hit means refresh, never a second entry.
-3. It is scope-qualified to this project, not general programming or domain English.
+3. It is scope-qualified to this project, not general programming or domain English, and not incidental jargon from one session.
 
-Nothing clears the gate: write nothing. A clean no-term result is correct.
+Nothing clears the gate: write nothing. A clean no-term result is correct. Incidental jargon that happened to appear once never earns a slot, however precisely phrased.
 
 ## Per entry
 
 - One sentence: what the term means here and what distinguishes it from neighbors.
 - A second paragraph only for non-obvious behavioral rules: lifecycle, ownership, cancellation, or transition semantics. Never to restate the definition.
 - Retired synonyms go directly under the definition as `*Avoid:* OldName, otherword`. When the team uses several words for one concept, pick the best and retire the rest.
-- No implementation specifics: file paths, class or function names, table names, library calls.
+- No implementation specifics: file paths, class or function names, table names, library calls. No incidental jargon: one-session words without a precise stable project meaning.
 - No status fields, dates, or owners on entries.
 - No current-config values that will change: specific thresholds, counts, or enum values. State the behavior, not the number.
 - No links to PRs, issues, channels, milestones, or version-specific claims.

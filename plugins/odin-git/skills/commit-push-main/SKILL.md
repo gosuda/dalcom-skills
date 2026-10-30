@@ -4,50 +4,52 @@ description: 'Use when a human explicitly asks to commit and push directly to th
 disable-model-invocation: true
 ---
 
-# Commit and push the default branch
+# Ship the default branch directly
 
-Ship the working tree on the default branch of the repository. The push target is the resolved default branch, and the skill refuses any other branch. It never creates or switches branches. Explicit invocation authorizes the commit and the push on the default branch.
+This skill puts the working tree on the default branch of the repository. The push target is the resolved default branch, and any other branch is refused. Branches are never created or switched here. Explicit human invocation authorizes both the commits and the push on the default branch. The work is done when `git status --porcelain` is empty and `git rev-list --left-right --count origin/<default>...HEAD` prints `0 0`.
 
-## Contract
+## Confirm the destination before touching anything
 
-| Field | Bound contract |
-|---|---|
-| Trigger | A human explicitly invokes this skill to commit and push directly to the default branch. |
-| Authority | Human-only: explicit human invocation is the authorization. The skill proves a single unambiguous push destination with matching fetch and push URLs, proves the authoritative default name for that destination, proves the push-side tip equals the preview tip, previews the exact push target and the commit set, and waits for approval before the push. The write set is local commits on the default branch and one push to `origin/<default>`. Rollback is user-owned: unpushed commits stay for user disposition and pushed work is undone only by a revert commit; this skill never runs reset, checkout, branch deletion, or force-push. No remote mutation beyond the previewed push. |
-| Side effect | Local commits on the default branch and one `git push` to `origin/<default>`. No branch creation, no branch switch, no pull request, no force push. |
-| Done | The default branch is committed and pushed: `git status --porcelain` is empty and `git rev-list --left-right --count origin/<default>...HEAD` prints `0 0`. |
+Run `git status`, `git diff HEAD`, `git branch --show-current`, `git log --oneline -10`, and `git remote`. A missing `origin` ends the skill before any commit, because the default branch cannot be verified and nothing could be pushed. Remotes are never added, invented, or guessed.
 
-## Inputs
+Otherwise prove the push destination first. Run `git config --get-all remote.origin.push` and stop before any commit on any output line, since a custom refspec would redirect `git push origin HEAD`. Run `git remote get-url --all origin`, stopping before any commit on failure or on more than one line, and record the single fetch line as FETCH_URL. Run `git remote get-url --all --push origin` the same way to record PUSH_URL, refusing an ambiguous push the same way. FETCH_URL and PUSH_URL must match exactly as strings. A triangular configuration cannot stand as its own preview, so report it and stop before any commit.
 
-- Working-tree state (`git status`, `git diff HEAD`): required, gathered by the skill.
-- Current branch and recent history (`git branch --show-current`, `git log --oneline -10`): required, gathered by the skill.
-- Single push destination with matching URLs (`git config --get-all remote.origin.push` must be empty; `git remote get-url origin` and `git remote get-url --all --push origin` must each succeed with exactly one URL recorded as FETCH_URL and PUSH_URL, and the two strings must match exactly): required, proven before any commit. A custom refspec, multiple push URLs, or fetch-push divergence stops the skill.
-- Remote default branch (`git ls-remote --symref origin HEAD` confirmed against `git ls-remote --symref "$PUSH_URL" HEAD`, then proven with `git ls-remote --heads origin <default>` and `git ls-remote --heads "$PUSH_URL" <default>`): required, authoritative only. No `origin/HEAD` cache and no `gh` fallback is consulted. When advertisement is missing, disputed, or unverifiable, the skill stops before any commit; a default branch is never guessed.
-- Push-target state (`git rev-list --left-right --count origin/<default>...HEAD`): required, gathered by the skill. `NO_REMOTE_BRANCH` means the local tracking ref `origin/<default>` is absent; step 1 verifies the remote and stops before any commit when the branch is truly absent.
-- Push-side tip equality (`git ls-remote origin refs/heads/<default>` versus `git ls-remote "$PUSH_URL" refs/heads/<default>`): required before preview and again after approval. Identical non-empty SHAs prove the preview tip is the push tip. Any missing, failed, or disagreeing result stops the push.
+Resolve the default from authoritative advertisement only. Run `git ls-remote --symref origin HEAD` and take the branch named by the first `ref: refs/heads/<name>` line. Failure or a missing ref line means `DEFAULT_BRANCH_UNRESOLVED`, so report and stop before any commit. Confirm the same branch through `git ls-remote --symref "$PUSH_URL" HEAD`, and report any disagreement with the push destination before any commit. Prove the branch exists on both destinations with `git ls-remote --heads origin <default>` and `git ls-remote --heads "$PUSH_URL" <default>`. Empty output on either means the default is absent there, so report and stop before any commit without creating it. A failed call means the remote is unobservable, which also stops the skill. The `origin/HEAD` cache and any `gh` fallback stay unused. Guessing is never allowed.
 
-## Procedure
+Read `git rev-list --left-right --count origin/<default>...HEAD 2>/dev/null || echo NO_REMOTE_BRANCH`. On `NO_REMOTE_BRANCH`, materialize the proven ref with `git fetch --no-tags origin refs/heads/<default>:refs/remotes/origin/<default>` and read the counts again. A failed fetch stops the skill before any commit.
 
-1. Gather context: run `git status`, `git diff HEAD`, `git branch --show-current`, `git log --oneline -10`, and `git remote`. When `git remote` lists no `origin`, report local-only and stop before any commit; this skill cannot verify the default branch and nothing can be pushed. Never add, invent, or guess a remote. Otherwise prove the actual push destination first: (a) run `git config --get-all remote.origin.push`; any output line means a custom push refspec redirects `git push origin HEAD`: report it and stop before any commit. (b) Run `git remote get-url origin`; a failed call means the fetch destination cannot be observed: report and stop before any commit. Record FETCH_URL as the single fetch line. (c) Run `git remote get-url --all --push origin`; a failed call means the push destination cannot be observed: report and stop before any commit. More than one line means multiple push destinations: report and stop before any commit rather than authorizing an ambiguous push. Record the single PUSH_URL. (d) Require FETCH_URL and PUSH_URL to match exactly as strings; any difference means the fetch-side preview cannot stand for the push destination: report the triangular configuration and stop before any commit. Otherwise resolve the default from authoritative advertisement only: run `git ls-remote --symref origin HEAD` and take the branch named by the first `ref: refs/heads/<name>` line; any failure or missing ref line means `DEFAULT_BRANCH_UNRESOLVED`: report and stop before any commit. Then prove the same default on the actual push destination: run `git ls-remote --symref "$PUSH_URL" HEAD`; it must name the same branch, or report the disagreement and stop before any commit. Then prove the branch exists on both destinations: run `git ls-remote --heads origin <default>` and `git ls-remote --heads "$PUSH_URL" <default>`; empty output on either means the default is absent on that destination: report and stop before any commit, never creating it. A failed call on either means the remote cannot be observed: report and stop before any commit. Then read `git rev-list --left-right --count origin/<default>...HEAD 2>/dev/null || echo NO_REMOTE_BRANCH`. On `NO_REMOTE_BRANCH`, materialize the proven ref with `git fetch --no-tags origin refs/heads/<default>:refs/remotes/origin/<default>` and read the counts again; when that fetch fails, report and stop before any commit. Done when: tree state, branch, history, matching single fetch and push destinations, proven default branch, and push-target counts are known, or the skill has stopped.
-2. Gate on the branch. If the checked-out branch is not the resolved default branch, or HEAD is detached, report the mismatch and stop before any commit. This skill pushes only the default branch. `commit-push-current` handles the checked-out branch and `commit-push-pr` a feature branch. Done when: HEAD is confirmed on the default branch, or the skill has stopped.
-3. Classify the work state. Nothing to do (clean tree and zero on the right side of the push-target counts): report and stop. Clean tree with commits ahead of the push target: skip to step 6. Otherwise: continue. Done when: the state is classified and the skill continues or stops.
-4. Author the commits with `commit`. Its message conventions, atomicity rules, and staging discipline apply. Do not restate them here. Its default-branch auto-branching and its reset and branch-deletion rollback do not apply: explicit invocation on the default branch is authorization to commit on it, and recovery here never uses hard reset or branch deletion. Done when: `commit` reports the working tree committed, or reports nothing to commit.
-5. Detect the remote with `git remote`. If no `origin` remote exists (empty output, or other remotes but none named `origin`), do not push and do not add or guess a remote. Report local-only and stop. Done when: `origin` is confirmed present, or the local-only result is reported.
-6. Preview the push and wait for explicit human approval. Refresh the tracking tip with `git fetch --no-tags origin refs/heads/<default>:refs/remotes/origin/<default>`; when the fetch fails, report and stop without pushing. Then prove the preview tip is the push tip: run `git ls-remote origin refs/heads/<default>` and `git ls-remote "$PUSH_URL" refs/heads/<default>`; each must return one line with an identical non-empty SHA. Empty, missing, failed, or disagreeing output means fetch-push tip divergence or an unobservable destination: report and stop without pushing. Because step 1 already required matching URLs, this SHA check proves the same repository state, not only the same branch name. Name the target `origin/<default>` and list the full commit set with `git log --oneline origin/<default>..HEAD`. When the left count is non-zero, the remote holds commits HEAD lacks; name them in the preview, because the push will be rejected until they are integrated. Show the target, the matched fetch and push URLs, the matched tip SHA, and the commit list, then wait for the human to approve the exact mutation set (platform blocking question tool, chat fallback). On no answer or refusal, stop with nothing pushed. On approval, re-resolve both tip SHAs and confirm the same identical SHA; on any difference, re-preview the new set and wait again. Then push with `git push -u origin HEAD`. Never force-push. Done when: the push is accepted, or the rejection or a stop is reported.
-7. Verify: `git status --porcelain` is empty and `git rev-list --left-right --count origin/<default>...HEAD` prints `0 0`. Done when: both read clean, or the residue is reported.
+## Stay on the default branch with work worth shipping
 
-## Failure and recovery
+Refuse anything but the resolved default. A different checked-out branch or a detached HEAD ends the skill before any commit, with no branch created or switched. Point the human at `commit-push-current` for the checked-out branch or `commit-push-pr` for a feature branch.
 
-- Checked-out branch is not the default branch, or HEAD is detached: report the mismatch and stop. No commit is created. No branch is created or switched.
-- Nothing to do: report and stop. No mutation occurs.
-- Custom push refspec (`git config --get-all remote.origin.push` non-empty), unobservable fetch or push URL, multiple push URLs, or fetch-push URL divergence: report the configuration and stop before any commit. Never authorize an ambiguous or triangular push.
-- Default branch unresolved, push-side name disagreement, or existence unproven on either destination: report `DEFAULT_BRANCH_UNRESOLVED`, the `origin` versus PUSH_URL disagreement, or the absent or unobservable branch, and stop before any commit. Never guess a default branch and never create the remote branch.
-- Push-side tip missing, unobservable, or disagreeing with the preview tip: report the divergence and stop without pushing. Approval never covers another tip's set.
-- Tracking-tip refresh fails before the preview: report and stop without pushing.
-- No `origin` remote: report local-only with the commit list. Never add, invent, or guess a remote.
-- Push rejected on a diverged remote branch: report the rejection and the counts from `git rev-list --left-right --count origin/<default>...HEAD`. Leave resolution to the user. Never force-push, never pull or rebase silently to repair the divergence.
-- Verification residue (non-empty `git status --porcelain`, or counts other than `0 0`): report the uncommitted files or unpushed commits. Do not claim done.
+Classify the work. A clean tree with zero on the right side of the counts means nothing to do, so report and stop. A clean tree with commits ahead of the target skips authoring and goes to the preview. Anything else continues to `commit`.
 
-## Output
+Author with `commit`, following its message conventions, atomicity rules, and staging discipline (not restated here). Its default-branch auto-branching does not apply, because invocation here already authorizes committing on the default. Its reset and branch-deletion rollback does not apply either, because recovery here never uses hard reset or branch deletion. Past this point when `commit` reports the tree committed or nothing to commit.
 
-The committed working tree on the default branch, one push to `origin/<default>`, and a report naming the branch, the matched fetch and push URLs, the matched tip SHA, the pushed commit hashes and subjects, and the verification result. When no `origin` remote exists, a local-only report naming the commits left unpushed.
+Run `git remote` again. Without a remote named `origin`, report local-only with the commit list and stop. Remotes are never added or guessed.
+
+## Preview the exact push and wait for approval
+
+Refresh the tracking tip with `git fetch --no-tags origin refs/heads/<default>:refs/remotes/origin/<default>`, stopping without pushing on failure. Prove the preview tip is the push tip: `git ls-remote origin refs/heads/<default>` and `git ls-remote "$PUSH_URL" refs/heads/<default>` must each return one line with the same non-empty SHA. Missing, failed, or disagreeing output means divergence or an unobservable destination, so report and stop without pushing. The earlier URL match plus this SHA check proves the same repository state, not just the same branch name.
+
+List the full set with `git log --oneline origin/<default>..HEAD`. A non-zero left count means the remote holds commits HEAD lacks. Name them in the preview, because the push will be rejected until they are integrated. Show the target, the matched URLs, the matched tip SHA, and the commit list, then wait for the human to approve the exact mutation set (platform blocking question tool, chat fallback). Silence or refusal stops with nothing pushed. On approval, re-resolve both tip SHAs and require the same identical SHA. Any difference gets a fresh preview and another wait.
+
+Push with `git push -u origin HEAD`. Force-push is never used.
+
+Verify with `git status --porcelain` (empty) and `git rev-list --left-right --count origin/<default>...HEAD` (`0 0`). Report residue instead of claiming done.
+
+## When to stop instead
+
+- Checked-out branch is not the default, or HEAD is detached. No commit is created.
+- Nothing to do. No mutation occurs.
+- Custom refspec, unobservable or multiple URLs, or fetch-push divergence. Never authorize an ambiguous or triangular push.
+- Default unresolved, push-side name disagreement, or existence unproven on either destination. Report `DEFAULT_BRANCH_UNRESOLVED` or the disagreement and stop. The remote branch is never created by this skill.
+- Push-side tip missing, unobservable, or disagreeing with the preview tip. Approval never covers another tip set.
+- Tracking-tip refresh failed before the preview. Report and stop without pushing.
+- No `origin` remote. Report local-only. Remotes are never invented.
+- Push rejected on a diverged branch. Report the rejection with the counts and leave resolution to the user. Silent pull or rebase repairs are out of scope.
+- Verification residue. Report the files or commits left over.
+
+## What you hand back
+
+The committed tree on the default branch, the one push to `origin/<default>`, and a report naming the branch, the matched URLs, the matched tip SHA, the pushed hashes and subjects, and the verification result. Without `origin`, a local-only report naming the commits left unpushed.

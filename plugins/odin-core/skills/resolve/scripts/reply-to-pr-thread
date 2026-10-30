@@ -36,7 +36,7 @@ jq -n --arg tid "$THREAD_ID" --rawfile b "$body_file" '
     variables: { threadId: $tid, body: $b }
   }' > "$payload_file"
 
-gh api graphql --input-file "$payload_file" > "$resp_file"
+gh api graphql --input "$payload_file" > "$resp_file"
 
 jq -e '
   if (.errors != null and (.errors | length > 0)) then error("GraphQL errors: \(.errors)")

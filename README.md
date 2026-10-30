@@ -29,10 +29,10 @@ Methodology: [outline-driven-development](https://github.com/OutlineDriven/outli
 
 ## What is this
 
-657 skills in 28 plugins. A skill is authored once, at
+304 skills in 22 plugins. A skill is authored once, at
 `plugins/<plugin>/skills/<slug>/SKILL.md`, and that path is its only home. The directory states
 which plugin owns the skill, so no registry has to answer that question. Every plugin and
-marketplace ships at one `releaseVersion`, currently 2.1.6, held in `catalog/plugins.json`.
+marketplace ships at one `releaseVersion`, currently 2.1.7, held in `catalog/plugins.json`.
 
 Each harness resolves components from fixed conventions at the plugin root, so this layout is the
 one every supported client already discovers. Nothing is copied at publish time, and nothing is
@@ -148,19 +148,19 @@ Both paths are absolute: Kimi rejects a relative plugin root.
 ## Choose your plugins
 
 Nothing here is all-or-nothing. `odin-core` and `odin-code` are the base from Install; every
-row below is what you add on top for that kind of work, and the rest of the 28 stay uninstalled.
+row below is what you add on top for that kind of work, and unselected plugins stay uninstalled.
 
 | Working on | Add |
 |---|---|
 | Everyday code changes | `odin-run`, `odin-git` |
 | Tests and verification | `odin-testing` |
 | Large refactors, audits, bounded iteration | `odin-code`, `odin-review` |
-| A specific language | `odin-python`, `odin-typescript`, `odin-native`, `odin-apple`, or `odin-formal` |
-| Web and interface work | `odin-web`, `odin-design` |
+| A specific language | `odin-native`, `odin-typescript`, or `odin-rust` |
+| Web and interface work | `odin-typescript`, `odin-design` |
 | Security review and hardening | `odin-security`, `odin-fuzzing` |
 | Research and technical writing | `odin-research`, `odin-knowledge`, `odin-writing` |
-| Product, planning, and new artifacts | `odin-planning`, `odin-product`, `odin-visual` |
-| Building agents | `odin-agent`, `odin-skills` |
+| Product, planning, and new artifacts | `odin-planning`, `odin-visual` |
+| Building agents | `odin-skills` |
 | Infrastructure and data | `odin-infra` |
 
 Each name installs with the same command:
@@ -169,7 +169,7 @@ Each name installs with the same command:
 /plugin install odin-security@odin-marketplace
 ```
 
-The largest plugins are `odin-native` at 138, `odin-run` at 46, and `odin-knowledge` at 41.
+The largest plugins are `odin-core` at 83, `odin-marketing` at 28, and `odin-run` at 20.
 Install one skill instead of a whole plugin with `gh skill install`, shown under Install above.
 
 ## Using the skills
@@ -182,18 +182,15 @@ You install plugins once and invoke skills every day. Start with the [getting-st
 |---|---|---|---|
 | odin-core | Coding | odin-knowledge | Productivity |
 | odin-planning | Productivity | odin-learn | Productivity |
-| odin-critique | Productivity | odin-people | Productivity |
-| odin-product | Productivity | odin-agent | Productivity |
 | odin-code | Coding | odin-skills | Productivity |
 | odin-review | Coding | odin-writing | Writing |
 | odin-testing | Coding | odin-visual | Design |
 | odin-git | Coding | odin-design | Design |
-| odin-release | Coding | odin-web | Coding |
 | odin-run | Coding | odin-typescript | Coding |
-| odin-infra | Infrastructure | odin-python | Coding |
-| odin-security | Security | odin-native | Coding |
-| odin-fuzzing | Security | odin-apple | Coding |
-| odin-research | Research | odin-formal | Coding |
+| odin-infra | Infrastructure | odin-native | Coding |
+| odin-security | Security | odin-rust | Coding |
+| odin-fuzzing | Security | odin-performance | Coding |
+| odin-research | Research | odin-marketing | Marketing |
 
 `catalog/plugins.json` is the identity ledger: it holds each plugin's name, description, category,
 and tags, and every manifest and registry is generated from it.

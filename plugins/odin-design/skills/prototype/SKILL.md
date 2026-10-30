@@ -5,39 +5,30 @@ description: 'Use when committing the wrong product answer would be expensive to
 
 # Prototype
 
-Anchors: David Parnas (a throwaway hides the product behind one tested question; nothing about it is load-bearing), Dieter Rams (fidelity follows the question, never habit).
+You settle one product question with something the user can see or drive, so committing to the wrong answer stops being the expensive option. A prototype here is a throwaway that hides the product behind the tested question. Nothing about it is load bearing, and fidelity follows the question, never habit. What the user decides against the artifact settles the matter; your judgment of the artifact never does.
 
-## Contract
+## Start only when a human can judge
 
-| Field | Bound contract |
-|---|---|
-| Trigger | A product question needs a runnable or viewable artifact to settle it, and the user is available to experience the result and decide. |
-| Authority | Builds a throwaway in scratch or an explicitly authorized isolated path; may touch the product tree only as a reversible throwaway overlay that is restored afterwards. Writes a short decisions note for continuity. No implementation commitment, polish pass, publication, remote, credential, paid, or destructive mutation. Never ships the prototype as the product. |
-| Side effect | A settled user decision on the tested questions, or a faithful recap when no decision transfers. |
-| Done | The user decided how the product should work or feel against a prototype that did not fake the tested dimension, or the run returned why it could not proceed. Their choice settles the matter, never the agent judgment of the artifact. |
+You need two things before building: the product question plus what judgment settles it (seeing the rendered result such as layout, density, or finish, or driving it such as flow, state model, or control response), and authorization to build plus the related plan or contract path when the result must write back. A request that names the thing to prototype counts as that authorization after scoping.
 
-## Inputs
+If no person can experience the prototype in this run (headless, pipeline, or the caller reports no human present), stop and return that this work needs a human. Do not preview or invent how it should feel.
 
-- The product question and what judgment settles it: seeing the rendered result (layout, density, finish) or driving it (flow, state model, control response). Required.
-- Authorization to build, plus the related plan or contract path when the result must write back. Required before building.
+Do not build when a cheap sketch could settle the question, when the question is already settled, when the ask is really polish on a working feature, or when it is a build decision. Those route to the owning job, and you say so.
 
-Do not build until authorized. A request that names the thing to prototype is that authorization after scoping. If no person can experience the prototype in this run (headless, pipeline, or caller reports no human present), stop and return that this skill needs a human instead of previewing or inventing how it should feel.
+## Scope the question, then build at its fidelity
 
-## Procedure
+Read only the repository surfaces the question touches. Do not scan the tree. Decide whether the question is narrow or wide, whether it is answered by seeing or by driving, and which follow up questions remain after each decision. Never fake the tested dimension: a driving question needs behavior, a seeing question needs real finish at the judged surface.
 
-1. Scope the question. Read only the repository surfaces the question touches; do not scan the tree. Decide narrow vs wide, seeing vs driving, and which follow-up questions remain after each decision. Do not fake the tested dimension: a driving question needs behavior, a seeing question needs real finish at the judged surface.
-2. Build at the fidelity the question needs. Default to an isolated web artifact whatever the product is written in; touch the existing app only when the question is density or chrome on an existing page that an isolated page would hide. When touching the tree, record every changed file and restore each one when the try ends; when restoration is not clean, name the files left modified rather than handing off a dirty tree. Never commit the overlay and never delete a kept prototype as cleanup: throwaway describes the code, not a removal request.
-3. Keep a short decisions note with the run: what was settled, the adjustments attached, and the prototype path when one survives. Point at the prototype; do not reproduce it. Include only what changes later planning. Update it only when confident a choice settled through user judgment of the artifact.
-4. Apply or recap. When the user applies and a directly related plan or contract was passed or named in-session, write the settled decisions back to that artifact only; never mint an unrelated plan. Otherwise recap from the decisions note with the choices and, when one survives, the prototype path (an undone overlay has none; say so). Then recommend the next owner by name (framing when product questions remain, planning when the session is enough to plan) without invoking it.
+Default to an isolated web artifact whatever the product is written in. Touch the existing app only when the question is about density or chrome on an existing page that an isolated page would hide. When you touch the tree, record every changed file and restore each one when the try ends. If restoration is not clean, name the files left modified rather than handing off a dirty tree. Never commit the overlay, and never delete a kept prototype as cleanup: throwaway describes the code, not a removal request.
 
-## Failure and recovery
+## Keep a short note and hand back a decision
 
-- No human present: stop with that blocker. Do not invent how it should feel.
-- Question answerable by a cheap sketch or already settled: stop and say so; do not build.
-- Request is polish of a working feature or a build decision: route to the owning job.
-- Overlay cannot be restored cleanly: report the modified files explicitly and stop.
-- User moves the goal instead of answering: stop building for the old question and hand back what was learned.
+Keep a decisions note with the run: what was settled, the adjustments attached, and the prototype path when one survives. Point at the prototype without reproducing it, and include only what changes later planning. Update it only when confident a choice settled through user judgment of the artifact.
 
-## Output
+1. When the user applies the result and a directly related plan or contract was passed or named in session, write the settled decisions back to that artifact only. Never mint an unrelated plan.
+2. Otherwise recap from the decisions note with the choices and, when one survives, the prototype path. An undone overlay has none, so say that.
+3. Recommend the next owner by name (framing when product questions remain, planning when the session is enough to plan). Do not invoke that owner yourself.
 
-Return the tested questions, the settled decisions with user adjustments, the prototype or overlay path when one survives, the decisions-note path, and the recommended next owner or the explicit blocker. Prototype evidence informs a later decision; it never counts as shipped behavior.
+If the user moves the goal instead of answering, stop building for the old question and hand back what was learned. If the overlay cannot be restored cleanly, report the modified files explicitly and stop.
+
+Return the tested questions, the settled decisions with user adjustments, the prototype or overlay path when one survives, the decisions note path, and the recommended next owner or the explicit blocker. Prototype evidence informs a later decision. It never counts as shipped behavior.
