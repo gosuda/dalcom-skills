@@ -14,6 +14,9 @@ DStack workflows for documentation, editorial prose, and copy.
 # Codex
 codex plugin marketplace add gosuda/dalcom-skills
 codex plugin add dstack-writing@dstack
+
+# Hermes Agent
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-writing --enable
 ```
 
 ### Individual (gh skill)
@@ -29,20 +32,20 @@ Cursor, Grok, and Kimi install from this same tree. The repository README gives 
 
 ## Skills
 
-Each row states when to reach for the skill. Invoke one as `/dstack-writing:<name>` in Claude Code, `$<name>` in Codex, or type `/` and pick it in Cursor.
+Each row states when to reach for the skill. Invoke one as `/dstack-writing:<name>` in Claude Code, `$<name>` in Codex, `dstack-writing:<name>` in Hermes Agent, or type `/` and pick it in Cursor.
 
 | Skill | Trigger |
 |---|---|
 | articulate | Use when the user knows what they mean but cannot express it completely or clearly. |
 | copywriting | Use when asked to write or fix product/marketing copy, landing pages, UI strings, brand voice, AI tells, an end-of-article CTA, or a hook/lede. |
-| docs-update | Use when documentation has drifted from code changes and the user asks to synchronize. |
+| docs-update | Use when documentation has drifted from code changes and the user asks to synchronize it. |
 | docs-writing | Use when asked to write, restructure, or audit documentation with Diataxis types, or to draft a feature docs page or diagram source. |
-| good-readme | Use when the user asks to create, rewrite, review, or polish an open-source README, including shop-window READMEs. |
+| good-readme | Use when the user asks to create, rewrite, review, or polish an open-source README. |
 | humaniseur-fr | Use when the user supplies French text that reads like AI output and asks to naturalize it. |
-| humanizer-korean-plain | Use when Plain English·Plain Language 원칙으로 한국어 작성·교정·검토, 쉽게 써 줘·명확하게 고쳐 줘·관료적인 표현 줄이기·쉬운 한국어/plain Korean·독자 중심 설명문·이메일·공지·README용, 의미·조건·전문용어 보존, 엄격 통제·절차는 humanizer-korean-ste 우선, 원문보존·맞춤법만 요청 시 문체 유지 |
-| humanizer-korean-ste | Use when Korean tech docs need unofficial ASD-STE controlled wording, single-step procedures, unified terms; not for plain readability (use humanizer-korean-plain), official or English STE. |
+| humanizer-korean-plain | Use when Korean prose reads as machine-generated, machine-translated, or bureaucratic and must be rewritten as plain, natural Korean without changing its meaning. |
+| humanizer-korean-ste | Use when Korean technical documents such as runbooks, procedures, manuals, or operating guides need controlled wording: one action per step, conditions before actions, unified terms, and warnings placed before risky steps. |
 | humanizer-plain-english | Use when asked to make English plain, clear, natural, and readable while keeping its meaning and voice. |
-| humanizer-simple-english-asd-ste100 | Use when asked to rewrite technical English for STE compliance, stripping ambiguity and AI-style patterns. |
+| humanizer-simple-english-asd-ste100 | Use when asked to rewrite technical English toward ASD-STE100 Simplified Technical English: short, unambiguous sentences, one instruction per step, consistent terms, and AI-style padding removed. |
 | proof | Use when asked to publish, read, comment on, suggest to, or pull a Proof collaborative markdown document. |
 | reorder | Use when asked to reorder a drifted listing under one stated principle, moving items only and rewording nothing. |
 | rewrite-clean-v0 | Use when a document or file has been edited piecemeal and reads as sediment. |

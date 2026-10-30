@@ -5,7 +5,9 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import {
   ROOT,
+  HERMES_PLUGIN_ENTRY,
   loadCatalog,
+  renderHermesPluginManifest,
   renderPluginReadme,
   renderRootReadme,
   skillRows,
@@ -24,6 +26,8 @@ const notice = readFileSync(join(ROOT, "licenses/NOTICE"), "utf8");
 for (const entry of catalog.entries) {
   wanted.set(`${entry.directory}/LICENSE`, license);
   wanted.set(`${entry.directory}/NOTICE`, notice);
+  wanted.set(`${entry.directory}/plugin.yaml`, renderHermesPluginManifest(catalog, entry));
+  wanted.set(`${entry.directory}/__init__.py`, HERMES_PLUGIN_ENTRY);
   wanted.set(
     `${entry.directory}/README.md`,
     renderPluginReadme(catalog, entry, skillRows(entry)),

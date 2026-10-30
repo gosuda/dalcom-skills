@@ -92,7 +92,7 @@
 | dimensional-analysis | dstack-code | Coding | Use when code mixes units, fixed-point precisions, scaling factors, rates, prices, shares, or conversions. |
 | do-it-now | dstack-core | Coding | Use when the user asks to finish the whole task now, clear active todos, or unblock undone implementation without deferred phases or follow-up remainders. |
 | docs-practices | dstack-core | Coding | Use when deciding whether a durable document, ADR, plan, or spec is needed, or when checking its invariant quality, scope, and naming. |
-| docs-update | dstack-writing | Writing | Use when documentation has drifted from code changes and the user asks to synchronize. |
+| docs-update | dstack-writing | Writing | Use when documentation has drifted from code changes and the user asks to synchronize it. |
 | docs-writing | dstack-writing | Writing | Use when asked to write, restructure, or audit documentation with Diataxis types, or to draft a feature docs page or diagram source. |
 | doubt-driven | dstack-core | Coding | Use when a non-trivial decision sits under uncertainty and correctness matters more than speed. |
 | drift-detect | dstack-research | Research | Use when roadmap, plans, or docs may have drifted from code, or when restarting a stalled project. |
@@ -130,7 +130,7 @@
 | git-cleanup | dstack-git | Coding | Use when the user explicitly invokes branch or worktree cleanup for a repo with accumulated local branches. |
 | github-solution-research | dstack-research | Research | Use when a bug, integration failure, dependency issue, unclear API usage, implementation blocker, or tool-capability need calls for GitHub solutions. |
 | goal-prompt-drafting | dstack-run | Coding | Use when asked to draft copy-ready /goal objectives for long-running agents. |
-| good-readme | dstack-writing | Writing | Use when the user asks to create, rewrite, review, or polish an open-source README, including shop-window READMEs. |
+| good-readme | dstack-writing | Writing | Use when the user asks to create, rewrite, review, or polish an open-source README. |
 | graph-backbone | dstack-planning | Productivity | Use when defining, revising, or gate-replanning the project structural backbone in project-root graph.yaml. |
 | grill-core | dstack-core | Coding | Use when the cause is unknown, the fault recurs as a class, or a review comment needs a root-design repair rather than a patch. |
 | ground-latest | dstack-core | Coding | Use when starting or scaffolding a codebase or service, migrating, refactoring, or picking language, framework, or dependency, or latest, LTS, or modern way. |
@@ -141,10 +141,10 @@
 | heaptrack | dstack-performance | Coding | Use when tracking heap allocations on Linux with heaptrack: allocation hotspots, peak heap, temporary allocations, leaks, or a diff of two runs via heaptrack_print. |
 | how | dstack-research | Research | Use when the user asks "how does X work" and wants an architecture walkthrough of the code path or subsystem, including its gotchas. |
 | humaniseur-fr | dstack-writing | Writing | Use when the user supplies French text that reads like AI output and asks to naturalize it. |
-| humanizer-korean-plain | dstack-writing | Writing | Use when Plain English·Plain Language 원칙으로 한국어 작성·교정·검토, 쉽게 써 줘·명확하게 고쳐 줘·관료적인 표현 줄이기·쉬운 한국어/plain Korean·독자 중심 설명문·이메일·공지·README용, 의미·조건·전문용어 보존, 엄격 통제·절차는 humanizer-korean-ste 우선, 원문보존·맞춤법만 요청 시 문체 유지 |
-| humanizer-korean-ste | dstack-writing | Writing | Use when Korean tech docs need unofficial ASD-STE controlled wording, single-step procedures, unified terms; not for plain readability (use humanizer-korean-plain), official or English STE. |
+| humanizer-korean-plain | dstack-writing | Writing | Use when Korean prose reads as machine-generated, machine-translated, or bureaucratic and must be rewritten as plain, natural Korean without changing its meaning. |
+| humanizer-korean-ste | dstack-writing | Writing | Use when Korean technical documents such as runbooks, procedures, manuals, or operating guides need controlled wording: one action per step, conditions before actions, unified terms, and warnings placed before risky steps. |
 | humanizer-plain-english | dstack-writing | Writing | Use when asked to make English plain, clear, natural, and readable while keeping its meaning and voice. |
-| humanizer-simple-english-asd-ste100 | dstack-writing | Writing | Use when asked to rewrite technical English for STE compliance, stripping ambiguity and AI-style patterns. |
+| humanizer-simple-english-asd-ste100 | dstack-writing | Writing | Use when asked to rewrite technical English toward ASD-STE100 Simplified Technical English: short, unambiguous sentences, one instruction per step, consistent terms, and AI-style padding removed. |
 | ideate-multiple-agents | dstack-planning | Productivity | Use when the user wants divergent ideas or an independently generated candidate pool grounded in the working repository. |
 | idiomatic-rust | dstack-rust | Coding | Use when writing, reviewing, or refactoring Rust code. |
 | implement-spec | dstack-run | Coding | Use when a ticket DAG from a complete specification needs parallel execution into a verified integration branch, with an optional green draft pull request or merge request on explicit approval. |

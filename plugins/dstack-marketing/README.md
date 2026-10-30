@@ -14,6 +14,9 @@ DStack workflows for marketing and viral growth, from audience research to oppor
 # Codex
 codex plugin marketplace add gosuda/dalcom-skills
 codex plugin add dstack-marketing@dstack
+
+# Hermes Agent
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-marketing --enable
 ```
 
 ### Individual (gh skill)
@@ -29,7 +32,7 @@ Cursor, Grok, and Kimi install from this same tree. The repository README gives 
 
 ## Skills
 
-Each row states when to reach for the skill. Invoke one as `/dstack-marketing:<name>` in Claude Code, `$<name>` in Codex, or type `/` and pick it in Cursor.
+Each row states when to reach for the skill. Invoke one as `/dstack-marketing:<name>` in Claude Code, `$<name>` in Codex, `dstack-marketing:<name>` in Hermes Agent, or type `/` and pick it in Cursor.
 
 | Skill | Trigger |
 |---|---|

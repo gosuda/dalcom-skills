@@ -10,7 +10,7 @@ supported client discovers them from that same layout, so nothing is copied or r
 Methodology: [dstack](https://github.com/gosuda/dstack)
 · Site: [outlinedriven.github.io](https://outlinedriven.github.io)
 
-- Five harness surfaces from one tree: Claude Code, Codex, Cursor, Grok, and Kimi
+- Six harness surfaces from one tree: Claude Code, Codex, Cursor, Grok, Kimi, and Hermes Agent
 - No package manager for the tooling; every script is dependency-free Node ESM or standard-library Python
 - Six output styles in dstack-core, each embedding the canonical doctrine byte-identically
 - Pre-commit gates that audit the whole tree on every commit, listed in `.pre-commit-config.yaml`
@@ -32,7 +32,7 @@ Methodology: [dstack](https://github.com/gosuda/dstack)
 304 skills in 22 plugins. A skill is authored once, at
 `plugins/<plugin>/skills/<slug>/SKILL.md`, and that path is its only home. The directory states
 which plugin owns the skill, so no registry has to answer that question. Every plugin and
-marketplace ships at one `releaseVersion`, currently 2.1.9, held in `catalog/plugins.json`.
+marketplace ships at one `releaseVersion`, currently 2.1.10, held in `catalog/plugins.json`.
 
 Each harness resolves components from fixed conventions at the plugin root, so this layout is the
 one every supported client already discovers. Nothing is copied at publish time, and nothing is
@@ -112,6 +112,29 @@ Add the marketplace, then `/plugin install dstack-core`. Cursor reads the
 
 # More ...
 ```
+
+### Hermes Agent
+
+Each plugin is also a native Hermes plugin. Install the modules you want straight from their
+directories; Hermes loads their skills as read-only `<plugin>:<skill>` entries, such as
+`dstack-writing:humanizer-korean-plain`.
+
+```shell
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-core --enable
+
+# Your selected plugin modules; Keep it lean, only for you.
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-code --enable
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-writing --enable
+
+# More ...
+```
+
+`hermes plugins update <plugin>` pulls a newer release. Hermes skips the `.claude-plugin/` and other
+harness directories and reads only `plugin.yaml` and `__init__.py`.
+
+Hermes scans every file at install time. Plugins whose skills quote shell or Rust syntax scan as
+`caution` and ask for one confirmation. `dstack-native` scans as `dangerous` on its security teaching
+examples and cannot be installed into Hermes; take its skills through `gh skill install` instead.
 
 ### Individual (gh skill)
 

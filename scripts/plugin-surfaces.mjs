@@ -7,6 +7,8 @@
 //   Cursor        .cursor-plugin/marketplace.json + plugins/<id>/.cursor-plugin/plugin.json
 //   Grok          .grok-plugin/marketplace.json   + plugins/<id>/.grok-plugin/plugin.json
 //   Kimi          .kimi-plugin/marketplace.json   + plugins/<id>/.kimi-plugin/plugin.json
+//   Hermes        plugins/<id>/plugin.yaml + plugins/<id>/__init__.py, installed per plugin
+//                 with `hermes plugins install <repo>/plugins/<id>`; no registry file
 //
 // Each harness resolves component locations by its own conventions, so a dotdir
 // manifest declares only what those defaults do not already resolve: Kimi needs
@@ -171,6 +173,63 @@ export function renderKimiPluginManifest(catalog, entry) {
   };
   return manifest;
 }
+
+// Hermes native plugin manifest. Hermes skips the harness dotdirs and reads a
+// root plugin.yaml; a root Agent Plugins plugin.json would instead flip Codex and
+// Cursor into the retired portable format, so the native pair is used. Every
+// scalar is a JSON string, which YAML reads as a double-quoted scalar.
+export function renderHermesPluginManifest(catalog, entry) {
+  const q = (value) => JSON.stringify(value);
+  return [
+    `name: ${q(entry.id)}`,
+    `version: ${q(catalog.releaseVersion)}`,
+    `description: ${q(entry.description)}`,
+    `author: ${q(catalog.owner.name)}`,
+    "manifest_version: 2",
+    `license: ${q(catalog.license)}`,
+    `homepage: ${q(entry.homepage)}`,
+    `tags: [${entry.tags.map(q).join(", ")}]`,
+    "",
+  ].join("\n");
+}
+
+// Hermes entry point, identical in every plugin. register() hands each
+// skills/<slug>/SKILL.md to ctx.register_skill, which namespaces it as
+// <plugin>:<slug>. The description is read from the frontmatter with the same
+// closed scalar grammar check-skill-frontmatter enforces, so the skill index
+// carries the routing trigger without importing Hermes internals.
+export const HERMES_PLUGIN_ENTRY = `import json
+from pathlib import Path
+
+
+def _scalar(raw):
+    value = raw.strip()
+    if len(value) >= 2 and value[0] == value[-1] == "'":
+        return value[1:-1].replace("''", "'")
+    if len(value) >= 2 and value[0] == value[-1] == '"':
+        return json.loads(value)
+    return value
+
+
+def _description(skill_md):
+    text = skill_md.read_text(encoding="utf-8")
+    if not text.startswith("---\\n"):
+        return ""
+    end = text.find("\\n---", 4)
+    for line in text[4:end].splitlines():
+        key, separator, raw = line.partition(":")
+        if separator and key == "description":
+            return _scalar(raw)
+    return ""
+
+
+def register(ctx):
+    skills = Path(__file__).parent / "skills"
+    for child in sorted(skills.iterdir()):
+        skill_md = child / "SKILL.md"
+        if child.is_dir() and skill_md.is_file():
+            ctx.register_skill(child.name, skill_md, _description(skill_md))
+`;
 
 export function renderClaudeMarketplace(catalog) {
   return {
@@ -353,6 +412,9 @@ export function renderPluginReadme(catalog, entry, skills) {
     `# Codex`,
     `codex plugin marketplace add gosuda/dalcom-skills`,
     `codex plugin add ${entry.id}@${catalog.marketplace_name}`,
+    "",
+    `# Hermes Agent`,
+    `hermes plugins install ${repoSlug(catalog)}/${entry.directory} --enable`,
     "```",
     "",
     "### Individual (gh skill)",
@@ -368,7 +430,7 @@ export function renderPluginReadme(catalog, entry, skills) {
     "",
     "## Skills",
     "",
-    `Each row states when to reach for the skill. Invoke one as \`/${entry.id}:<name>\` in Claude Code, \`$<name>\` in Codex, or type \`/\` and pick it in Cursor.`,
+    `Each row states when to reach for the skill. Invoke one as \`/${entry.id}:<name>\` in Claude Code, \`$<name>\` in Codex, \`${entry.id}:<name>\` in Hermes Agent, or type \`/\` and pick it in Cursor.`,
     "",
     "| Skill | Trigger |",
     "|---|---|",

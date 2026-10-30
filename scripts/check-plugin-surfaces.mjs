@@ -101,6 +101,18 @@ for (const entry of catalog.entries) {
           `${entry.id}: ${dotdir}/plugin.json must declare mcpServers "./mcp.json"`,
         );
     }
+  // Hermes reads the root plugin.yaml and imports __init__.py. A root plugin.json
+  // would be read as an Agent Plugins manifest by Codex and Cursor, which is the
+  // retired surface above, so Hermes stays on the native pair.
+  for (const file of ["plugin.yaml", "__init__.py"])
+    if (!existsSync(join(ROOT, entry.directory, file)))
+      errors.push(`${entry.id}: missing Hermes ${file}`);
+  const hermesManifest = join(ROOT, entry.directory, "plugin.yaml");
+  if (existsSync(hermesManifest)) {
+    const name = /^name: (.*)$/m.exec(readFileSync(hermesManifest, "utf8"));
+    if (!name || JSON.parse(name[1]) !== entry.id)
+      errors.push(`${entry.id}: plugin.yaml name does not match the catalog id`);
+  }
   for (const slug of skills) {
     const skillDir = join(ROOT, entry.directory, "skills", slug);
     if (!existsSync(join(skillDir, "SKILL.md")))
