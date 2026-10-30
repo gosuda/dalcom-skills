@@ -32,7 +32,7 @@ import { dirname, join, resolve, sep } from "node:path";
 import { ROOT, loadCatalog, skillRows } from "./plugin-surfaces.mjs";
 
 const DEST = ".devin/skills";
-const DEFAULT_TARGET = join(ROOT, "..", "outline-driven-development");
+const DEFAULT_TARGET = join(ROOT, "..", "dstack");
 
 function usage() {
   process.stderr.write("usage: node scripts/sync-outline-skills.mjs [--check] [--target <path>]\n");
@@ -67,7 +67,7 @@ if (!existsSync(target)) {
 
 if (!existsSync(join(target, "manifest.json")) || !existsSync(join(target, ".git"))) {
   process.stderr.write(
-    `sync-outline-skills: ${target} does not look like the outline-driven-development checkout\n`,
+    `sync-outline-skills: ${target} does not look like the dstack checkout\n`,
   );
   process.exit(2);
 }
