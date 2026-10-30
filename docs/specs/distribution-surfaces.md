@@ -228,7 +228,7 @@ A native plugin carries no `mcp.json` or output styles: Hermes reads portable MC
 
 ### Install scan
 
-`hermes plugins install` scans community sources and blocks a caution verdict. The helper scripts under `dstack-git` (subprocess calls, git commands in skill prose) produce one, so the documented commands pass `--force`; a `dangerous` verdict stays blocked regardless (Tier 1, executed locally against `dstack-git`, 2026-10-30).
+`hermes plugins install` scans community sources and blocks a caution verdict. The helper scripts under `dstack-git` (subprocess calls, git commands in skill prose) produce one, so the documented commands pass `--force`. `dstack-native` scores `dangerous` because `production-go` and `strace-ltrace` references quote traversal paths and `/etc/passwd` as teaching examples; `--force` does not override that verdict, so its documented install turns `plugins.scan_on_install` off for the one command. With that, all 22 plugins installed into a clean `HERMES_HOME` and registered 304 skills, each resolving through `skill_view` and appearing in `skills_list`, the prompt index, and the slash-command projection (Tier 1, executed locally, 2026-10-30).
 
 ## Per-skill install with gh skill
 

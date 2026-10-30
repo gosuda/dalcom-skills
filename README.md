@@ -155,7 +155,17 @@ hermes plugins install gosuda/dalcom-skills/plugins/dstack-code --enable --force
 Each plugin directory is a native Hermes plugin: `plugin.yaml` names it, and `__init__.py` registers
 every `skills/<slug>/SKILL.md` as `<plugin>:<slug>`, for example `dstack-core:askme`. Hermes scans
 community plugins on install and blocks a caution verdict, which the helper scripts in these skills
-trigger, so `--force` is required. Hermes does not load `mcp.json` or the output styles from a
+trigger, so `--force` is required. `dstack-native` gets a dangerous verdict from the path-traversal
+and `/etc/passwd` examples in its teaching references, which `--force` does not override; install it
+with the scan turned off for that one command:
+
+```shell
+hermes config set plugins.scan_on_install false
+hermes plugins install gosuda/dalcom-skills/plugins/dstack-native --enable
+hermes config set plugins.scan_on_install true
+```
+
+Hermes does not load `mcp.json` or the output styles from a
 native plugin; add the `dstack-core` MCP servers with `hermes mcp` if you want them.
 
 ## Choose your plugins
