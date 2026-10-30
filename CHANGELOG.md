@@ -5,6 +5,16 @@ All notable changes to Dalcom Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.9] - 2026-10-30
+### Changed
+- `dstack-writing` skills rewritten for structure and correctness. `humanizer-korean-plain`
+  now also removes Korean AI tone and translationese, with a new `references/ai-tells.md`
+  catalog; `humanizer-korean-ste` covers runbooks and procedures and points general
+  readability work to its sibling. `humaniseur-fr` replaces numbered patterns and fixed
+  quotas with named groups and fixes wrong French guidance; the English STE skill drops
+  unverified rule numbers; `good-readme` settles on one section order; `copywriting`
+  moves its catalogs into references.
+
 ## [2.1.8] - 2026-10-30
 ### Changed
 - The project is now Dalcom Skills, built on the DStack methodology. The marketplace

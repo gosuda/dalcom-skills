@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dstack-writing",
   "displayName": "DStack Writing",
-  "version": "2.1.8",
+  "version": "2.1.9",
   "description": "DStack workflows for documentation, editorial prose, and copy.",
   "author": {
     "name": "gosuda",
