@@ -92,6 +92,7 @@ which the checks import too, so one module defines both what is generated and wh
 | `.cursor-plugin/plugin.json` | plugin | Identity only |
 | `.grok-plugin/plugin.json` | plugin | Adds `mcpServers: "./mcp.json"` when `mcp.json` exists |
 | `.kimi-plugin/plugin.json` | plugin | Always declares `skills: "./skills"`; inlines the `mcpServers` map from `mcp.json` |
+| `plugin.yaml`, `__init__.py` | plugin | Hermes Agent manifest and entry point; `__init__.py` is identical across plugins |
 | `README.md`, `LICENSE`, `NOTICE` | plugin | README lists the skills; LICENSE and NOTICE are byte copies of the root `LICENSE` and `licenses/NOTICE` |
 | The table under `## Plugins` in the root `README.md` | tree | The only generated region of that file; the prose around it is authored |
 
@@ -190,6 +191,7 @@ this script holds the invariants no renderer can restate.
 | `.codex-plugin/plugin.json` declares no `$schema` | `must not declare $schema` |
 | `.kimi-plugin/plugin.json` declares `skills` | `must declare skills` |
 | A plugin shipping `mcp.json` declares `mcpServers: "./mcp.json"` in its Codex and Grok manifests | `must declare mcpServers "./mcp.json"` |
+| Every plugin carries the Hermes `plugin.yaml` and `__init__.py`, and `plugin.yaml` names the catalog `id` | `<id>: missing Hermes <file>` or `plugin.yaml name does not match the catalog id` |
 | Every skill directory holds `SKILL.md` and no nested `SKILL.md` one level down | `missing SKILL.md` or `nested SKILL.md at <dir>/ never loads` |
 | All five registries exist, list exactly as many plugins as the catalog, and every source starts with `./plugins/` (`../plugins/` for Kimi) | `missing registry`, `N plugins, catalog has M`, or `source is not a repository path` |
 

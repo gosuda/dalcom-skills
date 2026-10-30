@@ -4,15 +4,16 @@ Verified 2026-09-01 against vendor specifications, vendor source code, vendor do
 
 ## Purpose
 
-This repository dropped npm distribution. It now ships one skill tree through exactly five harness surfaces, plus per-skill install:
+This repository dropped npm distribution. It now ships one skill tree through exactly six harness surfaces, plus per-skill install:
 
 1. The Claude Code plugin marketplace
 2. The OpenAI Codex plugin marketplace
 3. The Cursor plugin marketplace
 4. The Grok plugin marketplace
 5. The Kimi Code plugin marketplace
+6. Hermes Agent native plugins, installed per plugin directory
 
-The Agent Plugins standard surface was retired on 2026-09-03; no root `plugins/<id>/plugin.json` ships anymore. This document records what each surface requires, the repository layout that satisfies all five at once, and the toolchain versions the gates run on.
+The Agent Plugins standard surface was retired on 2026-09-03; no root `plugins/<id>/plugin.json` ships anymore. This document records what each surface requires, the repository layout that satisfies all six at once, and the toolchain versions the gates run on.
 
 ## How to read the evidence
 
@@ -260,9 +261,26 @@ The tree carries no blanket per-skill `license` frontmatter field, and this is d
 
 The 543 license warnings from that run are advisory and do not fail the run.
 
+## Hermes Agent plugins
+
+Hermes discovers a plugin directory by a root `plugin.yaml` and imports its `__init__.py`; `register(ctx)` then calls `ctx.register_skill(name, path, description)` for each `skills/<slug>/SKILL.md`. Registered skills are read-only, namespaced `<plugin>:<slug>`, listed in the skill index while the plugin is enabled, and never copied into `~/.hermes/skills/` (Tier 1, source: NousResearch/hermes-agent `hermes_cli/plugins_content.py` and `hermes_cli/plugins_discovery.py` at `6337f1f22fe282636165c24568fa6da018653d30`, verified 2026-10-30).
+
+Hermes also reads a root Agent Plugins `plugin.json`, but this tree does not ship one. Codex resolves a root `plugin.json` with an Agent Plugins `$schema` before any dotdir manifest, and Cursor treats it as a second format, so a root manifest would bring back the surface retired on 2026-09-03. Hermes discovery skips `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, and `.kimi-plugin/` (`_FOREIGN_HARNESS_MANIFEST_DIRS` in `hermes_cli/plugins_discovery.py`), so the native pair coexists with the other five surfaces (Tier 1, same source, verified 2026-10-30).
+
+There is no registry file. Each plugin installs from its subdirectory with `hermes plugins install gosuda/dalcom-skills/plugins/<id> --enable`, and the installer clones only that folder. Plugins are opt-in: discovery lists them, and nothing loads until the plugin is in `plugins.enabled` (Tier 2, source: https://hermes-agent.nousresearch.com/docs/user-guide/features/plugins, verified 2026-10-30).
+
+`plugin.yaml` carries `name`, `version`, `description`, `author`, `manifest_version: 2`, `license`, `homepage`, and `tags`, each scalar written as a JSON string so YAML reads it double-quoted. `__init__.py` is byte-identical across plugins and imports only `json` and `pathlib`; it reads each description with the closed scalar grammar that `check-skill-frontmatter.py` enforces. The `mcp.json` in `dstack-core` is not registered for Hermes: the native plugin API has no MCP registration, and the file uses the Claude Code shape rather than the portable one.
+
+Install proof, run 2026-10-30 against hermes-agent `6337f1f2` with a throwaway `HERMES_HOME` (Tier 1, verified):
+
+- With all 22 plugins enabled, discovery registered 304 skills under 22 namespaces, each with a non-empty description. With none enabled, it registered zero.
+- `hermes plugins install file://<clone>#plugins/dstack-writing --enable` cloned the subdirectory, ran admission, and enabled the plugin. `skill_view("dstack-writing:humanizer-korean-plain")` then returned the skill with its sibling banner and its `references/` files.
+- The install-time security scan (`tools/plugin_guard.py`) reads every Markdown file as if it were executable. Twelve plugins scan `safe`. Nine scan `caution`, mostly on backtick spans that start with `!`, such as Rust macros, which match its `inline_shell_exec` pattern; a caution plugin installs after one confirmation, or with `--force`.
+- `dstack-native` scans `dangerous` and cannot be installed into Hermes. Its findings are teaching examples: `../../etc/passwd` path-traversal cases, `strace` output that opens `/etc/passwd`, `sudo ldconfig`, and Go configuration tables. `--force` does not override a dangerous verdict. The examples stay, because rewriting correct security material to pass a pattern scanner would remove what the skills teach; use `dstack-native` from the other five surfaces or `gh skill install` until the scanner treats Markdown examples as inert.
+
 ## Repository layout
 
-The current layout satisfies all five surfaces from one tree (Tier 1, source: repository files; shape verified 2026-09-03, counts per `catalog/plugins.json` at `releaseVersion` 2.1.7):
+The current layout satisfies all six surfaces from one tree (Tier 1, source: repository files; shape verified 2026-09-03, counts per `catalog/plugins.json` at `releaseVersion` 2.1.7):
 
 ```
 .
@@ -278,6 +296,8 @@ The current layout satisfies all five surfaces from one tree (Tier 1, source: re
 │       ├── .cursor-plugin/plugin.json   # Cursor manifest, identity only
 │       ├── .grok-plugin/plugin.json     # Grok manifest
 │       ├── .kimi-plugin/plugin.json     # Kimi manifest, skills declared
+│       ├── plugin.yaml                  # Hermes Agent manifest
+│       ├── __init__.py                  # Hermes Agent register(), registers skills/
 │       ├── mcp.json                     # optional; only dstack-core ships one
 │       └── skills/<slug>/SKILL.md       # 304 skills total; see the generated docs/specs/skill-index.md
 ├── catalog/                             # registry and membership data
@@ -293,6 +313,7 @@ Why this shape works for each surface:
 - Cursor reads `.cursor-plugin/marketplace.json` with the same relative sources, and would walk each `skills/` root recursively if nested skills ever appear.
 - Grok reads `.grok-plugin/marketplace.json` with `{"type": "local", "path": "./plugins/<module>"}` sources resolving against the marketplace root.
 - Kimi reads `.kimi-plugin/marketplace.json` from a local clone; each `../plugins/<module>` source resolves against the registry's own directory.
+- Hermes Agent installs each `plugins/<module>` directory on its own, reads `plugin.yaml`, and imports `__init__.py`, which registers every `skills/<slug>/SKILL.md` as `<module>:<slug>`.
 - `gh skill` discovers the fourth convention `plugins/{scope}/skills/*/SKILL.md`, so per-skill install works without any manifest.
 
 ## Toolchain set

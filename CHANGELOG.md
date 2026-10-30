@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   unfavorable terms stated up front) and a Korean machine-style catalog; the STE skill
   adapts the STE writing rules to Korean. Both ban the stock contrast frame, slash pairing,
   and both-sides hedging. Their rationale now lives in `licenses/NOTICE`.
+### Added
+- Hermes Agent support: every plugin also ships a native Hermes `plugin.yaml` and a shared
+  `__init__.py` that registers its skills as `<plugin>:<skill>`. Install one module with
+  `hermes plugins install gosuda/dalcom-skills/plugins/<id> --enable`.
 
 ## [2.1.9] - 2026-10-30
 ### Changed

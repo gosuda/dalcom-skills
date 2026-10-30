@@ -1,0 +1,8 @@
+name: "dstack-infra"
+version: "2.1.10"
+description: "DStack workflows for CI, deployment, observability, cost, and infrastructure tooling."
+author: "gosuda"
+manifest_version: 2
+license: "SEE LICENSE IN LICENSE"
+homepage: "https://github.com/gosuda/dalcom-skills"
+tags: ["dstack", "dalcom", "agent-skills", "infra"]
