@@ -5,6 +5,13 @@ All notable changes to Dalcom Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.11] - 2026-10-30
+### Security
+- The brainstorm visual probe no longer writes the newest screen's file name into the
+  served page or `/version`. Both now carry a version built only from the file's device,
+  inode, and modification time, so a file name that holds markup cannot inject script
+  (CodeQL `js/stored-xss`).
+
 ## [2.1.10] - 2026-10-30
 ### Changed
 - `dstack-writing` skills rewritten for structure and correctness. `humaniseur-fr` replaces

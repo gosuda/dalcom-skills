@@ -1,5 +1,5 @@
 name: "dstack-visual"
-version: "2.1.10"
+version: "2.1.11"
 description: "DStack workflows for diagrams, decks, canvases, and visual explainers."
 author: "gosuda"
 manifest_version: 2

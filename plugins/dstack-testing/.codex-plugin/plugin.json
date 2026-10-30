@@ -1,6 +1,6 @@
 {
   "name": "dstack-testing",
-  "version": "2.1.10",
+  "version": "2.1.11",
   "description": "DStack workflows for tests, properties, mutation, and behavioral verification.",
   "keywords": [
     "dstack",

@@ -32,7 +32,7 @@ Methodology: [dstack](https://github.com/gosuda/dstack)
 304 skills in 22 plugins. A skill is authored once, at
 `plugins/<plugin>/skills/<slug>/SKILL.md`, and that path is its only home. The directory states
 which plugin owns the skill, so no registry has to answer that question. Every plugin and
-marketplace ships at one `releaseVersion`, currently 2.1.10, held in `catalog/plugins.json`.
+marketplace ships at one `releaseVersion`, currently 2.1.11, held in `catalog/plugins.json`.
 
 Each harness resolves components from fixed conventions at the plugin root, so this layout is the
 one every supported client already discovers. Nothing is copied at publish time, and nothing is
