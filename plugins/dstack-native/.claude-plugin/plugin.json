@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dstack-native",
   "displayName": "DStack Native",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "DStack workflows for native systems, toolchains, and performance.",
   "author": {
     "name": "gosuda",

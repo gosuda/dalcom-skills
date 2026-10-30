@@ -5,15 +5,21 @@ All notable changes to Dalcom Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.10] - 2026-10-30
+### Changed
+- `dstack-writing` skills rewritten for structure and correctness. `humaniseur-fr` replaces
+  numbered patterns and fixed quotas with named groups and fixes wrong French guidance; the
+  English STE skill drops unverified rule numbers; `good-readme` settles on one section
+  order; `copywriting` moves its catalogs into references.
+- `humanizer-korean-plain` and `humanizer-korean-ste` are written in the formal polite
+  register with English-only descriptions. The plain skill adds plain-language rules
+  (everyday words, no hiding euphemisms, legal register kept out of explanations,
+  unfavorable terms stated up front) and a Korean machine-style catalog; the STE skill
+  adapts the STE writing rules to Korean. Both ban the stock contrast frame, slash pairing,
+  and both-sides hedging. Their rationale now lives in `licenses/NOTICE`.
+
 ## [2.1.9] - 2026-10-30
 ### Changed
-- `dstack-writing` skills rewritten for structure and correctness. `humanizer-korean-plain`
-  now also removes Korean AI tone and translationese, with a new `references/ai-tells.md`
-  catalog; `humanizer-korean-ste` covers runbooks and procedures and points general
-  readability work to its sibling. `humaniseur-fr` replaces numbered patterns and fixed
-  quotas with named groups and fixes wrong French guidance; the English STE skill drops
-  unverified rule numbers; `good-readme` settles on one section order; `copywriting`
-  moves its catalogs into references.
 - `sync-outline-skills.mjs` now defaults to the sibling checkout `../dstack`, the renamed
   methodology repository. Pass `--target` for any other location.
 - The brainstorm visual probe reads `DSTACK_VISUAL_PROBE_IDLE_TIMEOUT_MS` and
@@ -350,154 +356,11 @@ gh skill install OutlineDriven/odin-claude-plugin plugins/<new-id>/skills/<slug>
 - Duplicate root copies of `implementer-prompt.md` and `task-reviewer-prompt.md`
   under `subagent-driven`; only the `references/` copies were cited.
 - `setup-benny`: folded into `setup`; the archive-install verification now lives there.
-- `setup-pstack`: folded into `setup`; the role-to-model mapping now lives there.
-- `poteto-mode`: folded into `figure-it-out`; the 23-playbook contracts now live there.
-- `xcode-project-sync`: folded into `ios-build-fix` as the XcodeGen regeneration mode.
-- `ios-device-qa`: removed; the vendor daemon has no public equivalent.
-- `factory-mcp-bootstrap`: removed; the Warp Factory endpoint is vendor-internal,
-  and `mcp-builder` covers MCP server authoring.
+- `setup-pstack`: folded into `setup`; the role-to-model mapping now lives 
 
-- Folded 62 skills into 45 survivors (605 to 543 skills, 10.2 percent). Each survivor
-  absorbs its retired members' unique steps as inputs or named modes; a retired
-  slug that names a mode of its survivor keeps that name in the survivor's `mode`
-  input. Retired skills, slug to survivor:
+... [OUTPUT TRUNCATED - 7,306 chars omitted out of 57,234 total] ...
 
-  | Retired | Survivor |
-  |---|---|
-  | `aflpp` | `libfuzzer` |
-  | `batch-ask-me` | `askme` |
-  | `burp-search-command` | `burpsuite-project-parser` |
-  | `ci-sweeper` | `ci-fix` |
-  | `clarify` | `askme` |
-  | `classify-ci-failure` | `ci-fix` |
-  | `codebase-design` | `architect` |
-  | `commit-economy` | `commit` |
-  | `competitor-changelog` | `competitor-feature-research` |
-  | `constant-time-testing` | `constant-time-analysis` |
-  | `copywriting-cta` | `copywriting` |
-  | `copywriting-hooks` | `copywriting` |
-  | `copywriting-prose-creator` | `copywriting-tone-of-voice-creator` |
-  | `design-consultation` | `design` |
-  | `differential-security-review` | `security-review` |
-  | `engineering-blog-writing` | `technical-article-writer` |
-  | `framing-divergence-fanout` | `prism` |
-  | `get-pr-comments` | `resolve-pr-feedback` |
-  | `handoff-prompt` | `handoff` |
-  | `ideate` | `brainstorm` |
-  | `intent-proposal` | `askme` |
-  | `interview-me` | `askme` |
-  | `isolate-work-in-worktree` | `worktree` |
-  | `isolate-workspace-gate` | `worktree` |
-  | `plan-review-tune` | `plan-review` |
-  | `planning` | `plan` |
-  | `planning-and-task-breakdown` | `plan` |
-  | `port-static-analysis-rule` | `semgrep-rule-authoring` |
-  | `pr-link-issue` | `create-pull-request` |
-  | `pr-review-canvas-html` | `pr-review-canvas` |
-  | `property-test-failure-triage` | `property-test-authoring` |
-  | `property-test-review` | `property-test-authoring` |
-  | `property-testing-fit-assessment` | `property-test-authoring` |
-  | `prototype-logic` | `prototype` |
-  | `publish-release-pr` | `release-gate` |
-  | `rationale-by-source` | `why` |
-  | `render-excalidraw-diagram` | `visual-argument-diagram` |
-  | `respond-to-pr-comments-in-blocklist` | `resolve-pr-feedback` |
-  | `review-reception-protocol` | `resolve` |
-  | `shape` | `plan` |
-  | `sharp-edges-analyzer` | `sharp-edges` |
-  | `skill-benchmark-gate` | `skill-benchmark` |
-  | `skill-improver` | `agent-surface-forge` |
-  | `skill-progressive-disclosure-design` | `writing-for-agents` |
-  | `smart-contract-code-maturity-assessor` | `smart-contract-guidelines-advisor` |
-  | `trailmark-summary` | `trailmark-structural` |
-  | `validation-self-audit` | `evaluation-leakage-audit` |
-  | `variant-neighborhood-seeding` | `variant-hunt` |
-  | `visual-brainstorm-companion` | `brainstorm` |
-  | `visual-fact-check` | `verify-both-ways` |
-  | `visual-plan` | `plan` |
-  | `visual-project-recap` | `catchup` |
-  | `visual-render-tool` | `visual-diagram` |
-  | `visual-slides` | `presentation-creator` |
-  | `visualise-chart` | `visualise-widget` |
-  | `visualise-explainer` | `visualise-widget` |
-  | `watch-until` | `watch-for` |
-  | `what-did-i-get-done` | `weekly-review` |
-  | `write-pr-description` | `create-pull-request` |
-  | `write-prd` | `write-product-spec` |
-  | `write-tech-spec` | `write-product-spec` |
-  | `writing-skills` | `writing-for-agents` |
-
-### Migration
-
-Retired id to successor; the count is how many of the retired plugin's skills
-went to the named successor.
-
-| Retired | Successor | Skills |
-|---|---|---|
-| `odin-bigquery` | `odin-infra` | 2 of 2 |
-| `odin-code-advanced` | `odin-code` | 17 of 50; the rest to `odin-testing` (17), `odin-review` (5), `odin-git` (2), `odin-security` (2), `odin-knowledge` (2), `odin-skills` (2), `odin-planning` (1), `odin-infra` (1), `odin-design` (1) |
-| `odin-create` | `odin-writing` | 15 of 45; the rest to `odin-visual` (15), `odin-planning` (10), `odin-design` (2), `odin-critique` (1), `odin-product` (1), `odin-release` (1) |
-| `odin-create-advanced` | `odin-visual` | 10 of 22; the rest to `odin-planning` (6), `odin-writing` (2), `odin-critique` (1), `odin-product` (1), `odin-code` (1), `odin-learn` (1) |
-| `odin-design-advanced` | `odin-design` | 4 of 4 |
-| `odin-loop` | `odin-design` | 4 of 21; the rest to `odin-review` (3), `odin-testing` (3), `odin-infra` (2), `odin-product` (1), `odin-code` (1), `odin-git` (1), `odin-run` (1), `odin-research` (1), `odin-knowledge` (1), `odin-agent` (1), `odin-skills` (1), `odin-web` (1) |
-| `odin-prometheus` | `odin-infra` | 1 of 1 |
-| `odin-research-advanced` | `odin-critique` | 6 of 13; the rest to `odin-research` (4), `odin-product` (2), `odin-review` (1) |
-| `odin-run-advanced` | `odin-run` | 19 of 21; the rest to `odin-release` (2) |
-| `odin-security-advanced` | `odin-security` | 27 of 39; the rest to `odin-fuzzing` (12) |
-| `odin-terraform` | `odin-infra` | 1 of 1 |
-| `odin-writing-advanced` | `odin-writing` | 6 of 6 |
-
-To find a moved skill's new plugin, look up its slug in `docs/specs/skill-index.md`.
-Reinstall a single skill from its new path:
-
-```shell
-gh skill install OutlineDriven/odin-claude-plugin plugins/<new-id>/skills/<slug> \
-  --agent claude-code --scope user
-```
-
-## [2.0.4] - 2026-09-03
-
-### Fixed
-
-- `resolve-pr-feedback`: the entry-point document named five dispositions where
-  the rubric, both mode files, and the fixer prompt name six. It called the fix
-  verdict `fix` where every other file calls it `fixed`, and omitted
-  `fixed-differently`, so an agent reading only `SKILL.md` emitted a verdict the
-  fixer prompt does not accept and had no verdict for the better-repair case the
-  fixer is told to take. The four drifted sites now cite the rubric and carry
-  its six names.
-
-## [2.0.3] - 2026-09-03
-
-### Added
-
-- `gate-and-merge` references: `feedback-sweep.md` carries the sweep procedure
-  and the six verdict names, taken from the `resolve-pr-feedback` rubric rather
-  than coined a second time; `reviewer-subagent.md` carries the subagent
-  assignment and the six diff classes; `gotchas.md` carries the evidence only a
-  failing branch reaches, for the listing 502, `mergeStateStatus`, and the
-  conflict path.
-
-### Changed
-
-- `gate-and-merge`: the one-axis severity table becomes two axes and four
-  terminals. Direction decides `close`, repair bound decides `repair`, `hold`,
-  or `merge`. `minor` had welded harmless to locally fixable, so a reachable
-  defect with a bounded repair was held with a comment instead of fixed and
-  merged. The bound is now three conditions rather than a `--name-only` file
-  allowlist.
-- `gate-and-merge`: `reviewDecision: "CHANGES_REQUESTED"` routes to the new
-  review-feedback gate instead of terminating, which had made a feedback sweep
-  unreachable. The reading gates run in a fresh-context subagent that never
-  sees the merge decision, gate ordinals are gone, and the checks gate runs
-  last against the head that will actually merge.
-
-## [2.0.2] - 2026-09-03
-
-### Added
-
-- `prompt-optimizer` audit mode: finds dated instructions in prompts, skills,
-  output styles, and tool descriptions; returns a confidence-ordered report and
+s, and tool descriptions; returns a confidence-ordered report and
   a proposed diff carrying only high- and medium-confidence hunks. Pattern
   groups and keep list in `references/audit-patterns.md`; per-vendor guide
   index in `references/prompt-guides.md`.

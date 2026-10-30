@@ -1,6 +1,6 @@
 {
   "name": "dstack-git",
-  "version": "2.1.9",
+  "version": "2.1.10",
   "description": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
   "author": {
     "name": "gosuda",
