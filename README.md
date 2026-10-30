@@ -7,7 +7,7 @@ engineering, surgical editing, and workflow automation, published as installable
 you a drop-in skill set with five discipline layers. Skills are authored once in-tree, and every
 supported client discovers them from that same layout, so nothing is copied or republished.
 
-Methodology: [outline-driven-development](https://github.com/OutlineDriven/outline-driven-development)
+Methodology: [dstack](https://github.com/gosuda/dstack)
 · Site: [outlinedriven.github.io](https://outlinedriven.github.io)
 
 - Five harness surfaces from one tree: Claude Code, Codex, Cursor, Grok, and Kimi

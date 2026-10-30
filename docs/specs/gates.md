@@ -132,7 +132,7 @@ being handed every staged path.
 ### sync-outline-skills.mjs
 
 Mirrors every skill into `.devin/skills/<slug>/` in the outline repository, the project-scope path
-Devin reads. The default target is the sibling checkout `../outline-driven-development`; pass
+Devin reads. The default target is the sibling checkout `../dstack`; pass
 `--target <path>` for a clone elsewhere.
 
 The mirror carries exactly the files `git ls-files` tracks under each skill directory, including the
