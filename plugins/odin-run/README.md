@@ -2,7 +2,7 @@
 
 ODIN workflows for executing plans, orchestrating subagents, and bounded autonomous loops.
 
-27 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
+20 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -35,19 +35,14 @@ Each row states when to reach for the skill. Invoke one as `/odin-run:<name>` in
 |---|---|
 | append-run-log | Use when a completed agent run must be recorded as durable, queryable evidence. |
 | artifact-arena | Use when asked to run /artifact-arena to generate and judge competing artifact implementations. |
-| autopilot | Use when a human has an approved delivery plan and wants the full chain run under phase gates. |
-| autoplan-and-autopilot | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present for approval, and execute under verified phase gates. |
-| autowatch | Use when the user explicitly asks for autonomous end-to-end work from request to open pull request with CI watched to decided. |
 | cybernetic-loop | Use when the caller supplies a falsifiable out-of-happy-path invariant and a finite budget. |
 | diagnose-loop-health | Use when a configured loop misbehaves, produces unexpected results, or its setup soundness is questioned. |
 | diamond-task | Use when one issue or PR is too large for a worker and partitions into disjoint write sets. |
 | feedback-sweep | Use when asked to /feedback-sweep [setup\|reconfigure] [mode:non-interactive]. |
 | figure-it-out | Use when non-trivial work should run a matched playbook to verified real-surface completion, or a bespoke workflow when none fits. |
-| gate-proposed-change | Use when asked to evaluate a proposed commit, merge, or auto-merge against a gate config. |
 | goal-prompt-drafting | Use when asked to draft copy-ready /goal objectives for long-running agents. |
 | guardrail-carve-run | Use when guardrail-adjacent material (stealth, scraping, privacy, IP, policy, security) or mixed reversible/irreversible, sensitive work, or the user says "autobahn this". |
-| implement-spec | Use when a ticket DAG from a complete specification needs parallel execution into a verified integration branch, with an optional green draft pull request on explicit approval. |
-| llm-self-loop | Use when a button click, dashboard check, or human verdict sits inside an iteration loop and needs an autonomous gate. |
+| implement-spec | Use when a ticket DAG from a complete specification needs parallel execution into a verified integration branch, with an optional green draft pull request or merge request on explicit approval. |
 | orchestration-patterns | Use when work decomposes across subagents or role panels and needs coupling-based orchestration. |
 | partition-scopes-to-subagents | Use when asked to partition non-overlapping scopes across subagents and drive each to completion. |
 | schedule-dependency-waves | Use when work units carrying declared dependencies must be ordered into execution waves before any dispatch, including detecting a dependency cycle. |
@@ -58,8 +53,6 @@ Each row states when to reach for the skill. Invoke one as `/odin-run:<name>` in
 | watch-for-harness-mode | Use when a proven watch pattern should become a reusable harness artifact with configurable inputs. |
 | watch-for-structured | Use when the user wants to classify a surface state and page an on-call API when triggered. |
 | wizard | Use when a human must perform steps only they can, such as provisioning infrastructure, entering credentials or CI secrets, walking an unfamiliar third-party dashboard, or running a one-off migration or cutover. |
-| work | Use when implementing from a plan, spec, clear build request, or settled ticket, orchestrated or standalone. |
-| workflows-driven | Use when work decomposes across subagents or phases: audits, migrations, research sweeps, or scale one context cannot hold. |
 
 ## Workflows
 

@@ -1,3 +1,0 @@
-interface:
-  display_name: "Write Product Spec"
-  short_description: "Use when a user asks for a product spec with invariants, a tech spec, or a PRD."

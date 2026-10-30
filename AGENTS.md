@@ -38,7 +38,7 @@ Author each skill once at `plugins/<plugin>/skills/<slug>/SKILL.md`; its directo
 
 Each harness reads the immediate children of `skills/`, so keep every skill at `skills/<slug>/`; Cursor additionally walks deeper levels, which would load a nested skill there alone and break cross-harness parity. [Tony Hoare]
 
-Use `retaxonomize-plugins` for batch skill moves or plugin creation, merger, or retirement. [Tony Hoare]
+For batch moves or plugin creation, merger, or retirement, prove that every skill has one owner and every retired plugin contains no remaining authored files; update the catalog and regenerate all distribution surfaces together. [Tony Hoare]
 
 Promote reusable lessons into the existing owning skill first; add a skill only for a distinct job that warrants a deep procedure. [J.R.R. Tolkien]
 
@@ -127,6 +127,12 @@ Do not follow cached agents-md advice that weakens an explicit user absolute; th
 Write no explanatory code comments and keep no commented-out code; remove commented-out code when found. [J.R.R. Tolkien]
 
 Carry intent in names, types, and control flow so the code reads without commentary. [J.R.R. Tolkien]
+
+Keep the narrow compiler/lint/invariant exception: minimum `// SAFETY:` comments where `undocumented_unsafe_blocks` is denied, plus necessary rustdoc and module invariants, load-bearing clause identifiers, evidence rows, and measured numbers. [Tony Hoare]
+
+Claim no supplied count as a measured outcome; the meaning and proof floor outranks any reduction percentage. [Tony Hoare]
+
+Weaken no existing lint and invent no new lint requirement. [Tony Hoare]
 
 ## Test strength
 

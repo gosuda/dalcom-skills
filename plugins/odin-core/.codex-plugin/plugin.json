@@ -1,7 +1,7 @@
 {
   "name": "odin-core",
   "version": "2.1.7",
-  "description": "Core ODIN gates every session runs: intent, scope, verification, and hand-off checks.",
+  "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
   "keywords": [
     "odin",
     "outlinedriven",
@@ -15,7 +15,7 @@
   "mcpServers": "./mcp.json",
   "interface": {
     "displayName": "ODIN Core",
-    "shortDescription": "Core ODIN gates every session runs: intent, scope, verification, and hand-off checks.",
+    "shortDescription": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
     "category": "Coding"
   }
 }

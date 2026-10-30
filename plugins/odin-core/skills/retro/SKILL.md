@@ -3,76 +3,86 @@ name: retro
 description: 'Use when a finished session, period, milestone, or cycle needs an evidence-backed look-back, or an existing system needs its unexplained rationale recovered. Not for saving learnings into docs: use compound or autolearn.'
 ---
 
-# Retro
+# Look back with evidence
 
-## Contract
+A retro explains finished work: what helped, what hurt, and what to keep. It never saves learnings itself. Findings that deserve to live on become pointers to compound or autolearn, which own capture. It never writes docs/solutions/, CONCEPTS.md, or rationale topic files.
 
-| Field | Bound contract |
+This skill is read-only, except for one file write and only when the user explicitly asks for a file report. No version control, credential, paid, published, deployed, or remote mutation follows from running it. If the user wants the report as a file, write it to the path they name. When they ask for a file but name no path, use `reports/retro-<mode>-<slug>.md`. Otherwise the report stays in chat.
+
+## Run one mode at a time
+
+Pick exactly one mode from the request and stay inside it. A request that names no mode gets one clarifying question covering the five modes and what each needs, not five reports.
+
+| Mode | What it examines | What you need before starting |
+|---|---|---|
+| environment | A finished session, for agent-environment friction | The session transcript or state record, with observable agent-environment interaction in it |
+| engineering | A named period, from repository and tracker telemetry | The period resolved to an explicit start and end date |
+| learning | A milestone, from progress evidence | The milestone definition and at least one progress artifact such as exercises, notes, project artifacts, or session records |
+| next-cycle | A finished cycle, distilled into lessons, anti-patterns, gates, and a decision | The cycle objective and the final artifact |
+| rationale | An existing system, for unexplained why knowledge | The target path and a fixed pass scope: the whole system or one named subsystem, never widened mid-pass |
+
+How each mode gathers evidence, which sources outrank which, and how findings are prioritized lives in `references/mode-evidence.md`. Follow it for the routed mode and ignore the other four.
+
+## Gather only what the mode needs
+
+Do not start gathering until the mode and its required scope are settled. Missing required scope stops the run before any finding is drafted, and nothing is written. Confirm you are read-only unless a file report was requested.
+
+Cite every source you consult and record every unavailable source as a gap with its reason. Never infer an environment, invent telemetry, or treat code as proof of motive.
+
+The shared evidence rules apply to every mode. Each finding carries a source, a standing, and a severity.
+
+| Standing | Meaning |
 |---|---|
-| Trigger | User asks for a look-back on a finished session, period, milestone, or cycle, or for recovery of rationale an existing system cannot explain. |
-| Authority | Read-only, except one file write when the user explicitly asks for a file report; rollback is deleting that file. No VCS, credential, paid, published, deployed, or remote mutation. Never writes docs/solutions/, CONCEPTS.md, or rationale topic files; capture belongs to compound and autolearn. |
-| Side effect | Chat report; optionally one report file when the user explicitly asks for a file report: to the user-named path, or to the default reports/retro-<mode>-<slug>.md when no path is named. |
-| Done | Every finding cites traceable evidence with an honest standing; recommendations are ranked; unavailable sources and unverified items are named as gaps, never filled by invention. |
+| confirmed | The evidence states it |
+| inferred | Reasonably derived and labeled as such |
+| unverified | No traceable support; downgraded priority and lives under Gaps |
 
-## Principles
+| Severity | Meaning |
+|---|---|
+| high | Blocks progress or understanding of critical behavior |
+| medium | Degrades efficiency or correctness |
+| low | Minor friction |
 
-- Less but better: one mode per run, merged findings, no padding. A recommendation stays only if a reader can act on it.
-- Do not fool yourself: observation stays separate from inference, unknowns are recorded as unknowns, and every citation must survive a reader who checks it.
+Rank by severity first, evidence strength second. Merge duplicates instead of listing near copies. Findings with no traceable evidence are dropped, or kept under Gaps as unverified. No numeric scores or invented metrics.
 
-## Modes
+## Turn specifics into patterns before recommending
 
-One run uses exactly one mode. Never run several modes as a routine; a request naming no mode gets one clarifying question, not five reports.
+Cluster individual complaints and incidents upward into the shared pattern. The pattern becomes the finding and the specifics stay as evidence. A recommendation that fixes only the reported case is rework waiting to happen, so escalate it to the class or drop it. Each surviving recommendation names the concrete change, the cost or friction it removes, and the evidence behind it, ordered by severity then evidence strength.
 
-- environment: a completed session assessed for agent-environment friction. Needs the session transcript or state record.
-- engineering: a named period assessed from repository and tracker telemetry. Needs the period, resolved to explicit start and end dates.
-- learning: a milestone assessed from progress evidence. Needs the milestone definition and at least one progress artifact.
-- next-cycle: a finished cycle distilled into lessons, anti-patterns, gates, and a keep, iterate, or restart decision. Needs the cycle objective and the final artifact.
-- rationale: an existing system assessed for unexplained why-knowledge. Needs the target path and a fixed pass scope (the whole system or one named subsystem).
+Each mode then gets its own verdict, built from the pattern findings above.
 
-Mode evidence paths, source precedence, and prioritization live in references/mode-evidence.md.
+### Environment verdict
 
-## Inputs
+The ranked friction candidates are the verdict; no separate breakdown is needed. When no friction is observed, say so plainly with zero candidates rather than inventing any.
 
-- Scope (required): the session artifact, period, milestone, cycle objective plus final artifact, or target path plus fixed pass scope, per the mode.
-- Evidence (per mode): telemetry, artifacts, QA output, complaints, diffs, transcripts, planning notes, or for rationale: history, tracker threads, existing docs, and maintainer statements. Each consulted source is cited; each unavailable source is recorded as a gap.
-- Report path (optional): where to write the file report when asked. When the user asks for a file report without naming a path, use the Contract default. Without a file request, the report stays in chat.
+### Engineering verdict
 
-## Procedure
+Name team or contributor breakdowns (commits, PRs, review participation, issue resolution, CI pass or fail rate) with each line carrying its source. The local repository is primary for commits, pull requests, and CI runs, connected trackers cover issues and tickets, and repository review logs outrank tracker exported review data. A secondary source covering the same activity is cited as corroboration only. Habits carry evidence citations and inferences are labeled as inferences, and every unreachable source becomes a named gap with its reason while each finding it would have supported stays unevidenced.
 
-1. Route exactly one mode from the request. Ambiguous scope gets one question naming the five modes and what each needs; do not start gathering until the mode is settled. Done when: one mode is routed with its required scope present, or the run stops to ask.
-2. Confirm authority: read-only unless the user asked for a file report. Done when: no mutation occurs without an explicit file request.
-3. Gather only the routed mode's evidence per references/mode-evidence.md. Missing required scope stops the run before any finding is drafted. Unavailable optional sources become named gaps. Never infer an environment, invent telemetry, or treat code as proof of motive. Done when: every available source is gathered or the run stops for missing scope, with gaps recorded.
-4. Draft findings where each finding carries evidence, standing, and severity. Standing is confirmed (stated by the evidence), inferred (reasonably derived, labeled as such), or unverified (no traceable support). Severity is high (blocks progress), medium (degrades efficiency or correctness), or low (minor friction). Merge duplicates; drop findings with no traceable evidence, or keep them under Gaps as unverified with downgraded priority. No numeric scores or invented metrics. Done when: every finding has evidence, standing, and severity, and nothing unevidenced poses as confirmed.
-5. Generalize before recommending. Cluster specific complaints or incidents upward into the shared pattern; record the pattern as the finding and keep specifics as evidence. A recommendation that fixes only the reported case is rework waiting to happen: escalate it to the class or drop it. Done when: each recommendation addresses a pattern, not a single reported case.
-6. Rank recommendations. Order by severity, then by evidence strength. Each recommendation names the concrete change, the cost or friction it removes, and the evidence behind it. Findings that merit durable capture become pointers: learnings to compound or autolearn, rationale topic records to compound, never writes by this skill. Done when: recommendations are ordered and capture pointers name the owning skill.
-7. Mode verdicts: engineering names team or contributor breakdowns with per-source attribution and separates evidenced habits from inferences; next-cycle separates working assets from misleading progress, names each anti-pattern as a concrete failure mode with the gate that catches it, prefers hard gates over advice, and ends with an explicit keep, iterate, or restart decision; rationale enumerates every in-scope gap with Evidence and Status, marks unrecoverable items unknown with needs-maintainer notes, flags conflicts open with both sides recorded, and organizes entries by topic. Done when: mode verdicts are present, every gate traces to observed evidence, and no rationale entry poses a guess as confirmed.
-8. Emit the report in chat per templates/retro-report.md, keeping only the routed mode's section and deleting the other four. Write the file only when asked. A fresh reader can tell what to preserve, discard, and check first without reading the source session. Done when: the report is emitted with the mode's required sections, ranked recommendations, gaps, and capture pointers, and any file write matches the chat report.
+### Learning verdict
 
-## Failure and recovery
+Review evidence one row per milestone criterion, calling each met, partially met, or unmet with the artifact behind the call, and stop with the gap named when evidence is absent or thin. Gaps state expected versus observed. Strategies and resources are judged effective or not only on the supplied evidence. Adjustments say what to continue, change, drop, and add, each with its motivating evidence. The next milestone is specific and measurable with explicit success criteria. Conflicting evidence surfaces both readings and asks for the specific clarification, and scope beyond the milestone stops with a recommendation for a separate retro.
 
-- Missing required scope: stop before gathering; state what is missing. Nothing is written.
-- Source unavailable: record the gap with its reason and continue on what is evidenced. Never fabricate activity, issues, or rationale.
-- Ambiguous or conflicting evidence: mark the finding unverified or record both sides; ask for the specific missing fact, never a generic explanation.
-- Scope widens mid-run: stop and report the widening; recommend a separate retro for the added scope.
-- A guessed entry is detected: demote it to unverified and correct the report before finishing.
-- Rollback: the single written file, if any, is deleted. Nothing else was mutated.
+### Next-cycle verdict
 
-## Cutover
+Separate working assets (contracts, schemas, tests, services, vocabulary, examples that earned reuse) from misleading progress (scaffolds, panels, abstractions that only looked productive), record failed paths in the report as negative corpus without deleting them, name each anti-pattern as a concrete failure mode with the gate that catches it, prefer hard gates over advice for repeated or high impact failures, turn vague direction into vocabulary a fresh reader can use, and end with an explicit keep, iterate, or restart decision. A restart carries the lessons and leaves the failed code behind, and shipped artifacts never describe their development history.
 
-Retro is the only surviving retrospective entry point. No alias is kept for any name below.
+### Rationale verdict
 
-- plugins/odin-agent/skills/agent-environment-retrospective: friction taxonomy, severity ranking, and evidence validation become environment mode. Directory closes.
-- plugins/odin-knowledge/skills/engineering-retrospective: period telemetry, source precedence, breakdowns, and gap accounting become engineering mode. Directory closes.
-- plugins/odin-learn/skills/learning-retrospective: criterion classification, strategy assessment, adjusted plan, and measurable next milestone become learning mode. Directory closes.
-- plugins/odin-agent/skills/skill-doctor retrospective surface: its decode-the-transcript plus evidence-cited per-turn findings discipline is carried by the shared evidence rules. Its numeric scores and scratch HTML report are grading, not retrospective analysis, and are not carried; retro uses ranked findings, never numeric scores. The skill-doctor directory itself is outside this cutover.
-- plugins/odin-run/skills/cycle-memo: lesson extraction, asset separation, pattern escalation, and anti-pattern plus gate discipline become next-cycle mode. Directory closes.
-- plugins/odin-run/skills/cross-run-playbook: cycle memo and the explicit keep, iterate, or restart decision become next-cycle mode. Its build, real-surface drive, and versioning machinery stays with the work owners; retro assesses finished cycles, it does not run them. Directory closes.
-- plugins/odin-knowledge/skills/keep-why-retrospective: gap scanning, evidence search and trust order, Evidence and Status classification, conflict flagging, and the unknown discipline become rationale mode. Its topic-file capture moves to compound under the keep-why fold; retro analyzes and recommends, it never writes topic files. Directory retires.
+Start by inventorying existing documentation (README, docs, design notes, decision records, existing rationale files) and adopting the project terminology and file conventions; that inventory informs the analysis only, since retro writes no files but the report. Scan for gaps where the code cannot explain why (surprising, defensive, or redundant code, compatibility workarounds, boundaries that do not follow from the domain, magic numbers, rejected alternatives named in commits or issues but unexplained, incident shaped changes with no documentation, constraints invisible in the code, areas one contributor understands, docs that state what but never why) and produce the gap list before explaining anything. Large scopes are ordered damage first (auth, data integrity, incident touched code, unusual or defensive code, then low bus factor areas) with every prioritized area enumerated. Each candidate resolves through history first (log, blame, messages), then tracker and PR threads, then existing docs however stale, then the code itself, which is the weakest source for why: it identifies candidates and corroborates shape but never authors rationale. Search order stays separate from trust order. Confirmed comes only from maintained docs, an accepted decision record, or a maintainer stating it directly. When sources disagree, both sides are recorded and the conflict flagged open. Every entry carries Evidence (confirmed, inferred, or unknown) and Status (active, superseded, open, or needs-review), with Source (commit hash, issue link, file reference) and Verification (corroborated, uncorroborated, or contradicted, with what contradicts and why) wherever a concrete artifact backs the claim. Unverified standing is recorded as unknown with a `needs-maintainer` note, never a guess, and open means the entry's own question is unresolved. The human is asked only what the evidence cannot answer, asked specifically, and "nobody remembers" is recorded as unknown. Entries are organized by topic, never by source file or commit. A correction that restored something to its intended state involved no real alternative and gets one line, not a manufactured decision entry; full decision, alternatives, and reason structure is reserved for choices a reader would genuinely ask why about, and self evident conventions get one sentence. Credentials, personal information, private local detail, and session narrative stay out of anything recommended for committing, and areas outside the fixed pass are reported as remaining scope, not entries.
 
-Preserved, never absorbed:
+Emit the report in chat following `templates/retro-report.md`, keeping only the routed mode's section and deleting the other four. Write the file only when asked; any file write matches the chat report. A fresh reader should be able to tell what to preserve, discard, and check first without reading the source session. Every finding cites traceable evidence with an honest standing, recommendations are ranked, and unavailable sources and unverified items appear as gaps, never filled by invention.
 
-- compound and autolearn keep the capture jobs; compound additionally receives the keep-why topic-file capture under the separate fold. Retro recommends capture; it never writes their surfaces.
+## Stop honestly when the run cannot proceed
 
-## Output
+Missing required scope stops the run before gathering, with what is missing stated. An unavailable source becomes a named gap; continue on what is evidenced and never fabricate activity, issues, or rationale. Ambiguous or conflicting evidence marks the finding unverified or records both sides. Ask for the specific missing fact, never a generic explanation, and "nobody remembers" is a complete answer. Scope widening mid-run stops the run: report the widening and recommend a separate retro for the added scope. A guessed entry discovered late is demoted to unverified and the report corrected before finishing. Rollback, if a file was written, is deleting that file; nothing else was mutated.
 
-A report with scope, sources consulted, sources unavailable, the routed mode's required sections, ranked recommendations, explicit gaps, and capture pointers. File form goes to the user-named path, or to the Contract default when asked without a path.
+## What retired into this skill
+
+Retro is the only surviving retrospective entry point, with no aliases kept. Agent environment friction taxonomy, severity ranking, and evidence validation came from the agent environment retrospective. Period telemetry, source precedence, breakdowns, and gap accounting came from the engineering retrospective. Criterion classification, strategy assessment, adjusted plan, and measurable next milestone came from the learning retrospective. Lesson extraction, asset separation, pattern escalation, and anti-pattern plus gate discipline came from cycle memo, whose build and versioning machinery stays with the work owners. The explicit keep, iterate, or restart decision came from the cross run playbook, which likewise does not run cycles here. Rationale gap scanning, evidence search and trust order, Evidence and Status classification, conflict flagging, and the unknown discipline came from keep why; its topic file capture moved to compound under the keep why fold. The skill doctor decode the transcript plus evidence cited per turn discipline is carried by the shared evidence rules; its numeric scores and scratch HTML report were grading, not retrospective analysis, and were not carried.
+
+Compound and autolearn keep the capture jobs, and compound additionally receives the keep why topic file capture. Retro recommends capture; it never writes those surfaces.
+
+## What you hand back
+
+A report with the scope, sources consulted, sources unavailable, the routed mode's required sections, ranked recommendations, explicit gaps, and capture pointers naming the owning skill per pointer. File form goes to the user named path, or to `reports/retro-<mode>-<slug>.md` when a file was asked for without a path.

@@ -3,7 +3,7 @@
   "name": "odin-git",
   "displayName": "ODIN Git",
   "version": "2.1.7",
-  "description": "ODIN workflows for commits, branches, pull requests, review feedback, and issue tracking.",
+  "description": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
   "author": {
     "name": "OutlineDriven",
     "url": "https://github.com/OutlineDriven"

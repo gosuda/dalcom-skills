@@ -2,7 +2,7 @@
 
 ODIN workflows for authoring, auditing, benchmarking, and publishing agent skills.
 
-10 skills, category Productivity. Install the whole plugin below, or take a single skill with `gh skill install`.
+8 skills, category Productivity. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -33,7 +33,6 @@ Each row states when to reach for the skill. Invoke one as `/odin-skills:<name>`
 
 | Skill | Trigger |
 |---|---|
-| automate-me | Use when asked to create or refresh a personal mode skill and open a reviewable PR. |
 | cascade-dedup | Use when prompt-doctrine is duplicated, drifted, or conflicting across output-style embeds and external harness AGENTS files. |
 | dedup-skills | Use when asked to deduplicate a skill tree, fold overlapping skills, or cut the skill count: analyze, gate per family, then fold. |
 | generate-my-taste | Use when asked to generate a personal taste skill from local evidence. |
@@ -42,7 +41,6 @@ Each row states when to reach for the skill. Invoke one as `/odin-skills:<name>`
 | review-plugin-submission | Use when asked to review a plugin for marketplace readiness via a read-only audit of published quality gates. |
 | skill-gap-finder | Use when the user suspects no installed skill covers a task and wants proof. |
 | skill-scanner | Use when a user asks to scan, audit, or validate a skill for security issues. |
-| writing-for-agents | Use when authoring or restructuring an agent-consumed document, a SKILL.md or skill directory, writing skills, or deciding a skill split-or-monolith disclosure question. |
 
 ## Workflows
 

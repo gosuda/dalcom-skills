@@ -5,40 +5,37 @@ description: 'Use when grounding developer marketing in a confirmed audience pro
 
 # Developer audience context
 
-## Contract
+Ground developer marketing in what you can observe about the audience: who they are, where they gather, what hurts, what else they use, and the words they use. The result is an evidence profile delivered in chat. It stores nothing and invents nothing.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | User asks to define, update, or apply a developer audience profile for marketing work. |
-| Authority | Read-only. Chat output only. No file writes, no canonical store, no credentials, no outreach, no publication. Optional public source reads. |
-| Side effect | An audience profile in chat that the user may supply as evidence to other work. Nothing stored or changed. |
-| Done | All ten dimensions are present or explicitly marked unknown; every factual claim and quote carries provenance; no invented quotes, testimonials, benchmarks, user counts, or audience facts remain; no file was created. |
+## When this applies, and what it never does
 
-## Not for
+This applies when the user asks to define, update, or apply a developer audience profile for marketing work. The work is read-only: chat output only, with optional reads of public sources. No file writes, no canonical store, no credentials, no outreach, no publication.
 
-- Writing or maintaining a shared context file. There is no canonical audience store. Every other marketing skill accepts supplied sources directly and MUST NOT require any artifact from this skill.
-- Prescribing voice or tone. Voice prescription stays with `copywriting-tone-of-voice-creator` and the `copywriting` voice chart; this skill owns observed audience evidence only, and references `TONE.md` or `VOICE.md` as completed input without writing them.
+There is no canonical audience store, and this skill never creates one. Every other marketing skill accepts supplied sources directly and must never require anything produced here.
 
-## Inputs
+Voice discipline matters: this skill records only observed audience evidence (how the audience speaks). How the brand should speak is prescribed by the `copywriting` voice work, not here. `TONE.md` or `VOICE.md` may be read as completed input, but never written.
 
-- `product` (required): what is offered, in the user own words or supplied docs.
-- `evidence` (required): supplied docs, READMEs, issues, docs pages, or explicitly requested read-only research. Tool mentions (search consoles, rank trackers, listeners) are optional evidence inputs, never required dependencies.
+## What you need before starting
 
-## Procedure
+- `product` (required): what is offered, in the user's own words or supplied docs.
+- `evidence` (required): supplied docs, READMEs, issues, docs pages, or an explicitly requested read-only research pass. Mentions of tooling such as search consoles, rank trackers, or listeners are optional evidence inputs, never required dependencies.
 
-1. Collect the ten dimensions: product, persona, places, problems, alternatives, differentiators, verbatim language, trust signals, conversion actions, voice observations. **Done when:** each dimension is filled from evidence or marked unknown.
-2. Record provenance per item: source and observation date. Verbatim language must be exact quotes with sources; never paraphrase into quotation marks. **Done when:** every claim and quote traces to a source or an explicit unknown.
-3. Check trust signals against reality: docs quality, examples that run, error coverage, maintenance signs, license clarity. **Done when:** each trust signal cites an observed artifact.
-4. State conversion actions as observed or plausible paths, never as guaranteed funnels. **Done when:** each action names its evidence or its assumption flag.
-5. Voice observations describe how the audience speaks; they do not instruct how the brand speaks. **Done when:** no voice prescription appears.
-6. Present the profile in chat only. Never create a file, store, or canonical path. **Done when:** the artifact is delivered in chat and the working tree is untouched.
+## Building the ten-dimension profile
 
-## Failure and recovery
+Work through these in order; each dimension is finished only when filled from evidence or explicitly marked unknown:
 
-- Evidence too thin: deliver the profile with unknowns explicit and name the smallest evidence that would fill each gap.
-- Fictional example material supplied as format reference: use its shape only; never copy its testimonials, numbers, or names as facts.
-- Unverifiable numeric claims (audience sizes, conversion benchmarks): mark `UNVERIFIED` or omit; never preserve them as defaults.
+1. Collect all ten: product, persona, places, problems, alternatives, differentiators, verbatim language, trust signals, conversion actions, voice observations.
+2. Give every item provenance: source and observation date. Verbatim language must be exact quotes with sources; never put a paraphrase inside quotation marks.
+3. Check each trust signal against something real: docs quality, examples that run, error coverage, maintenance signs, license clarity. Each one cites the artifact observed.
+4. State conversion actions as observed or plausible paths, each naming its evidence or flagged as an assumption. Never present them as guaranteed funnels.
+5. Keep voice observations descriptive of the audience. No brand-voice prescription may appear.
 
-## Output
+## Thin evidence and tempting fictions
 
-An audience profile in chat covering the ten dimensions with per-item provenance, explicit unknowns, and verbatim quotes with sources. No other skill requires this output; it is one optional input among supplied sources.
+- Evidence too thin for a dimension: deliver the profile with the unknown explicit, and name the smallest evidence that would fill each gap.
+- Fictional example material supplied as a format reference: borrow its shape only. Never copy its testimonials, numbers, or names as facts.
+- Numeric claims you cannot verify (audience sizes, conversion benchmarks): mark them `UNVERIFIED` or omit them. Never let them stand as defaults.
+
+## What you hand back
+
+An audience profile in chat covering all ten dimensions, with per-item provenance, explicit unknowns, and exact verbatim quotes with sources. It is one optional input among supplied sources for other work; no other skill requires it. No file is created and the working tree stays untouched.

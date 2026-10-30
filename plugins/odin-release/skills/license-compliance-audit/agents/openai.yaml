@@ -1,3 +1,0 @@
-interface:
-  display_name: "License Compliance Audit"
-  short_description: "Use for a read-only audit of LICENSE, NOTICE, and source-file SPDX headers."

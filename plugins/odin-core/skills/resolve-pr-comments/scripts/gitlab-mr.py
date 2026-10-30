@@ -1,32 +1,4 @@
 #!/usr/bin/env python3
-"""GitLab merge-request review helper.
-
-Self-contained: Python standard library only, no plugin-global imports.
-One glab write at most per invocation; a write is never retried. The caller
-owns idempotency: every accepted write returns its mutation IDs, and a later
-read-back failure reports those IDs instead of repeating the mutation.
-
-Consistency contract (single-shot CLI over the GitLab REST API via glab):
-- Reads take a two-pin snapshot: the MR head SHA is fetched before and after
-  the discussion/note census, and any head change fails the census instead of
-  returning a mixed snapshot.
-- Writes are at-most-once. Exactly-once delivery does not exist across a CLI
-  subprocess boundary, so this helper issues one POST/PUT, validates the
-  receipt, then reads back. There is no retry budget for mutations and no
-  outbox/saga: the receipt plus read-back is the whole protocol.
-- Every glab hop carries an explicit timeout and fails fast; there are no
-  unbounded waits and no retries on any failure.
-
-Endpoints (grounded in docs.gitlab.com/api/discussions and
-docs.gitlab.com/cli/api, pinned in local://gitlab-mr-api-contract.json and
-local://gitlab-cli-contract.json):
-- GET  projects/:encoded/merge_requests/:iid
-- GET  projects/:encoded/merge_requests/:iid/discussions?per_page=100 (paged)
-- GET  projects/:encoded/merge_requests/:iid/notes?per_page=100 (paged)
-- GET  projects/:encoded/merge_requests/:iid/discussions/:discussion_id
-- POST projects/:encoded/merge_requests/:iid/discussions/:discussion_id/notes
-- PUT  projects/:encoded/merge_requests/:iid/discussions/:discussion_id?resolved=true
-"""
 
 import argparse
 import json
@@ -43,8 +15,6 @@ PER_PAGE = 100
 
 
 class HelperError(Exception):
-    """Typed failure with a machine-readable code and detail payload."""
-
     def __init__(self, code, message, details=None):
         super().__init__(message)
         self.code = code
@@ -75,6 +45,14 @@ def check_host(raw):
     return host
 
 
+def _check_project_segment(segment, raw):
+    if not segment:
+        raise HelperError("usage", f"project has an empty path segment: {raw!r}")
+    for ch in segment:
+        if not (ch.isalnum() or ch in "._-"):
+            raise HelperError("usage", f"project segment has an illegal character: {segment!r}")
+
+
 def check_project(raw):
     project = (raw or "").strip()
     if not project or "/" not in project:
@@ -82,15 +60,13 @@ def check_project(raw):
     if project.startswith("/") or project.endswith("/"):
         raise HelperError("usage", f"project must not start or end with '/': {raw!r}")
     for segment in project.split("/"):
-        if not segment:
-            raise HelperError("usage", f"project has an empty path segment: {raw!r}")
-        for ch in segment:
-            if not (ch.isalnum() or ch in "._-"):
-                raise HelperError("usage", f"project segment has an illegal character: {segment!r}")
+        _check_project_segment(segment, raw)
     return project
 
 
 def check_iid(raw):
+    if type(raw) is bool:
+        raise HelperError("usage", f"mr IID must be a positive integer: {raw!r}")
     try:
         iid = int(raw)
     except (TypeError, ValueError) as err:
@@ -101,6 +77,8 @@ def check_iid(raw):
 
 
 def check_note_id(raw):
+    if type(raw) is bool:
+        raise HelperError("usage", f"note id must be a positive integer: {raw!r}")
     try:
         note_id = int(raw)
     except (TypeError, ValueError) as err:
@@ -119,6 +97,17 @@ def check_discussion(raw):
     return discussion_id
 
 
+def check_expected_head(raw):
+    if type(raw) is bool or not isinstance(raw, str):
+        raise HelperError("usage", f"expected head must be a full 40- or 64-character hex SHA: {raw!r}")
+    head = raw.strip()
+    if not head:
+        raise HelperError("usage", "expected head must not be empty")
+    if len(head) not in (40, 64) or not all(c in "0123456789abcdefABCDEF" for c in head):
+        raise HelperError("usage", f"expected head must be a full 40- or 64-character hex SHA: {raw!r}")
+    return head.lower()
+
+
 def check_timeout(raw):
     try:
         timeout_s = float(raw)
@@ -130,13 +119,18 @@ def check_timeout(raw):
 
 
 def _run(argv, timeout_s, label):
-    """Run one glab call exactly once with a hard timeout and no retries."""
     try:
         return subprocess.run(argv, capture_output=True, text=True, timeout=timeout_s, check=False)
     except subprocess.TimeoutExpired as err:
         raise HelperError(
             "timeout",
             f"glab call timed out after {timeout_s:g}s: {label}",
+            {"endpoint": label},
+        ) from err
+    except UnicodeDecodeError as err:
+        raise HelperError(
+            "subprocess_failed",
+            f"glab output could not be decoded as text for {label}",
             {"endpoint": label},
         ) from err
     except OSError as err:
@@ -168,7 +162,6 @@ def _refuse_failed(proc, label):
 
 
 def fetch_single_object(host, endpoint, timeout_s):
-    """GET one JSON object (MR identity, single discussion). No pagination."""
     argv = ["glab", "api", "--hostname", host, endpoint, "-X", "GET", "--output", "json"]
     proc = _run(argv, timeout_s, endpoint)
     _refuse_failed(proc, endpoint)
@@ -189,7 +182,6 @@ def fetch_single_object(host, endpoint, timeout_s):
 
 
 def fetch_complete_list(host, endpoint, timeout_s):
-    """GET a complete paginated JSON array via the documented --paginate flag."""
     argv = ["glab", "api", "--hostname", host, endpoint, "-X", "GET",
             "--paginate", "--output", "json"]
     proc = _run(argv, timeout_s, endpoint)
@@ -210,50 +202,75 @@ def fetch_complete_list(host, endpoint, timeout_s):
     return payload
 
 
-def get_mr(host, project, iid, timeout_s):
-    """Fetch MR identity, enforcing IID match and a present head SHA."""
-    endpoint = f"projects/{quote(project, safe='')}/merge_requests/{iid}"
-    obj = fetch_single_object(host, endpoint, timeout_s)
-    if obj.get("iid") != iid:
+def _check_mr_identity(obj, iid, endpoint):
+    if type(obj.get("iid")) is not int or obj.get("iid") != iid:
         raise HelperError(
             "wrong_identity",
             f"MR identity mismatch: asked for iid {iid}, got {obj.get('iid')!r}",
             {"endpoint": endpoint, "returned_iid": obj.get("iid")},
         )
-    web_url = obj.get("web_url")
-    if isinstance(web_url, str) and web_url:
-        parsed = urlparse(web_url)
-        want_host, _, want_port = host.lower().partition(":")
-        if (parsed.hostname or "").lower() != want_host:
-            raise HelperError(
-                "wrong_identity",
-                f"MR web_url host {parsed.hostname!r} does not match requested host {host!r}",
-                {"endpoint": endpoint, "web_url": web_url},
-            )
-        try:
-            got_port = parsed.port
-        except ValueError as err:
-            raise HelperError(
-                "wrong_identity",
-                f"MR web_url {web_url!r} carries an unparsable port",
-                {"endpoint": endpoint, "web_url": web_url},
-            ) from err
-        if want_port and str(got_port or "") != want_port:
-            raise HelperError(
-                "wrong_identity",
-                f"MR web_url port {got_port!r} does not match requested host {host!r}",
-                {"endpoint": endpoint, "web_url": web_url},
-            )
-    references = obj.get("references")
+
+
+def _check_mr_web_url(web_url, host, endpoint, iid):
+    if not isinstance(web_url, str) or not web_url.strip():
+        raise HelperError(
+            "malformed_payload",
+            f"MR {iid} response carries no web_url string",
+            {"endpoint": endpoint},
+        )
+    parsed = urlparse(web_url)
+    want_host, _, want_port = host.lower().partition(":")
+    if not parsed.hostname or parsed.hostname.lower() != want_host:
+        raise HelperError(
+            "wrong_identity",
+            f"MR web_url host {parsed.hostname!r} does not match requested host {host!r}",
+            {"endpoint": endpoint, "web_url": web_url},
+        )
+    try:
+        got_port = parsed.port
+    except ValueError as err:
+        raise HelperError(
+            "wrong_identity",
+            f"MR web_url {web_url!r} carries an unparsable port",
+            {"endpoint": endpoint, "web_url": web_url},
+        ) from err
+    if want_port and str(got_port or "") != want_port:
+        raise HelperError(
+            "wrong_identity",
+            f"MR web_url port {got_port!r} does not match requested host {host!r}",
+            {"endpoint": endpoint, "web_url": web_url},
+        )
+
+
+def _check_mr_references(references, project, iid, endpoint):
     full_ref = references.get("full") if isinstance(references, dict) else None
-    suffix = f"!{iid}"
-    if isinstance(full_ref, str) and full_ref.endswith(suffix):
-        if full_ref[: -len(suffix)].lower() != project.lower():
-            raise HelperError(
-                "wrong_identity",
-                f"MR full reference {full_ref!r} does not match requested project {project!r}",
-                {"endpoint": endpoint, "full_reference": full_ref},
-            )
+    if not isinstance(full_ref, str) or not full_ref.strip():
+        raise HelperError(
+            "malformed_payload",
+            f"MR {iid} response carries no references.full string",
+            {"endpoint": endpoint, "references": references},
+        )
+    if full_ref.lower() != f"{project}!{iid}".lower():
+        raise HelperError(
+            "wrong_identity",
+            f"MR full reference {full_ref!r} does not match requested project {project!r}",
+            {"endpoint": endpoint, "full_reference": full_ref},
+        )
+
+
+def _check_mr_payload_fields(obj, iid, endpoint):
+    if type(obj.get("id")) is not int:
+        raise HelperError(
+            "malformed_payload",
+            f"MR {iid} response carries no integer id",
+            {"endpoint": endpoint, "id": obj.get("id")},
+        )
+    if type(obj.get("project_id")) is not int:
+        raise HelperError(
+            "malformed_payload",
+            f"MR {iid} response carries no integer project_id",
+            {"endpoint": endpoint, "project_id": obj.get("project_id")},
+        )
     head_sha = obj.get("sha")
     if not isinstance(head_sha, str) or not head_sha:
         raise HelperError(
@@ -261,13 +278,22 @@ def get_mr(host, project, iid, timeout_s):
             f"MR {iid} response carries no head sha",
             {"endpoint": endpoint},
         )
+    return head_sha
+
+
+def get_mr(host, project, iid, timeout_s):
+    endpoint = f"projects/{quote(project, safe='')}/merge_requests/{iid}"
+    obj = fetch_single_object(host, endpoint, timeout_s)
+    _check_mr_identity(obj, iid, endpoint)
+    _check_mr_web_url(obj.get("web_url"), host, endpoint, iid)
+    _check_mr_references(obj.get("references"), project, iid, endpoint)
+    head_sha = _check_mr_payload_fields(obj, iid, endpoint)
     return obj, head_sha
 
 
 def check_thread_notes(thread_notes, discuss_id):
-    """Every thread note must carry an integer id; fail otherwise."""
     for note in thread_notes:
-        if not isinstance(note, dict) or not isinstance(note.get("id"), int):
+        if not isinstance(note, dict) or type(note.get("id")) is not int:
             raise HelperError(
                 "malformed_payload",
                 f"discussion {discuss_id!r} holds a note without an integer id; census unusable",
@@ -276,7 +302,6 @@ def check_thread_notes(thread_notes, discuss_id):
 
 
 def check_census(discussions, notes):
-    """Every census element must carry its identity fields; fail otherwise."""
     for index, discussion in enumerate(discussions):
         discuss_id = discussion.get("id") if isinstance(discussion, dict) else None
         if not isinstance(discuss_id, str) or not discuss_id:
@@ -294,7 +319,7 @@ def check_census(discussions, notes):
             )
         check_thread_notes(thread_notes, discuss_id)
     for index, note in enumerate(notes):
-        if not isinstance(note, dict) or not isinstance(note.get("id"), int):
+        if not isinstance(note, dict) or type(note.get("id")) is not int:
             raise HelperError(
                 "malformed_payload",
                 f"root note #{index} has no integer id; census unusable",
@@ -303,7 +328,6 @@ def check_census(discussions, notes):
 
 
 def read_census(host, project, iid, timeout_s):
-    """Read MR head plus the full discussion and note census (head-pinned)."""
     _, head_before = get_mr(host, project, iid, timeout_s)
     base = f"projects/{quote(project, safe='')}/merge_requests/{iid}"
     discussions = fetch_complete_list(host, f"{base}/discussions?per_page={PER_PAGE}", timeout_s)
@@ -320,19 +344,53 @@ def read_census(host, project, iid, timeout_s):
     return head_before, discussions, notes
 
 
+def _extract_thread_note_ids(discussions):
+    thread_note_ids = set()
+    for d in discussions:
+        for n in d.get("notes", []):
+            if isinstance(n, dict) and type(n.get("id")) is int:
+                thread_note_ids.add(n["id"])
+    return thread_note_ids
+
+
+def _collect_unique_note(note, thread_note_ids, seen_note_ids, normalized_notes):
+    if isinstance(note, dict) and type(note.get("id")) is int:
+        nid = note["id"]
+        if nid not in thread_note_ids and nid not in seen_note_ids:
+            seen_note_ids.add(nid)
+            normalized_notes.append(note)
+
+
+def normalize_census_notes(discussions, notes, thread_note_ids):
+    normalized_notes = []
+    seen_note_ids = set()
+    for n in notes:
+        _collect_unique_note(n, thread_note_ids, seen_note_ids, normalized_notes)
+    for d in discussions:
+        if d.get("individual_note") is True:
+            for n in d.get("notes", []):
+                _collect_unique_note(n, thread_note_ids, seen_note_ids, normalized_notes)
+    return normalized_notes
+
+
 def cmd_list(host, project, iid, timeout_s):
     head_sha, discussions, notes = read_census(host, project, iid, timeout_s)
+    real_discussions = [d for d in discussions if not d.get("individual_note", False)]
+    thread_note_ids = _extract_thread_note_ids(real_discussions)
+    normalized_notes = normalize_census_notes(discussions, notes, thread_note_ids)
     print(json.dumps({
         "provider": PROVIDER,
         "host": host,
         "project": project,
         "iid": iid,
         "head_sha": head_sha,
-        "discussions": discussions,
-        "notes": notes,
+        "discussions": real_discussions,
+        "notes": normalized_notes,
         "coverage": {
-            "discussions_fetched": len(discussions),
-            "notes_fetched": len(notes),
+            "discussions_fetched": len(real_discussions),
+            "notes_fetched": len(normalized_notes),
+            "raw_discussions_fetched": len(discussions),
+            "raw_notes_fetched": len(notes),
             "discussions_complete": True,
             "notes_complete": True,
             "head_stable": True,
@@ -345,21 +403,8 @@ def cmd_thread(host, project, iid, timeout_s, note_id):
     head_sha, discussions, _ = read_census(host, project, iid, timeout_s)
     matches = []
     for discussion in discussions:
-        if not isinstance(discussion, dict):
-            raise HelperError(
-                "malformed_payload",
-                "discussion census contains a non-object entry",
-                {"note_id": note_id},
-            )
-        thread_notes = discussion.get("notes")
-        if not isinstance(thread_notes, list):
-            raise HelperError(
-                "malformed_payload",
-                f"discussion {discussion.get('id')!r} carries no notes array",
-                {"note_id": note_id, "discussion_id": discussion.get("id")},
-            )
-        for note in thread_notes:
-            if isinstance(note, dict) and note.get("id") == note_id:
+        for note in discussion.get("notes", []):
+            if isinstance(note, dict) and type(note.get("id")) is int and note.get("id") == note_id:
                 matches.append(discussion)
                 break
     if not matches:
@@ -413,91 +458,153 @@ def read_body_file(path):
     return body_text
 
 
-def cmd_reply(host, project, iid, timeout_s, discussion_id, body_file):
-    body_text = read_body_file(body_file)
-    mr_obj, head_before = get_mr(host, project, iid, timeout_s)
-    base = f"projects/{quote(project, safe='')}/merge_requests/{iid}"
-    single = f"{base}/discussions/{quote(discussion_id, safe='')}"
-    before = fetch_single_object(host, single, timeout_s)
-    if before.get("id") != discussion_id:
+def _raise_head_mismatch(current_head, expected_head):
+    raise HelperError(
+        "head_mismatch",
+        f"MR head {current_head} does not match expected head {expected_head}; refusing to write",
+        {"head_before": current_head, "expected_head": expected_head},
+    )
+
+
+def _fetch_discussion(host, endpoint, discussion_id, timeout_s):
+    obj = fetch_single_object(host, endpoint, timeout_s)
+    if obj.get("id") != discussion_id:
         raise HelperError(
             "wrong_identity",
-            f"discussion identity mismatch: asked for {discussion_id!r}, got {before.get('id')!r}",
-            {"endpoint": single, "discussion_id": discussion_id},
+            f"discussion identity mismatch: asked for {discussion_id!r}, got {obj.get('id')!r}",
+            {"endpoint": endpoint, "discussion_id": discussion_id},
         )
-    tmp_path = ""
+    return obj
+
+
+def _execute_mutation(argv, timeout_s, endpoint, discussion_id, op_name):
+    action_verb = "re-post" if "POST" in op_name else "re-resolve"
     try:
-        with tempfile.NamedTemporaryFile(mode="w", suffix=".json",
-                                         delete=False, encoding="utf-8") as tmp:
-            json.dump({"body": body_text}, tmp)
-            tmp_path = tmp.name
-        endpoint = f"{single}/notes"
-        argv = ["glab", "api", "--hostname", host, endpoint, "-X", "POST",
-                "--input", tmp_path, "--output", "json"]
         proc = _run(argv, timeout_s, endpoint)
-    finally:
-        if tmp_path:
-            try:
-                os.unlink(tmp_path)
-            except OSError as err:
-                print(f"warning: could not remove temp file {tmp_path}: {err}",
-                      file=sys.stderr)
-    _refuse_failed(proc, endpoint)
-    receipt = _parse_json(proc.stdout, endpoint)
-    if not isinstance(receipt, dict) or not isinstance(receipt.get("id"), int):
+        _refuse_failed(proc, endpoint)
+        return _parse_json(proc.stdout, endpoint)
+    except HelperError as err:
+        raise HelperError(
+            err.code,
+            f"{err.message}; {op_name} was attempted; outcome unknown; do not {action_verb}",
+            {"endpoint": endpoint, "discussion_id": discussion_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False,
+             **err.details},
+        ) from err
+
+
+def _cleanup_temp_file(path):
+    if path:
+        try:
+            os.unlink(path)
+        except OSError as err:
+            print(f"warning: could not remove temp file {path}: {err}", file=sys.stderr)
+
+
+def _validate_reply_receipt(receipt, endpoint, discussion_id, mr_obj):
+    if not isinstance(receipt, dict) or type(receipt.get("id")) is not int:
         raise HelperError(
             "missing_receipt",
-            f"reply POST returned no note id for discussion {discussion_id!r}",
-            {"endpoint": endpoint, "discussion_id": discussion_id},
+            f"reply POST returned no note id for discussion {discussion_id!r}; "
+            f"mutation attempt was made, outcome unknown; do not re-post",
+            {"endpoint": endpoint, "discussion_id": discussion_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
         )
     for key, want in (("project_id", mr_obj.get("project_id")), ("noteable_id", mr_obj.get("id"))):
         got = receipt.get(key)
-        if isinstance(got, int) and isinstance(want, int) and got != want:
+        if type(got) is not int or type(want) is not int or got != want:
             raise HelperError(
                 "wrong_identity",
-                f"reply POST receipt {key} {got} is outside the requested scope ({want}); do not re-post",
-                {"endpoint": endpoint, "discussion_id": discussion_id, "note_id": receipt.get("id")},
+                f"reply POST receipt {key} {got!r} is outside the requested scope ({want!r}); do not re-post",
+                {"endpoint": endpoint, "discussion_id": discussion_id,
+                 "note_id": receipt.get("id"), "mutation_attempted": True,
+                 "outcome_unknown": True, "retryable": False},
             )
-    note_id = receipt["id"]
+    return receipt["id"]
+
+
+def _verify_readback_reply(host, single, timeout_s, discussion_id, note_id):
     try:
         after = fetch_single_object(host, single, timeout_s)
     except HelperError as err:
         raise HelperError(
             err.code,
             f"{err.message}; reply was accepted as note {note_id}, do not re-post",
-            {"discussion_id": discussion_id, "note_id": note_id, **err.details},
+            {"discussion_id": discussion_id, "note_id": note_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False, **err.details},
         ) from err
     if after.get("id") != discussion_id:
         raise HelperError(
             "wrong_identity",
             f"read-back discussion identity mismatch: asked for {discussion_id!r}, "
-            f"got {after.get('id')!r}; do not re-post",
-            {"endpoint": single, "discussion_id": discussion_id, "note_id": note_id},
+            f"got {after.get('id')!r}; reply was accepted as note {note_id}, do not re-post",
+            {"endpoint": single, "discussion_id": discussion_id, "note_id": note_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
         )
     after_notes = after.get("notes")
     if not isinstance(after_notes, list) or not any(
-            isinstance(n, dict) and n.get("id") == note_id for n in after_notes):
+            isinstance(n, dict) and type(n.get("id")) is int and n.get("id") == note_id for n in after_notes):
         raise HelperError(
             "readback_mismatch",
             f"reply was accepted as note {note_id} but is absent on read-back; do not re-post",
-            {"discussion_id": discussion_id, "note_id": note_id},
+            {"discussion_id": discussion_id, "note_id": note_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
         )
+
+
+def _verify_post_mutation_head(mr_target, head_before, discussion_id, note_id=None):
+    host, project, iid, timeout_s = mr_target
+    action = f"reply was accepted as note {note_id}" if note_id is not None else f"resolve was accepted for {discussion_id!r}"
+    verb = "do not re-post" if note_id is not None else "do not re-resolve"
+    details = {
+        "discussion_id": discussion_id,
+        "mutation_attempted": True,
+        "outcome_unknown": True,
+        "retryable": False,
+    }
+    if note_id is not None:
+        details["note_id"] = note_id
     try:
         _, head_after = get_mr(host, project, iid, timeout_s)
     except HelperError as err:
         raise HelperError(
             err.code,
-            f"{err.message}; reply was accepted as note {note_id}, do not re-post",
-            {"discussion_id": discussion_id, "note_id": note_id, **err.details},
+            f"{err.message}; {action}, {verb}",
+            {**details, **err.details},
         ) from err
     if head_before != head_after:
         raise HelperError(
             "head_changed",
-            f"reply was accepted as note {note_id} but MR head moved "
-            f"({head_before} -> {head_after}); do not re-post",
-            {"discussion_id": discussion_id, "note_id": note_id,
-             "head_before": head_before, "head_after": head_after},
+            f"{action} but MR head moved ({head_before} -> {head_after}); {verb}",
+            {**details, "head_before": head_before, "head_after": head_after},
         )
+    return head_after
+
+
+def cmd_reply(host, project, iid, timeout_s, discussion_id, body_file, expected_head):
+    body_text = read_body_file(body_file)
+    mr_obj, head_before = get_mr(host, project, iid, timeout_s)
+    if head_before != expected_head:
+        _raise_head_mismatch(head_before, expected_head)
+    base = f"projects/{quote(project, safe='')}/merge_requests/{iid}"
+    single = f"{base}/discussions/{quote(discussion_id, safe='')}"
+    _fetch_discussion(host, single, discussion_id, timeout_s)
+    endpoint = f"{single}/notes"
+    tmp_path = ""
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json",
+                                         delete=False, encoding="utf-8") as tmp:
+            json.dump({"body": body_text}, tmp)
+            tmp_path = tmp.name
+        argv = ["glab", "api", "--hostname", host, endpoint, "-X", "POST",
+                "--input", tmp_path, "--output", "json"]
+        receipt = _execute_mutation(argv, timeout_s, endpoint, discussion_id, "reply POST")
+    finally:
+        _cleanup_temp_file(tmp_path)
+    note_id = _validate_reply_receipt(receipt, endpoint, discussion_id, mr_obj)
+    _verify_readback_reply(host, single, timeout_s, discussion_id, note_id)
+    mr_target = (host, project, iid, timeout_s)
+    head_after = _verify_post_mutation_head(mr_target, head_before, discussion_id, note_id)
     print(json.dumps({
         "provider": PROVIDER,
         "host": host,
@@ -512,33 +619,132 @@ def cmd_reply(host, project, iid, timeout_s, discussion_id, body_file):
     }, indent=2, sort_keys=True))
 
 
-def cmd_resolve(host, project, iid, timeout_s, discussion_id):
-    _, head_before = get_mr(host, project, iid, timeout_s)
-    base = f"projects/{quote(project, safe='')}/merge_requests/{iid}"
-    single = f"{base}/discussions/{quote(discussion_id, safe='')}"
-    current = fetch_single_object(host, single, timeout_s)
-    if current.get("id") != discussion_id:
-        raise HelperError(
-            "wrong_identity",
-            f"discussion identity mismatch: asked for {discussion_id!r}, got {current.get('id')!r}",
-            {"endpoint": single, "discussion_id": discussion_id},
-        )
+def _is_unusable_note_entry(entry):
+    if not isinstance(entry, dict) or type(entry.get("id")) is not int:
+        return True
+    if type(entry.get("resolvable")) is not bool:
+        return True
+    if entry.get("resolvable") is True and type(entry.get("resolved")) is not bool:
+        return True
+    return False
+
+
+def _check_pre_resolve_notes(current, endpoint, discussion_id):
     thread_notes = current.get("notes")
     if not isinstance(thread_notes, list) or not thread_notes:
         raise HelperError(
             "malformed_payload",
             f"discussion {discussion_id!r} carries no notes array; resolvability unknown",
-            {"endpoint": single, "discussion_id": discussion_id},
+            {"endpoint": endpoint, "discussion_id": discussion_id},
         )
     for entry in thread_notes:
-        if (not isinstance(entry, dict) or not isinstance(entry.get("id"), int)
-                or not isinstance(entry.get("resolvable"), bool)
-                or not isinstance(entry.get("resolved"), bool)):
+        if _is_unusable_note_entry(entry):
             raise HelperError(
                 "malformed_payload",
                 f"discussion {discussion_id!r} holds an unusable note entry; resolvability unknown",
-                {"endpoint": single, "discussion_id": discussion_id},
+                {"endpoint": endpoint, "discussion_id": discussion_id},
             )
+    return thread_notes
+
+
+def _validate_resolve_receipt(updated, endpoint, discussion_id):
+    if not isinstance(updated, dict):
+        raise HelperError(
+            "missing_receipt",
+            f"resolve PUT returned no discussion object for {discussion_id!r}; "
+            f"mutation attempt was made, outcome unknown; do not re-resolve",
+            {"endpoint": endpoint, "discussion_id": discussion_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
+        )
+    if updated.get("id") != discussion_id:
+        raise HelperError(
+            "wrong_identity",
+            f"resolve PUT returned discussion {updated.get('id')!r}, not {discussion_id!r}; "
+            f"mutation attempt was made, outcome unknown; do not re-resolve",
+            {"endpoint": endpoint, "discussion_id": discussion_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
+        )
+    updated_notes = updated.get("notes")
+    if not isinstance(updated_notes, list) or not updated_notes:
+        raise HelperError(
+            "missing_receipt",
+            f"resolve PUT response for {discussion_id!r} carries no notes array to confirm; "
+            f"mutation attempt was made, outcome unknown; do not re-resolve",
+            {"endpoint": endpoint, "discussion_id": discussion_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
+        )
+    for entry in updated_notes:
+        if _is_unusable_note_entry(entry):
+            raise HelperError(
+                "malformed_payload",
+                f"resolve PUT response for {discussion_id!r} holds an unusable note entry; "
+                f"mutation attempt was made, outcome unknown; do not re-resolve",
+                {"endpoint": endpoint, "discussion_id": discussion_id,
+                 "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
+            )
+    resolvable_updated = [entry for entry in updated_notes if entry.get("resolvable") is True]
+    if not resolvable_updated or not all(entry.get("resolved") is True for entry in resolvable_updated):
+        raise HelperError(
+            "missing_receipt",
+            f"resolve PUT response does not confirm resolution of {discussion_id!r}; "
+            f"mutation attempt was made, outcome unknown; do not re-resolve",
+            {"endpoint": endpoint, "discussion_id": discussion_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
+        )
+
+
+def _verify_readback_resolve(host, single, timeout_s, discussion_id):
+    try:
+        after = fetch_single_object(host, single, timeout_s)
+    except HelperError as err:
+        raise HelperError(
+            err.code,
+            f"{err.message}; resolve was accepted for {discussion_id!r}, do not re-resolve",
+            {"discussion_id": discussion_id, "mutation_attempted": True,
+             "outcome_unknown": True, "retryable": False, **err.details},
+        ) from err
+    if after.get("id") != discussion_id:
+        raise HelperError(
+            "wrong_identity",
+            f"read-back discussion identity mismatch: asked for {discussion_id!r}, "
+            f"got {after.get('id')!r}; resolve was accepted; do not re-resolve",
+            {"endpoint": single, "discussion_id": discussion_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
+        )
+    after_notes = after.get("notes")
+    if not isinstance(after_notes, list) or not after_notes:
+        raise HelperError(
+            "malformed_payload",
+            f"read-back discussion {discussion_id!r} carries no notes array; do not re-resolve",
+            {"endpoint": single, "discussion_id": discussion_id,
+             "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
+        )
+    for entry in after_notes:
+        if _is_unusable_note_entry(entry):
+            raise HelperError(
+                "malformed_payload",
+                f"read-back discussion {discussion_id!r} holds an unusable note entry; do not re-resolve",
+                {"endpoint": single, "discussion_id": discussion_id,
+                 "mutation_attempted": True, "outcome_unknown": True, "retryable": False},
+            )
+    resolvable_after = [entry for entry in after_notes if entry.get("resolvable") is True]
+    if not resolvable_after or not all(entry.get("resolved") is True for entry in resolvable_after):
+        raise HelperError(
+            "readback_mismatch",
+            f"resolve was accepted for {discussion_id!r} but read-back is unresolved; do not re-resolve",
+            {"discussion_id": discussion_id, "mutation_attempted": True,
+             "outcome_unknown": True, "retryable": False},
+        )
+
+
+def cmd_resolve(host, project, iid, timeout_s, discussion_id, expected_head):
+    _, head_before = get_mr(host, project, iid, timeout_s)
+    if head_before != expected_head:
+        _raise_head_mismatch(head_before, expected_head)
+    base = f"projects/{quote(project, safe='')}/merge_requests/{iid}"
+    single = f"{base}/discussions/{quote(discussion_id, safe='')}"
+    current = _fetch_discussion(host, single, discussion_id, timeout_s)
+    thread_notes = _check_pre_resolve_notes(current, single, discussion_id)
     resolvable = [entry for entry in thread_notes if entry.get("resolvable") is True]
     if not resolvable:
         raise HelperError(
@@ -560,98 +766,11 @@ def cmd_resolve(host, project, iid, timeout_s, discussion_id):
         return
     endpoint = f"{single}?resolved=true"
     argv = ["glab", "api", "--hostname", host, endpoint, "-X", "PUT", "--output", "json"]
-    proc = _run(argv, timeout_s, endpoint)
-    _refuse_failed(proc, endpoint)
-    updated = _parse_json(proc.stdout, endpoint)
-    if not isinstance(updated, dict):
-        raise HelperError(
-            "missing_receipt",
-            f"resolve PUT returned no discussion object for {discussion_id!r}; do not re-send",
-            {"endpoint": endpoint, "discussion_id": discussion_id},
-        )
-    if updated.get("id") != discussion_id:
-        raise HelperError(
-            "wrong_identity",
-            f"resolve PUT returned discussion {updated.get('id')!r}, not {discussion_id!r}; do not re-send",
-            {"endpoint": endpoint, "discussion_id": discussion_id},
-        )
-    updated_notes = updated.get("notes")
-    if not isinstance(updated_notes, list) or not updated_notes:
-        raise HelperError(
-            "missing_receipt",
-            f"resolve PUT response for {discussion_id!r} carries no notes array to confirm; do not re-send",
-            {"endpoint": endpoint, "discussion_id": discussion_id},
-        )
-    for entry in updated_notes:
-        if (not isinstance(entry, dict) or not isinstance(entry.get("id"), int)
-                or not isinstance(entry.get("resolvable"), bool)
-                or not isinstance(entry.get("resolved"), bool)):
-            raise HelperError(
-                "malformed_payload",
-                f"resolve PUT response for {discussion_id!r} holds an unusable note entry; do not re-send",
-                {"endpoint": endpoint, "discussion_id": discussion_id},
-            )
-    resolvable_updated = [entry for entry in updated_notes if entry.get("resolvable") is True]
-    if not resolvable_updated or not all(entry.get("resolved") is True for entry in resolvable_updated):
-        raise HelperError(
-            "missing_receipt",
-            f"resolve PUT response does not confirm resolution of {discussion_id!r}; do not re-send",
-            {"endpoint": endpoint, "discussion_id": discussion_id},
-        )
-    try:
-        after = fetch_single_object(host, single, timeout_s)
-    except HelperError as err:
-        raise HelperError(
-            err.code,
-            f"{err.message}; resolve was accepted for {discussion_id!r}, do not re-send",
-            {"discussion_id": discussion_id, **err.details},
-        ) from err
-    if after.get("id") != discussion_id:
-        raise HelperError(
-            "wrong_identity",
-            f"read-back discussion identity mismatch: asked for {discussion_id!r}, "
-            f"got {after.get('id')!r}; do not re-send",
-            {"endpoint": single, "discussion_id": discussion_id},
-        )
-    after_notes = after.get("notes")
-    if not isinstance(after_notes, list) or not after_notes:
-        raise HelperError(
-            "malformed_payload",
-            f"read-back discussion {discussion_id!r} carries no notes array; do not re-send",
-            {"endpoint": single, "discussion_id": discussion_id},
-        )
-    for entry in after_notes:
-        if (not isinstance(entry, dict) or not isinstance(entry.get("id"), int)
-                or not isinstance(entry.get("resolvable"), bool)
-                or not isinstance(entry.get("resolved"), bool)):
-            raise HelperError(
-                "malformed_payload",
-                f"read-back discussion {discussion_id!r} holds an unusable note entry; do not re-send",
-                {"endpoint": single, "discussion_id": discussion_id},
-            )
-    resolvable_after = [entry for entry in after_notes if entry.get("resolvable") is True]
-    if not resolvable_after or not all(entry.get("resolved") is True for entry in resolvable_after):
-        raise HelperError(
-            "readback_mismatch",
-            f"resolve was accepted for {discussion_id!r} but read-back is unresolved; do not re-send",
-            {"discussion_id": discussion_id},
-        )
-    try:
-        _, head_after = get_mr(host, project, iid, timeout_s)
-    except HelperError as err:
-        raise HelperError(
-            err.code,
-            f"{err.message}; resolve was accepted for {discussion_id!r}, do not re-send",
-            {"discussion_id": discussion_id, **err.details},
-        ) from err
-    if head_before != head_after:
-        raise HelperError(
-            "head_changed",
-            f"resolve was accepted for {discussion_id!r} but MR head moved "
-            f"({head_before} -> {head_after}); do not re-send",
-            {"discussion_id": discussion_id,
-             "head_before": head_before, "head_after": head_after},
-        )
+    updated = _execute_mutation(argv, timeout_s, endpoint, discussion_id, "resolve PUT")
+    _validate_resolve_receipt(updated, endpoint, discussion_id)
+    _verify_readback_resolve(host, single, timeout_s, discussion_id)
+    mr_target = (host, project, iid, timeout_s)
+    head_after = _verify_post_mutation_head(mr_target, head_before, discussion_id)
     print(json.dumps({
         "provider": PROVIDER,
         "host": host,
@@ -668,20 +787,54 @@ def build_parser():
     parser = argparse.ArgumentParser(
         description="GitLab merge-request review helper (read census, thread lookup, reply, resolve)")
     parser.add_argument("--host", required=True, help="GitLab hostname, e.g. gitlab.com")
-    parser.add_argument("--project", required=True, help="Namespaced path, e.g. GROUP/PROJECT")
-    parser.add_argument("--mr", required=True, help="Merge-request IID (project-scoped)")
+    parser.add_argument("--project", required=True, help="GitLab project path, e.g. group/subgroup/project")
+    parser.add_argument("--mr", required=True, help="Merge request IID (integer)")
     parser.add_argument("--timeout", default=DEFAULT_TIMEOUT_S,
-                        help=f"Seconds per glab call (default {DEFAULT_TIMEOUT_S:g})")
-    sub = parser.add_subparsers(dest="operation", required=True)
-    sub.add_parser("list", help="Emit MR head plus the full discussion/note census")
-    thread_p = sub.add_parser("thread", help="Find the discussion containing a note")
-    thread_p.add_argument("--note", required=True, help="Numeric note id")
-    reply_p = sub.add_parser("reply", help="Post exactly one reply in a discussion")
-    reply_p.add_argument("--discussion", required=True, help="Discussion id (hex string)")
-    reply_p.add_argument("--body-file", required=True, help="File carrying the reply body")
-    resolve_p = sub.add_parser("resolve", help="Resolve one resolvable discussion")
-    resolve_p.add_argument("--discussion", required=True, help="Discussion id (hex string)")
+                        help=f"Per-subprocess timeout in seconds (default {DEFAULT_TIMEOUT_S})")
+    subparsers = parser.add_subparsers(dest="subcommand", required=True)
+
+    subparsers.add_parser("list", help="Fetch census of discussions and notes")
+
+    thread_p = subparsers.add_parser("thread", help="Look up a thread discussion by note id")
+    thread_p.add_argument("--note", required=True, help="Note ID (integer)")
+
+    reply_p = subparsers.add_parser("reply", help="Reply to a discussion")
+    reply_p.add_argument("--discussion", required=True, help="Discussion ID")
+    reply_p.add_argument("--body-file", required=True, help="Path to a file containing the reply text")
+    reply_p.add_argument("--expected-head", required=True,
+                         help="Expected MR head commit SHA; refusing to post if head has moved")
+
+    resolve_p = subparsers.add_parser("resolve", help="Resolve a discussion")
+    resolve_p.add_argument("--discussion", required=True, help="Discussion ID")
+    resolve_p.add_argument("--expected-head", required=True,
+                           help="Expected MR head commit SHA; refusing to resolve if head has moved")
     return parser
+
+
+def _dispatch_subcommand(args, host, project, iid, timeout_s):
+    sub = args.subcommand
+    if sub == "list":
+        cmd_list(host, project, iid, timeout_s)
+        return True
+    if sub == "thread":
+        cmd_thread(host, project, iid, timeout_s, check_note_id(args.note))
+        return True
+    if sub == "reply":
+        cmd_reply(
+            host, project, iid, timeout_s,
+            check_discussion(args.discussion),
+            args.body_file,
+            check_expected_head(args.expected_head),
+        )
+        return True
+    if sub == "resolve":
+        cmd_resolve(
+            host, project, iid, timeout_s,
+            check_discussion(args.discussion),
+            check_expected_head(args.expected_head),
+        )
+        return True
+    return False
 
 
 def main(argv=None):
@@ -692,24 +845,16 @@ def main(argv=None):
         project = check_project(args.project)
         iid = check_iid(args.mr)
         timeout_s = check_timeout(args.timeout)
-        if args.operation == "list":
-            cmd_list(host, project, iid, timeout_s)
-        elif args.operation == "thread":
-            cmd_thread(host, project, iid, timeout_s, check_note_id(args.note))
-        elif args.operation == "reply":
-            cmd_reply(host, project, iid, timeout_s,
-                      check_discussion(args.discussion), args.body_file)
-        elif args.operation == "resolve":
-            cmd_resolve(host, project, iid, timeout_s, check_discussion(args.discussion))
-        else:
-            raise HelperError("usage", f"unknown operation: {args.operation!r}")
+        if not _dispatch_subcommand(args, host, project, iid, timeout_s):
+            parser.print_help(file=sys.stderr)
+            return 2
     except HelperError as err:
-        host = getattr(args, "host", None)
-        project = getattr(args, "project", None)
-        raw_iid = getattr(args, "mr", None)
+        host = args.host
+        project = args.project
+        raw_iid = args.mr
         try:
             iid = int(raw_iid)
-        except (TypeError, ValueError):
+        except ValueError:
             iid = raw_iid
         emit_error(err, host, project, iid)
         return 1

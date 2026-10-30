@@ -2,7 +2,7 @@
 
 ODIN workflows for diagrams, decks, canvases, and visual explainers.
 
-5 skills, category Design. Install the whole plugin below, or take a single skill with `gh skill install`.
+3 skills, category Design. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -33,11 +33,9 @@ Each row states when to reach for the skill. Invoke one as `/odin-visual:<name>`
 
 | Skill | Trigger |
 |---|---|
-| automatic-freeform-graphs-design | Use when a user wants a looser conceptual graph for exploratory work. |
 | compile-3d-workflow | Use when the user asks for direction and a compilable 3D workflow from an interview. |
 | pr-review-canvas | Use when asked to render a PR review as a Cursor Canvas artifact or a standalone HTML page served on localhost (mode: html), with risky hunks foregrounded. |
 | pr-walkthrough | Use when a user asks for a zoomable PR map or graph-canvas orientation. |
-| show-me | Use when asked to show/diagram: comparison table, data record, metric card, stepper, mockup, numeric chart, interactive explainer. |
 
 ## Workflows
 

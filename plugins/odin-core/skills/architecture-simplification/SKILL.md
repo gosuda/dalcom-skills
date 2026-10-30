@@ -1,65 +1,71 @@
 ---
 name: architecture-simplification
-description: 'Use when the user explicitly asks to simplify an architecture, collapse modules or crates, or cut a dependency graph within approved boundaries. Not for single-module cleanup: use code-simplification. Not for blind re-derivation: use breaking-driven.'
+description: 'Use when the user explicitly asks to simplify an architecture, collapse modules or crates, or cut a dependency graph within approved boundaries. Executes an approved layout direction slice by slice. Not for single-module cleanup: use code-simplification. Not for layout planning from nothing: use architect. Not for blind re-derivation: use breaking-driven.'
 ---
 
-# Architecture simplification (very-offensive layout reduction)
+# Architecture simplification
 
-Standards: every remaining module and edge earns its place. Each surviving module hides exactly one family of decisions behind a contract its callers can rely on.
+This skill performs the cut. The user names a subsystem and the direction it should go, directly or through a layout already approved via `architect`, and this skill re-derives the interior so fewer modules, crates, and dependency edges remain, with every in-scope caller migrated in the same motion and the product boundary preserved. It plans nothing from nothing: without an approved direction, the layout question belongs to `architect` first.
 
-Human invocation only: the model never auto-fires this skill. An explicit human request or an explicit `architecture-simplify` ask is required every time.
+It runs only on an explicit user request to simplify, collapse, or re-derive a subsystem layout. It never starts itself from a smaller cleanup, and routing or handoff here grants no permission. Only the approved scope and recorded yeses authorize the work.
 
-## Contract
+## Start from the approved scope and the contracts it must preserve
 
-| Field | Bound contract |
+Before touching anything, write down three things and the approval covering them:
+
+- The exact path set under review (subsystem, crate set, or layer set), plus every dependency edge entering, leaving, or crossing it, each with its owning file and line, observed in the tree.
+- The consumer-visible surfaces that must survive: public APIs, re-exports, wire and on-disk shapes, configuration keys, plugin points, documented examples, and the end-to-end behavior the layout must keep working.
+- The approved layout direction, whether stated by the user or carried over from `architect`. This skill executes that cut; it does not substitute its own plan.
+
+Derive the preserved contracts from call sites, tests, signatures, wire shapes, and configuration consumers, never from the layout's own aspirations. With a missing or vague scope, stop and ask for the exact path set rather than inferring a subsystem from a symptom. Anything outside the approved set needs a new explicit scope.
+
+## Judge every module by the decisions it hides
+
+A surviving module earns its place by hiding exactly one family of decisions behind a contract its callers can rely on. Shared language, after Matt Pocock's codebase-design work: a **module** is anything with an interface and an implementation, at any scale; the **interface** is every fact a caller must know (types, invariants, ordering, errors, configuration, performance), not just the type-level surface; **depth** is behavior hidden per unit of interface learned; a **seam** is where behavior can be substituted or tested in isolation; an **adapter** is the concrete thing sitting at a seam. Depth buys callers leverage and maintainers locality: fix once, fixed everywhere.
+
+Classify each in-scope module as an essential owner (keep, or merge into as the surviving owner, with a one-line reason naming the decision family) or as residue: a forwarding tier, single-use layer, duplicated owner, or dead branch of the graph, cut with a reason. Classify each edge as load-bearing, with consumer-need evidence behind it, or removable as forwarding, speculative, or superseded. Competing canonical owners are never unified on judgment alone: the survivor needs consumer-need evidence, and the losing import path migrates fully.
+
+Run the deletion test on every suspect: imagine deleting the module. Where complexity vanishes, it was a pass-through, so name the callers that absorb it and cut it. Where complexity reappears across callers, it was earning its keep. Judge depth by leverage, never by line or branch ratios, which reward padding the implementation; and never treat an interface as just a keyword or method list, which omits the invariants and failure modes callers depend on. Simplify directory depth and width by domain cohesion and change propagation (modules that change together belong together), with no arbitrary depth or fan-out quotas and no shallow wrappers left standing.
+
+## Treat each dependency by what varies across it
+
+How a merged module gets tested depends on what sits behind its seam:
+
+| Dependency | Treatment |
 |---|---|
-| Trigger | Human explicitly asks for architecture simplification: collapse crates, layers, or modules; re-derive a subsystem layout; cut a dependency graph; remove architectural edges or tiers. Human-invoked or an explicit `architecture-simplify` ask only; never self-initiated from a smaller cleanup. |
-| Authority | Reversible local over the human-scoped path set only: re-derive layout, move or merge modules, collapse edges, migrate every affected caller, test reference, and doc pointer in atomic commits; rollback is version control. No remote mutation. Any path outside the approved set needs a new explicit scope; any product-boundary or consumer-contract change needs a recorded yes. |
-| Side effect | Layout re-derived with fewer modules, crates, or edges; every affected caller migrated; no shim, alias, tombstone, re-export stub, or deprecated path left behind. |
-| Done | Every in-scope module and edge classified, interior layout re-derived and migrated, boundary decisions recorded, residue search empty, the narrowest verifier plus the applicable end-to-end check green, and no shim, alias, tombstone, or deprecated path surviving. Crate, module, and edge deltas are reported evidence only, never targets. |
+| In-process (pure computation, in-memory state, no I/O) | Merge freely and test through the new interface directly; no adapter needed. Keep separate only when owners or change reasons differ. |
+| Local-substitutable (a local stand-in exists, such as an in-memory filesystem or a containerized service in the test suite) | Deepen when the stand-in exists; the seam stays internal and no port appears at the external interface. |
+| Remote but owned (the team's own services across a network boundary) | Define a port at the seam: the deep module owns the logic, transport arrives as an injected adapter, tests use an in-memory adapter, production uses the real transport. |
+| True external (third-party services the team does not control) | Take the dependency as an injected port and test with an adapter that asserts observable outcomes through the interface, not a mock echo. A dependency that cannot be classified counts as true-external. |
 
-## Inputs
+One adapter means a hypothetical seam; two justified adapters, typically production plus test, make a real one. Never introduce a port for a hypothetical variation (a single-adapter seam is just indirection). Internal seams used only by the module's own tests stay private; never widen the external interface just because tests use them.
 
-- Scope (required): the explicit human-approved path set (subsystem, crate set, layer set) plus the dependency edges under review, observed in the tree with owning files and lines.
-- Contracts (derived): the consumer-visible surfaces of the subsystem (public APIs, re-exports, wire or on-disk shapes, configuration keys, plugin points, documented examples) and the end-to-end behavior the layout must preserve.
-- Plan anchor (derived): the approved layout direction, whether from the user directly or from `architect`; this skill executes the cut, it does not substitute its own plan for an approved one.
+## Never cross the product boundary on silence
 
-## Procedure
+Interior layout (every caller in-tree, nothing persisted, shipped, externally configured, or version-promised) is re-derived without further asking. Boundary surfaces (a public API, a crate-root re-export an external example or downstream crate imports, a wire or on-disk format, live configuration, a plugin point, a version promise) need a recorded yes immediately before removal, relocation, or migration. Pause before each such cut and ask the user; proceed only on an explicit yes for that surface. On silence or no, keep the surface permanently as contract and hand the compatibility cut to `refactor-break-compat` with file, line, evidence, and reason. A boundary cut attempted on silence is restored from version control, with the surface, the missing yes, and the handoff recorded. Routing, prior approval of the interior, or a handoff from another skill never substitutes for that yes.
 
-1. **Record scope, contracts, and the dependency graph.** List every in-scope path, every exposed surface, and every dependency edge entering, leaving, or crossing the scope with its owner and line. Derive the preserved contracts from call sites, tests, signatures, wire shapes, and configuration consumers, never from the layout's own aspirations. Done when: the path set, surface list, edge table, and preserved contracts are written and the approval covering them is recorded.
+## Collapse, move, and migrate in the same cut
 
-2. **Classify every module and edge.** For each module: essential owner (hides one decision family, keep or merge as the surviving owner, one-line reason) or residue (forwarding tier, single-use layer, duplicated owner, dead branch of the graph, cut with reason). For each edge: load-bearing (real consumer need with evidence) or removable (forwarding, speculative, or superseded). Competing canonical owners are not unified here on judgment alone: the surviving owner needs consumer-need evidence and the losing import path migrates fully. Done when: no in-scope module or edge is unclassified.
+Collapse the condemned modules and edges into their surviving owners; move code to its justified owner; update every affected internal caller, test reference, example, and doc pointer in the same commit series, one slice per atomic commit. Never leave a caller on a removed module or edge, and never leave a shim, alias, tombstone, re-export stub, dual path, or deprecated wrapper behind as a convenience. Enumerate config-selected, environment-selected, and build-variant-selected references by exact token search, not by assuming them absent. The cut stays incomplete while exact-token search for any removed module, edge, or re-export still finds a survivor (or the hit is reclassified as not-dead with its consumer evidence). A hidden consumer found mid-cut stops that surface until its exact tokens are enumerated and migrated, or a no is recorded.
 
-3. **Gate the boundary.** Interior layout (every caller in-tree, nothing persisted, shipped, externally configured, or version-promised) is re-derived without further asking. Boundary surfaces (public API, crate-root re-export an external example or downstream crate imports, wire or on-disk format, live configuration, plugin point, version promise) need a recorded yes before removal or relocation; on silence or no, keep the surface permanently as contract and hand the compat cut to `refactor-break-compat` with file, line, evidence, and reason. Done when: every boundary surface carries a yes or a no; nothing structural crosses on silence.
+## Prove the layout holds
 
-4. **Re-derive and migrate in the same series.** Collapse the condemned modules and edges into their surviving owners; move code to its justified owner; update every affected internal caller, test reference, example, and doc pointer in the same commit series, one slice per atomic commit. Never leave a caller on a removed module or edge; never leave a shim, alias, tombstone, re-export stub, dual path, or deprecated wrapper as a convenience. Config-selected, environment-selected, and build-variant-selected references are enumerated by exact token search, not assumed absent. Done when: the new layout is in place, every affected reference resolves to a surviving owner, and exact-token search for every removed module, edge, and re-export returns nothing.
+After each atomic commit run the narrowest verifier (compiler or typechecker first, then the repository's own test command) and finish with the applicable end-to-end check for the subsystem. A red baseline stops all cutting and is reported first with the failing tests and end-to-end state; never cut on unproved ground. A regression reverts that slice, with the failing check recorded, while prior green slices stand.
+Where a boundary rule already exists as a compiler or linter import boundary, enforce the surviving edges through it and show the rule bites. Never invent weak directory-shape tests, and never write tests that restate the new layout: each check must prove an invariant or stand as adversarial proof against a plausible fault, and must survive equivalent refactors.
 
-5. **Prove the new layout.** After each atomic commit run the narrowest verifier (compiler or typechecker, then the repository's own test command); finish with the applicable end-to-end check for the subsystem. A red baseline stops all cutting and is reported first. A regression reverts that slice with its failing check recorded. Permitted test edits are mechanical migration to the new layout (imports, paths, fixture wiring, renamed symbols) plus assertion updates strictly required by an approved contract change, each with a recorded reason. Forbidden: deleting, suppressing, skipping, or weakening tests to force green. Test shrinkage belongs to `tests-purge-unneeded` under mutation proof; doc-only purges belong to `purge-slop-docs`. Done when: verifier and end-to-end are green on the migrated tree with no forbidden edit.
+Permitted test edits are mechanical migration to the new layout (imports, paths, fixture wiring, renamed symbols) plus assertion updates strictly required by an approved contract change, each with a recorded reason. Forbidden: deleting, suppressing, skipping, or weakening tests to force green. Test shrinkage belongs to `tests-purge-unneeded` under mutation proof; doc-only purges belong to `purge-slop-docs`. Without a verifier or end-to-end check, state exactly which claims are unproved instead of claiming done.
 
-6. **Ghost sweep across surfaces.** Grep code, tests, docs, configs, registries and overrides, error messages, log lines, and navigation for every removed module, edge, configuration key, and re-export. Done when: zero survivors, or the hit is reclassified not-dead with its consumer evidence.
+## Stop conditions and recovery
 
-## Owner limits (stop here, hand off with file, line, evidence, reason)
+- Vague or missing scope: ask for the exact path set; infer nothing.
+- Red baseline: report the failures; cut nothing.
+- Slice regression: revert the slice, record the check, keep prior green slices.
+- Boundary cut on silence: restore, record, hand off.
+- Hidden consumer: stop that surface, enumerate tokens, migrate or record no.
+- Ghost references remain: remove the survivors or roll back the slice.
+- No verifier or end-to-end: name the unproved claims.
+- Partial result: keep green slices, report rejected slices with reasons, and never call the layout done while callers dangle or residue stands.
 
-| Owner | When it owns the job, not this skill |
-|---|---|
-| This skill | Fewer modules, crates, or edges with the product boundary preserved; interior re-derivation plus full caller migration; boundary cuts only on recorded yes. |
-| `architect` | Layout planning itself. This skill executes an approved direction slice by slice; it does not plan the target layout from nothing. |
-| `code-simplification` | One named module or dependency slice whose interior shrinks without re-deriving the surrounding layout. Route single-scope work down, not up. |
-| `breaking-driven` | Blind re-derivation from call-site evidence alone. This skill reuses the interior-versus-boundary gate without copying that method. |
-| `guillotine` | Multi-artifact-class residue requiring a candidate ledger and bidirectional consumer proof. Route when the cut's residue spans code plus docs, tests, config, workflows, or generated sources under one unchanged boundary. |
-| `refactor-break-compat` | Any consumer-facing removal or relocation. Recorded yes only; silence keeps the surface. |
+## What you hand back
 
-## Failure and recovery
-
-- Missing or vague scope: stop and ask for the exact path set. Do not infer the subsystem from a symptom.
-- Red baseline: stop before cutting; report the failing tests and the end-to-end state. Never cut on unproven ground.
-- Regression in a slice: revert that slice; record the failing check; keep prior green slices.
-- Boundary cut on silence: restore from version control; record the surface, the missing yes, and the handoff.
-- Hidden consumer found (config, environment, build variant, downstream example): stop cutting that surface; enumerate the exact tokens; migrate or record no before proceeding.
-- Ghost references remain: incomplete; remove survivors or roll back the slice that left them.
-- No verifier or no end-to-end available: state exactly which claims are unproved; do not claim done.
-- Partial result: keep green slices; report rejected slices with reasons; never claim the layout done while callers dangle or residue resolves.
-
-## Output
-
-The re-derived layout plus a report: approved scope and plan anchor, module and edge classifications with reasons, applied slices with atomic commits and migrated callers, boundary decisions with yes or no evidence, ghost-sweep result, verifier and end-to-end results, and reported structural deltas. Terminal classification: simplified, already-at-floor, or blocked with the exact missing scope, yes, prerequisite, or hidden consumer.
+The re-derived layout, plus the record of how it got there: the approved scope and plan anchor, module and edge classifications with reasons, applied slices with atomic commits and migrated callers, boundary decisions with yes or no evidence, the ghost-sweep result, verifier and end-to-end results, and the structural deltas (crate, module, and edge counts) as observed evidence, never as targets. The work ends in one of three states: simplified, already-at-floor, or blocked with the exact missing scope, yes, prerequisite, or hidden consumer named.

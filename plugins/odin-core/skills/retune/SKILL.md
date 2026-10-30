@@ -5,41 +5,38 @@ description: 'Use when a skill corpus degrades on a new model and needs measurem
 
 # Retune a corpus for a new model
 
-Standards: behavior is the contract, prose edits without measured effect are not repairs. Cut only what measurement proves removable.
+Behavior is the contract here. Prose edits with no measured effect are not repairs, and word reduction is not a goal. Leanness is a separate program; report completion, not word counts. This skill runs only on an explicit user request to retune, never unprompted and never as headless self improvement.
 
-## Contract
+You may measure freely and edit the named corpus, but nothing else. Never weaken a test to get a green suite, never invent harness output and present it as behavior proof, and never publish, mutate remote state, spend money, touch credentials, or destroy data.
 
-| Field | Bound contract |
+## Fix the target, corpus, and bar before touching anything
+
+Settle three facts in writing before any edit exists. First, the target model and the symptom: what got worse, on which model. Second, the corpus path: the checkout you are allowed to edit, which defaults to `./skills` only when the invocation names no other corpus. Third, the acceptance bar: consecutive clean runs or an equivalent bar with its count. A bar chosen after results is not a bar. A green test suite alone is never the bar; the bar is measured behavior on the target model.
+
+## Prove the harness can measure before claiming anything
+
+Require all three of these, then stop and name the missing piece when any one is absent. There is no fallback audit.
+
+| Requirement | What counts |
 |---|---|
-| Trigger | A corpus performs worse on a named target model and the user requests retuning it. |
-| Authority | Read-only measurement plus explicitly authorized corpus edits in the named corpus path. No test weakening, no harness invention billed as behavior proof, no publication, remote, credential, paid, or destructive mutation. Explicit user request only; this skill never auto-invokes and never runs headless self-improvement. |
-| Side effect | A corpus whose measured behavior on the target model clears a pre-registered bar, with regression classes removed and each removal attributable, or an explicit unsupported claim. |
-| Done | The registered bar is cleared and reported with what stayed unmeasured, or the run reports the specific claim it could not support. A green test suite alone is not done. |
+| Run archive or harness | Produces per run tool call traces, terminal markers, and final messages |
+| Build selector | Lets one runner compare two corpus checkouts |
+| Repeatable task | The corpus executes end to end through it |
 
-## Inputs
+Never present a static audit as retuning. Mine history before spending runs, then establish the noise floor by running the harness against two identical corpus copies at the same commit. The observed difference is the floor every later claim must clear.
 
-- The target model and the symptom. Required.
-- The corpus path (default `./skills` only when the invocation names no other corpus). Required to fix before editing.
-- The acceptance bar: consecutive clean runs or equivalent bar with its count. Required to register before any change.
+## Argue both sides in separate heads
 
-Word reduction is a non-goal. Leanness is a separate program; report completion, not word counts.
+Audit adversarially with independent contexts: one worker per skill proposes cuts while a separate worker defends the existing prose. When no independent worker facility exists, report that as a blocker and stop the audit rather than arguing both sides in one context.
 
-## Procedure
+Cut in surgical passes, one problem per change, fanning out by disjoint file ownership and never by item. Never edit a test to make a suite green: a removed string a test pins is a finding to report, not a test to weaken. Sort every stop by who is on the other side before touching it. Workflows that exist to stop and ask are the product, not the defect.
 
-1. Check the measurement gate first. Require all three: a run archive or harness producing per-run tool-call traces, terminal markers, and final messages; a build selector letting one runner compare two corpus checkouts; a repeatable task the corpus executes end to end. When any is missing, stop and name what to build. Never present a static audit as retuning.
-2. Mine history before spending runs, then establish the noise floor. Run the harness against two identical corpus copies at the same commit; the observed difference is the floor every later claim must clear. Register the bar in writing before any change exists. A bar chosen after results is not a bar.
-3. Audit adversarially with independent contexts: one worker per skill proposes cuts, a separate worker defends existing prose. When no independent worker facility exists, report that as a blocker and stop the audit rather than arguing both sides in one context.
-4. Cut in surgical passes, one problem per change. Fan out by disjoint file ownership, never by item. Never edit a test to make a suite green: a removed string a test pins is a finding to report, not a test to weaken. Sort every stop by who is on the other side before touching it; workflows that exist to stop and ask are the product, not the defect.
-5. Measure after each pass and let the failure choose the next fix until the registered bar clears. Then stop. Report what stayed unmeasured: a cleared bar never implies coverage it does not have.
-6. Ship the corpus change with what each commit preserves and removes attributable. Keep the bar, floor, and measurement evidence with the result.
+## Let the failure choose the next fix
 
-## Failure and recovery
+Measure after each pass and let the failure choose the next fix until the registered bar clears, then stop. Report what stayed unmeasured: a cleared bar never implies coverage it does not have. If the bar does not clear, report the failing sites and the next fix they select rather than claiming success. If an explicit limit is reached, stop incomplete with the evidence and remaining scope; limit exhaustion is not convergence.
 
-- Measurement gate missing: blocked with the exact missing piece. No fallback audit.
-- No independent audit contexts: blocked audit; no single-context adversarial result.
-- Bar not cleared: report the failing sites and the next fix they select; do not claim success.
-- Explicit limit reached: stop incomplete with evidence and remaining scope. Limit exhaustion is not convergence.
+Ship the corpus change with each commit stating what it preserves and what it removes, so every removal stays attributable. Keep the bar, the floor, and the measurement evidence with the result.
 
-## Output
+## What you hand back
 
-Return the target model, harness found, floor and bar, passes with attributable removals, measurement evidence per pass, unmeasured scope, and the cleared or blocked verdict. Never report prose reduction as behavior proof.
+Return the target model, the harness found, the floor and the bar, the passes with attributable removals, the measurement evidence per pass, the unmeasured scope, and the cleared or blocked verdict. Never report prose reduction as behavior proof.

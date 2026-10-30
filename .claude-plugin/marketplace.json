@@ -9,7 +9,7 @@
     {
       "name": "odin-core",
       "source": "./plugins/odin-core",
-      "description": "Core ODIN gates every session runs: intent, scope, verification, and hand-off checks.",
+      "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
       "version": "2.1.7",
       "author": {
         "name": "OutlineDriven",
@@ -45,29 +45,6 @@
         "outlinedriven",
         "agent-skills",
         "planning"
-      ],
-      "category": "Productivity",
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      }
-    },
-    {
-      "name": "odin-product",
-      "source": "./plugins/odin-product",
-      "description": "ODIN workflows for product strategy, market signals, and developer adoption.",
-      "version": "2.1.7",
-      "author": {
-        "name": "OutlineDriven",
-        "url": "https://github.com/OutlineDriven"
-      },
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "license": "SEE LICENSE IN LICENSE",
-      "keywords": [
-        "odin",
-        "outlinedriven",
-        "agent-skills",
-        "product"
       ],
       "category": "Productivity",
       "policy": {
@@ -147,7 +124,7 @@
     {
       "name": "odin-git",
       "source": "./plugins/odin-git",
-      "description": "ODIN workflows for commits, branches, pull requests, review feedback, and issue tracking.",
+      "description": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
       "version": "2.1.7",
       "author": {
         "name": "OutlineDriven",
@@ -160,29 +137,6 @@
         "outlinedriven",
         "agent-skills",
         "git"
-      ],
-      "category": "Coding",
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      }
-    },
-    {
-      "name": "odin-release",
-      "source": "./plugins/odin-release",
-      "description": "ODIN workflows for cutting, gating, publishing, and announcing releases.",
-      "version": "2.1.7",
-      "author": {
-        "name": "OutlineDriven",
-        "url": "https://github.com/OutlineDriven"
-      },
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "license": "SEE LICENSE IN LICENSE",
-      "keywords": [
-        "odin",
-        "outlinedriven",
-        "agent-skills",
-        "release"
       ],
       "category": "Coding",
       "policy": {
@@ -344,29 +298,6 @@
         "outlinedriven",
         "agent-skills",
         "learn"
-      ],
-      "category": "Productivity",
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      }
-    },
-    {
-      "name": "odin-agent",
-      "source": "./plugins/odin-agent",
-      "description": "ODIN workflows for configuring agent harnesses, MCP servers, and repository agent surfaces.",
-      "version": "2.1.7",
-      "author": {
-        "name": "OutlineDriven",
-        "url": "https://github.com/OutlineDriven"
-      },
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "license": "SEE LICENSE IN LICENSE",
-      "keywords": [
-        "odin",
-        "outlinedriven",
-        "agent-skills",
-        "agent"
       ],
       "category": "Productivity",
       "policy": {

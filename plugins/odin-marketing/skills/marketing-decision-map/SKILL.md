@@ -5,43 +5,35 @@ description: 'Use when a marketing initiative is too broad for a brief and needs
 
 # Marketing decision map
 
-## Contract
+Chart a marketing initiative that is too broad for a brief before anyone acts on it. You fix an observable destination, sort everything known into decided, answerable, blocked, unknowable, and out of scope, and either stop at the map or resolve one frontier decision per continuation with explicit user confirmation. The output is a map, never a task tracker or production plan.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | User names an unclear marketing initiative plus an observable destination. |
-| Authority | Read-only by default. Writes a map file only when the user explicitly names a writable path. No credentials, publication, outreach, or remote mutation. |
-| Side effect | A decision map in chat, or at the named path when requested. Nothing else changes. |
-| Done | Destination, constraints, confirmed decisions, current frontier, blocked questions, fog, and out-of-scope boundary are stated; at most one consequential decision is resolved per continuation; no recommendation is recorded as a decision without user confirmation. |
+This skill is read-only by default. It writes a map file only when the user explicitly names a writable path (`output_path`); otherwise it stays in chat. It never touches credentials, publication, outreach, or remote state, and it never executes the selected strategy, runs campaigns, or tracks production tasks. On failure there is no mutation: chat output only, unless a path was already approved for a completed map.
 
-## Not for
-
-- Executing the selected strategy, running campaigns, or tracking production tasks.
-- Wayfinding for non-marketing planning; that belongs with general planning owners.
-
-## Inputs
+## What you need
 
 - `initiative` (required): the unclear marketing effort to chart.
-- `destination` (required): the observable outcome the map points at.
-- `context` (optional): current user instructions and explicitly selected project material. Supplied, never inferred into a file.
-- `output_path` (optional): writable path for the map. Chat-only when omitted.
+- `destination` (required): the observable outcome the map points at. Without one, stop and ask for it. Motion is not progress, so do not chart without it.
+- `context` (optional): current user instructions and explicitly selected project material. Supplied material only, never inferred into a file. On a material conflict in the supplied context, stop, name the conflict, and do not resolve it by assumption.
+- `output_path` (optional): a writable path for the map. Chat-only when omitted.
 
-## Procedure
+## Chart the territory
 
-1. Fix the destination in observable terms and record standing constraints and notes. **Done when:** destination and constraints are written and observable.
-2. Sort what is known into confirmed decisions, current frontier (answerable now), blocked questions (prerequisite missing), fog (unknown and currently unknowable), and out of scope. **Done when:** every item sits in exactly one bucket.
-3. Apply only materially relevant lenses: outcome, market, audience, problem, value, position, journey, channel, expression, economics, measurement, risk. Skip lenses with no bearing and say so. **Done when:** used lenses are named; skipped lenses are named with a reason.
-4. In chart mode, stop before resolving the first consequential decision and present the map. **Done when:** the map is presented with an untouched frontier.
-5. In continue mode, resolve exactly one frontier decision: state the options, the evidence, the recommendation, and ask for confirmation. Record it as a decision only on explicit user confirmation. **Done when:** zero or one decision is confirmed and recorded as user-confirmed.
-6. Never convert the map into a task tracker or production plan. **Done when:** the output contains no tasks, owners, or dates beyond decision sequencing.
+Fix the destination in observable terms and record standing constraints and notes. Then sort what is known so every item sits in exactly one bucket:
 
-## Failure and recovery
+- Confirmed decisions (each recorded only on explicit user confirmation, with its basis)
+- Current frontier (answerable now)
+- Blocked questions (each with its missing prerequisite named)
+- Fog (unknown and currently unknowable)
+- Out of scope (the boundary of this map)
 
-- No observable destination: stop and ask for one; do not chart motion as progress.
-- Material conflict in supplied context: stop, name the conflict, do not resolve by assumption.
-- Partial result: present the charted portion, mark the uncharted remainder as fog.
-- No mutation on failure; chat output only unless a path was already approved for a completed map.
+Apply only materially relevant lenses from this set: outcome, market, audience, problem, value, position, journey, channel, expression, economics, measurement, risk. Skip lenses with no bearing and say why. Name every lens used and every lens skipped with its reason.
 
-## Output
+## Chart mode or continue mode
 
-A decision map: destination, notes and constraints, confirmed decisions (each marked user-confirmed with its basis), current frontier, blocked questions with prerequisites, fog, out-of-scope boundary, and the single next decision when in continue mode.
+In chart mode, stop before resolving the first consequential decision and present the map with its frontier untouched. In continue mode, resolve exactly one frontier decision: state the options, the evidence, and the recommendation, then ask for confirmation and record it as a decision only on explicit confirmation. At most one consequential decision is resolved per continuation, and no recommendation is ever recorded as a decision without user confirmation.
+
+Never convert the map into a task tracker or production plan: no tasks, owners, or dates beyond decision sequencing. On a partial result, present the charted portion and mark the uncharted remainder as fog.
+
+## What you hand back
+
+A decision map: destination, notes and constraints, confirmed decisions (each marked user-confirmed with its basis), current frontier, blocked questions with prerequisites, fog, the out-of-scope boundary, and the single next decision when in continue mode.

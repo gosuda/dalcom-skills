@@ -39,7 +39,7 @@ it("constructor stores repo and logger", () => {
 
 `public` parameter properties are a TS feature, the compiler proves the assignment. Delete.
 
-### Identity passthrough / re-export
+### Identity passthrough or re-export
 
 ```ts
 it("getUser returns the input id wrapped", () => {
@@ -63,17 +63,27 @@ it("service.getUser calls repo.findById", () => {
 
 This test asserts that the mock was called with the value the test passed and returned the fixture the test set up. It exposes no real bug surface. Replace it with a real-DB integration test or delete it.
 
-## Keep
-
-### Runtime boundary validation (where TS strict leaks)
+### Bare no-assert execution tests
 
 ```ts
-it("parseUserPayload rejects malformed JSON shape", () => {
-  expect(() => parseUserPayload(JSON.parse('{"name": null}'))).toThrow();
+it("parseUserPayload executes on empty input", () => {
+  parseUserPayload({}); // no expect: catches only uncaught exceptions, ignoring wrong return values or corrupted state
 });
 ```
 
-`JSON.parse` returns `any`, the compiler cannot help here. The test verifies the runtime guard at the boundary. Keep.
+Delete bare execution tests that lack an independent assertion or invariant oracle. Observing that a function runs without throwing does not prove contract correctness; an implementation returning undefined or corrupted data passes this check. Reject the smoke test exception. Either delete the test, or upgrade it to assert against an independent invariant or explicit contract outcome.
+
+## Keep
+
+### Runtime boundary validation with error classification
+
+```ts
+it("parseUserPayload rejects malformed JSON shape", () => {
+  expect(() => parseUserPayload(JSON.parse('{"name": null}'))).toThrow(ValidationError);
+});
+```
+
+Because `JSON.parse` returns `any`, static types cannot guarantee runtime validity at the boundary. A bare `toThrow()` is weak because an unintended `TypeError` or runtime crash passes as readily as a validation failure. Assert the specific error class (such as `toThrow(ValidationError)`) or structured rejection contract to verify the guard enforced the schema. Keep with specific error classification.
 
 ### HTTP contract
 

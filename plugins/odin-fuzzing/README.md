@@ -2,7 +2,7 @@
 
 ODIN workflows for fuzz harnesses, fuzzer setup, sanitizers, and coverage analysis.
 
-5 skills, category Security. Install the whole plugin below, or take a single skill with `gh skill install`.
+4 skills, category Security. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -33,7 +33,6 @@ Each row states when to reach for the skill. Invoke one as `/odin-fuzzing:<name>
 
 | Skill | Trigger |
 |---|---|
-| fuzz-harness-writing | Use when a user needs to create or improve a deterministic, engine-agnostic fuzz harness for raw or structured target inputs. |
 | fuzzing | Use when planning an end-to-end fuzzing program for a project: engine and target selection, corpus management, and CI or nightly wiring. |
 | fuzzing-dictionary | Use when a parser, protocol, or file format fuzzer stalls at fixed-token validation gates and needs a coverage dictionary. |
 | fuzzing-obstacles | Use when asked to identify and bypass checksums, nondeterminism, or validation barriers that block fuzzing coverage. |

@@ -5,41 +5,24 @@ description: 'Use when pressure-testing one marketing decision, idea, or plan be
 
 # Marketing assumption grill
 
-## Contract
+Pressure-test one marketing idea, decision, or plan before anyone commits to it. You ask sharp questions in dependency order, look up whatever the environment already knows instead of asking the user, and leave every decision with the user. The run ends with understanding confirmed, never with the decision executed.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | User explicitly asks to grill, challenge, or pressure-test one marketing idea, decision, or plan. |
-| Authority | Read-only. Chat questions, answers, and recommendations only. Optional public factual research. No writes, publication, outreach, or remote mutation. |
-| Side effect | Interview transcript and recommendation set in chat. No external state changes. |
-| Done | The answerable frontier is empty or the user stops; every asked question carried a recommendation beside it; no decision was executed. |
+This skill is read-only: chat questions, answers, and recommendations, plus optional fact-finding from public or user-selected sources. It writes nothing, publishes nothing, and changes no external state. It also stays inside marketing: no executing the grilled decision, no writing the plan into files, no running research as a substitute for judgment, and no general critique of non-marketing work.
 
-## Not for
+## What you need
 
-- Executing the grilled decision, writing the plan into files, or running research as a substitute for judgment.
-- General critique of non-marketing work; that belongs with general review owners.
-
-## Inputs
-
-- `target` (required): one marketing idea, decision, or plan under test.
-- `answers` (ongoing): user responses to frontier questions.
+- `target` (required): the one marketing idea, decision, or plan under test. When the target is too broad for one grill, name the split and grill the first branch only.
+- `answers` (ongoing): the user's responses to frontier questions.
 - `sources` (optional): user-selected public sources for fact-finding.
 
-## Procedure
+## Grill in frontier order
 
-1. Build a dependency-aware question tree for the target: which questions must settle before downstream ones are answerable. **Done when:** the tree names prerequisites per question.
-2. Ask the whole currently answerable frontier, not downstream questions whose prerequisites are open. **Done when:** every asked question has its prerequisites settled.
-3. Find discoverable facts through read-only research from supplied or public sources instead of asking the user for them. **Done when:** no asked question could have been answered from the available environment.
-4. Give a recommendation beside each question while preserving the decision for the user. Separate facts found, recommendations made, and decisions the user owns. **Done when:** each question carries a recommendation and the user decision slot stays explicit.
-5. Recompute the frontier after each answer. **Done when:** answered questions leave the frontier and newly answerable ones enter it.
-6. Stop when the frontier is empty or the user stops. Do not execute the resulting decision. **Done when:** the run ends with understanding confirmed and nothing executed.
+1. Sketch which questions must settle before downstream ones become answerable, noting the prerequisites of each question. Then ask only the currently answerable frontier, never a downstream question whose prerequisites are still open.
+2. Before asking the user anything, check whether the environment already knows it: do read-only research in the supplied or public sources first. No asked question should survive that could have been answered from what is available. A fact unavailable from any authorized source is marked unknown: never asked twice, never invented.
+3. Put a recommendation beside every question asked, while keeping the decision visibly the user's: facts found, recommendations made, and user-owned decisions stay in separate slots, and user decisions are recorded verbatim.
+4. After each answer, recompute the frontier: answered questions leave it, newly answerable ones enter it.
+5. Stop when the frontier is empty or the user stops. An early stop keeps the answered ground and names the remaining frontier explicitly. Either way, do not execute the resulting decision.
 
-## Failure and recovery
+## What you hand back
 
-- User stops early: keep answered ground, mark the remaining frontier explicitly.
-- Fact unavailable from any authorized source: mark it unknown, do not ask twice, do not invent it.
-- Target too broad for one grill: name the split and grill the first branch only.
-
-## Output
-
-Frontier transcript: questions asked with prerequisites, facts found with sources, recommendations per question, user decisions recorded verbatim, and the remaining frontier or confirmation that it is empty.
+A frontier transcript in chat: questions asked with their prerequisites, facts found with sources, one recommendation per question, user decisions recorded verbatim, and either confirmation that the frontier is empty or the remaining frontier named.

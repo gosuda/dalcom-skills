@@ -5,43 +5,45 @@ description: 'Use when starting a project or feature, requirements are unclear, 
 
 # Spec-driven development
 
-## Contract
+Vague requirements become a reviewed spec, the spec becomes an approved plan and task list, and the tasks get built through tests that attack the acceptance criteria. Nothing gets implemented until a human has approved the spec behind it. All writes stay local to the working tree, with version control as the rollback. Remote mutation, credential exposure, and irreversible actions are outside this skill.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | A new project or feature is starting, requirements are unclear, the change touches multiple modules, or the task exceeds roughly 30 minutes. |
-| Authority | Reversible local: writes only files and VCS scoped to the current working tree; rollback is version control. No remote mutation, credential exposure, or irreversible action. |
-| Side effect | Writes and commits a spec, records human-approved plan and tasks, and implements through offensive-first tests. All writes are local; no external service calls. |
-| Done | A reviewed, approved spec covering six areas is saved to the repo and the implementation follows it. |
+Call on this skill for a new project or feature, unclear requirements, a change crossing modules, or work past roughly 30 minutes.
 
-## Inputs
+## Map capabilities before specifying
 
-- The user request (required). The requester must approve the spec before planning begins.
-- The scope anchor (required): the module, package, or directory boundary the work affects.
+Every request needs its scope anchor first: the module, package, or directory boundary the work affects. The anchor bounds the spec, and work outside it belongs in a separate request. Single-capability requests go straight to a spec once anchored. Decomposition comes first only when one requirement bundles several independently testable capabilities: distinct capabilities with their own consumers or data, acceptance criteria that cluster into separately shippable groups, or one capability cuttable without rewriting the others.
 
-## Procedure
+For a bundled request, propose a small capability map: a module table with build order, stable kebab-case module ids chosen once, one-way dependency arrows with no cycles, and contracts living in the provider module spec. Save the approved map at the project root and name each module spec after its id. Module boundaries decided mid-implementation count as unapproved, so a multi-capability spec without an approved map stops here.
 
-1. Check scope before specifying. Most requests describe one capability; specify directly for those. Decompose first only when one requirement bundles several independently testable capabilities: distinct capabilities with their own consumers or data, acceptance criteria that cluster into separately shippable groups, or one capability that could be cut without rewriting the others. Propose a small capability map with a module table and build order, stable kebab-case module ids chosen once, one-way dependency arrows with no cycles, and contracts living in the provider module spec. Save the approved map at the project root and name each module spec after its id. Done when: a single-capability request proceeds directly, or a multi-capability map with boundaries, direction, and build order is approved before any module spec.
-2. Surface assumptions first. List every assumption being made and require explicit correction. Do not silently fill ambiguous requirements. Done when: every assumption is listed and corrected or confirmed.
-3. Write the spec covering six core areas. Objective states what is being built and why, who the user is, and what success looks like. Commands record full executable commands with flags for build, test, lint, and dev for the stack the project actually uses. Project structure captures where source, tests, and docs live. Code style shows one real snippet in the project language with naming and formatting rules. Testing strategy sketches the seams where the feature will be tested, prefers an existing seam over a new one, and records framework, locations, coverage expectations, and which level covers each concern. Boundaries use three tiers: always do, ask first, and never do. Keep the artifact format the project already uses when one exists; this skill owns clarification, content, and approval gates, not the external tool format. Reframe vague requirements as testable success criteria and confirm the targets. Done when: all six areas are written with testable success criteria.
-4. Present the spec to the human. Do not advance until the human reviews and approves it. Once the spec is saved, summarize it, list open questions, and stop the turn. Do not start planning or code in the same turn. Done when: the human approves the spec in a later turn.
-4a. **Existing approved spec entry.** When the invocation supplies an already-approved spec, skip steps 1–4 and enter at step 5 (Plan from the validated spec). Map every requested behavior to at least one spec statement; list each unmapped request as a spec gap and stop until the gap is approved as a spec addition. Align implementation to the spec; when a decision changes, update the spec first. A spec may describe approved new behavior that contradicts current implementation — that is a migration directive, not a conflict to surface-and-stop. Never treat a previously pushed commit as exhausting authority for new reversible local edits.
-5. Plan from the validated spec. Identify major components and dependencies, determine implementation order, note risks and mitigations, separate parallel from sequential work, and define verification checkpoints between phases. Before seeking plan approval, validate every implementation step against the codebase: confirm each referenced path, type, and interface exists or is created by an earlier step; record any unconfirmable reference as an assumption in Open questions with the check that would settle it. Done when: the plan is written.
-6. Present the plan to the human. Do not advance until the human reviews and approves it. Done when: the human approves the plan.
-7. Break the plan into discrete tasks. Each task completes in one focused session, has explicit acceptance criteria, includes a verification step with test, build, or manual check, is ordered by dependency, and touches no more than about five files. Done when: the task list is written.
-8. Present the task list to the human. Do not advance until the human reviews and approves it. Done when: the human approves the task list.
-9. Implement through offensive-first tests, one task at a time. For each task turn its acceptance criteria into attacks that must fail red for the right reason, implement until the attacks stop breaking the code, and never bend a test or fixture to reach green. Load only the spec sections and source files the current task needs. Done when: every task is implemented and verified against its acceptance criteria.
-10. Keep the spec alive. When decisions or scope change, update the spec first, then implement. Commit the spec to version control alongside the code. Reference the spec section each change implements. Done when: the spec reflects the current decision and is committed.
+Already holding an approved spec? Skip the mapping, assumptions, drafting, and review steps below and enter at planning. Map every requested behavior to at least one spec statement, list each unmapped request as a spec gap, and stop until the gap is approved as a spec addition. A spec may describe approved new behavior contradicting current implementation. That is a migration directive, not a conflict to surface and stop over. A previously pushed commit never exhausts authority for new reversible local edits.
 
-## Failure and recovery
+## Surface assumptions, then write the spec
 
-- Human withholds approval: do not proceed to the next phase. Surface the specific objection and wait.
-- Scope widens mid-implementation: stop. Return to the spec. Update it, get approval, then proceed.
-- Assumption surfaces after the spec is written: surface it immediately; do not proceed until the human resolves or approves it.
-- No spec written or saved: the done predicate is not met. Implement nothing until the spec exists and is approved.
-- One spec spans several independently testable capabilities without an approved map: stop and map first. Module boundaries decided during implementation are not approved.
-- Non-converged: when the human never approves, the skill ends with no implementation. State this outcome explicitly.
+List every assumption under consideration and get each one corrected or confirmed. Ambiguous requirements never get silently filled.
 
-## Output
+The spec covers six areas:
 
-A reviewed, approved spec saved to a file in the repository covering all six areas, a human-approved plan, a human-approved task list, and implementation that follows that spec through offensive-first tests. The spec is a living document committed to version control.
+- Objective: what gets built and why, who uses it, what success looks like.
+- Commands: full executable build, test, lint, and dev commands with flags, for the stack the project actually uses.
+- Project structure: where source, tests, and docs live.
+- Code style: one real snippet in the project language showing naming and formatting rules.
+- Testing strategy: the seams where the feature gets tested, preferring an existing seam, with framework, locations, coverage expectations, and which level covers each concern.
+- Boundaries in three tiers: always do, ask first, never do.
+
+Vague requirements get reframed as testable success criteria with confirmed targets. Where the project already uses an artifact format, keep it. This skill owns clarification, content, and approval gates rather than any external tool format.
+
+## Get approval at each gate, in order
+
+Present the spec to the human and wait. Once it is saved, summarize it, list open questions, and stop the turn. Planning and code never start in the same turn.
+
+From the validated spec, plan components and dependencies, implementation order, risks with mitigations, parallel versus sequential work, and verification checkpoints between phases. Every implementation step gets validated against the codebase before seeking plan approval: each referenced path, type, and interface exists or is created by an earlier step, and each unconfirmable reference lands in Open questions with the check that would settle it.
+
+Present the plan and wait for approval. Break the approved plan into discrete tasks, each finishing in one focused session with explicit acceptance criteria, a verification step (test, build, or manual check), dependency ordering, and no more than about five files touched. Present the task list and wait for approval.
+
+Withholding approval ends forward motion. Surface the specific objection and wait. A scope widening or a late-breaking assumption sends the work back to the spec: update it, get approval, then proceed.
+
+## Build through attacks, keep the spec alive
+
+Each task turns its acceptance criteria into attacks that must fail red for the right reason. Implementation continues until the attacks stop breaking the code. Tests and fixtures never get bent to reach green. Load only the spec sections and source files the current task needs.
+
+Decisions or scope changes update the spec first, then the code. Commit the spec alongside the code and reference the spec section each change implements. Without a written, saved, approved spec, the work is not done and implementation should never have started. Where the human never approves, the skill ends with no implementation, stated explicitly.

@@ -2,7 +2,7 @@
 
 ODIN workflows for source-backed investigation, verification, and design rationale.
 
-7 skills, category Research. Install the whole plugin below, or take a single skill with `gh skill install`.
+4 skills, category Research. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -37,9 +37,6 @@ Each row states when to reach for the skill. Invoke one as `/odin-research:<name
 | drift-detect | Use when roadmap, plans, or docs may have drifted from code, or when restarting a stalled project. |
 | github-solution-research | Use when a bug, integration failure, dependency issue, unclear API usage, implementation blocker, or tool-capability need calls for GitHub solutions. |
 | how | Use when the user asks "how does X work" and wants an architecture walkthrough of the code path or subsystem, including its gotchas. |
-| research | Use when researching a named library, framework, SDK, API, or service, or finding a migration guide. |
-| summarize-document-set | Use when the user asks to summarize a set of documents, identify themes and conflicts across multiple files, or synthesize internal docs. |
-| verify-both-ways | Use when a claim needs checking both ways, "fact-check this", or an artifact or HTML document needs claims verified and corrected in place. |
 
 ## Workflows
 

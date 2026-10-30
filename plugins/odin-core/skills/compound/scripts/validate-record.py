@@ -731,192 +731,409 @@ def _validate(data, cfg, doc_path):
     return problems
 
 
-def _self_cases():
-    a64 = "a" * 64
-    b64 = "b" * 64
-    r_base = (
+def _check_verdict(doc, slot):
+    import contextlib
+    import io
+    try:
+        with open(slot, "w", encoding="utf-8") as handle:
+            handle.write(doc)
+    except OSError:
+        return None
+    out = io.StringIO()
+    err = io.StringIO()
+    with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+        code = main([__file__, slot])
+    if code == EXIT_OK:
+        return True
+    if code == EXIT_INVALID:
+        return False
+    return None
+
+
+def _absent_oracle(doc):
+    return True
+
+
+def _parsing_oracle(doc):
+    numbered, ferr = _extract_frontmatter(doc)
+    if ferr is not None:
+        return False
+    _, perrs = _parse_mapping(numbered)
+    return perrs == []
+
+
+def _rationale_doc(typ, conf, extra):
+    return (
         "---\n"
         "schema: odin-learning/v1\n"
         "record_kind: rationale\n"
         "date: 2026-10-01\n"
-        "type: caveat\n"
-        "confidence: high\n"
+        "type: " + typ + "\n"
+        "confidence: " + conf + "\n"
         "source: session context 2026-10-29\n"
-        "tags:\n"
-        "  - parser-caveat\n"
+        + extra +
         "---\n"
         "Body.\n"
     )
-    r_origin_two = (
-        "---\n"
-        "schema: odin-learning/v1\n"
-        "record_kind: rationale\n"
-        "date: 2026-10-01\n"
-        "type: lesson\n"
-        "confidence: medium\n"
-        "source: session context 2026-10-29\n"
-        "origin_records:\n"
-        "  - path: docs/solutions/old-a.md\n"
-        "    sha256: " + a64 + "\n"
-        "    migration_origin: legacy-compound-v0\n"
-        "    historical: true\n"
-        "  - path: docs/solutions/old-b.md\n"
-        "    sha256: " + b64 + "\n"
-        "    migration_origin: legacy-compound-v0\n"
-        "    historical: true\n"
-        "---\n"
-        "Body.\n"
-    )
-    r_flow_tags = r_base.replace(
-        "tags:\n  - parser-caveat\n", "tags: [parser-caveat, second-tag]\n")
-    r_unknown_key = r_base.replace(
-        "source: session context 2026-10-29\n",
-        "source: session context 2026-10-29\ntitle: Something\n")
-    r_bad_enum = r_base.replace("confidence: high\n", "confidence: confirmed\n")
-    r_missing_source = r_base.replace("source: session context 2026-10-29\n", "")
-    r_bad_date = r_base.replace("date: 2026-10-01\n", "date: 2026/10/29\n")
-    r_block_scalar = r_base.replace(
-        "source: session context 2026-10-29\n", "source: |\n")
-    r_unquoted_colon = r_base.replace(
-        "source: session context 2026-10-29\n", "source: session: context\n")
-    s_base = (
+
+
+def _solution_doc(pt, cat, bug_fields):
+    extra = ""
+    if bug_fields:
+        extra = (
+            "symptoms:\n"
+            "  - build fails on clean checkout\n"
+            "root_cause: config_error\n"
+            "resolution_type: config_change\n"
+        )
+    return (
         "---\n"
         "schema: odin-learning/v1\n"
         "record_kind: solution\n"
         "date: 2026-10-01\n"
         "title: 'Fix: restore the build graph'\n"
-        "category: build-errors\n"
+        "category: " + cat + "\n"
         "module: build\n"
-        "problem_type: build_error\n"
+        "problem_type: " + pt + "\n"
         "component: build-graph\n"
         "severity: high\n"
-        "symptoms:\n"
-        "  - build fails on clean checkout\n"
-        "root_cause: config_error\n"
-        "resolution_type: config_change\n"
+        + extra +
         "---\n"
         "Body.\n"
     )
-    s_unquoted_title = s_base.replace(
-        "title: 'Fix: restore the build graph'\n",
-        "title: Fix: restore the build graph\n")
-    s_missing_bug_fields = (
-        "---\n"
-        "schema: odin-learning/v1\n"
-        "record_kind: solution\n"
-        "date: 2026-10-01\n"
-        "title: Broken build\n"
-        "category: build-errors\n"
-        "module: build\n"
-        "problem_type: build_error\n"
-        "component: build-graph\n"
-        "severity: high\n"
-        "---\n"
-        "Body.\n"
-    )
-    s_category_mismatch = s_base.replace(
-        "category: build-errors\n", "category: test-failures\n")
-    r_origin_no_historical = (
-        "---\n"
-        "schema: odin-learning/v1\n"
-        "record_kind: rationale\n"
-        "date: 2026-10-01\n"
-        "type: lesson\n"
-        "confidence: medium\n"
-        "source: session context 2026-10-29\n"
-        "origin_records:\n"
-        "  - path: docs/solutions/old-a.md\n"
-        "    sha256: " + a64 + "\n"
-        "    migration_origin: legacy-compound-v0\n"
-        "---\n"
-        "Body.\n"
-    )
-    r_origin_duplicate = (
-        "---\n"
-        "schema: odin-learning/v1\n"
-        "record_kind: rationale\n"
-        "date: 2026-10-01\n"
-        "type: lesson\n"
-        "confidence: medium\n"
-        "source: session context 2026-10-29\n"
-        "origin_records:\n"
-        "  - path: docs/solutions/old-a.md\n"
-        "    sha256: " + a64 + "\n"
-        "    migration_origin: legacy-compound-v0\n"
-        "    historical: true\n"
-        "  - path: docs/solutions/old-a.md\n"
-        "    sha256: " + a64 + "\n"
-        "    migration_origin: legacy-compound-v0\n"
-        "    historical: true\n"
-        "---\n"
-        "Body.\n"
-    )
-    s_stale_no_pair = s_base.replace(
-        "severity: high\n", "severity: high\nstatus: stale\n")
-    s_stale_supersedes_no_pair = s_base.replace(
-        "severity: high\n",
-        "severity: high\nstatus: stale\nsupersedes: docs/solutions/old.md\n")
-    s_active_bad_stale_date = s_base.replace(
-        "severity: high\n", "severity: high\nstatus: active\nstale_date: nope\n")
-    s_active_valid_stale_pair = s_base.replace(
-        "severity: high\n",
-        "severity: high\nstatus: active\n"
-        "stale_reason: revisit after migration\nstale_date: 2026-10-29\n")
-    s_numeric_title = s_base.replace(
-        "title: 'Fix: restore the build graph'\n", "title: 404\n")
-    s_quoted_numeric_title = s_base.replace(
-        "title: 'Fix: restore the build graph'\n", "title: '404'\n")
-    r_null_source = r_base.replace(
-        "source: session context 2026-10-29\n", "source: Null\n")
-    r_origin_mapping = (
-        "---\n"
-        "schema: odin-learning/v1\n"
-        "record_kind: rationale\n"
-        "date: 2026-10-01\n"
-        "type: lesson\n"
-        "confidence: medium\n"
-        "source: session context 2026-10-29\n"
-        "origin_records:\n"
-        "  path: docs/solutions/old-a.md\n"
-        "    sha256: " + a64 + "\n"
-        "    migration_origin: legacy-compound-v0\n"
-        "    historical: true\n"
-        "---\n"
-        "Body.\n"
-    )
+
+
+def _origin_block(items):
+    out = "origin_records:\n"
+    for path, sha, origin in items:
+        out += "  - path: " + path + "\n"
+        out += "    sha256: " + sha + "\n"
+        out += "    migration_origin: " + origin + "\n"
+        out += "    historical: true\n"
+    return out
+
+
+def _category_pairs(cfg):
+    pairs = {}
+    for entry in cfg["category_map"]:
+        name, _, cat = entry.partition("=")
+        pairs[name.strip()] = cat.strip()
+    return pairs
+
+
+def _valid_docs(cfg, pairs, a64, b64):
+    docs = []
+    rtypes = [
+        "pattern", "caveat", "reference", "decision", "concept",
+        "fix", "lesson", "workaround", "incident", "constraint",
+    ]
+    confs = ["high", "medium", "low"]
+    for i in range(len(rtypes)):
+        docs.append((
+            "generated rationale type " + rtypes[i] + " admitted",
+            _rationale_doc(rtypes[i], confs[i % 3], ""),
+        ))
+    docs.append((
+        "generated rationale flow-list tags admitted",
+        _rationale_doc("caveat", "high", "tags: [parser-caveat, second-tag]\n"),
+    ))
+    docs.append((
+        "generated rationale block-list tags admitted",
+        _rationale_doc("caveat", "high", "tags:\n  - parser-caveat\n  - second-tag\n"),
+    ))
+    docs.append((
+        "generated rationale quoted colon source admitted",
+        _rationale_doc("lesson", "medium", "").replace(
+            "source: session context 2026-10-29\n",
+            "source: 'session: context 2026-10-29'\n",
+        ),
+    ))
+    docs.append((
+        "generated rationale origin pair admitted",
+        _rationale_doc("lesson", "medium", _origin_block([
+            ("docs/solutions/old-a.md", a64, "legacy-compound-v0"),
+            ("docs/solutions/old-b.md", b64, "legacy-compound-v0"),
+        ])),
+    ))
+    for pt in ("build_error", "best_practice", "convention", "tooling_decision"):
+        docs.append((
+            "generated solution " + pt + " admitted",
+            _solution_doc(pt, pairs[pt], pt in cfg["bug_track"]),
+        ))
+    docs.append((
+        "generated solution quoted numeric title admitted",
+        _solution_doc("build_error", pairs["build_error"], True).replace(
+            "title: 'Fix: restore the build graph'\n",
+            "title: '404'\n",
+        ),
+    ))
+    docs.append((
+        "generated stale solution with stale pair admitted",
+        _solution_doc("build_error", pairs["build_error"], True).replace(
+            "severity: high\n",
+            "severity: high\nstatus: stale\n"
+            "stale_reason: superseded by migration\nstale_date: 2026-10-29\n",
+        ),
+    ))
+    docs.append((
+        "generated solution origin item admitted",
+        _solution_doc("best_practice", pairs["best_practice"], False).replace(
+            "severity: high\n",
+            "severity: high\n" + _origin_block([
+                ("docs/solutions/old-a.md", a64, "legacy-autolearn-v0"),
+            ]),
+        ),
+    ))
+    return docs
+
+
+def _attack_docs(pairs, a64, b64):
+    r = _rationale_doc("caveat", "high", "")
+    s = _solution_doc("build_error", pairs["build_error"], True)
     return [
-        ("valid rationale with plain and block-list scalars", r_base, True),
-        ("valid rationale with nested origin_records list", r_origin_two, True),
-        ("valid rationale with quoted and flow-list scalars", r_flow_tags, True),
-        ("valid solution with quoted title", s_base, True),
-        ("unquoted colon-space scalar is rejected", s_unquoted_title, False),
-        ("unquoted colon-space source is rejected", r_unquoted_colon, False),
-        ("block scalar is rejected fail-closed", r_block_scalar, False),
-        ("unknown solution-only key on rationale is rejected", r_unknown_key, False),
-        ("enum mismatch is rejected", r_bad_enum, False),
-        ("missing required field is rejected", r_missing_source, False),
-        ("bug track missing bug fields is rejected", s_missing_bug_fields, False),
-        ("category and problem_type mismatch is rejected", s_category_mismatch, False),
-        ("origin item missing historical is rejected", r_origin_no_historical, False),
-        ("duplicate origin tuple is rejected", r_origin_duplicate, False),
-        ("non-ISO date is rejected", r_bad_date, False),
-        ("stale record without stale pair is rejected", s_stale_no_pair, False),
+        ("unquoted colon-space title is rejected",
+         s.replace("title: 'Fix: restore the build graph'\n",
+                     "title: Fix: restore the build graph\n")),
+        ("unquoted colon-space source is rejected",
+         r.replace("source: session context 2026-10-29\n",
+                     "source: session: context\n")),
+        ("block scalar pipe is rejected fail-closed",
+         r.replace("source: session context 2026-10-29\n", "source: |\n")),
+        ("block scalar fold is rejected fail-closed",
+         r.replace("source: session context 2026-10-29\n", "source: >\n")),
+        ("flow mapping value is rejected fail-closed",
+         r.replace("source: session context 2026-10-29\n", "source: {a: b}\n")),
+        ("unknown solution-only key on rationale is rejected",
+         r.replace("source: session context 2026-10-29\n",
+                     "source: session context 2026-10-29\ntitle: Something\n")),
+        ("rationale-only confidence on solution is rejected",
+         s.replace("severity: high\n", "severity: high\nconfidence: high\n")),
+        ("rationale-only type on solution is rejected",
+         s.replace("severity: high\n", "severity: high\ntype: lesson\n")),
+        ("confidence enum mismatch is rejected",
+         r.replace("confidence: high\n", "confidence: confirmed\n")),
+        ("type enum mismatch is rejected",
+         r.replace("type: caveat\n", "type: rumor\n")),
+        ("severity enum mismatch is rejected",
+         s.replace("severity: high\n", "severity: confirmed\n")),
+        ("missing required source is rejected",
+         r.replace("source: session context 2026-10-29\n", "")),
+        ("missing required date is rejected",
+         r.replace("date: 2026-10-01\n", "")),
+        ("bug track missing bug fields is rejected",
+         _solution_doc("build_error", pairs["build_error"], False)),
+        ("category and problem_type mismatch is rejected",
+         s.replace("category: " + pairs["build_error"] + "\n",
+                     "category: " + pairs["test_failure"] + "\n")),
+        ("origin item missing historical is rejected",
+         _rationale_doc("lesson", "medium",
+                         "origin_records:\n"
+                         "  - path: docs/solutions/old-a.md\n"
+                         "    sha256: " + a64 + "\n"
+                         "    migration_origin: legacy-compound-v0\n")),
+        ("duplicate origin tuple is rejected",
+         _rationale_doc("lesson", "medium", _origin_block([
+             ("docs/solutions/old-a.md", a64, "legacy-compound-v0"),
+             ("docs/solutions/old-a.md", a64, "legacy-compound-v0"),
+         ]))),
+        ("origin uppercase sha256 is rejected",
+         _rationale_doc("lesson", "medium", _origin_block([
+             ("docs/solutions/old-a.md", "A" * 64, "legacy-compound-v0"),
+         ]))),
+        ("origin short sha256 is rejected",
+         _rationale_doc("lesson", "medium", _origin_block([
+             ("docs/solutions/old-a.md", "abc", "legacy-compound-v0"),
+         ]))),
+        ("origin string historical is rejected",
+         _rationale_doc("lesson", "medium", _origin_block([
+             ("docs/solutions/old-a.md", a64, "legacy-compound-v0"),
+         ]).replace("historical: true\n", "historical: 'true'\n"))),
+        ("origin unknown migration origin is rejected",
+         _rationale_doc("lesson", "medium", _origin_block([
+             ("docs/solutions/old-a.md", a64, "legacy-compound-v0"),
+         ]).replace("migration_origin: legacy-compound-v0\n",
+                     "migration_origin: legacy-unknown-v9\n"))),
+        ("non-ISO slash date is rejected",
+         r.replace("date: 2026-10-01\n", "date: 2026/10/29\n")),
+        ("impossible calendar date is rejected",
+         r.replace("date: 2026-10-01\n", "date: 2026-02-30\n")),
+        ("stale record without stale pair is rejected",
+         s.replace("severity: high\n", "severity: high\nstatus: stale\n")),
         ("stale record with supersedes but no stale pair is rejected",
-         s_stale_supersedes_no_pair, False),
+         s.replace("severity: high\n",
+                     "severity: high\nstatus: stale\n"
+                     "supersedes: docs/solutions/old.md\n")),
         ("non-stale record with mistyped stale_date is rejected",
-         s_active_bad_stale_date, False),
-        ("non-stale record carrying a valid stale pair is accepted",
-         s_active_valid_stale_pair, True),
-        ("unquoted numeric title is rejected", s_numeric_title, False),
-        ("quoted numeric title is accepted", s_quoted_numeric_title, True),
-        ("unquoted Null source is rejected", r_null_source, False),
-        ("mapping-shaped origin_records is rejected", r_origin_mapping, False),
+         s.replace("severity: high\n",
+                     "severity: high\nstatus: active\nstale_date: nope\n")),
+        ("unquoted numeric title is rejected",
+         s.replace("title: 'Fix: restore the build graph'\n", "title: 404\n")),
+        ("unquoted Null source is rejected",
+         r.replace("source: session context 2026-10-29\n", "source: Null\n")),
+        ("unquoted boolean-like source is rejected",
+         r.replace("source: session context 2026-10-29\n", "source: True\n")),
+        ("mapping-shaped origin_records is rejected",
+         _rationale_doc("lesson", "medium",
+                         "origin_records:\n"
+                         "  path: docs/solutions/old-a.md\n"
+                         "    sha256: " + a64 + "\n"
+                         "    migration_origin: legacy-compound-v0\n"
+                         "    historical: true\n")),
+        ("nested mapping in plain list is rejected",
+         s.replace("  - build fails on clean checkout\n", "  - key: value\n")),
+        ("duplicate key is rejected",
+         r.replace("confidence: high\n", "confidence: high\nconfidence: low\n")),
+        ("tab indentation is rejected",
+         r.replace("source: session context", "\tsource: session context")),
+        ("unbalanced flow list is rejected",
+         _rationale_doc(
+             "caveat", "high", "tags: [parser-caveat, second-tag\n")),
+        ("empty flow list item is rejected",
+         _rationale_doc(
+             "caveat", "high", "tags: [parser-caveat, , second-tag]\n")),
         ("JSON object without delimiters is rejected",
-         '{"schema": "odin-learning/v1"}\n', False),
+         '{"schema": "odin-learning/v1"}\n'),
+        ("unclosed frontmatter is rejected",
+         r.replace("---\nBody.\n", "Body.\n")),
+        ("unknown escape in double-quoted scalar is rejected",
+         r.replace("source: session context 2026-10-29\n",
+                     "source: \"a\\qb\"\n")),
+        ("bare single quote is rejected",
+         r.replace("source: session context 2026-10-29\n",
+                     "source: 'it's'\n")),
+        ("unknown record_kind is rejected",
+         r.replace("record_kind: rationale\n", "record_kind: note\n")),
+        ("wrong schema value is rejected",
+         r.replace("schema: odin-learning/v1\n", "schema: odin-learning/v0\n")),
+        ("uppercase tag is rejected",
+         _rationale_doc("caveat", "high", "tags:\n  - Parser-Caveat\n")),
+        ("empty tag item is rejected",
+         _rationale_doc("caveat", "high", "tags:\n  - ''\n")),
+        ("solution-only field on rationale with origin is rejected",
+         _rationale_doc("lesson", "medium", _origin_block([
+             ("docs/solutions/old-a.md", a64, "legacy-compound-v0"),
+             ("docs/solutions/old-b.md", b64, "legacy-compound-v0"),
+         ])).replace("source: session context 2026-10-29\n",
+                      "source: session context 2026-10-29\nseverity: high\n")),
     ]
 
 
+def _equiv_pairs(pairs):
+    block = _rationale_doc(
+        "caveat", "high", "tags:\n  - parser-caveat\n  - second-tag\n")
+    flow = _rationale_doc(
+        "caveat", "high", "tags: [parser-caveat, second-tag]\n")
+    s = _solution_doc("build_error", pairs["build_error"], True)
+    dquoted = s.replace("title: 'Fix: restore the build graph'\n",
+                         "title: \"Fix: restore the build graph\"\n")
+    base = _rationale_doc("caveat", "high", "")
+    reordered = base.replace("date: 2026-10-01\n", "").replace(
+        "source: session context 2026-10-29\n",
+        "source: session context 2026-10-29\ndate: 2026-10-01\n",
+    )
+    commented = base.replace(
+        "source: session context 2026-10-29\n",
+        "# provenance note\nsource: session context 2026-10-29  # trailing note\n",
+    )
+    return [
+        ("block list and flow list tags agree", block, flow),
+        ("single and double quoted titles agree", s, dquoted),
+        ("field order permutation agrees", base, reordered),
+        ("comment lines agree", base, commented),
+    ]
+
+
+def _run_cases(cases, slot):
+    passed = 0
+    failed = []
+    broken = False
+    for name, doc, expect in cases:
+        got = _check_verdict(doc, slot)
+        if got is None:
+            broken = True
+            failed.append("harness fault on " + name)
+        elif got == expect:
+            passed += 1
+        else:
+            failed.append(name)
+    return passed, failed, broken
+
+
+def _run_equiv(equiv, slot):
+    passed = 0
+    failed = []
+    broken = False
+    for name, first, second in equiv:
+        first_got = _check_verdict(first, slot)
+        second_got = _check_verdict(second, slot)
+        if first_got is None or second_got is None:
+            broken = True
+            failed.append("harness fault on " + name)
+        elif first_got and first_got == second_got:
+            passed += 1
+        else:
+            failed.append(name)
+    return passed, failed, broken
+
+
+def _run_controls(slot):
+    passed = 0
+    failed = []
+    broken = False
+    control = _rationale_doc("caveat", "high", "").replace(
+        "confidence: high\n", "confidence: confirmed\n")
+    numbered, ferr = _extract_frontmatter(control)
+    perrs = ["unparsed"]
+    if ferr is None:
+        _, perrs = _parse_mapping(numbered)
+    control_got = _check_verdict(control, slot)
+    if control_got is None:
+        broken = True
+        failed.append("harness fault on validator layer control")
+    elif ferr is None and perrs == [] and not control_got:
+        passed += 1
+    else:
+        failed.append("validator layer catches parser-clean enum fault")
+    empty_got = _check_verdict("", slot)
+    if empty_got is None:
+        broken = True
+        failed.append("harness fault on empty document control")
+    elif not empty_got:
+        passed += 1
+    else:
+        failed.append("empty document is rejected")
+    return passed, failed, broken
+
+
+def _run_faulted(cases, equiv):
+    passed = 0
+    failed = []
+    oracles = (("absent", _absent_oracle), ("parse-only", _parsing_oracle))
+    for label, oracle in oracles:
+        matched = 0
+        for _, doc, expect in cases:
+            if oracle(doc) == expect:
+                matched += 1
+        for _, first, second in equiv:
+            first_got = oracle(first)
+            if first_got and first_got == oracle(second):
+                matched += 1
+        if matched < len(cases) + len(equiv):
+            passed += 1
+        else:
+            failed.append(label + " validator is caught by the suite")
+    return passed, failed, False
+
+
+def _drop_slot(path, failed):
+    try:
+        os.remove(path)
+    except OSError as err:
+        failed.append("self-test slot cleanup failed: %s" % err)
+
+
 def run_self_test():
+    import tempfile
     skill_dir = Path(__file__).resolve().parent.parent
     schema_path = skill_dir / "references" / "schema.md"
     cfg, schema_errs = _load_machine(str(schema_path))
@@ -929,27 +1146,50 @@ def run_self_test():
     if missing:
         sys.stdout.write("self-test: schema machine block is missing keys\n")
         return EXIT_USAGE
-    cases = _self_cases()
-    passed = 0
+    a64 = "a" * 64
+    b64 = "b" * 64
+    pairs = _category_pairs(cfg)
+    cases = []
+    for name, doc in _valid_docs(cfg, pairs, a64, b64):
+        cases.append((name, doc, True))
+    for name, doc in _attack_docs(pairs, a64, b64):
+        cases.append((name, doc, False))
+    equiv = _equiv_pairs(pairs)
+    slot = None
     failed = []
-    for name, doc, expect in cases:
-        numbered, ferr = _extract_frontmatter(doc)
-        if ferr is not None:
-            got = False
-        else:
-            data, perrs = _parse_mapping(numbered)
-            if perrs:
-                got = False
-            else:
-                got = (_validate(data, cfg, "<self-test>") == [])
-        if got == expect:
-            passed += 1
-        else:
-            failed.append(name)
-    total = len(cases)
+    passed = 0
+    broken = False
+    creation_err = None
+    try:
+        try:
+            slot_file = tempfile.NamedTemporaryFile(
+                mode="w", suffix=".md", prefix="record-selftest-", delete=False)
+            slot = slot_file.name
+            slot_file.close()
+        except OSError as err:
+            creation_err = err
+        if creation_err is None:
+            case_passed, case_failed, case_broken = _run_cases(cases, slot)
+            equiv_passed, equiv_failed, equiv_broken = _run_equiv(equiv, slot)
+            control_passed, control_failed, control_broken = _run_controls(slot)
+            faulted_passed, faulted_failed, _ = _run_faulted(cases, equiv)
+            failed = case_failed + equiv_failed + control_failed + faulted_failed
+            passed = case_passed + equiv_passed + control_passed + faulted_passed
+            broken = case_broken or equiv_broken or control_broken
+    finally:
+        if slot is not None:
+            _drop_slot(slot, failed)
+    if creation_err is not None:
+        sys.stdout.write("self-test: slot creation failed: %s\n" % creation_err)
+        for name in failed:
+            sys.stdout.write("  FAIL: %s\n" % name)
+        return EXIT_USAGE
+    total = len(cases) + len(equiv) + 4
     sys.stdout.write("self-test: %d/%d passed\n" % (passed, total))
     for name in failed:
         sys.stdout.write("  FAIL: %s\n" % name)
+    if broken:
+        return EXIT_USAGE
     return EXIT_OK if not failed else EXIT_INVALID
 
 

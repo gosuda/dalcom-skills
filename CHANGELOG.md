@@ -7,14 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.1.7] - 2026-10-30
 ### Added
-- `autoplan-and-autopilot` (`odin-run`): combined planning and execution workflow
-  that autoplans via `/autoplan` and then executes with `/autopilot`, bringing
-  `odin-run` to 27 skills and total skills to 365.
+- `autoplan-and-autopilot` (`odin-core`): combined planning and execution workflow
+  that autoplans via `/autoplan` and then executes with `/autopilot`.
 - `humanizer-korean-plain` (`odin-writing`): restored from the retired set as
-  plain Korean humanizer, reversing the removal of `plain-korean` and bringing
-  `odin-writing` to 21 skills.
+  plain Korean humanizer, reversing the removal of `plain-korean`.
 ### Changed
 - `ste-korean` (`odin-writing`) renamed to `humanizer-korean-ste`.
+- Final surface: 304 skills across 22 plugins. `plan` moves to `odin-core` alongside new `tests-practices`, `docs-practices`, and `setup-repo`; `odin-writing` humanizers settle as `humanizer-simple-english-asd-ste100`, `humanizer-plain-english`, `humanizer-korean-ste`, and `humanizer-korean-plain`; `gate-and-merge` covers GitLab merge-request queues alongside GitHub. Empty `odin-agent`, `odin-product`, and `odin-release` shells retire from the catalog with no skill loss.
+- GitHub review helpers preserve reply bytes and reject incomplete pagination
+  and mismatched mutation receipts. GitLab helpers bind mutations to the
+  approved head and require identified, passing required jobs before reporting
+  green CI.
+- Skills use job-specific prose, semantic artifact names, and independent
+  invariant or adversarial test oracles. Documentation and learned rules retain
+  material invariants rather than activity records.
 
 ## [2.1.6] - 2026-10-30
 ### Changed

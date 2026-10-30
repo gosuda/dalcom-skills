@@ -2,11 +2,11 @@
 
 Go does not train models: it **serves** them. The 2026 stack is inference-first: run ONNX graphs in-process over CGO, do classical numerics in `gonum`, tokenize with Rust-FFI bindings, and talk to vector DBs over gRPC. The native-Go training frameworks (Gorgonia, tensorflow/go) are dead or unmaintained. The single biggest trap is **stale import paths and major versions**: every vector client moved, and models still emit the dead ones.
 
-> Verified against Go **1.26.x** (stable; cgo overhead −~30%) + **1.27 RC** notes, 2026-06. Library versions checked against pkg.go.dev on 2026-06. Version tags `[1.N]` mark the Go release a claim applies to. Triangulated from two deep-research corpora + primary-source verification.
+> Verified against Go **1.26.x** (stable; cgo overhead −~30%) and the **final** Go 1.27 release notes (GA 2026-08-19), rechecked 2026-10. Library versions checked against pkg.go.dev on 2026-06. Version tags `[1.N]` mark the Go release a claim applies to. Triangulated from two deep-research corpora + primary-source verification.
 
-## TL;DR: the deltas models get wrong (read first)
+## Version traps to check first
 
-- `onnxruntime_go` is at v1.38.0 (pkg.go.dev, 2026-06-04), *not* the v1.21.0 some sources cite, but it still wraps **ORT C API 1.31.0** (upstream caveat originally worded "will probably only work with version 1.26.0 of the onnxruntime shared libraries."). Binding version ≠ runtime version; **pin the shared lib to 1.31.0**.
+- `onnxruntime_go` is at v1.38.0, wrapping **ORT C API 1.31.0**; separate the Go binding version (v1.38.0) from the conservative runtime target (1.31.0) and upstream latest (1.31.1). The binding README notes it "will probably only work with version 1.31.0 of the onnxruntime shared libraries"; treat 1.31.0 as the conservative tested binding target without asserting strict incompatibility with minor patch revisions as absolute fact.
 - `NewSession`/`DynamicSession` are deprecated. Use `NewAdvancedSession`/`DynamicAdvancedSession`: explicit caller-owned tensors, no per-run realloc.
 - Every C-allocated handle (`Tensor`, `Session`, `*ProviderOptions`, `ArenaCfg`) must `Destroy()`: it lives outside the Go GC. Forgetting this is a C-heap leak, not a Go leak.
 - Vector clients all moved: Milvus → `milvus-io/milvus/client/v2/milvusclient` (old `milvus-sdk-go/v2` archived 2025-03-21), Weaviate → `/v6`, Pinecone → `/v5`, Qdrant flattened to `qdrant.NewClient` with a unified `Query` API (not `Search`).
@@ -56,19 +56,19 @@ When to call out to Python/C instead of forcing it into Go: bleeding-edge archit
 
 Subpackages: `mat` (matrices/linear algebra), `stat` + `stat/distuv` (statistics, distributions), `floats` (vector ops): note non-vector scalar helpers split into **`floats/scalar`** (and `cmplxs/cscalar`); old code importing them from `floats` won't compile: `optimize` (BFGS, Nelder-Mead), `integrate`, `graph`, `blas/blas64`, `lapack/lapack64`, `spatial`, `num/quat`. `gonum.org/v1/plot` is a separate module.
 
-The memory model is the expert-level detail (every model knows `mat.Dense` exists; few know this). The zero value is a usable destination and auto-sizes from empty on an operation. But `Reset` is documented as **unsafe when matrices share a backing slice**: resizing after reset can silently corrupt the other view. This is where raw-view/performance code breaks.
+`mat.Dense` auto-sizes a zero-value destination, which is where raw-view code breaks: `Reset` is unsafe when matrices share a backing slice, because resizing after reset can silently corrupt the other view.
 
 ```go
-// RIGHT — zero-value destination, auto-sized; receiver holds the result.
-a := mat.NewDense(2, 2, []float64{1, 0, 1, 0}) // row-major
+a := mat.NewDense(2, 2, []float64{1, 0, 1, 0})
 b := mat.NewDense(2, 2, []float64{0, 1, 0, 1})
 var c mat.Dense
-c.Mul(a, b) // c sized automatically; reuses backing data when it can
+c.Mul(a, b)
 
-// WRONG — Reset on a matrix that shares backing with another view, then reuse:
 sub := a.Slice(0, 1, 0, 2).(*mat.Dense)
-sub.Reset() // unsafe: a later resize can modify a's backing slice unexpectedly
+sub.Reset()
 ```
+
+Do not reuse `sub` after `Reset` when it shares backing data with `a`; the resize can modify `a` unexpectedly.
 
 BLAS/LAPACK backend (a key stale claim). `blas64`/`lapack64` default to the **pure-Go** implementations: gonum runs with zero C dependency. To swap in a cgo BLAS (OpenBLAS/MKL) for large dense algebra, register it once at startup via the separate `gonum.org/v1/netlib` module. Because LAPACK dispatches through `blas64`, this also accelerates LAPACK paths.
 
@@ -96,7 +96,7 @@ Verdict: do not start new work here. For inference, use ONNX Runtime. If you gen
 
 ## ONNX Runtime: pre-trained model inference {#onnx}
 
-> `github.com/yalue/onnxruntime_go`: **the de-facto binding.** v1.38.0 (pkg.go.dev 2026-06-04), MIT, ~142 importers, actively maintained. Loads the ORT shared library at runtime via `dlopen` (so it links no MSVC and works on Windows under MinGW). **Uses ORT C API headers 1.31.0**: match your shared lib to 1.31.0 or it won't load.
+> `github.com/yalue/onnxruntime_go`: **the de-facto binding.** v1.38.0, MIT, ~142 importers, actively maintained. Loads the ORT shared library at runtime via `dlopen` (so it links no MSVC and works on Windows under MinGW). **Uses ORT C API headers 1.31.0**: separate the binding release (v1.38.0) from the conservative runtime target (1.31.0) and upstream latest (1.31.1). The binding README notes it "will probably only work with version 1.31.0" of the shared library, so pin 1.31.0 conservatively rather than asserting strict incompatibility.
 
 Train in Python → export ONNX → infer in Go. The lifecycle is explicit and non-optional in production:
 
@@ -126,11 +126,11 @@ predictions := out.GetData() // []float32, reads the bound output buffer
 ```
 
 ```go
-// WRONG / STALE — deprecated constructor, no shared-lib path (segfault at load),
-// non-generic tensors, and no Destroy() (leaks the C heap):
 sess, _ := ort.NewSession("model.onnx", inNames, outNames, inputs, outputs)
 out, _ := sess.Run(inputs)
 ```
+
+The constructor above is deprecated, skips the shared-library path, uses non-generic tensors, and leaks the C heap through missing `Destroy` calls. Use `NewAdvancedSession` with explicit tensors instead.
 
 `AdvancedSession` vs `DynamicAdvancedSession`: use `AdvancedSession` when shapes/buffers are **stable** across calls (lowest allocation pressure: buffers bound once). Use `DynamicAdvancedSession` when shapes **vary per request** or you want outputs allocated on the `Run` path; it lets you pass inputs/outputs per call, which is also what makes safe concurrency possible ([below](#concurrency-inference)).
 
@@ -148,7 +148,7 @@ session, _ := ort.NewAdvancedSession("model.onnx", in, out, ins, outs, opts)
 
 Introspection: `ort.GetInputOutputInfo("model.onnx")` returns names/shapes/dtypes: use it instead of hard-coding I/O names. **Training is not supported:** `IsTrainingSupported()` always returns `false`; the ORT training API was deprecated in ORT 1.20 and the wrappers are stubs that return errors. Train in Python.
 
-Higher-level path: `github.com/knights-analytics/hugot` (v0.8.3, 2026-06-05) runs Hugging Face pipelines (feature-extraction, NER, classification, cross-encoders, image classification) from ONNX, giving Python-identical predictions. Backends are build-tag selected: `-tags ORT` (fastest CPU), `-tags XLA` (TPU + the only fine-tuning path), or a **pure-Go backend** (`NewGoSession()`) for cgo-free environments. The docs are blunt that pure-Go is "for simpler workloads… smaller models such as all-MiniLM-L6-v2… best with small batches of roughly 32 inputs per call" and to "move to a C backend such as XLA or ORT" for performance: exactly the nuance summaries miss. **Computer vision:** `gocv.io/x/gocv` (OpenCV 4.12) does `ReadNetFromONNX` with CUDA/OpenVINO: use only if you already need OpenCV; it's a heavy CGO dependency.
+Higher-level path: `github.com/knights-analytics/hugot` (v0.8.3, 2026-06-05) runs Hugging Face pipelines (feature-extraction, NER, classification, cross-encoders, image classification) from ONNX, giving Python-identical predictions. Backends are build-tag selected: `-tags ORT` (fastest CPU), `-tags XLA` (TPU + the only fine-tuning path), or a **pure-Go backend** (`NewGoSession()`) for cgo-free environments. The docs are blunt that pure-Go is "for simpler workloads… smaller models such as all-MiniLM-L6-v2… best with small batches of roughly 32 inputs per call" and to "move to a C backend such as XLA or ORT" for performance: exactly the nuance summaries miss. **Computer vision:** `gocv.io/x/gocv` (v0.43.1 on Go module proxy, targeting OpenCV 4.13) does `ReadNetFromONNX` with CUDA/OpenVINO: use only if you already need OpenCV; it's a heavy CGO dependency.
 
 ---
 
@@ -159,7 +159,7 @@ Every serious inference path here (`onnxruntime_go`, `daulet/tokenizers`, `gocv`
 - Build & portability: CGO disables pure cross-compilation. `CGO_ENABLED=1` ties the build to a C toolchain and target libc: a `scratch`/`distroless` image needs the `.so` and a compatible glibc/musl. Cross-compiling needs `zig cc` or a sysroot. (See `cgo-and-interop.md#cross-compile`.)
 - Runtime cost [1.26]: baseline cgo call overhead is down ~30%: meaningful because ORT crosses C on every `Run`, allocator setup, and provider call. The old "cgo is too slow for per-request local inference" heuristic needs re-evaluation; it doesn't make bad call patterns good (a per-element cgo loop is still a disaster), but a per-request `Run` is now firmly viable.
 - Memory ownership: C-allocated handles bypass the Go GC. Every `Destroy()` you skip is a leak `pprof` won't show you (it's not Go heap). Treat `defer x.Destroy()` as mandatory, and audit constructors that hide allocation.
-- Deployment recipe: static Go binary + the ORT shared library in the image; **pin the ORT version to the binding's C-header expectation (1.31.0)**; set `SetSharedLibraryPath` to the versioned SONAME (`libonnxruntime.so.1.31.0`, not the bare symlink). `ONNXRUNTIME_SHARED_LIBRARY_PATH` is honored in CI/tests.
+- Deployment recipe: static Go binary + the ORT shared library in the image; **pin the ORT version conservatively to the binding's C-header target (1.31.0)** (even as upstream ORT reaches 1.31.1); set `SetSharedLibraryPath` to the versioned SONAME (`libonnxruntime.so.1.31.0`, not the bare symlink). `ONNXRUNTIME_SHARED_LIBRARY_PATH` is honored in CI/tests.
 
 `onnxruntime_go` notably does NOT use cgo at the Go-compile level: it dlopens the library, so the *binding* is portable; the cost is shipping and version-matching the `.so` at runtime. The genuinely cgo-at-compile-time deps are `daulet/tokenizers`, `gocv`, `usearch`, and netlib.
 
@@ -173,7 +173,7 @@ Large tensors are the allocation hot spot. Keep buffers off the per-request path
 - `NewTensor(shape, data)` wraps your existing `[]float32`: the slice is the backing store, so reshaping a pooled buffer avoids a copy. Mutating that slice after binding mutates the tensor; don't share it across concurrent `Run`s.
 - `sync.Pool` the big slices, not the tensors, when shapes vary: rent a `[]float32`, build a `DynamicAdvancedSession` input around it, return it after. Pre-size to your max batch × max sequence.
 - Quantize at the source. pgvector supports half-precision (`HalfVectorCodec`) and sparse (`SparseVectorCodec`) vectors: storing `float16`/sparse halves bandwidth and index size before Go ever sees the bytes. ONNX models exported with int8/fp16 quantization shrink the C-side working set too.
-- Go 1.26 runtime helps: Green Tea GC (default) and size-specialized small-object allocation reduce GC pressure from the many small Go-side slices an embedding pipeline churns; experimental `simd/archsimd` (amd64, behind GOEXPERIMENT) is available for hand-rolled vector math but is not a substitute for a tuned BLAS.
+- Go 1.26/1.27 runtime helps: Green Tea GC (default since 1.26) and [1.27]'s size-specialized small-object allocation (allocations under 80 bytes up to ~30% cheaper) reduce allocation pressure from the many small Go-side slices an embedding pipeline churns; `simd/archsimd` is still experimental ([1.26] amd64, revised amd64 API plus arm64/wasm 128-bit in [1.27], behind `GOEXPERIMENT=simd`) for hand-rolled vector math but is not a substitute for a tuned BLAS.
 
 ---
 
@@ -202,7 +202,7 @@ func infer(ctx context.Context, x []float32) ([]float32, error) {
 }
 ```
 
-Batching at the boundary, not in handlers: accumulate requests up to a max batch (~32 is hugot's sweet spot) or a short max-delay (whichever fires first) with a `time.Timer` + channel-receive select loop; **pad to the batch's longest sequence**; flush remaining items when the input channel closes. Initialize the ORT environment and sessions **once at startup** and run a dummy inference to warm caches before marking the service ready. Use the [1.26] `goroutineleak` pprof profile (experiment) in staging to catch stuck inference workers.
+Batching at the boundary, not in handlers: accumulate requests up to a max batch (~32 is hugot's sweet spot) or a short max-delay (whichever fires first) with a `time.Timer` + channel-receive select loop; **pad to the batch's longest sequence**; flush remaining items when the input channel closes. Initialize the ORT environment and sessions **once at startup** and run a dummy inference to warm caches before marking the service ready. Use the `goroutineleak` pprof profile (experimental in [1.26], GA in [1.27]) in staging to catch stuck inference workers.
 
 ---
 
@@ -306,8 +306,9 @@ type Embedder interface {
     EmbedDocuments(ctx context.Context, texts []string) ([][]float32, error)
     EmbedQuery(ctx context.Context, text string) ([]float32, error)
 }
-// WRONG: func Embed(ctx, text string) ([]float64, error) — wrong element type, no batching, no swap.
 ```
+
+Keep the `[]float32` element type with separate document-batch and query-single methods. A single-text `[]float64` signature loses batching and uses the wrong element type.
 
 ### Remote (OpenAI / Ollama)
 
@@ -334,7 +335,7 @@ Pipeline: tokenize → build `input_ids`/`attention_mask`/`token_type_ids` **int
 
 ### Cosine similarity
 
-For pre-normalized vectors (most embedding APIs return these), cosine = **dot product**: just `sum(a[i]*b[i])`. For non-normalized, divide the dot product by the product of magnitudes. **Always L2-normalize before cosine search** and keep dimensionality consistent with your index. For millions of comparisons, unroll or use SIMD (`simd/archsimd` [1.26], amd64).
+For pre-normalized vectors (most embedding APIs return these), cosine = **dot product**: just `sum(a[i]*b[i])`. For non-normalized, divide the dot product by the product of magnitudes. **Always L2-normalize before cosine search** and keep dimensionality consistent with your index. For millions of comparisons, unroll or use SIMD (`simd/archsimd` [1.26], amd64; still experimental behind `GOEXPERIMENT=simd` in [1.27], API not yet stable).
 
 ---
 
@@ -342,9 +343,9 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 
 | Library | Import path | Status [2026] | CGO? | Use when |
 |---|---|---|---|---|
-| onnxruntime_go | `github.com/yalue/onnxruntime_go` | **Current** (v1.38.0; ORT C API 1.31.0) | dlopen (no cgo at compile; ships `.so`) | Default neural-net inference |
+| onnxruntime_go | `github.com/yalue/onnxruntime_go` | **Current** (v1.38.0; ORT C API 1.31.0 target; upstream ORT 1.31.1) | dlopen (no cgo at compile; ships `.so`) | Default neural-net inference |
 | hugot | `github.com/knights-analytics/hugot` | **Current** (v0.8.3) | ORT/XLA backends cgo; pure-Go backend opt | HF pipelines from ONNX |
-| gocv | `gocv.io/x/gocv` | **Current** (OpenCV 4.12) | **Yes, heavy** | CV/DNN if already on OpenCV |
+| gocv | `gocv.io/x/gocv` | **Current** (v0.43.1; OpenCV 4.13) | **Yes, heavy** | CV/DNN if already on OpenCV (proxy v0.43.1 valid release) |
 | gonum | `gonum.org/v1/gonum` | **Current/stable** (v0.17.0, pre-v1) | No (pure Go default) | Linear algebra, stats, optimize |
 | gonum netlib | `gonum.org/v1/netlib` | Current | **Yes** | cgo BLAS/LAPACK for large dense |
 | GoMLX | `github.com/gomlx/gomlx` | **Current, niche** (v0.28.18) | XLA via gopjrt | Pure-Go/XLA training in-process |
@@ -367,9 +368,9 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 
 | Item | Maturity (2026-06) | Notes |
 |---|---|---|
-| **Go 1.26** | Stable | cgo overhead −~30%; Green Tea GC default; `goroutineleak` pprof (exp); `simd/archsimd` (exp, amd64) |
-| **Go 1.27 (RC)** | Pre-GA (~Aug 2026) | `goroutineleak` GA; `encoding/json/v2` GA (stricter defaults, error text differs: affects JSON-heavy ML APIs); macOS 13+ |
-| onnxruntime_go | v1.38.0 binding / **ORT 1.31.0** runtime | Pin shared lib to 1.31.0; `NewAdvancedSession` only |
+| **Go 1.26** | Stable (supported) | cgo overhead −~30%; Green Tea GC default; `goroutineleak` pprof (exp); `simd/archsimd` (exp, amd64) |
+| **Go 1.27** | Stable (GA 2026-08-19, pin 1.27.3) | `goroutineleak` GA (experiment deleted); `encoding/json/v2` + `encoding/json/jsontext` stable (stricter defaults, error text differs: affects JSON-heavy ML APIs); size-specialized malloc (<80B up to 30% cheaper); new experimental portable `simd` package; `simd/archsimd` still experimental (`GOEXPERIMENT=simd`); macOS 13+ |
+| onnxruntime_go | v1.38.0 binding / **ORT 1.31.0** target (upstream latest 1.31.1) | Pin shared lib to conservative 1.31.0 target (README "probably only work"); `NewAdvancedSession` only |
 | gonum | v0.17.0 (pre-v1) | No SemVer stability promise; supports 2 latest Go |
 | hugot | v0.8.3 | Pure-Go backend = convenience, not throughput |
 | GoMLX | v0.28.18 | Only live in-process training path |
@@ -384,7 +385,7 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 
 ## What models get wrong {#stale}
 
-1. Emitting `onnxruntime_go` v1.21.0 / assuming binding version == runtime version. It's **v1.38.0**, but pins to **ORT shared lib 1.31.0** regardless.
+1. Emitting `onnxruntime_go` v1.21.0 / assuming binding version == runtime version. The binding is **v1.38.0** wrapping **ORT C API 1.31.0** (upstream ORT is at 1.31.1); conservatively target shared lib 1.31.0 (README "will probably only work with version 1.31.0").
 2. Using deprecated `NewSession`/`DynamicSession` instead of `NewAdvancedSession`/`DynamicAdvancedSession`.
 3. Skipping `SetSharedLibraryPath` (load-time segfault) or shipping the bare `libonnxruntime.so` symlink instead of the versioned SONAME.
 4. Forgetting `Destroy()` on tensors/sessions/provider-options: a **C-heap** leak invisible to Go `pprof`.
@@ -435,7 +436,7 @@ For pre-normalized vectors (most embedding APIs return these), cosine = **dot pr
 
 ## Sources {#sources}
 
-- pkg.go.dev: `yalue/onnxruntime_go` (v1.38.0; ORT C API 1.31.0; deprecated `NewSession`; `IsTrainingSupported`), `knights-analytics/hugot` (v0.8.3; pure-Go backend caveat), `philippgille/chromem-go` (v0.7.0; "zero third-party dependencies"), `unum-cloud/usearch/golang` (untagged, CGO), `gonum.org/v1/gonum` (v0.17.0)
-- Repos/docs: yalue/onnxruntime_go README (shared-lib version match; training-API stubs), Qdrant Go client + Query API docs, Weaviate v5/v6 docs, milvus-io/milvus client/v2 docs, pgvector-go, daulet/tokenizers, james-bowman/sparse
-- go.dev/doc/go1.23 to go1.27 release notes (cgo −~30% [1.26]; iterators [1.23]; `tool` directives [1.24]; `testing/synctest` [1.25]; `encoding/json/v2`, `goroutineleak` [1.27])
+- pkg.go.dev: `yalue/onnxruntime_go` (v1.38.0; ORT C API 1.31.0; deprecated `NewSession`; `IsTrainingSupported`), `gocv.io/x/gocv` (v0.43.1; OpenCV 4.13), `knights-analytics/hugot` (v0.8.3; pure-Go backend caveat), `philippgille/chromem-go` (v0.7.0; "zero third-party dependencies"), `unum-cloud/usearch/golang` (untagged, CGO), `gonum.org/v1/gonum` (v0.17.0)
+- Repos/docs: yalue/onnxruntime_go README (conservative shared-lib 1.31.0 target vs upstream ORT 1.31.1; training-API stubs), Qdrant Go client + Query API docs, Weaviate v5/v6 docs, milvus-io/milvus client/v2 docs, pgvector-go, daulet/tokenizers, james-bowman/sparse
+- go.dev/doc/go1.23 to go1.27 release notes (cgo −~30% [1.26]; iterators [1.23]; `tool` directives [1.24]; `testing/synctest` [1.25]; `encoding/json/v2` stable, `goroutineleak` GA, `simd` still experimental [1.27, final])
 - Official deprecation notices: `tensorflow/go` ("no longer supported by the TensorFlow team"), `milvus-sdk-go` (archived 2025-03-21)

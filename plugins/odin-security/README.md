@@ -2,7 +2,7 @@
 
 ODIN workflows for security review, vulnerability triage, and defensive implementation.
 
-17 skills, category Security. Install the whole plugin below, or take a single skill with `gh skill install`.
+16 skills, category Security. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -40,7 +40,6 @@ Each row states when to reach for the skill. Invoke one as `/odin-security:<name
 | mermaid-to-proverif | Use when a crypto Mermaid sequenceDiagram needs a ProVerif model for secrecy, authentication, replay, or forward-secrecy checks. |
 | project-findings-onto-graph | Use when graph-backed security analysis is needed: project SARIF or reviewer findings onto a program graph; build or query a multi-language graph; summarize Trailmark structure; map smart-contract entry points; compare two refs or snapshots; or hunt confirmed vulnerability variants with pattern or graph seeding. |
 | security-finding-verification | Use when a named security allegation needs a true-positive or false-positive verdict. |
-| security-review | Use when changes touch auth, parsing, dependencies, network, or pre-release, or a diff or baseline needs regression review, or the user asks for a security review, vulnerability audit, or OWASP review of a supplied file, diff, or component, covering injection, XSS, auth, or crypto, with high-confidence findings only (mode: confirmed), or an API, configuration schema, cryptographic interface, authentication surface, or library design is audited for misuse resistance or footguns at a caller-named target (mode: edges, inline or delegated specialist). |
 | smart-contract-guidelines-advisor | Use when a smart-contract project needs architecture, testing, or a maturity scorecard. |
 | smart-contract-secure-workflow | Use when a smart-contract team invokes this before check-in or deployment. |
 | supply-chain-risk-auditor | Use when assessing npm, PyPI, or Go dependency supply-chain risk, with lockfile-absent paths marked unassessable. |

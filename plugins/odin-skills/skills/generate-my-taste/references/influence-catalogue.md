@@ -1,4 +1,4 @@
-# influence-catalogue.md: candidate influence pool
+# Candidate influence pool
 
 Use this catalogue to map evidence into operational taste anchors. The catalogue is not fandom. A candidate earns inclusion only when it satisfies all five criteria below.
 

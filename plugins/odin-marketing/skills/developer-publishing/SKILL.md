@@ -6,38 +6,22 @@ disable-model-invocation: true
 
 # Developer publishing
 
-## Contract
+You adapt a finished technical draft for Dev.to or Hashnode so the human can publish it. Use this when someone supplies the draft and names `dev-to`, `hashnode`, or both (`targets`) as adaptation targets.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | User supplies a finished draft and names Dev.to, Hashnode, or both as adaptation targets. |
-| Authority | Read-only adaptation pack in chat. Dev.to and Hashnode are separate internal profiles. No account creation, publication, scheduling, follower manipulation, or canonical-URL change. |
-| Side effect | An adaptation pack the human applies. Nothing published. |
-| Done | Canonical ownership is stated, per-platform metadata agrees with content, series placement and content differences are explicit, and no factual drift between versions remains. |
+This is an adaptation pack in chat only. Nothing is published. Dev.to and Hashnode are separate internal profiles with their own rules, and you treat them that way. You do not create accounts, publish, schedule, manipulate followers, or change the canonical URL. The human publishes. You prepare the pack they apply.
 
-## Not for
+## Fix canonical ownership first
 
-- Publishing, distributing, or managing publications. The human publishes; this skill prepares the pack.
+You need the finished technical draft with its canonical home URL (`draft`). You may also receive existing tags, series, or custom domain facts (`metadata`).
 
-## Inputs
+State the canonical URL and require it recorded on every syndicated copy. Never change canonical as part of adaptation. The pack is blocked until canonical is stated and every target pack references it. If the canonical home is missing, stop and ask. Do not syndicate an orphan.
 
-- `draft` (required): the finished technical draft with its canonical home URL.
-- `targets` (required): `dev-to`, `hashnode`, or both.
-- `metadata` (optional): existing tags, series, or custom-domain facts the user supplies.
+## Apply each venue profile from current docs
 
-## Procedure
+For Dev.to, fill frontmatter fields, tag selection within venue limits, series placement, and cover and description rules per current venue docs. For Hashnode, fill article settings, tags, series, and custom domain behavior per current venue docs. Each venue section is complete when every field is filled or marked venue default with the doc cited. Where venue docs are unavailable for a setting, mark it venue default unknown with the open question. Do not guess.
 
-1. Fix canonical ownership: state the canonical URL and require it recorded on every syndicated copy. Never change canonical as part of adaptation. **Done when:** canonical is stated and every target pack references it.
-2. Apply the Dev.to profile: frontmatter fields, tag selection within venue limits, series placement, cover and description rules per current venue docs. **Done when:** each Dev.to field is filled or marked venue-default with the doc cited.
-3. Apply the Hashnode profile: article settings, tags, series, custom-domain behavior per current venue docs. **Done when:** each Hashnode setting is filled or marked venue-default with the doc cited.
-4. State content differences honestly: what is trimmed, expanded, or reformatted per venue and why, with no factual drift between versions. **Done when:** every difference names its reason and factual parity is confirmed.
-5. Verify metadata and content agreement: titles, descriptions, tags, and code match the draft or the difference is named. **Done when:** no silent drift remains.
+## State differences and verify parity
 
-## Failure and recovery
+Say what is trimmed, expanded, or reformatted per venue and why. Confirm factual parity across versions: titles, descriptions, tags, and code match the draft, or the difference is named. The pack is complete when every difference names its reason and no silent drift remains, with canonical ownership stated, per platform metadata in agreement, and series placement and content differences explicit.
 
-- Canonical home missing: stop and ask; do not syndicate an orphan.
-- Venue docs unavailable for a setting: mark venue-default-unknown with the question, do not guess.
-
-## Output
-
-An adaptation pack per target: canonical statement, metadata fields with cited venue docs, series placement, content differences with reasons, and the parity verification note.
+What you hand back: one adaptation pack per target with the canonical statement, metadata fields with cited venue docs, series placement, content differences with reasons, and the parity verification note.

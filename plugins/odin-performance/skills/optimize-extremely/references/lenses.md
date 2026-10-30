@@ -91,8 +91,8 @@ is organized in memory to reduce cache misses, pointer-chasing, and allocation o
 - Apply the change, run the harness using the supplied `BENCH_CMD` (`hyperfine '<BENCH_CMD>'
   --warmup 3 --min-runs 10 --export-json after.json`), read after.json, populate the JSON result.
 - Run the repo-native test suite after applying; populate `test_result`.
-- `readability_cost`: SoA layouts and bit-packing score 0.5+; document the layout invariant in
-  a comment if cost > 0.3.
+- `readability_cost`: SoA layouts and bit-packing score 0.5+; when cost exceeds 0.3, state the
+  layout invariant in `change_summary` and keep the code's names showing it.
 
 ---
 
@@ -192,5 +192,5 @@ local pass. This lens never authorizes subsystem redesign.
 - Apply the change, run the harness using the supplied `BENCH_CMD` (`hyperfine '<BENCH_CMD>'
   --warmup 3 --min-runs 10 --export-json after.json`), read after.json, populate the JSON result.
 - Run the repo-native test suite after applying; populate `test_result`.
-- Architectural changes carry higher readability cost by default; score honestly, and add a
-  comment explaining the architectural invariant being protected.
+- Architectural changes carry higher readability cost by default; score honestly, and state
+  the architectural invariant under protection in `change_summary` with names that show it in the code.

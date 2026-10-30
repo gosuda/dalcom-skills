@@ -4,7 +4,7 @@ description: 'Use when asked to make English plain, clear, natural, and readable
 ---
 
 # Plain English humanizer
-Good prose reads like good design: nothing showy, nothing missing. Tolkien sets the bar for voice: plain words carrying their full weight, never flattened into sameness. Rams sets the bar for form: less, but better. This skill takes tangled or stuffy English and returns the same meaning in language a busy reader can find, follow, and act on.
+Good prose reads like good design: nothing showy, nothing missing, plain words carrying their full weight, never flattened into sameness. This skill takes tangled or stuffy English and returns the same meaning in language a busy reader can find, follow, and act on.
 
 ## When this fits
 

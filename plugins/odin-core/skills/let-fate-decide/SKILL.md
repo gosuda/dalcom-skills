@@ -4,60 +4,61 @@ description: 'Use when the user says let fate decide, YOLO, dealer choice, surpr
 allowed-tools: Bash Read
 ---
 
-# Let Fate Decide
+# Let fate decide
 
-A playful bounded workflow for breaking ties between valid options. Cards suggest where to look next. Evidence decides what is true.
+When several valid options tie and the user invites fate to break it (let fate decide, feeling lucky, dealer choice, surprise me, YOLO, heart of the cards, whatever, your call, up to you, idk, wing it, or a shrug that fully delegates), you draw a 12-house Tarot spread with real entropy and let the reading suggest which option to explore first. No approval is needed to draw and interpret. Cards suggest where to look next. Evidence decides what is true. The reading never authorizes anything on its own: the interpretation is always delivered alongside the tool call that acts on the chosen option, never as a text-only turn. A redraw request when nothing in the system changed draws one new spread once; it never re-runs the same approach to chase a preferred card.
 
-## Contract
+For the meaning of each house and card, see [the interpretation guide](references/INTERPRETATION_GUIDE.md), with the matching lens from [technical context lenses](references/TECHNICAL_CONTEXT_LENSES.md) for specialized work. Major Arcana sets each house theme and carries more weight; Minor Arcana supplies detail (Wands for action and drive, Cups for collaboration and feel, Swords for analysis and hard truths, Pentacles for craft and reliability).
 
-| Field | Bound contract |
+## Refusals that need no draw
+
+| The situation | What you do instead |
 |---|---|
-| Trigger | Vague prompt with several reasonable approaches, explicit fate invocation (let fate decide, feeling lucky, dealer choice, surprise me, YOLO, heart of the cards), casual delegation (whatever, your call, up to you, idk, wing it), shrug-like brevity that fully delegates, tie between 2+ valid approaches, or a redraw request when nothing in the system changed. |
-| Authority | No approval needed to draw and interpret. The reading never authorizes safety, security, data-integrity, production, release, or incident-response decisions. |
-| Side effect | None by itself. It biases which valid option to explore first. |
-| Done | One 12-house spread drawn with real entropy over complete assets, houses and drawn cards read from their files, reading synthesized across all 12 houses, chosen direction stated with its card reasons, and the interpretation delivered alongside the tool call that acts on it. |
+| Precise instructions, a single obviously correct approach, or a precision-seeking tone | Reject the draw and ask clarifying questions. |
+| A safety, security sign-off, production, release, or incident-response decision, or any correctness verdict | Reject the draw as a decision method. A reading may prioritize where to investigate, and must then be followed by source review, tests, proofs, traces, or reproduction. |
+| An explicit "do not use Tarot" | Reject the draw. Do not draw. |
+| Drawn text contradicting a requirement or a concrete risk | Requirements and evidence win. Record the conflict and proceed on evidence. |
+| The urge to redraw until a preferred card appears | Reject it. One draw per decision point. |
 
-## Refusals
+## Draw with real entropy over complete assets
 
-- Precise instructions, a single obviously correct approach, or a precision-seeking tone: rejected. Ask clarifying questions instead of drawing.
-- Safety, security sign-off, production release, incident response, or any correctness verdict: rejected as a decision method. A reading may prioritize investigation and must then be followed by source review, tests, proofs, traces, or reproduction.
-- Explicit "do not use Tarot": rejected. Do not draw.
-- User requirements versus card text: requirements win. Never override them with a reading.
-- Redrawing until a preferred card appears: rejected. One draw per decision point.
+Resolve the script from this `SKILL.md` file's installed location, never from the shell working directory. Relative links and JSON `file` paths resolve from the directory containing this `SKILL.md`. Quote the absolute script path in the commands below.
 
-## Inputs
+Draw the default spread, 12 Houses of the Zodiac, where each house gets 1 Major Arcana card then 2 Minor Arcana cards, and each of the 36 cards carries an independent reversal flag:
 
-The human supplies the vague prompt or the list of tied options. Optional: the question the spread should address. No other input is required.
+```bash
+python3 "<resolved-script-path>"
+```
 
-## Procedure
+For house and card text inline in the JSON:
 
-1. Resolve the script from this `SKILL.md` file's installed location, never from the shell working directory. Relative links and JSON `file` paths resolve from the directory containing this `SKILL.md`. **Done when**: the absolute script path is fixed and quoted for the commands below.
-2. Draw the default spread (12 Houses of the Zodiac: each house gets 1 Major Arcana card then 2 Minor Arcana cards; each of the 36 cards carries an independent reversal flag):
-   ```bash
-   python3 "<resolved-script-path>"
-   ```
-   For house and card text inline in the JSON:
-   ```bash
-   python3 "<resolved-script-path>" --content
-   ```
-   For a pre-flight asset check:
-   ```bash
-   python3 "<resolved-script-path>" --verify
-   ```
-   The script verifies all 92 assets before every draw and refuses to deal when any are missing. **Done when**: the script exits 0 and its JSON parses with 12 houses, 36 cards, sequential positions 1-36, 12 distinct Major cards, and 24 distinct Minor cards.
-3. Read every house file and every drawn card's file, honoring each card's orientation (upright or reversed). With `--content` the text is already in the draw output and no further reads are needed. See [the interpretation guide](references/INTERPRETATION_GUIDE.md), and for specialized work the matching lens in [technical context lenses](references/TECHNICAL_CONTEXT_LENSES.md). Major Arcana sets each house theme and carries more weight; Minor Arcana supplies detail (Wands: action and drive; Cups: collaboration and feel; Swords: analysis and hard truths; Pentacles: craft and reliability). **Done when**: all 12 houses and all 36 cards have been read in their drawn orientations.
-4. Synthesize one story across all 12 houses (beginning stance, resources, communication, foundations, creativity, practice, partnership, transformation, principle, delivery, community, blind spot). Prioritize House 1 for stance, House 6 for execution quality, House 8 for risk, House 10 for delivery, and House 12 for blind spots when time is short. State which approach the reading supports, which cards moved the choice, and what to watch. For security, audit, or correctness work the decision is only where to investigate next; evidence from review, testing, reproduction, or formal reasoning still decides whether a risk is real. **Done when**: the reading names a direction, its card reasons, and its caveats, and is delivered alongside the tool call that implements the chosen option rather than as a text-only turn.
-5. Stop after one draw per decision point. A "try again" with no system change means drawing a new spread once, not re-running the same approach. **Done when**: no second draw is taken to chase a preferred outcome.
+```bash
+python3 "<resolved-script-path>" --content
+```
 
-## Failure and recovery
+For a pre-flight asset check:
 
-- Script exits non-zero, reports missing assets, or the entropy source fails: stop. Report the error and skip the reading. Never invent cards, never simulate randomness by hand, and never interpret card names without their files. The whole point is real entropy over complete assets.
-- Any draw naming missing files: fail closed. Do not fall back to interpreting from names or suits. Restore the assets (see `references/SOURCE-MAP.md`) and redraw.
-- Drawn text contradicts a requirement or a concrete risk: the requirement and the evidence win. Record the conflict and proceed on evidence.
+```bash
+python3 "<resolved-script-path>" --verify
+```
 
-## Output
+The script verifies all 92 assets before every draw and refuses to deal when any are missing. The draw succeeds when the script exits 0 and its JSON parses with 12 houses, 36 cards, sequential positions 1 through 36, 12 distinct Major cards, and 24 distinct Minor cards.
 
-The chosen direction with its card reasons and caveats, attached to the tool call that acts on it; or, for the compact helper form, `Verdict: {option}` plus one sentence of card reason, or 3 bullets (dominant theme, main risk or blind spot, recommended next action).
+Then read every house file and every drawn card's file, honoring each card's orientation (upright or reversed). With `--content` the text is already in the draw output and no further reads are needed. The reading is complete when all 12 houses and all 36 cards have been read in their drawn orientations.
+
+## Synthesize one story across all 12 houses
+
+Weave a single reading across beginning stance, resources, communication, foundations, creativity, practice, partnership, transformation, principle, delivery, community, and blind spot. When time is short, prioritize House 1 for stance, House 6 for execution quality, House 8 for risk, House 10 for delivery, and House 12 for blind spots. State which approach the reading supports, which cards moved the choice, and what to watch. For security, audit, or correctness work the decision is only where to investigate next; evidence from review, testing, reproduction, or formal reasoning still decides whether a risk is real. The reading names a direction with its card reasons and caveats, delivered alongside the tool call that implements the chosen option.
+
+Stop after one draw per decision point. A "try again" with no system change means drawing a new spread once, not re-running the same approach.
+
+## Fail closed, never invent
+
+When the script exits nonzero, reports missing assets, or the entropy source fails, stop and report the error, then skip the reading. Never invent cards, never simulate randomness by hand, and never interpret card names without their files. The whole point is real entropy over complete assets. A draw naming missing files fails closed too: do not fall back to interpreting from names or suits. Restore the assets (see `references/SOURCE-MAP.md`) and redraw.
+
+## What you hand back
+
+The chosen direction with its card reasons and caveats, attached to the tool call that acts on it. For the compact helper form, give `Verdict: {option}` plus one sentence of card reason, or 3 bullets (dominant theme, main risk or blind spot, recommended next action).
 
 ## Spread reference
 
@@ -66,7 +67,7 @@ The chosen direction with its card reasons and caveats, attached to the tool cal
 | 1 | Self | How should this work begin? |
 | 2 | Resources | What values, assets, or constraints matter? |
 | 3 | Communication | What needs clarifying or connecting? |
-| 4 | Foundations | What context or dependency anchors the task? |
+| 4 | Foundations | What context or dependency underlies the task? |
 | 5 | Creativity | Where should experiment or delight shape the work? |
 | 6 | Practice | What quality, maintenance, or execution concern matters? |
 | 7 | Partnership | Who or what must this integrate with? |
@@ -84,11 +85,11 @@ Unseeded draws use `secrets.randbelow()` for two independent Fisher-Yates shuffl
 
 | Rationalization | Why it fails |
 |---|---|
-| The cards said so, so I must. | Cards inform direction; they never override safety, correctness, or requirements. |
-| This justifies my pre-existing preference. | Say so honestly when the reading challenges instinct instead. |
-| The reversed card means do nothing. | Reversed means blocked, internalized, or inverted, not inert. |
+| The cards said so, so it is decided. | Cards inform direction. They never override safety, correctness, or requirements. |
+| This reading justifies a pre-existing preference. | Say so honestly when the reading challenges instinct instead. |
+| The reversed card means do nothing. | Reversed means blocked, internalized, or inverted. It is not inert. |
 | Major Arcana overrides the user. | Requirements always take priority over readings. |
-| Keep drawing until it agrees with me. | One draw per decision point; accept the spread. |
+| Keep drawing until the spread agrees. | One draw per decision point. Accept the spread. |
 | The reading says the risk is fine. | Only evidence dismisses a security or correctness concern. |
 
 ## Provenance

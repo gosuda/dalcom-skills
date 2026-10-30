@@ -4,7 +4,7 @@
     {
       "id": "odin-core",
       "displayName": "ODIN Core",
-      "description": "Core ODIN gates every session runs: intent, scope, verification, and hand-off checks.",
+      "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
       "version": "2.1.7",
       "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
       "source": "../plugins/odin-core"
@@ -16,14 +16,6 @@
       "version": "2.1.7",
       "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
       "source": "../plugins/odin-planning"
-    },
-    {
-      "id": "odin-product",
-      "displayName": "ODIN Product",
-      "description": "ODIN workflows for product strategy, market signals, and developer adoption.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-product"
     },
     {
       "id": "odin-code",
@@ -52,18 +44,10 @@
     {
       "id": "odin-git",
       "displayName": "ODIN Git",
-      "description": "ODIN workflows for commits, branches, pull requests, review feedback, and issue tracking.",
+      "description": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
       "version": "2.1.7",
       "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
       "source": "../plugins/odin-git"
-    },
-    {
-      "id": "odin-release",
-      "displayName": "ODIN Release",
-      "description": "ODIN workflows for cutting, gating, publishing, and announcing releases.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-release"
     },
     {
       "id": "odin-run",
@@ -120,14 +104,6 @@
       "version": "2.1.7",
       "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
       "source": "../plugins/odin-learn"
-    },
-    {
-      "id": "odin-agent",
-      "displayName": "ODIN Agent",
-      "description": "ODIN workflows for configuring agent harnesses, MCP servers, and repository agent surfaces.",
-      "version": "2.1.7",
-      "homepage": "https://github.com/OutlineDriven/odin-claude-plugin",
-      "source": "../plugins/odin-agent"
     },
     {
       "id": "odin-skills",

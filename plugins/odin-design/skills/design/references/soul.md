@@ -81,11 +81,11 @@ The canonical reading list. Internalize before improvising.
 
 - 10 principles of good design: innovative, useful, aesthetic, understandable, unobtrusive, honest, long-lasting, thorough down to the last detail, environmentally friendly, as little design as possible. Anchor product: the Braun T1000 radio, every dial has a function, every surface a reason, no element decorative.
 
-- **John Maeda's *Laws of Simplicity*** (MIT Press, 2006): ten laws: reduce, organize, time, learn, differences, context, emotion, trust, failure, the one. The operating frame: *subtract the obvious, add the meaningful*. Reduction is not absence; it is concentration.
+- *Laws of Simplicity* (MIT Press, 2006): ten laws: reduce, organize, time, learn, differences, context, emotion, trust, failure, the one. The operating frame: *subtract the obvious, add the meaningful*. Reduction is not absence; it is concentration.
 
-- Brad Frost on craft: atomic design and the Pattern Lab philosophy: components are atoms, molecules, organisms; design systems are care expressed at scale. Frost's frame turns restraint from a single-surface discipline into an institutional one.
+- Atomic design and the Pattern Lab philosophy: components are atoms, molecules, organisms; design systems are care expressed at scale. That frame turns restraint from a single-surface discipline into an institutional one.
 
-- Tobias van Schneider: *"design that gives a damn"*; the personal-investment lens. Surfaces that feel alive are surfaces somebody fought for. Anonymous design ships anonymous product.
+- *"Design that gives a damn"*: the personal-investment lens. Surfaces that feel alive are surfaces somebody fought for. Anonymous design ships anonymous product.
 
 These four form the readable canon. The principles source supplies the principles, the operations source supplies the operations. Full author mapping lives externally. Sections 4,6 apply the canon.
 

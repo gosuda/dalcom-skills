@@ -29,7 +29,7 @@ Methodology: [outline-driven-development](https://github.com/OutlineDriven/outli
 
 ## What is this
 
-365 skills in 25 plugins. A skill is authored once, at
+304 skills in 22 plugins. A skill is authored once, at
 `plugins/<plugin>/skills/<slug>/SKILL.md`, and that path is its only home. The directory states
 which plugin owns the skill, so no registry has to answer that question. Every plugin and
 marketplace ships at one `releaseVersion`, currently 2.1.7, held in `catalog/plugins.json`.
@@ -155,12 +155,12 @@ row below is what you add on top for that kind of work, and unselected plugins s
 | Everyday code changes | `odin-run`, `odin-git` |
 | Tests and verification | `odin-testing` |
 | Large refactors, audits, bounded iteration | `odin-code`, `odin-review` |
-| A specific language | `odin-python`, `odin-typescript`, `odin-native`, `odin-apple`, or `odin-formal` |
-| Web and interface work | `odin-web`, `odin-design` |
+| A specific language | `odin-native`, `odin-typescript`, or `odin-rust` |
+| Web and interface work | `odin-typescript`, `odin-design` |
 | Security review and hardening | `odin-security`, `odin-fuzzing` |
 | Research and technical writing | `odin-research`, `odin-knowledge`, `odin-writing` |
-| Product, planning, and new artifacts | `odin-planning`, `odin-product`, `odin-visual` |
-| Building agents | `odin-agent`, `odin-skills` |
+| Product, planning, and new artifacts | `odin-planning`, `odin-visual` |
+| Building agents | `odin-skills` |
 | Infrastructure and data | `odin-infra` |
 
 Each name installs with the same command:
@@ -169,7 +169,7 @@ Each name installs with the same command:
 /plugin install odin-security@odin-marketplace
 ```
 
-The largest plugins are `odin-planning` at 39, `odin-marketing` at 28, and `odin-core` at 27.
+The largest plugins are `odin-core` at 84, `odin-marketing` at 28, and `odin-run` at 20.
 Install one skill instead of a whole plugin with `gh skill install`, shown under Install above.
 
 ## Using the skills
@@ -182,17 +182,15 @@ You install plugins once and invoke skills every day. Start with the [getting-st
 |---|---|---|---|
 | odin-core | Coding | odin-knowledge | Productivity |
 | odin-planning | Productivity | odin-learn | Productivity |
-| odin-product | Productivity | odin-agent | Productivity |
 | odin-code | Coding | odin-skills | Productivity |
 | odin-review | Coding | odin-writing | Writing |
 | odin-testing | Coding | odin-visual | Design |
 | odin-git | Coding | odin-design | Design |
-| odin-release | Coding | odin-typescript | Coding |
-| odin-run | Coding | odin-native | Coding |
-| odin-infra | Infrastructure | odin-rust | Coding |
-| odin-security | Security | odin-performance | Coding |
-| odin-fuzzing | Security | odin-marketing | Marketing |
-| odin-research | Research |  |  |
+| odin-run | Coding | odin-typescript | Coding |
+| odin-infra | Infrastructure | odin-native | Coding |
+| odin-security | Security | odin-rust | Coding |
+| odin-fuzzing | Security | odin-performance | Coding |
+| odin-research | Research | odin-marketing | Marketing |
 
 `catalog/plugins.json` is the identity ledger: it holds each plugin's name, description, category,
 and tags, and every manifest and registry is generated from it.

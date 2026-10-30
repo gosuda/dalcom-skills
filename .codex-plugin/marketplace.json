@@ -29,18 +29,6 @@
       "category": "Productivity"
     },
     {
-      "name": "odin-product",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-product"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Productivity"
-    },
-    {
       "name": "odin-code",
       "source": {
         "source": "local",
@@ -81,18 +69,6 @@
       "source": {
         "source": "local",
         "path": "./plugins/odin-git"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Coding"
-    },
-    {
-      "name": "odin-release",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-release"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -177,18 +153,6 @@
       "source": {
         "source": "local",
         "path": "./plugins/odin-learn"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_USE"
-      },
-      "category": "Productivity"
-    },
-    {
-      "name": "odin-agent",
-      "source": {
-        "source": "local",
-        "path": "./plugins/odin-agent"
       },
       "policy": {
         "installation": "AVAILABLE",

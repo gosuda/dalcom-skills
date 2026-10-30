@@ -84,7 +84,7 @@ A generated anchor entry contains:
 - Evidence rationale: why this anchor belongs in this user's skill.
 - Canonical exemplar: concrete artifact or method.
 - Failure modes: Side A and Side B.
-- Cross-domain manifestations: prose, code, design, decision.
+- Cross-domain manifestations: prose, code, design, decisions.
 
 Anchor names must be stable, readable, and operational. Avoid private jokes and fandom labels.
 

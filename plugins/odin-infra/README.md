@@ -2,7 +2,7 @@
 
 ODIN workflows for CI, deployment, observability, cost, and infrastructure tooling.
 
-7 skills, category Infrastructure. Install the whole plugin below, or take a single skill with `gh skill install`.
+5 skills, category Infrastructure. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -34,8 +34,6 @@ Each row states when to reach for the skill. Invoke one as `/odin-infra:<name>` 
 | Skill | Trigger |
 |---|---|
 | ci-cd | Use when setting up or modifying CI/CD pipelines, quality gates, test runners, or deployment pipeline configuration through workflow files. |
-| ci-fix | Use when "CI is red", "fix the checks", or "make CI green", one check needs classifying, or a bounded sweep runs. |
-| consult-deployment | Use when the user asks to rank deployment platforms and stacks against their product with quantitative trade-offs. |
 | environment-contract-audit | Use when environment-dependent code, templates, or deployment configuration changes, or when runtime configuration is missing. |
 | observability | Use when adding telemetry, composing an observability surface, reviewing alerts, shipping a production feature, or diagnosing a production issue. |
 | terraform-style-check | Use when writing, reviewing, or generating Terraform HCL that must pass fmt and validate. |

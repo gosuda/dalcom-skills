@@ -136,7 +136,7 @@ Fall back to a numbered list in chat only when no blocking tool exists or the ca
 
 ## Self-redirect
 
-If the user response indicates they are in the wrong skill (e.g., "this is too small, just `/work` it" or "this needs more thought, let me brainstorm differently"):
+If the user response indicates they are in the wrong skill (e.g., "this is too small, just `/do-it-now` it" or "this needs more thought, let me brainstorm differently"):
 
 - Stop `/brainstorm`.
 - Suggest the alternative skill the user appears to want.

@@ -5,37 +5,27 @@ description: 'Use when mapping technical search opportunities by exact query, in
 
 # Developer search
 
-## Contract
+Map which technical queries are worth targeting and what page each one needs. This is read only. Work from public search evidence and any console or rank data the user supplies, which stays optional throughout. Rank trackers and consoles are evidence sources only, never the work itself. This skill does not deploy SEO, build pages, run vendor-automated campaigns, or promise ranks.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | User asks which technical queries to target and what page each needs. |
-| Authority | Read-only. Public search evidence and supplied console or rank data only, treated as optional inputs. No credentials required, no rank guarantees. |
-| Side effect | A search opportunity map in chat. Nothing else changes. |
-| Done | Every row carries exact query, intent class, source evidence, recommended page type, competing answer, freshness trigger, and measurable success signal; no invented volume, ranking, traffic, or timeline remains. |
-
-## Not for
-
-- SEO deployment, page building, or vendor-automated campaigns. Rank trackers and consoles are optional evidence sources only.
-
-## Inputs
+## What you need before you start
 
 - `queries` (required): candidate exact queries, or a topic the user authorizes for query discovery from public sources.
-- `evidence` (optional): Search Console exports, rank-tracker data, or docs analytics the user supplies.
+- `evidence` (optional): Search Console exports, rank-tracker data, or docs analytics the user supplies. When absent, proceed on public evidence and mark rows accordingly.
 
-## Procedure
+## Reading each query
 
-1. Record each exact query verbatim and classify intent: error-message, how-to, implementation, comparison, or reference. Keep intents distinct; they need different page types. **Done when:** every query has an intent class.
-2. Attach source evidence per query: observed discussions, docs gaps, competing answers, or supplied console data with dates. **Done when:** every query has evidence or an explicit gap flag.
-3. Recommend the page type per query (error reference, tutorial, comparison brief, API reference section) and name the competing answer it must beat fairly. **Done when:** each query maps to one page type and one named competitor answer.
-4. Set freshness triggers (release cadence, API change, new error text) and a measurable success signal per row (indexed page,.docs click-through on a real path, resolved-question rate). **Done when:** each row has a trigger and a signal.
-5. Purge invented numbers: volumes, rankings, traffic forecasts, and timelines appear only with an authoritative source and date, otherwise `UNVERIFIED` or omitted. **Done when:** no number lacks a source.
+1. Record each exact query verbatim and give it one intent class: error-message, how-to, implementation, comparison, or reference. Intents stay distinct because each needs a different page type.
+2. Attach source evidence to each query: observed discussions, docs gaps, competing answers, or supplied console data with dates. A query with no evidence stays on the map as a candidate with its gap named, or is dropped at the user's choice.
+3. Recommend one page type per query (error reference, tutorial, comparison brief, API reference section) and name the competing answer it must beat fairly.
 
-## Failure and recovery
+## Freshness and success signals
 
-- No evidence for a query: keep it as a candidate with the gap named, or drop it at user choice.
-- Supplied console data unavailable: proceed on public evidence and mark rows accordingly.
+Give every row a freshness trigger (release cadence, API change, new error text) and a measurable success signal (indexed page, docs click-through on a real path, resolved-question rate). A row without both is unfinished.
 
-## Output
+## Numbers you may not invent
 
-A search opportunity map with exact queries, intent classes, evidence, page types, competing answers, freshness triggers, success signals, and the verification note on every number.
+Volumes, rankings, traffic forecasts, and timelines appear only with an authoritative source and date. Anything else is marked `UNVERIFIED` or left out. Read the finished map once for unsourced numbers before handing it over.
+
+## What you hand over
+
+A search opportunity map in chat: exact queries, intent classes, evidence, page types, named competing answers, freshness triggers, success signals, and a verification note covering every number. Nothing else changes.

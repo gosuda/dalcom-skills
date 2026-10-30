@@ -1,27 +1,19 @@
-# Gates for the skill tree and its five distribution surfaces.
-# Run the whole set with: prek run --all-files
 repos:
-  # General text cleanup for markdown and JSON files
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
-      # Remove trailing whitespace
       - id: trailing-whitespace
         types_or: [markdown, json]
 
-      # Validate JSON syntax
       - id: check-json
 
-      # Fix mixed line endings (convert to LF)
       - id: mixed-line-ending
         args: ["--fix=lf"]
         types_or: [markdown, json]
 
-      # Fix UTF-8 byte order marker
       - id: fix-byte-order-marker
         types_or: [markdown, json]
 
-  # TOML lint + format
   - repo: https://github.com/tombi-toml/tombi-pre-commit
     rev: v1.5.0
     hooks:
@@ -29,15 +21,6 @@ repos:
         args: ["--offline"]
       - id: tombi-format
 
-  # Every local hook below audits the whole tree and takes no filenames. A `files:`
-  # selector on such a hook is a second, hand-maintained model of what the check
-  # depends on, and that model was silently wrong six times during the 2.0 rebuild:
-  # three marketplace registries missing from the surface gates, a shared module
-  # missing from the skill gates, the generated root README missing from both, and
-  # the voice gate matching three directories while its script audits every tracked
-  # markdown file. A whole-tree check must not be conditional on which file the
-  # author happened to touch, so these run unconditionally and carry no selector to
-  # drift. The full set costs a few seconds.
   - repo: local
     hooks:
       - id: sync-baseline
@@ -75,8 +58,6 @@ repos:
         pass_filenames: false
         always_run: true
 
-      # Both gates below have shipped a wrong rule at least once, so each carries
-      # its own fixtures and proves itself on every run.
       - id: check-voice-self-test
         name: check the voice gate against its own fixtures
         entry: python3 scripts/check-voice.py --self-test
@@ -105,7 +86,7 @@ repos:
         pass_filenames: false
         always_run: true
       - id: sync-knowledge-copies
-        name: check generated knowledge copies match their compound sources
+        name: check generated skill files match canonical sources
         entry: node scripts/sync-knowledge-copies.mjs --check
         language: system
         pass_filenames: false
@@ -146,9 +127,6 @@ repos:
         pass_filenames: false
         always_run: true
 
-      # The mirror gate proves the mirror only from a checkout whose sibling
-      # outline repo exists; from a worktree the default target is absent and
-      # the script skips, so mirror evidence there needs an explicit --target.
       - id: sync-outline-skills
         name: check the flat Devin skill mirror matches the plugin tree
         entry: node scripts/sync-outline-skills.mjs --check
@@ -156,10 +134,6 @@ repos:
         pass_filenames: false
         always_run: true
 
-      # Authorized by the 2026-09-06 user-invoked audit-project run over the PR
-      # #22 change surface: executable skill scripts must compile, syntax-check,
-      # and pass their own --self-check before commit. This gates shipped
-      # executables; it is not a test suite.
       - id: check-skill-scripts
         name: compile, syntax-check, and self-check skill scripts
         entry: python3 scripts/check-skill-scripts.py

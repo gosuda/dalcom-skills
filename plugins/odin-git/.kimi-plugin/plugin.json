@@ -1,7 +1,7 @@
 {
   "name": "odin-git",
   "version": "2.1.7",
-  "description": "ODIN workflows for commits, branches, pull requests, review feedback, and issue tracking.",
+  "description": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
   "keywords": [
     "odin",
     "outlinedriven",
@@ -16,6 +16,6 @@
   "skills": "./skills",
   "interface": {
     "displayName": "ODIN Git",
-    "shortDescription": "ODIN workflows for commits, branches, pull requests, review feedback, and issue tracking."
+    "shortDescription": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues."
   }
 }

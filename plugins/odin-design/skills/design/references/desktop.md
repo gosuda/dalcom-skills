@@ -1,6 +1,6 @@
 # desktop.md, native cross-platform desktop surfaces
 
-Surface reference for native desktop apps that are not built on Electron. Covers Tauri 2.x (web frontend + Rust backend), Slint 1.17 (declarative `.slint` markup), egui (immediate-mode), and Iced (Elm-inspired reactive). Companion to `references/paradigms.md` for paradigm fit and `references/anti-slop.md` for cross-platform color slop tells.
+Surface reference for native desktop apps that are not built on Electron. Covers Tauri 2.x (web frontend + Rust backend), Slint 1.18 (declarative `.slint` markup), egui (immediate-mode), and Iced (Elm-inspired reactive). Companion to `references/paradigms.md` for paradigm fit and `references/anti-slop.md` for cross-platform color slop tells.
 
 **Grounded: 2026-08-31.** Re-verify versions and capability tables before relying on them in production.
 
@@ -92,7 +92,7 @@ Cross-platform color discipline, never hardcode platform colors; always derive f
 
 Sandboxing, Tauri's allowlist must be tight. The default capability surface in 2.x is permission-scoped per command; widening it for convenience is the most common security regression in shipping Tauri apps.
 
-## 3. Slint 1.17
+## 3. Slint 1.18
 
 Slint 1.18.1 is the current release line. Runtime is under 300 KiB, among the smallest cross-platform UI runtimes in production. Compile-time validation: declarative `.slint` markup with property bindings checked at build, so theme-token mismatches surface before runtime.
 

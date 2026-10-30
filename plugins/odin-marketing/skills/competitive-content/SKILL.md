@@ -6,39 +6,30 @@ disable-model-invocation: true
 
 # Competitive content
 
-## Contract
+You prepare a comparison brief or draft that a reader can trust: every claim traces to product docs or a cited observation, competitors get honest credit, and anything legally sensitive is flagged for a human reviewer. Nothing here publishes. There are no trademark-domain tactics, no keyword bidding, and no unlicensed logo or endorsement implication. Drafts stay in chat, and no passage ships around a legal flag until a human clears it.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | User asks for an alternative or comparison page against named competitors. |
-| Authority | Read-only drafts in chat. No publication, no trademark-domain tactics, no keyword bidding, no logo or endorsement implication. Explicit human approval before any handoff to a writing or design owner. |
-| Side effect | A comparison brief or draft plus a legal-review flag list in chat. Nothing published. |
-| Done | Every comparison claim traces to product documentation or a cited observation; competitor strengths are stated honestly; migration guidance, update date, and legal flags are present; no false claim, implied endorsement, unlicensed asset, or uncited testimonial remains. |
+Live comparison pages and SEO deployment are out of scope. Hand the approved brief to `copywriting` for final copy; page build and deployment belong elsewhere.
 
-## Not for
+## What the brief is built from
 
-- Live comparison pages or SEO deployment. Hand the approved brief to `copywriting` for final copy; page build and deployment belong elsewhere.
-
-## Inputs
-
-- `subject` (required): the product and the named alternatives being compared.
-- `evidence` (required): product docs, competitor docs, and cited observations with dates.
+- `subject`: the product and the named alternatives being compared.
+- `evidence`: product docs, competitor docs, and cited observations with dates.
 - `migration` (optional): known migration paths, limits, and rollback notes.
 
-## Procedure
+## How the brief gets built
 
-1. Build the comparison table with nuanced states (full, partial, beta, not available, unknown) instead of checkmark binaries. **Done when:** every cell has a state plus its source.
-2. State competitor strengths honestly alongside gaps. **Done when:** each compared alternative has at least one fairly stated strength with a source.
-3. Write migration guidance: path, effort, limits, rollback. **Done when:** migration states its limits or marks them unknown.
-4. Stamp the update date and the recheck trigger per volatile claim. **Done when:** every volatile claim has a date and a recheck condition.
-5. Flag legal review triggers: trademarks, logos, endorsement language, performance claims. **Done when:** each trigger names the exact passage and the question for review.
-6. Verify: no false claims, no implied endorsement, no unlicensed logos, no uncited testimonials, no dependency on missing upstream pages. **Done when:** the verification pass names its result per risk.
+1. Build the comparison table with nuanced states (full, partial, beta, not available, unknown) instead of checkmark binaries. Every cell carries its state plus its source.
+2. State each compared alternative's strengths honestly alongside its gaps, with a source for each strength.
+3. Write migration guidance covering path, effort, limits, and rollback. Where limits are not known, mark them unknown.
+4. Stamp the update date and give every volatile claim a recheck trigger.
+5. Flag legal review triggers (trademarks, trademark-domain tactics, keyword bidding, logos, endorsement language, performance claims). Each flag names the exact passage and the question for review.
+6. Run a final verification pass over false claims, implied endorsement, unlicensed logos, uncited testimonials, and dependence on missing upstream pages. Record the result per risk.
 
-## Failure and recovery
+## When a claim or passage cannot go out
 
-- Evidence missing for a material claim: mark unknown or drop the claim; never assert it.
-- Legal flag cannot be cleared here: keep the flag and stop that passage; the page ships around it only after human legal review.
+- A material claim has no evidence: mark it unknown or drop it. Never assert it.
+- A legal flag cannot be cleared here: keep the flag and stop that passage. It moves only after human legal review.
 
-## Output
+## What you deliver
 
-A comparison brief or draft with a sourced table, honest strengths, migration path, update date, legal-review flags, and the verification record.
+A comparison brief or draft in chat with a sourced table, honestly stated competitor strengths, a migration path with limits, the update date, legal review flags, and the verification record. Explicit human approval is required before any handoff to a writing or design owner.

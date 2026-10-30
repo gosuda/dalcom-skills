@@ -5,37 +5,39 @@ description: 'Use when auditing GitHub presence or preparing curated directory s
 
 # Developer discovery surfaces
 
-## Contract
+You audit a developer tool's public surfaces and prepare submission packets a human can file. Use this when someone names a repository, tool, or package and asks whether it is ready to be discovered, covering GitHub presence, directory fit, or both.
 
-| Field | Bound contract |
-|---|---|
-| Trigger | User names a repository, tool, or package and asks for discovery review or directory readiness. |
-| Authority | Read-only audit in chat, plus submission packets the human submits. GitHub and curated directories are distinct surface profiles. No star or follow manipulation, automated PR submission, listing submission, directory spam, or analytics credential. |
-| Side effect | An audit plus per-directory packets in chat. Nothing submitted. |
-| Done | Repository facts are accurate, README and topic recommendations trace to observed gaps, each directory packet has unique descriptions and meets current contribution rules, and a maintenance ledger states recheck duties. |
+This is preparation only. You read the live repository, write the audit and one packet per directory in chat, and stop. The human submits. You never submit a listing, open a directory PR, game stars or follows, or touch analytics credentials. Treat GitHub and curated directories as separate surfaces with their own rules.
 
-## Not for
+## Start from the live repository
 
-- Submitting listings, opening directory PRs, or gaming signals. The human submits; this skill prepares.
+You need the repository or package under review (`repo`), in its actual current state, not how it is described but how it reads from its current files. When the caller suggests candidate directories (`directories`), use them. Otherwise propose candidates from public awesome-lists and registries that fit the artifact.
 
-## Inputs
+Read what is really there before recommending anything:
 
-- `repo` (required): the repository or package under review with its actual current state.
-- `directories` (optional): candidate curated directories or registries. Defaults to proposing candidates from public awesome-lists and registries relevant to the artifact.
+- README completeness
+- A quickstart that runs
+- Topics and description
+- License clarity
+- The contributing path
+- Visible signs of issue and PR responsiveness
 
-## Procedure
+Every audit item cites the state you observed. Where the facts are unavailable, say so and mark the item unknown rather than filling it in.
 
-1. Audit the repository: README completeness, quickstart that runs, topics, description, license clarity, contributing path, issue and PR responsiveness signs. **Done when:** each item cites the observed state.
-2. Recommend GitHub improvements: description, topics, README structure, pinned material, profile placement where relevant. **Done when:** each recommendation names the gap it closes.
-3. For each candidate directory, check current contribution rules (cited URL and date): fit, uniqueness requirements, description constraints, maintenance expectations. **Done when:** every candidate has a rules check or an explicit unknown.
-4. Write per-directory submission packets with unique descriptions (never the same blurb everywhere), correct category placement, and required metadata. **Done when:** each packet meets its venue rules and differs from the others.
-5. Open the maintenance ledger: who rechecks what, on which trigger (release, rule change, quarterly). **Done when:** every packet has a recheck trigger.
+## Fix up GitHub first
 
-## Failure and recovery
+Recommend description, topics, README structure, and pinned material, plus profile placement where it is relevant. Each recommendation names the gap it closes, so the reader can trace every suggestion back to something you saw missing or weak.
 
-- Repository facts unavailable: audit the visible surface and mark the rest unknown.
-- Directory rules forbid the listing type: drop the candidate with the reason; do not reframe to evade rules.
+## Check each directory's current rules
 
-## Output
+Directories drift. For every candidate, look up its current contribution rules (fit, uniqueness requirements, description constraints, maintenance expectations) and note the cited URL and date. A candidate without a rules check gets an explicit unknown, never an assumed pass. If a venue's rules forbid this listing type, drop the candidate and say why. Do not reframe the listing to evade the rules.
 
-A discovery audit with cited observations, GitHub recommendations, per-directory submission packets with unique descriptions, rules citations, and the maintenance ledger.
+## Write one packet per directory, each in its own words
+
+Every packet carries unique descriptions, never the same blurb pasted across venues, with the correct category placement and required metadata for that venue. A packet is finished when it meets its venue rules and reads differently from the others.
+
+## Leave a recheck ledger
+
+Close with a maintenance note: who rechecks what, and on which trigger (a release, a rule change, or a quarterly pass). Every packet needs its recheck trigger, so nothing goes stale silently.
+
+What you hand back: the discovery audit with cited observations, GitHub recommendations traced to gaps, one submission packet per directory with unique descriptions and rules citations, and the maintenance ledger.

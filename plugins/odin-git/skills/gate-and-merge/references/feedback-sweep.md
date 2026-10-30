@@ -5,40 +5,34 @@ comment. A PR with none of those skips the gate entirely.
 
 ## Path base
 
-Every helper path here is written plugin-relative against
-`plugins/odin-core/skills/resolve/scripts/`, matching the convention in
-`plugins/odin-core/skills/resolve/SKILL.md`, which owns the single-batch review-feedback
-workflow. The helpers moved with `resolve` from `odin-git` to `odin-core` on cutover; a reader
-who takes `../resolve/` as file-relative resolves it to a directory that no longer exists.
+Every helper path here is written against the owning skill directory (`scripts/`), where the
+bundled review helpers are installed.
 
 ## GitLab path base
 
-On GitLab the same four operations run through one helper in the moved skill bundle (duplicated
-identically in `resolve-pr-comments` for single-skill installs; the two copies share the
-contract, so either copy works). The helper is self-contained (Python standard library only),
-issues at most one write per invocation, and never retries a mutation:
+On GitLab the same four operations run through the bundled helper `scripts/gitlab-mr.py`.
+The helper is self-contained (Python standard library only), issues at most one write per
+invocation, and never retries a mutation:
 
 ```
-python3 ../../../../odin-core/skills/resolve/scripts/gitlab-mr.py --host <host> --project <GROUP/PROJECT> --mr <iid> list
-python3 ../../../../odin-core/skills/resolve/scripts/gitlab-mr.py --host <host> --project <GROUP/PROJECT> --mr <iid> thread --note <note-id>
-python3 ../../../../odin-core/skills/resolve/scripts/gitlab-mr.py --host <host> --project <GROUP/PROJECT> --mr <iid> reply --discussion <discussion-hex-id> --body-file <tmp>
-python3 ../../../../odin-core/skills/resolve/scripts/gitlab-mr.py --host <host> --project <GROUP/PROJECT> --mr <iid> resolve --discussion <discussion-hex-id>
+python3 scripts/gitlab-mr.py --host <host> --project <GROUP/PROJECT> --mr <iid> list
+python3 scripts/gitlab-mr.py --host <host> --project <GROUP/PROJECT> --mr <iid> thread --note <note-id>
+python3 scripts/gitlab-mr.py --host <host> --project <GROUP/PROJECT> --mr <iid> reply --discussion <discussion-hex-id> --body-file <tmp> --expected-head <approved-head-SHA>
+python3 scripts/gitlab-mr.py --host <host> --project <GROUP/PROJECT> --mr <iid> resolve --discussion <discussion-hex-id> --expected-head <approved-head-SHA>
 ```
 
 Bind host, project, and MR IID separately; address the MR by IID in project scope, never by
 global id. `list` pins the MR head SHA before and after the full discussion-plus-ordinary-note
 census across every page; any head change fails the census instead of returning mixed evidence.
 `thread` finds the unique discussion containing a note and fails nonzero on missing or ambiguous
-matches. `reply` posts exactly one reply from `--body-file` (empty body is an error) and
-`resolve` resolves only a resolvable discussion; both verify the receipt and read back, with no
+matches. Mutating operations (`reply` and `resolve`) require `--expected-head <approved-head-SHA>`,
+binding each mutation to the surveyed and adjudicated approved revision; never fetch a new head
+merely to satisfy the flag. If the MR head changed, stop publication for re-adjudication.
+`reply` posts exactly one reply from `--body-file` (empty body is an error) and `resolve`
+resolves only a resolvable discussion; both verify the receipt and read back, with no
 automatic mutation retry. Approval and reply-before-resolve stay mandatory per `SKILL.md`. Keep
 resolved discussions and author fields; GitLab exposes no review-submission category, so do not
-fabricate one. One install shape has no sibling bundle: query the discussions REST API directly:
-
-```
-glab api projects/<url-encoded-GROUP%2FPROJECT>/merge_requests/<iid>/discussions --paginate --output json
-glab api projects/<url-encoded-GROUP%2FPROJECT>/merge_requests/<iid>/notes --paginate --output json
-```
+fabricate one.
 
 Never mix REST hex discussion IDs with GraphQL global discussion IDs. GitLab normalizes saved
 note bodies (runs then removes quick actions, strips carriage returns and trailing whitespace),
@@ -47,34 +41,20 @@ failed write.
 
 ## Enumerate before judging
 
-GitHub: four executables in the moved skill do this work. Their signatures differ, so read the argument
-list rather than assuming a shared shape:
+GitHub: four bundled executables in `scripts/` do this work. Their signatures differ, so read
+the argument list rather than assuming a shared shape:
 
 ```
-../../../../odin-core/skills/resolve/scripts/get-pr-comments <PR_NUMBER> [OWNER/REPO]
-../../../../odin-core/skills/resolve/scripts/get-thread-for-comment <PR_NUMBER> <COMMENT_NODE_ID> [OWNER/REPO]
-../../../../odin-core/skills/resolve/scripts/reply-to-pr-thread <THREAD_ID>
-../../../../odin-core/skills/resolve/scripts/resolve-pr-thread <THREAD_ID>
+scripts/get-pr-comments <PR_NUMBER> [OWNER/REPO]
+scripts/get-thread-for-comment <PR_NUMBER> <COMMENT_NODE_ID> [OWNER/REPO]
+scripts/reply-to-pr-thread <THREAD_ID>
+scripts/resolve-pr-thread <THREAD_ID>
 ```
 
 The two read-only scripts locate a PR, so they take an optional `OWNER/REPO` when the queue is not
 the current repository. The two mutating scripts take a thread node ID, which is globally unique,
 so they need no repository argument. `reply-to-pr-thread` reads the body from stdin, which keeps
 markdown out of shell quoting.
-
-The path reaches the moved skill under both install shapes. The two skills ship in separate
-plugins (`gate-and-merge` in `odin-git`, `resolve` in `odin-core`), and the flat Devin mirror
-places them as siblings under `.devin/skills/`, so the mirrored `resolve/scripts/` sits beside
-the mirrored `gate-and-merge/`.
-
-One install shape has no sibling: a single-skill
-`gh skill install ... plugins/odin-git/skills/gate-and-merge`. There, query the threads directly:
-
-```
-gh api graphql -f query='{repository(owner:"OWNER",name:"REPO"){pullRequest(number:N){
-  reviewThreads(first:100){totalCount nodes{id isResolved isOutdated path line
-  comments(first:10){nodes{id author{login} body}}}}}}}'
-```
 
 `isOutdated` means the diff hunk moved under the thread, never that the concern was answered. An
 outdated thread still needs a verdict.
@@ -86,7 +66,7 @@ a top-level comment carries them too. GitHub:
 gh pr view <n> --json comments,reviews
 ```
 
-GitLab: the `gitlab-mr.py list` census above already returns every discussion (including resolved
+GitLab: the `scripts/gitlab-mr.py list` census above already returns every discussion (including resolved
 ones, with author and `resolved`/`resolvable` receipts) plus every ordinary note across all pages.
 Judge every item on the code even when its diff hunk moved underneath it; an outdated anchor never
 means the concern was answered.

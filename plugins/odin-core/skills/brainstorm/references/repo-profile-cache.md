@@ -2,7 +2,7 @@
 
 Read this when a repo-grounding skill needs the question-agnostic **project profile** (stack, deps, conventions, structure). The profile is derived once and reused within a session and across sessions and skills at an unchanged commit, only the *question-specific* grounding for the current run is ever re-derived.
 
-Owner. pov calls ../brainstorm/scripts/repo-profile-cache.py and this file. Do not recopy.
+Owner. Brainstorm owns both this file and scripts/repo-profile-cache.py; this file is the protocol for invoking the script via SKILL_DIR. Do not recopy.
 
 ## What is cached (the agnostic profile)
 

@@ -1,3 +1,3 @@
 interface:
   display_name: "Resolve"
-  short_description: "Use when a single feedback batch needs adjudication and repair, locally or on one PR: verify each finding against code, fix valid items, and prove them."
+  short_description: "Use when local feedback needs adjudication, or the user explicitly chooses analyze, reception, summary, interactive, or autonomous mode for one feedback batch."

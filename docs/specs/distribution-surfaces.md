@@ -121,7 +121,7 @@ The manifest `mcpServers` field accepts a path: type `string|array|object`, desc
 
 Shared-file claim, stated precisely: one shared `mcp.json` serves Claude Code, Codex, and Grok, but only through an explicit `mcpServers` entry, because all three default to the dotted `.mcp.json`. Without the manifest entry, none of the three loads the dotless file. Kimi takes the servers inline instead: its `mcpServers` is a server map, not a path, so the generator reads `mcp.json` and inlines its `mcpServers` value verbatim. Mechanism verified at Tier 2 for Claude Code and Tier 1 for Codex and Grok.
 
-Repository state as read 2026-09-03: `plugins/odin-core/.claude-plugin/plugin.json`, `plugins/odin-core/.codex-plugin/plugin.json`, and `plugins/odin-core/.grok-plugin/plugin.json` all declare `"mcpServers": "./mcp.json"`, and `plugins/odin-core/.kimi-plugin/plugin.json` carries the inlined server map. No other plugin ships `mcp.json`, so the other 27 manifests omit the key. The renderers add the entry whenever a plugin ships an `mcp.json` (Tier 1, source: repository files and `scripts/plugin-surfaces.mjs`, verified 2026-09-03).
+Repository state as read 2026-09-03: `plugins/odin-core/.claude-plugin/plugin.json`, `plugins/odin-core/.codex-plugin/plugin.json`, and `plugins/odin-core/.grok-plugin/plugin.json` all declare `"mcpServers": "./mcp.json"`, and `plugins/odin-core/.kimi-plugin/plugin.json` carries the inlined server map. No other plugin ships `mcp.json`, so the other 21 manifests omit the key (re-verified against the 2.1.7 tree). The renderers add the entry whenever a plugin ships an `mcp.json` (Tier 1, source: repository files and `scripts/plugin-surfaces.mjs`, verified 2026-09-03).
 
 ### Skill discovery
 
@@ -222,7 +222,7 @@ From a local clone (Tier 1, sources: `source.ts` and `marketplace.ts`, verified 
 - `*/SKILL.md` at root level
 - `plugins/{scope}/skills/*/SKILL.md`
 
-`gh skill install --help` states discovery follows the agentskills.io `skills/*/SKILL.md` convention "including when the `skills/` directory is nested under a prefix", and that an exact repository path "avoids a full tree traversal of the repository" (Tier 1, source: `gh skill install --help`, verified). The traversal shortcut matters for a repository with 365 skills.
+`gh skill install --help` states discovery follows the agentskills.io `skills/*/SKILL.md` convention "including when the `skills/` directory is nested under a prefix", and that an exact repository path "avoids a full tree traversal of the repository" (Tier 1, source: `gh skill install --help`, verified). The traversal shortcut matters for a repository with 304 skills.
 
 ### Publish validation
 
@@ -266,20 +266,20 @@ The current layout satisfies all five surfaces from one tree (Tier 1, source: re
 
 ```
 .
-├── .claude-plugin/marketplace.json      # Claude Code: 25 entries, ./plugins/<module>
+├── .claude-plugin/marketplace.json      # Claude Code: 22 entries, ./plugins/<module>
 ├── .codex-plugin/marketplace.json       # Codex format, forward-compat (Codex reads .claude-plugin/)
-├── .cursor-plugin/marketplace.json      # Cursor: 25 entries, ./plugins/<module>
-├── .grok-plugin/marketplace.json        # Grok: 25 entries, {type: local, path}
-├── .kimi-plugin/marketplace.json        # Kimi: 25 entries, ../plugins/<module>
+├── .cursor-plugin/marketplace.json      # Cursor: 22 entries, ./plugins/<module>
+├── .grok-plugin/marketplace.json        # Grok: 22 entries, {type: local, path}
+├── .kimi-plugin/marketplace.json        # Kimi: 22 entries, ../plugins/<module>
 ├── plugins/
-│   └── <module>/                        # 25 modules
+│   └── <module>/                        # 22 modules
 │       ├── .claude-plugin/plugin.json   # Claude Code manifest
 │       ├── .codex-plugin/plugin.json    # Codex Legacy manifest
 │       ├── .cursor-plugin/plugin.json   # Cursor manifest, identity only
 │       ├── .grok-plugin/plugin.json     # Grok manifest
 │       ├── .kimi-plugin/plugin.json     # Kimi manifest, skills declared
 │       ├── mcp.json                     # optional; only odin-core ships one
-│       └── skills/<slug>/SKILL.md       # 365 skills total; see the generated docs/specs/skill-index.md
+│       └── skills/<slug>/SKILL.md       # 304 skills total; see the generated docs/specs/skill-index.md
 ├── catalog/                             # registry and membership data
 ├── scripts/                             # dependency-free Node ESM and stdlib Python
 ├── Justfile                             # render, check, validate-skills, verify

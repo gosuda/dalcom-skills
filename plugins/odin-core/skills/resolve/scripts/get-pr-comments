@@ -15,29 +15,6 @@
 #                        filtering as pr_comments)
 #   coverage           - fetch accounting that distinguishes a complete empty
 #                        result from a partial or failed fetch
-#
-# Pagination: each top-level connection -- reviewThreads, comments, reviews --
-# is fetched in its own paginated query because `gh api graphql --paginate`
-# only follows the outermost pageInfo per response. Per-thread inline
-# `comments` past the first 100 are fetched with a follow-up paginated
-# `node(id: ...)` query per truncated thread (same --paginate/--slurp shape,
-# page payloads in files via --slurpfile) and merged back before filtering; a
-# thread still short of its totalCount afterwards fails the fetch instead of
-# emitting a partial census. A missing page, a GraphQL `errors` entry, or a
-# last page whose pageInfo still hasNextPage is an incomplete fetch: the
-# script exits nonzero and never emits an empty success object, so a complete
-# empty result (exit 0, complete true, zero counts) is distinguishable from a
-# partial or failed fetch (nonzero exit, no success object).
-#
-# Bot filtering: only structurally non-actionable CI/status bots (codecov)
-# are filtered at the source. AI review bots are never filtered here; step 2
-# triage decides actionability from content.
-#
-# Feed jq from files, never argv: on a PR with enough threads the paginated
-# JSON exceeds the kernel's ARG_MAX and `--argjson "$var"` dies with
-# "Argument list too long" before any filtering runs. `gh api graphql
-# --paginate --slurp` wraps pages in an array; `--slurpfile` adds one more
-# nesting level, so both shapes are normalized before filtering.
 
 set -e
 
@@ -54,11 +31,6 @@ if [ -n "$2" ]; then
     OWNER=$(echo "$2" | cut -d/ -f1)
     REPO=$(echo "$2" | cut -d/ -f2)
 else
-    # `|| true` is load-bearing: under `set -e`, a failed command substitution
-    # in an assignment aborts the script immediately. Run outside a git repo,
-    # `gh repo view` exits 1, its stderr is swallowed by `2>/dev/null`, and the
-    # script would die here with rc=1 and no output -- making the friendly error
-    # below unreachable. Keep `|| true` so detection failure falls through to it.
     OWNER=$(gh repo view --json owner -q .owner.login 2>/dev/null || true)
     REPO=$(gh repo view --json name -q .name 2>/dev/null || true)
 fi
@@ -94,7 +66,7 @@ query Threads($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
               createdAt
               url
             }
-            pageInfo { hasNextPage endCursor }
+            commentPageInfo: pageInfo { hasNextPage endCursor }
           }
         }
         pageInfo { hasNextPage endCursor }
@@ -140,12 +112,6 @@ query Reviews($owner: String!, $repo: String!, $pr: Int!, $endCursor: String) {
   }
 }')
 
-# Resolution semantics: `isOutdated` means the diff hunk around the comment
-# has shifted since the thread was opened -- not that the reviewer concern
-# was addressed. Resolution state is the only authoritative signal; outdated
-# threads are still surfaced with their flag intact so the resolver can
-# factor in that the referenced line may have moved.
-
 tmp_dir=$(mktemp -d "${TMPDIR:-/tmp}/odin-get-pr-comments.XXXXXX")
 trap 'rm -rf "$tmp_dir"' EXIT
 threads_file="$tmp_dir/threads.json"
@@ -154,17 +120,10 @@ reviews_file="$tmp_dir/reviews.json"
 printf '%s' "$threads_pages" > "$threads_file"
 printf '%s' "$comments_pages" > "$comments_file"
 printf '%s' "$reviews_pages" > "$reviews_file"
-# Per-thread follow-up pagination: `gh api graphql --paginate` follows only
-# the outermost pageInfo, so inline comments beyond the first 100 per thread
-# need one paginated `node(id: ...)` query per truncated thread. Thread IDs
-# are small scalars passed with `-f`; every page payload stays in files and
-# reaches jq via --slurpfile, never argv -- the same file-backed pattern as
-# the top-level connections above. A failed follow-up aborts here (set -e):
-# a missing page is an error, never an empty set.
 truncated_ids=$(jq -r '
   (if (.[0]|type) == "array" then .[0] else . end)[]
   | .data.repository.pullRequest.reviewThreads.nodes[]
-  | select((.comments.totalCount // (.comments.nodes | length)) > (.comments.nodes | length))
+  | select((.comments.commentPageInfo.hasNextPage // false) or ((.comments.totalCount // (.comments.nodes | length)) > (.comments.nodes | length)))
   | .id' "$threads_file")
 
 thread_idx=0
@@ -229,13 +188,16 @@ jq -n \
       or .data.repository.pullRequest == null
       or ((.errors // []) | length > 0))) | length) as $bad_pages |
   ([$threads[] | ((.data.repository.pullRequest.reviewThreads.nodes // [])[])]) as $raw_threads |
-  [(($raw_threads[]) | .comments.nodes = ($extra_comments[.id] // .comments.nodes))] as $all_threads |
+  [(($raw_threads[]) |
+    .comments.nodes = ($extra_comments[.id] // .comments.nodes) |
+    .comments.pageInfo = ($last_thread_page[.id].data.node.comments.pageInfo // .comments.commentPageInfo // .comments.pageInfo) |
+    del(.comments.commentPageInfo))] as $all_threads |
   ([$comments[] | ((.data.repository.pullRequest.comments.nodes // [])[])]) as $all_comments |
   ([$reviews[] | ((.data.repository.pullRequest.reviews.nodes // [])[])]) as $all_reviews |
   ($threads[0].data.repository.pullRequest.author) as $author |
   ["codecov"] as $ci_bot_logins |
   [$all_threads[] | select(.isResolved == false)] as $unresolved |
-  [$all_threads[] | select((.comments.totalCount // (.comments.nodes | length)) > (.comments.nodes | length)) | .id] as $truncated |
+  [$all_threads[] | select(((.comments.pageInfo.hasNextPage // false) and ($extra_comments[.id] == null)) or ((.comments.totalCount // (.comments.nodes | length)) > (.comments.nodes | length))) | .id] as $truncated |
   (($threads | length) == 0
     or (($threads[-1].data.repository.pullRequest.reviewThreads.pageInfo.hasNextPage) != false)) as $threads_open |
   (($comments | length) == 0

@@ -1,11 +1,9 @@
-# Optimize-extremely: tooling matrix and harness templates
+# Choosing profilers and throwing together a benchmark harness
 
 Used during target location and baseline pinning of the `optimize-extremely` campaign.
 This matrix pairs profiling and location tools with benchmark harness templates.
 
----
-
-## Per-language tooling matrix
+## Which profiler and harness to reach for
 
 | Language | CPU profiler | Memory/alloc profiler | Benchmark / differential |
 |---|---|---|---|
@@ -17,20 +15,19 @@ This matrix pairs profiling and location tools with benchmark harness templates.
 | JavaScript / TypeScript | Chrome DevTools, `node --prof` + `node --prof-process`, `clinic flame` | Chrome heap snapshot, `clinic doctor` | `tinybench`, `mitata`, `hyperfine` |
 | OCaml | `landmarks`, `magic-trace`, `perf record` | `memtrace` + `memtrace-viewer`, `Statmemprof` | `bechamel`, `core_bench`, `hyperfine` |
 
-**Tool rules:**
-- `hyperfine` not `time`. `procs` not `ps`. `bat -P -p -n` not `cat`. `difft` not `diff`.
-- Always `--warmup 3 --min-runs 10` on hyperfine. Export JSON: `--export-json <path>`.
-- Profile in a release or optimized build, never debug. Benchmark the same binary that will ship.
+Small fixed habits: `hyperfine` not `time`. `procs` not `ps`. `bat -P -p -n` not `cat`. `difft` not `diff`.
+Always pass `--warmup 3 --min-runs 10` on hyperfine, and export JSON with `--export-json <path>`.
+Profile in a release or optimized build, never debug. Benchmark the same binary that will ship.
 
 ---
 
-## Minimal harness templates
+## Borrowing a harness only when no benchmark exists
 
-Use these when baseline pinning finds no existing benchmark harness for the hot path. It is a
-throwaway instrument: its only purpose is to measure the hot path in isolation with realistic
+Use these when baseline pinning finds no existing benchmark harness for the hot path. The harness
+is a throwaway instrument: its only purpose is to measure the hot path in isolation with realistic
 inputs. Delete it after the campaign run unless the user asks to keep it as a regression guard.
 
-### Harness placement
+### Where each toolchain expects its harness to live
 
 - Python, TypeScript, OCaml: toolchain-agnostic runners discover files by path argument;
   write the harness directly to `.outline/optimize/<target>/` and invoke it from there.
@@ -166,7 +163,7 @@ let () =
 
 ---
 
-## Measurement discipline
+## Keeping measurements honest
 
 - Standard deviation below 20 percent of median is the single acceptance condition. Above it,
   stop and fix measurement noise before proceeding.
