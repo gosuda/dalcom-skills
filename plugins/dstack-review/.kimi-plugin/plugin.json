@@ -1,6 +1,6 @@
 {
   "name": "dstack-review",
-  "version": "2.1.13",
+  "version": "2.1.14",
   "description": "DStack workflows for reviewing diffs, branches, and implementations against their specs.",
   "keywords": [
     "dstack",

@@ -1,5 +1,5 @@
 name: "dstack-performance"
-version: "2.1.13"
+version: "2.1.14"
 description: "DStack workflows for measured performance: hardware kernels, profilers, byte budgets, and optimization proof."
 author: "gosuda"
 manifest_version: 2

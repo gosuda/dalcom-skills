@@ -5,6 +5,15 @@ All notable changes to Dalcom Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.14] - 2026-10-31
+### Changed
+- `autowatch` now watches the whole pull request or merge request, not only CI. Each
+  `watch-and-repair-pr` cycle reads checks, review threads, top-level comments, review
+  bodies, conflicts, and protection gates, and names each change as an event. New
+  feedback goes to `resolve-pr-comments`, a failing check to `ci-fix`, and a conflict to
+  the branch-currency step. The watch keeps running until a true stop holds, and the
+  `DONE` line reports the watch decision with open review items.
+
 ## [2.1.12] - 2026-10-30
 ### Changed
 - `dstack-core` skills renamed: `plan` is now `plans` and `plan-complete` is now

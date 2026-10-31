@@ -1,6 +1,6 @@
 {
   "name": "dstack-skills",
-  "version": "2.1.13",
+  "version": "2.1.14",
   "description": "DStack workflows for authoring, auditing, benchmarking, and publishing agent skills.",
   "keywords": [
     "dstack",

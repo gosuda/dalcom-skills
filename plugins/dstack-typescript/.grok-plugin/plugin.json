@@ -1,6 +1,6 @@
 {
   "name": "dstack-typescript",
-  "version": "2.1.13",
+  "version": "2.1.14",
   "description": "DStack workflows for modern TypeScript development.",
   "author": {
     "name": "gosuda",

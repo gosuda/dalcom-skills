@@ -19,7 +19,7 @@
 | autopilot | dstack-core | Coding | Use when a human has an approved delivery plan and wants the full chain run under phase gates. |
 | autoplan | dstack-core | Coding | Use when the user runs /autoplan on a plan or idea. |
 | autoplan-and-autopilot | dstack-core | Coding | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present for approval, and execute under verified phase gates. |
-| autowatch | dstack-core | Coding | Use when the user explicitly asks for autonomous end-to-end work from request to open pull request or merge request with CI watched to decided. |
+| autowatch | dstack-core | Coding | Use when the user explicitly asks for autonomous end-to-end work from request to an open pull request or merge request, then a reactive watch of CI, reviews, comments, and conflicts until decided. |
 | bakeoff | dstack-planning | Productivity | Use when choosing well needs developing competing solutions to a defined brief beyond their current form. |
 | brainstorm | dstack-core | Coding | Use when capturing or refining notes, a transcript, a brain dump, or an existing idea, or when a concrete visual question is clearer shown in a local browser. |
 | breaking-driven | dstack-core | Coding | Use when bloated code needs clean re-derivation, or the user says "this module is bloated" or "break it and rebuild". |

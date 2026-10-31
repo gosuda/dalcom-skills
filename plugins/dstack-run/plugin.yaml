@@ -1,5 +1,5 @@
 name: "dstack-run"
-version: "2.1.13"
+version: "2.1.14"
 description: "DStack workflows for executing plans, orchestrating subagents, and bounded autonomous loops."
 author: "gosuda"
 manifest_version: 2
