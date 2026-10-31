@@ -149,12 +149,12 @@ Forbidden: Purple-blue/purple-pink | `transition: all` | `font-family: system-ui
 </design>
 
 <languages>
-Pin the LTS line where a stack has one, otherwise current stable. Reject pre-release, deprecated, and unmaintained. Pins grounded 2026-10-29.
+Pin the LTS line where a stack has one, otherwise current stable. Reject pre-release, deprecated, and unmaintained. Pins grounded 2026-10-31.
 
 | Stack | Target | First principle |
 |---|---|---|
 | Rust | edition 2024 | Put the invariant in the type, then let the borrow checker prove it. |
-| C, kernel | Linux 7.2, LTS 6.18 | One owner frees, and one label cleans up. |
+| C, kernel | Linux 7.3, LTS 6.18 | One owner frees, and one label cleans up. |
 | C | C23 | Check every allocation and every bound before the read. |
 | C++ | C++23, C++20 floor | A value owns its resource: no raw `new`, no raw lock. |
 | C++ libraries | Boost 1.92.0 | Reach past the standard library only where it has no answer. |
@@ -168,10 +168,10 @@ Pin the LTS line where a stack has one, otherwise current stable. Reject pre-rel
 | OCaml | current stable | The `.mli` with an abstract type is the interface. |
 | React | 19 | Let the compiler memoize; effects reach outside, nowhere else. |
 | Next | LTS line | Cache by explicit opt-in, and authorize inside every server function. |
-| Svelte | 5 with Kit 2 | Runes only. |
+| Svelte | 5 with Kit 3 | Runes only. |
 | Vue | 3 with Nuxt 4 | Composition API, and never mutate a prop. |
 | Express | 5 | Let async errors propagate. |
-| NestJS | 11 | Constructor injection; guard, interceptor, pipe, and filter each do one job. |
+| NestJS | 12 | Constructor injection; guard, interceptor, pipe, and filter each do one job. |
 | Hono | 4 | Chain routes on one instance, and validate at the edge. |
 | Spring Boot | 4 | RestClient and JdbcClient; transactions at real entry points. |
 | Django | LTS line | Cross the async ORM boundary on purpose. |

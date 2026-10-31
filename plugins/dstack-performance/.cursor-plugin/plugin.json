@@ -1,6 +1,6 @@
 {
   "name": "dstack-performance",
-  "version": "2.1.12",
+  "version": "2.1.13",
   "description": "DStack workflows for measured performance: hardware kernels, profilers, byte budgets, and optimization proof.",
   "author": {
     "name": "gosuda",

@@ -372,7 +372,7 @@ gh skill install OutlineDriven/odin-claude-plugin plugins/<new-id>/skills/<slug>
 - Duplicate root copies of `implementer-prompt.md` and `task-reviewer-prompt.md`
   under `subagent-driven`; only the `references/` copies were cited.
 - `setup-benny`: folded into `setup`; the archive-install verification now lives there.
-- `setup-pstack`: folded into `setup`; the role-to-model mapping now lives 
+- `setup-pstack`: folded into `setup`; the role-to-model mapping now lives
 
 ... [OUTPUT TRUNCATED - 7,306 chars omitted out of 57,234 total] ...
 

@@ -1,5 +1,5 @@
 name: "dstack-typescript"
-version: "2.1.12"
+version: "2.1.13"
 description: "DStack workflows for modern TypeScript development."
 author: "gosuda"
 manifest_version: 2

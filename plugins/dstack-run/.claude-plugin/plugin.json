@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dstack-run",
   "displayName": "DStack Run",
-  "version": "2.1.12",
+  "version": "2.1.13",
   "description": "DStack workflows for executing plans, orchestrating subagents, and bounded autonomous loops.",
   "author": {
     "name": "gosuda",
