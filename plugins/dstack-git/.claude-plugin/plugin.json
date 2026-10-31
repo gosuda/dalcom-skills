@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "dstack-git",
   "displayName": "DStack Git",
-  "version": "2.1.12",
+  "version": "2.1.13",
   "description": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
   "author": {
     "name": "gosuda",

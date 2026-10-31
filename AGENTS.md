@@ -78,7 +78,7 @@ Change generated output through its generator or catalog input, regenerate with 
 
 Declare only harness components that defaults do not resolve: Kimi needs `skills`, and Codex and Grok need `mcpServers` where a plugin ships dotless `mcp.json`. [Tony Hoare]
 
-Keep every plugin and marketplace version aligned with `releaseVersion`, currently `2.1.12`. [Tony Hoare]
+Keep every plugin and marketplace version aligned with `releaseVersion`, currently `2.1.13`. [Tony Hoare]
 
 Bump `releaseVersion` by one patch when shipping a skill, output style, manifest, or attribution change; bump the minor version only on explicit request. [Tony Hoare]
 

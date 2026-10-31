@@ -1,5 +1,5 @@
 name: "dstack-native"
-version: "2.1.12"
+version: "2.1.13"
 description: "DStack workflows for native systems, toolchains, and performance."
 author: "gosuda"
 manifest_version: 2

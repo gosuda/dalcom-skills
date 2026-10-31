@@ -1,5 +1,5 @@
 name: "dstack-testing"
-version: "2.1.12"
+version: "2.1.13"
 description: "DStack workflows for tests, properties, mutation, and behavioral verification."
 author: "gosuda"
 manifest_version: 2
