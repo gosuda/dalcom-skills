@@ -1,6 +1,6 @@
 {
   "name": "dstack-knowledge",
-  "version": "2.1.13",
+  "version": "2.1.14",
   "description": "DStack workflows for memory, session continuity, decision records, and retrospectives.",
   "keywords": [
     "dstack",

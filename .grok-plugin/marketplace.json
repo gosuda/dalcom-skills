@@ -9,7 +9,7 @@
       "name": "dstack-core",
       "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -26,7 +26,7 @@
       "name": "dstack-planning",
       "description": "DStack workflows for shaping intent into approved plans, specs, and task lists.",
       "category": "Productivity",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -43,7 +43,7 @@
       "name": "dstack-code",
       "description": "DStack workflows for writing, changing, and simplifying code.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -60,7 +60,7 @@
       "name": "dstack-review",
       "description": "DStack workflows for reviewing diffs, branches, and implementations against their specs.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -77,7 +77,7 @@
       "name": "dstack-testing",
       "description": "DStack workflows for tests, properties, mutation, and behavioral verification.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -94,7 +94,7 @@
       "name": "dstack-git",
       "description": "Git workflows for commits, branches, GitHub pull requests, GitLab merge requests, review feedback, and issues.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -111,7 +111,7 @@
       "name": "dstack-run",
       "description": "DStack workflows for executing plans, orchestrating subagents, and bounded autonomous loops.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -128,7 +128,7 @@
       "name": "dstack-infra",
       "description": "DStack workflows for CI, deployment, observability, cost, and infrastructure tooling.",
       "category": "Infrastructure",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -145,7 +145,7 @@
       "name": "dstack-security",
       "description": "DStack workflows for security review, vulnerability triage, and defensive implementation.",
       "category": "Security",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -162,7 +162,7 @@
       "name": "dstack-fuzzing",
       "description": "DStack workflows for fuzz harnesses, fuzzer setup, sanitizers, and coverage analysis.",
       "category": "Security",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -179,7 +179,7 @@
       "name": "dstack-research",
       "description": "DStack workflows for source-backed investigation, verification, and design rationale.",
       "category": "Research",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -196,7 +196,7 @@
       "name": "dstack-knowledge",
       "description": "DStack workflows for memory, session continuity, decision records, and retrospectives.",
       "category": "Productivity",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -213,7 +213,7 @@
       "name": "dstack-learn",
       "description": "DStack workflows for teaching, explaining, drilling, and onboarding.",
       "category": "Productivity",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -230,7 +230,7 @@
       "name": "dstack-skills",
       "description": "DStack workflows for authoring, auditing, benchmarking, and publishing agent skills.",
       "category": "Productivity",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -247,7 +247,7 @@
       "name": "dstack-writing",
       "description": "DStack workflows for documentation, editorial prose, and copy.",
       "category": "Writing",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -264,7 +264,7 @@
       "name": "dstack-visual",
       "description": "DStack workflows for diagrams, decks, canvases, and visual explainers.",
       "category": "Design",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -281,7 +281,7 @@
       "name": "dstack-design",
       "description": "DStack workflows for interface design, prototypes, and visual fidelity.",
       "category": "Design",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -298,7 +298,7 @@
       "name": "dstack-typescript",
       "description": "DStack workflows for modern TypeScript development.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -315,7 +315,7 @@
       "name": "dstack-native",
       "description": "DStack workflows for native systems, toolchains, and performance.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -332,7 +332,7 @@
       "name": "dstack-rust",
       "description": "DStack workflows for Rust development: cargo, async, FFI, cross-compilation, debugging, and unsafe review.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -349,7 +349,7 @@
       "name": "dstack-performance",
       "description": "DStack workflows for measured performance: hardware kernels, profilers, byte budgets, and optimization proof.",
       "category": "Coding",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",
@@ -366,7 +366,7 @@
       "name": "dstack-marketing",
       "description": "DStack workflows for marketing and viral growth, from audience research to opportunity scouting.",
       "category": "Marketing",
-      "version": "2.1.13",
+      "version": "2.1.14",
       "homepage": "https://github.com/gosuda/dalcom-skills",
       "keywords": [
         "dstack",

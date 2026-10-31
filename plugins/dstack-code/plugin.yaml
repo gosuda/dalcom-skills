@@ -1,5 +1,5 @@
 name: "dstack-code"
-version: "2.1.13"
+version: "2.1.14"
 description: "DStack workflows for writing, changing, and simplifying code."
 author: "gosuda"
 manifest_version: 2
