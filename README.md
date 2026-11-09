@@ -196,7 +196,7 @@ Install one skill instead of a whole plugin with `gh skill install`, shown under
 
 ## Using the skills
 
-You install plugins once and invoke skills every day. Start with the [getting-started guide](docs/guides/getting-started.md) to run your first skill. Read [using the skills](docs/guides/using-skills.md) for the invocation mechanics. Browse [example workflows](docs/guides/workflows.md) for chains mined from real sessions.
+You install plugins once and invoke skills every day. Not sure which skill fits? Run `/dstack-core:ask-dalcom` followed by your situation; other harnesses spell it as the [using the skills](docs/guides/using-skills.md) table shows. Start with the [getting-started guide](docs/guides/getting-started.md) to run your first skill. Read [using the skills](docs/guides/using-skills.md) for the invocation mechanics. Browse [example workflows](docs/guides/workflows.md) for chains mined from real sessions.
 
 ## Plugins
 
