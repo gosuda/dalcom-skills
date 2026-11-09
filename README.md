@@ -196,7 +196,11 @@ Install one skill instead of a whole plugin with `gh skill install`, shown under
 
 ## Using the skills
 
-You install plugins once and invoke skills every day. Not sure which skill fits? Run `/dstack-core:ask-dalcom` followed by your situation; other harnesses spell it as the [using the skills](docs/guides/using-skills.md) table shows. Start with the [getting-started guide](docs/guides/getting-started.md) to run your first skill. Read [using the skills](docs/guides/using-skills.md) for the invocation mechanics. Browse [example workflows](docs/guides/workflows.md) for chains mined from real sessions.
+You install plugins once and invoke skills every day. When you do not know which skill fits, ask the router: run `/dstack-core:ask-dalcom` and describe the situation, such as "CI is red on my PR" or "re-derive this bloated module". Other harnesses spell it `$ask-dalcom` in Codex or `/` and the name in Cursor; the [using the skills](docs/guides/using-skills.md) guide has the full table.
+
+It answers with one route: which skills, in which order, what each step does, and what must exist first. It recommends only and runs none of it. Inside a running `autopilot` chain, `continue`, `go`, `do it now`, `orchestrate`, and `fan out` resume the chain instead of starting a new skill.
+
+New here? Start with [getting started](docs/guides/getting-started.md). For chained examples mined from real sessions, see [workflows](docs/guides/workflows.md).
 
 ## Plugins
 
@@ -247,6 +251,11 @@ just verify       # every gate plus Agent Skills validation
 `.pre-commit-config.yaml` is the gate list. Every gate audits the whole tree and runs
 unconditionally, so none of them can be skipped by touching the wrong file. `docs/specs/gates.md`
 explains what each generator writes, what each gate proves, and how to read a failure.
+
+### Contributing
+
+Maintainer workflow lives in [CONTRIBUTING.md](CONTRIBUTING.md): how to publish, run gates, and change skills. Agent-behavior rules live in `AGENTS.md`.
+
 
 ## License
 

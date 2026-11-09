@@ -348,7 +348,7 @@ Four sections are the harness tool layer and are exempt from comparison but requ
 `git`, `directives`, `code_tools`, `thinking`. The gate prints this bound on every run, because
 doctrine written inside those four is outside what a green run asserts.
 
-AGENTS.md orders this split. It tells each carrier to keep its harness-specific tool layer and tool names. Codex shells out through rtk, while omp and Claude Code use native file tools.
+CONTRIBUTING.md orders this split, in its External harness carriers section. It tells each carrier to keep its harness-specific tool layer and tool names. Codex shells out through rtk, while omp and Claude Code use native file tools.
 
 | Carrier shape | Verdict |
 |---|---|
