@@ -32,14 +32,22 @@ Invariants the machine enforces:
 
 ## Precondition: before execute
 
-The chain begins only when an approved plan exists: one the user approved through Claude Code's built-in plan mode (`ExitPlanMode`), or an equivalent written plan the user has approved. autopilot never produces it; "scope unknown" is not autofixable and has no arm. Fails → do not start; HALT before execute and hand off to upstream `askme` / planning, where the user must supply an execution-ready task.
+The chain begins only when an approved plan exists, in one of two forms.
+
+- A plan the user approved through the harness plan mode (`ExitPlanMode` in Claude Code), or a plan file the user approved in writing.
+- An itemized request in the invocation message itself, where every item names a location (file, symbol, test, or a review finding with its file and line) and the expected change or the check that proves it. A review findings list qualifies when each finding carries a location and a fix. A list introduced as examples ("for example", "such as", "e.g.") covers only the items it lists; ask before extending it to unlisted siblings.
+
+Anything else fails the precondition: open scope such as "fix the rest", items without a location, or a goal with no expected change. autopilot never writes the plan, and "scope unknown" has no autofix arm. Fails -> do not start; HALT before execute and route to `autoplan-and-autopilot`, which reviews the request, asks for approval, and then runs these same gates. The report names the plan source on its `plan:` line.
 
 ## Preflight: before execute
 
-Before the first edit, record two facts that the gates and the report use.
+Before the first edit, record three facts that the gates and the report use.
 
 1. Verifier commands: resolve the repo-native build, type-check, and test commands from repository files (task runner, manifest, CI workflow) and name each one.
-2. Baseline failures: run those commands once on the pre-change tree and record every failure by identity: test name, or diagnostic rule plus path plus message. An empty set is a clean baseline. This set is the only evidence that may later call a failure inherited.
+2. Host tools: every program those commands invoke is present, and its version matches any pin the repository declares (for example `rust-toolchain.toml`, `.nvmrc`, `.tool-versions`, the `toolchain` line in `go.mod`, `engines` in `package.json`). When the repository ships a doctor or setup-check command, run it. A missing tool or a pin mismatch halts before execute with the tool, the expected version, and the observed version. Record free memory and disk space as observations, never as a gate.
+3. Baseline failures: run those commands once on the pre-change tree and record every failure by identity: test name, or diagnostic rule plus path plus message. An empty set is a clean baseline. This set is the only evidence that may later call a failure inherited.
+
+Host facts learned later in the run, such as a missing interpreter, a shell quirk, or a path form the platform rejects, are recorded the moment they cause a failure. The report carries them on its `host:` line, and its `next:` line names `autolearn` when one should outlive the run.
 
 ## Per-phase gate definitions
 
@@ -83,11 +91,14 @@ next:          <the single action that unblocks: e.g. "return to plan mode for a
 autopilot report
 mode:          <full | local-only> [+ headless]
 task:          <one line>
+plan:          <plan mode | plan file <path> | invocation items <count>, each checked against the invocation message>
+host:          <verifier commands named | tools checked, with expected and observed versions | facts learned in this run, or none>
 phases:        execute <✓ | HALT> · simplify <✓ | HALT | skipped> · review <✓ | HALT | skipped> · finalize <✓ | local-only | HALT | skipped> · report ✓
 autofix:       <grill-core firings in phase order, one per phase that fired: execute: <root cause line>; review: <root cause line> | not needed, every gate passed on its first check>
 gates:         <per gate, pass or fail with its receipt: execute verifier commands, exit codes, and new test names; the quoted simplify result block; the reviewer verdict with critical and high counts; finalize checks plus commits or the pull request URL>
 inherited:     <baseline failures and out-of-diff findings left as found | none>
 commits:       <sha + subject per commit>
 remote:        <pushed branch / PR url | local-only, not pushed>
+next:          <one exact action for the human, such as "authorize the push of 17 commits to origin/<branch>" | none>
 outcome:       <shipped | HALT at <phase> (gate <gate-name>), see handoff above>
 ```

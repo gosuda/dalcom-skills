@@ -11,11 +11,11 @@ You run an approved delivery plan from first edit to observed close-out, under p
 
 You need a feature description, an approved execution plan, the repository, acceptance criteria, and a close-out condition. Scope limits, an assigned executor, the target branch, remote and PR destination, required checks, and shipping instructions ride along when given. When something optional is missing you may fill it in only if repository evidence gives exactly one safe answer.
 
-Read the plan first and reject contradictions, naming the conflicting pair. If the invocation names an executor that is not available, stop and say so. Then confirm approval: plan-mode approval (`ExitPlanMode`) or an equivalent written approval the user has given. With no approval record there is no implementation and no delegation. Route to planning instead.
+Read the plan first and reject contradictions, naming the conflicting pair. If the invocation names an executor that is not available, stop and say so. Then confirm approval in one of the two forms `references/pipeline-gates.md` defines: a plan approved through plan mode or in writing, or an itemized invocation where every item names a location and the expected change or check. A list given as examples covers only the listed items. Anything else gets no implementation and no delegation: halt and route to `autoplan-and-autopilot`.
 
 ## Bind every step to the repository
 
-Before changing anything, gather enough repository evidence to tie each plan step to a concrete artifact (a file, directory, or remote target) and to the behavior, verification, and remote destination behind it. State the scope boundary plainly: what is inside the campaign and what is excluded from it. Everything after this point stays inside that boundary. Then record the preflight from `references/pipeline-gates.md`: the verifier commands and the baseline failure set. Only that set can make a failure inherited.
+Before changing anything, gather enough repository evidence to tie each plan step to a concrete artifact (a file, directory, or remote target) and to the behavior, verification, and remote destination behind it. State the scope boundary plainly: what is inside the campaign and what is excluded from it. Everything after this point stays inside that boundary. Then record the preflight from `references/pipeline-gates.md`: the verifier commands, the host tools they need checked against repository pins, and the baseline failure set. A missing tool or a pin mismatch halts here; only the baseline set can make a failure inherited.
 
 ## Keep dangerous consequences human-gated
 
@@ -62,12 +62,15 @@ There is exactly one terminal result. `DONE` delivers the behavior, the changed 
 autopilot report
 mode:          <full | local-only> [+ headless]
 task:          <one line>
+plan:          <plan mode | plan file <path> | invocation items <count>, each checked against the invocation message>
+host:          <verifier commands named | tools checked, with expected and observed versions | facts learned in this run, or none>
 phases:        execute <✓ | HALT> · simplify <✓ | HALT | skipped> · review <✓ | HALT | skipped> · finalize <✓ | local-only | HALT | skipped> · report ✓
 autofix:       <grill-core firings in phase order, one per phase that fired: execute: <root cause line>; review: <root cause line> | not needed, every gate passed on its first check>
 gates:         <per gate, pass or fail with its receipt: execute verifier commands, exit codes, and new test names; the quoted simplify result block; the reviewer verdict with critical and high counts; finalize checks plus commits or the pull request URL>
 inherited:     <baseline failures and out-of-diff findings left as found | none>
 commits:       <sha + subject per commit>
 remote:        <pushed branch / PR url | local-only, not pushed>
+next:          <one exact action for the human, such as "authorize the push of 17 commits to origin/<branch>" | none>
 outcome:       <shipped | HALT at <phase> (gate <gate-name>), see handoff above>
 ```
 
