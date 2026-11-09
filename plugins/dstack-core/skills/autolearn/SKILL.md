@@ -36,7 +36,7 @@ Phrases like "that worked", "it is fixed", or "tests pass now" permit evaluation
 
 Capture starts from rejection. Three preconditions must all hold: the problem is solved, not in progress (a finished abandoned attempt counts only when its learning is a reusable anti-pattern invariant, naming the specific failure reason plus when retrying would make sense); the solution is observed working, with actual enforcement or proof (guardrail, check, reproduction, or reference behavior), never a claimed run; and the write carries a generalized invariant, a reusable mechanism rather than an incident, project name, command, version, or path, with supported scope stated without overgeneralizing beyond the evidence and a material consequence stated (it prevents a plausible significant failure or improves a recurring decision). Being solved, verified, or non-trivial alone is never a shortcut.
 
-Then three filters run in order: would this be forgotten without a record and reused under stated inputs; is it already covered (improving the existing invariant beats writing, since duplicating is drift); is the claim scope-qualified and no broader than the evidence. The same gate governs vocabulary: precise local meaning, not already defined, scope-qualified to this project. Anything failing the gate exits in one line with no write.
+Then three filters run in order: would this be forgotten without a record and reused under stated inputs; is it already covered (improving the existing invariant beats writing, since duplicating is drift); is the claim scope-qualified and no broader than the evidence. The same gate governs vocabulary: precise local meaning, not already defined, scope-qualified to this project. Anything failing the gate exits in one line with no write: `Not yet: <missing evidence>; re-run after <observable>`.
 
 ## What you need on hand
 
@@ -48,13 +48,17 @@ Scan any injected memory block for related entries and carry matches as labeled 
 
 ## Write it and prove it
 
-The overlap gate decides the shape: High overlap updates the existing doc (keeping its path, adding `last_updated`); Moderate creates normally and notes a consolidation candidate; Low creates normally. Read `assets/solution-template.md` and assemble the doc with only invariant, supported scope, material consequence, enforcement or independent proof, and necessary counterexample or limits. Incident details may inform extraction but never ship as a session diary. Read rationale records for overlap only; never rewrite one into the solution schema. Write frontmatter per the local `references/schema.md`, quoting values the validator requires quoted, keeping provenance as metadata only, making no claim the evidence does not support. Never change the stored record schema or field shapes. Write to `docs/solutions/<category>/<slug>.md` (category from the schema map, slug human-readable semantic, no date, serial, or hash noise), then validate from the skill directory:
+The overlap gate decides the shape: High overlap updates the existing doc (keeping its path, adding `last_updated`); Moderate creates normally and notes a consolidation candidate; Low creates normally. Read `assets/solution-template.md` and assemble the doc with only invariant, supported scope, material consequence, enforcement or independent proof, and necessary counterexample or limits. Incident details may inform extraction but never ship as a session diary. Read rationale records for overlap only; never rewrite one into the solution schema. If the overlapping record is a rationale record (`record_kind: rationale`), or `compound` writes one for the same invariant in this turn, write no solution record: name the rationale path and stop, because `compound` owns rationale records. Write frontmatter per the local `references/schema.md`, quoting values the validator requires quoted, keeping provenance as metadata only, making no claim the evidence does not support. Never change the stored record schema or field shapes. Write to `docs/solutions/<category>/<slug>.md` (category from the schema map, slug human-readable semantic, no date, serial, or hash noise), then validate from the skill directory, passing the record by absolute path:
 
 ```bash
-python3 scripts/validate-record.py docs/solutions/<category>/<slug>.md
+cd <autolearn-dir> && python3 scripts/validate-record.py "<repo-root>/docs/solutions/<category>/<slug>.md"
 ```
 
 Quote, rewrite, and re-run until exit 0. A non-zero exit blocks the write. Read the file back to confirm it landed as intended. When a durable term surfaced that clears the gate, reconcile `CONCEPTS.md` per its local concepts contract.
+
+If `scripts/validate-record.py` or `references/schema.md` under this skill's directory cannot be read, stop before any write and report `contract unavailable: <path>`. Never reconstruct the validator, schema, or template from memory.
+
+`<autolearn-dir>` and `<repo-root>` are absolute paths.
 
 ## Refresh only what the new learning disturbs
 
@@ -64,7 +68,7 @@ Recommend a narrow bounded refresh only when the new invariant contradicts or su
 
 ## Maintain the shelf
 
-Refresh scope covers every `.md` under `docs/solutions/` except `README.md`. A `[scope]` hint narrows in order: subdirectory name, frontmatter `module`, `component`, or `tags` match, filename partial, content keyword. No match reports the miss and exits. With no candidate docs at all, report it and point at create mode.
+Refresh scope covers every `.md` under `docs/solutions/` except `README.md` and rationale records (`record_kind: rationale`), which are read for overlap only. A `[scope]` hint narrows in order: subdirectory name, frontmatter `module`, `component`, or `tags` match, filename partial, content keyword. No match reports the miss and exits. With no candidate docs at all, report it and point at create mode.
 
 Classify every candidate into exactly one outcome:
 

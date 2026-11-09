@@ -82,10 +82,10 @@ tags:
 [Necessary counterexample or limits: concrete violation conditions, boundary cases, or known limits where the invariant does not apply.]
 ```
 
-After assembling, run from the skill directory:
+After assembling, run from the skill directory, passing the record by absolute path:
 
 ```bash
-python3 scripts/validate-record.py docs/solutions/<category>/<slug>.md
+cd <autolearn-dir> && python3 scripts/validate-record.py "<repo-root>/docs/solutions/<category>/<slug>.md"
 ```
 
 A non-zero exit blocks publication. Quote any value containing `: ` or starting with a reserved indicator, then re-run until exit 0.
