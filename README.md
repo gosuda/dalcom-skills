@@ -248,6 +248,11 @@ just verify       # every gate plus Agent Skills validation
 unconditionally, so none of them can be skipped by touching the wrong file. `docs/specs/gates.md`
 explains what each generator writes, what each gate proves, and how to read a failure.
 
+### Contributing
+
+Maintainer workflow lives in [CONTRIBUTING.md](CONTRIBUTING.md): how to publish, run gates, and change skills. Agent-behavior rules live in `AGENTS.md`.
+
+
 ## License
 
 See LICENSE. Third-party attribution is in `licenses/NOTICE`.
