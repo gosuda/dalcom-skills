@@ -7,7 +7,7 @@ Fill this template when dispatching an implementer. Use a fresh, self-contained 
 ```
 Subagent:
   description: "Implement Task N: [task name]"
-  model: [MODEL — REQUIRED: pick per SKILL.md Model Selection. An omitted
+  model: [MODEL — REQUIRED: pick per SKILL.md, section 'What the plan must give you'. An omitted
          model inherits the session's model — usually the most expensive —
          which silently defeats cost control.]
   prompt: |

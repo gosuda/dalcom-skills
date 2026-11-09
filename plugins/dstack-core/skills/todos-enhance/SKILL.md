@@ -5,7 +5,7 @@ description: 'Use when tasks are too vague, read as headings, or the user asks t
 
 # Turning a vague list into executable work
 
-You rewrite a coarse task list in your reply so every item names one behavior, sits where its dependencies are met, and carries a checkable finish line. Nothing leaves this session as a file, version control, or remote change.
+You rewrite a coarse task list so every item names one behavior, sits where its dependencies are met, and carries a checkable finish line. Nothing leaves this session as a file, version control, or remote change. When a live todo tracker holds the list, write the rewritten list back through the todo tool with op init and a list whose entries each carry a phase and items. Otherwise present the rewritten list in the reply and report that the tracker was left unchanged.
 
 Use this when the user says to sophisticate the todos, says the tasks are too vague, or the list reads as headings rather than executable work. It does not reconcile a drifted list against the tree (that is todos-update) and does not add requirements (that is todo-add). The full current task list must be present in context; without it, stop and say a task list is required.
 

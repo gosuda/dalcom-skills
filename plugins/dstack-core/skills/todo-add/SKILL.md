@@ -22,7 +22,7 @@ Follow this order, because the recovery rule depends on it.
 3. If it is already present in both, return `Duplicate: no change` and stop.
 4. If it conflicts with an existing requirement, write nothing. Ask one question that presents the two incompatible forms and wait.
 5. Assign the todo phase by the work's owning module or domain, not by wording or chronology.
-6. Append the native todo first, with a backlink or stable reference to the requirement source.
+6. Append the native todo first, with a backlink or stable reference to the requirement source. Call the todo tool with op append, phase set to the phase name, and items holding the single requirement.
 7. Update the durable requirement source with the same normalized requirement and the native todo identifier.
 8. Verify both sides resolve to the same text and ownership.
 
@@ -32,4 +32,4 @@ Refusals that hold for the whole flow: no empty requirement, no durable-source w
 
 If native todo creation fails, do not touch the durable source. If the durable-source write fails after native todo creation, retain the native todo, mark it `requirement-source-write-failed`, and warn with the exact failed path and the recovery action. Do not claim success. Never silently remove the retained todo.
 
-Return `Added`, `Duplicate`, `Conflict`, or `Partial failure`, plus the requirement-source path and native todo identifier when they exist.
+Return `Added`, `Duplicate`, `Conflict`, `Partial failure`, or `Refused`, plus the requirement-source path and native todo identifier when they exist. `Refused` covers a message without the `TODO ADD:` prefix and an empty requirement; it writes nothing and names the rule. Adding a requirement records it and never executes it.

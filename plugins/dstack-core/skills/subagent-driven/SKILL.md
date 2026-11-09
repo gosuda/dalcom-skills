@@ -11,7 +11,7 @@ Saying "execute with subagents" or handing over an ordered multi-task plan invok
 
 ## What the plan must give you
 
-The plan file defines task boundaries, file scopes, and done criteria. Model selection for each dispatch is required. An omitted model silently inherits the session most expensive model and defeats cost control, so always set one explicitly. Fresh subagents see only what gets put in front of them: the task brief path, relevant context from earlier tasks, and every decision or interface the implementer must respect.
+The plan file defines task boundaries, file scopes, and done criteria. Select a model or agent tier for each dispatch. Pass the model argument when the dispatch tool accepts one for that agent. When the tool rejects a per-call model, select the agent tier instead and record the choice in the ledger. An omitted model inherits the session model, which is usually the most expensive, so set one explicitly. Fresh subagents see only what gets put in front of them: the task brief path, relevant context from earlier tasks, and every decision or interface the implementer must respect.
 
 Before execution, scan the plan for self-conflicts (tasks contradicting each other, Global Constraints, or plan-mandated defects). Batch every finding into one user question. A clean scan proceeds silently.
 
@@ -24,7 +24,7 @@ Work tasks in order, one at a time:
 1. Split the task into one-concern work with explicit file boundaries. Two tasks editing the same file are not independent. Sequence or merge them.
 2. Run `scripts/task-brief PLAN_FILE N`. It extracts the full task text to a uniquely named file and prints the path. That brief is the single source of requirements. The plan must head each task `Task N`: the script matches only that heading form and exits 3 for any other, so write the brief by hand for a plan with other headings.
 3. Record the BASE commit (current HEAD) before dispatching.
-4. Dispatch one fresh implementer with `references/implementer-prompt.md` filled in. Fresh means no carried context and no resumed worker. Always name the model.
+4. Dispatch one fresh implementer with `references/implementer-prompt.md` filled in. Fresh means no carried context and no resumed worker. Name the model or tier, as the section above requires.
 5. The implementer works, verifies, commits one concern, self-reviews, writes a full report to the report file, and returns a short status: DONE, DONE_WITH_CONCERNS, NEEDS_CONTEXT, or BLOCKED.
 6. Resolve the status before moving on. Missing context gets supplied and the task re-dispatches. Reasoning problems re-dispatch on a more capable model. Oversized tasks split first. Plan errors escalate to the user. A worker saying it is stuck always triggers a change of some kind before retry. Never retry unchanged.
 7. Run `scripts/review-package BASE HEAD`. It writes one file (commit list, stat summary, full diff with context) and prints the path. Use the recorded BASE, never HEAD~1.
