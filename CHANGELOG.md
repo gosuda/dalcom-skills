@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and a routes check that fails when the router names a retired skill.
 
 ### Changed
+- `skill-gap-finder` and `skill-scanner` move from `dstack-skills` to `dstack-core`, so they
+  are always installed beside `writing-for-agents`. Invoke them as `dstack-core:skill-gap-finder`
+  and `dstack-core:skill-scanner`.
 - `autopilot` gates cite receipts, review runs through `code-review` in a fresh context,
   inherited failures are kept apart from new ones, itemized requests count as plans, a host
   preflight runs before execute, and the report ends with a `next:` line.

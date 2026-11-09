@@ -2,7 +2,7 @@
 
 Cross-project workflows for planning, implementation, review, verification, and delivery.
 
-84 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
+86 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -100,6 +100,8 @@ Each row states when to reach for the skill. Invoke one as `/dstack-core:<name>`
 | setup-repo | Use when the user asks to set up a repository: deterministic gitignore, repository-native pre-commit hooks, or REVIEW.md and CONTRIBUTE.md rules that enforce anti-slop, anti-spaghetti, and offensive-minimalism defaults. |
 | show-me | Use when asked to show/diagram: comparison table, data record, metric card, stepper, mockup, numeric chart, interactive explainer. |
 | simplify | Use when the user asks to simplify a change-set, diff, branch, or module and the right level is not yet decided; routes each cut to the simplification skill that owns it. |
+| skill-gap-finder | Use when the user suspects no installed skill covers a task and wants proof. |
+| skill-scanner | Use when a user asks to scan, audit, or validate a skill for security issues. |
 | source-driven | Use when writing or verifying framework-specific code, boilerplate, or a documented, correct implementation. |
 | spec-driven | Use when starting a project or feature, requirements are unclear, or a change crosses modules. |
 | strict-validation-setup | Use when a user invokes a strict-mode validation or verifiable-goals loop setup. |

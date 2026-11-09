@@ -247,8 +247,8 @@
 | simd-intrinsics | dstack-performance | Coding | Use when reading auto-vectorization reports, writing SSE2, AVX2, or NEON intrinsics, or fixing vectorization failures. |
 | simplify | dstack-core | Coding | Use when the user asks to simplify a change-set, diff, branch, or module and the right level is not yet decided; routes each cut to the simplification skill that owns it. |
 | size-the-run | dstack-run | Coding | Use when a run could be over- or under-powered, before dispatching a subagent, or the user asks how hard to think about a task. |
-| skill-gap-finder | dstack-skills | Productivity | Use when the user suspects no installed skill covers a task and wants proof. |
-| skill-scanner | dstack-skills | Productivity | Use when a user asks to scan, audit, or validate a skill for security issues. |
+| skill-gap-finder | dstack-core | Coding | Use when the user suspects no installed skill covers a task and wants proof. |
+| skill-scanner | dstack-core | Coding | Use when a user asks to scan, audit, or validate a skill for security issues. |
 | slicing-code-context | dstack-code | Coding | Use when an exact symbol, path, entrypoint, or line range can bound a focused code question or patch proposal under a fixed source budget. |
 | smart-contract-guidelines-advisor | dstack-security | Security | Use when a smart-contract project needs architecture, testing, or a maturity scorecard. |
 | smart-contract-secure-workflow | dstack-security | Security | Use when a smart-contract team invokes this before check-in or deployment. |

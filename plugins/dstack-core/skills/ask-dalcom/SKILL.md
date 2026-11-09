@@ -76,7 +76,11 @@ Upkeep, not feature work. `/skill:simplify` decides which level owns a cut and r
 
 ## Writing and visuals
 
-`/skill:unslop` removes AI tells from prose. `/skill:writing-for-agents` shapes skills, AGENTS.md files, and other documents agents read. `/skill:show-me` turns an explanation into a table, chart, diagram, or mockup. `/skill:brainstorm` refines notes or a brain dump into an idea.
+`/skill:unslop` removes AI tells from prose. `/skill:writing-for-agents` shapes AGENTS.md files and other documents agents read. `/skill:show-me` turns an explanation into a table, chart, diagram, or mockup. `/skill:brainstorm` refines notes or a brain dump into an idea.
+
+## Skills themselves
+
+Before you write a skill, `/skill:skill-gap-finder` proves that no installed skill already owns the job. `/skill:writing-for-agents` then shapes the skill directory and its SKILL.md. Before you install or ship a skill, `/skill:skill-scanner` audits it for security risk. Deduplication, model retuning, and marketplace review live in dstack-skills.
 
 ## Session care
 
@@ -100,7 +104,7 @@ Each plugin outside dstack-core has a reference beside this file. Read the one w
 | `references/dstack-research.md` | sourced research reports, drift between docs and code, GitHub solution search, how a code path works |
 | `references/dstack-knowledge.md` | saving and cleaning memory files, syncing after a gap, weekly reviews, summarizing past work, turning chat history into reusable steps |
 | `references/dstack-learn.md` | learning a concept, onboarding to a repository, courses and capstones, restating an unclear answer |
-| `references/dstack-skills.md` | authoring, deduplicating, scanning, or retuning skills, and proving a skill gap |
+| `references/dstack-skills.md` | deduplicating skills or shared doctrine, retuning skills for a new model, marketplace review, a personal taste skill |
 | `references/dstack-writing.md` | documentation, READMEs, copywriting, plain-language and STE rewrites in English, Korean, or French |
 | `references/dstack-visual.md` | a 3D workflow, a visual review of a pull request, a zoomable map of a pull request |
 | `references/dstack-design.md` | UI design systems, prototypes, frontend fidelity, animation, visual benchmarks |

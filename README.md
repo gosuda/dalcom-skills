@@ -191,7 +191,7 @@ Each name installs with the same command:
 /plugin install dstack-security@dstack
 ```
 
-The largest plugins are `dstack-core` at 84, `dstack-marketing` at 28, and `dstack-run` at 20.
+The largest plugins are `dstack-core` at 86, `dstack-marketing` at 28, and `dstack-run` at 20.
 Install one skill instead of a whole plugin with `gh skill install`, shown under Install above.
 
 ## Using the skills
