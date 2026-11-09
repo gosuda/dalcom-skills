@@ -16,7 +16,7 @@
 | audit-project | dstack-core | Coding | Use when the user says "audit my code", "find all the bugs", "review until clean", or "grill my changes". |
 | autolearn | dstack-core | Coding | Use when a verified fix yields a generalized well-abstracted invariant with enforcement or proof, or existing solution docs need bounded refresh. |
 | automatic-freeform-graphs-design | dstack-planning | Productivity | Use when a user wants a looser conceptual graph for exploratory work. |
-| autopilot | dstack-core | Coding | Use when a human has an approved delivery plan and wants the full chain run under phase gates. |
+| autopilot | dstack-core | Coding | Use when a human has an approved delivery plan and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. |
 | autoplan | dstack-core | Coding | Use when the user runs /autoplan on a plan or idea. |
 | autoplan-and-autopilot | dstack-core | Coding | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present for approval, and execute under verified phase gates. |
 | autowatch | dstack-core | Coding | Use when the user explicitly asks for autonomous end-to-end work from request to an open pull request or merge request, then a reactive watch of CI, reviews, comments, and conflicts until decided. |
@@ -90,7 +90,7 @@
 | diagnose-loop-health | dstack-run | Coding | Use when a configured loop misbehaves, produces unexpected results, or its setup soundness is questioned. |
 | diamond-task | dstack-run | Coding | Use when one issue or PR is too large for a worker and partitions into disjoint write sets. |
 | dimensional-analysis | dstack-code | Coding | Use when code mixes units, fixed-point precisions, scaling factors, rates, prices, shares, or conversions. |
-| do-it-now | dstack-core | Coding | Use when the user asks to finish the whole task now, clear active todos, or unblock undone implementation without deferred phases or follow-up remainders. |
+| do-it-now | dstack-core | Coding | Use when the user asks to finish the whole task now, clear active todos, or unblock undone implementation without deferred phases or follow-up remainders, or says do it now, do all, or don't ask. |
 | docs-practices | dstack-core | Coding | Use when deciding whether a durable document, ADR, plan, or spec is needed, or when checking its invariant quality, scope, and naming. |
 | docs-update | dstack-writing | Writing | Use when documentation has drifted from code changes and the user asks to synchronize it. |
 | docs-writing | dstack-writing | Writing | Use when asked to write, restructure, or audit documentation with Diataxis types, or to draft a feature docs page or diagram source. |
@@ -110,7 +110,7 @@
 | figure-it-out | dstack-run | Coding | Use when non-trivial work should run a matched playbook to verified real-surface completion, or a bespoke workflow when none fits. |
 | final-grain | dstack-design | Design | Use when asked to push an already-working artifact to finished composition, texture, and feel. |
 | first-load-byte-reduction | dstack-code | Coding | Use when a first screen needs lower transfer bytes without visual or behavioral change. |
-| fix | dstack-core | Coding | Use when the user asks to fix a local bug, make a verifier pass, or implement an already-adjudicated repair. |
+| fix | dstack-core | Coding | Use when the user asks to fix a local bug, make a verifier pass, or implement an already-adjudicated repair, including a pasted FIX: block, traceback, or compiler error with a known local cause. |
 | fixed-view-visual-benchmark | dstack-design | Design | Use when a visual needs repeatable fixed-view rendering and independent rubric scoring. |
 | frame | dstack-planning | Productivity | Use when a vague or ambitious product idea needs framing into a right-sized requirements-only plan before implementation. |
 | from-first-principle | dstack-core | Coding | Use when a user wants to rebuild a design, organization, or API from primitives. |
@@ -132,7 +132,7 @@
 | goal-prompt-drafting | dstack-run | Coding | Use when asked to draft copy-ready /goal objectives for long-running agents. |
 | good-readme | dstack-writing | Writing | Use when the user asks to create, rewrite, review, or polish an open-source README. |
 | graph-backbone | dstack-planning | Productivity | Use when defining, revising, or gate-replanning the project structural backbone in project-root graph.yaml. |
-| grill-core | dstack-core | Coding | Use when the cause is unknown, the fault recurs as a class, or a review comment needs a root-design repair rather than a patch. |
+| grill-core | dstack-core | Coding | Use when the cause is unknown, including a pasted traceback or compiler error nobody can explain yet, the fault recurs as a class, or a review comment needs a root-design repair rather than a patch. |
 | ground-latest | dstack-core | Coding | Use when starting or scaffolding a codebase or service, migrating, refactoring, or picking language, framework, or dependency, or latest, LTS, or modern way. |
 | guardrail-carve-run | dstack-run | Coding | Use when guardrail-adjacent material (stealth, scraping, privacy, IP, policy, security) or mixed reversible/irreversible, sensitive work, or the user says "autobahn this". |
 | guillotine | dstack-core | Coding | Use when dead, duplicate, superseded, or generated residue must leave more than one artifact class of a repo or subsystem, preserving behavior. |
@@ -189,7 +189,7 @@
 | optimize | dstack-performance | Coding | Use when one named path or performance symptom needs a single measured fix. |
 | optimize-extremely | dstack-performance | Coding | Use when a named subsystem must be made as fast as possible through a measured-floor campaign. |
 | orchestration-patterns | dstack-run | Coding | Use when work decomposes across subagents or role panels and needs coupling-based orchestration. |
-| parallel-launch | dstack-core | Coding | Use when work splits into independent sub-tasks or cross-domain research. |
+| parallel-launch | dstack-core | Coding | Use when work splits into independent sub-tasks or cross-domain research, or the user says orchestrate, fan out, or more parallel about independent work. |
 | partition-scopes-to-subagents | dstack-run | Coding | Use when asked to partition non-overlapping scopes across subagents and drive each to completion. |
 | perspective-complete-review | dstack-review | Coding | Use when one named review viewpoint must run fix cycles until a fresh reviewer finds nothing. |
 | plans | dstack-core | Coding | Use when multi-step work needs a structured implementation plan that preserves outcomes and constraints. |
@@ -220,7 +220,7 @@
 | retune | dstack-core | Coding | Use when a skill corpus degrades on a new model and needs measurement-first retuning against a registered bar. |
 | reverse-engineering | dstack-native | Coding | Use when triaging an unknown binary, decompiling with Ghidra, scripting radare2, or diffing two builds for patched functions. |
 | review | dstack-review | Coding | Use when asked to review a pull request or merge request, examine code changes, find bugs, or audit a branch, in standard or depth mode. |
-| review-fix-loop | dstack-core | Coding | Use when review and repair must repeat to an evidenced end state, locally or across one or more GitHub PRs or GitLab MRs. |
+| review-fix-loop | dstack-core | Coding | Use when review and repair must repeat to an evidenced end state, locally or across one or more GitHub PRs or GitLab MRs, or the user says resolve new review findings, fix failing CIs, or loop until green across all open PRs. |
 | review-plugin-submission | dstack-skills | Productivity | Use when asked to review a plugin for marketplace readiness via a read-only audit of published quality gates. |
 | rewrite-clean-v0 | dstack-writing | Writing | Use when a document or file has been edited piecemeal and reads as sediment. |
 | rhythmic-taste | dstack-writing | Writing | Use when the user says "give this rhythm", "vary the structure", or "the sections all read the same". |
@@ -257,7 +257,7 @@
 | state-machine-workflow | dstack-planning | Productivity | Use when work has distinct modes and the user wants states, events, guards, outcomes, illegal transitions, not a prose todo list. |
 | strace-ltrace | dstack-native | Coding | Use when a binary misbehaves without crashing and the question is which file, socket, syscall, or library call fails: strace for syscalls, ltrace for library calls. |
 | strict-validation-setup | dstack-core | Coding | Use when a user invokes a strict-mode validation or verifiable-goals loop setup. |
-| subagent-driven | dstack-core | Coding | Use when a user says execute with subagents or hands over an ordered multi-task plan. |
+| subagent-driven | dstack-core | Coding | Use when a user says execute with subagents or orchestrate, or hands over an ordered multi-task plan. |
 | supply-chain-risk-auditor | dstack-security | Security | Use when assessing npm, PyPI, or Go dependency supply-chain risk, with lockfile-absent paths marked unassessable. |
 | sync-docs | dstack-core | Coding | Use when a behavioral diff may have left docs or CHANGELOG stale, or when tidy targets stale code comments. |
 | taste | dstack-planning | Productivity | Use when asking "overkill?", "elegant?", "audit", or "taste-test this", or setting a taste register. |
@@ -298,9 +298,9 @@
 | workflow-capacity-audit | dstack-infra | Infrastructure | Use for a read-only audit of CI workflow capacity, duplication, queue time, runner compatibility, and required-check safety. |
 | workflow-evidence-mining | dstack-knowledge | Productivity | Use when authorized workflow history may contain a repeated process worth extracting and replay-testing. |
 | workflow-from-chats | dstack-knowledge | Productivity | Use when a user asks to mine recent chats for workflow preferences. |
-| workflows-driven | dstack-core | Coding | Use when work decomposes across subagents or phases: audits, migrations, research sweeps, or scale one context cannot hold. |
+| workflows-driven | dstack-core | Coding | Use when work decomposes across subagents or phases: audits, migrations, research sweeps, or scale one context cannot hold, or the user says workflowz, workflow DAG, or orchestrate max. |
 | worktree | dstack-git | Coding | Use when work needs an isolated git worktree: new work, an existing ref, a gated feature workspace, a manifest-tracked loop run, or a candidate patch captured without touching the current checkout. |
-| writing-for-agents | dstack-core | Coding | Use when authoring or restructuring an agent-consumed document, a SKILL.md or skill directory, writing skills, or deciding a skill split-or-monolith disclosure question. |
+| writing-for-agents | dstack-core | Coding | Use when authoring or restructuring an agent-consumed document, a SKILL.md or skill directory, an AGENTS.md, CLAUDE.md, or rules file, writing skills, or deciding a skill split-or-monolith disclosure question. |
 | writing-tla-plus-specs | dstack-testing | Coding | Use when a protocol, concurrent algorithm, or design needs a model-checked TLA+ or Alloy spec, or a TLC or Apalache trace needs reading. |
 | yara-rule-authoring | dstack-security | Security | Use when writing, reviewing, optimizing, validating, or migrating YARA or YARA-X malware-detection rules, including CRX or DEX rules. |
 | zeroize-audit | dstack-security | Security | Use when auditing C, C++, or Rust secret-handling code to verify zeroization survives compiler optimization. |

@@ -1,6 +1,6 @@
 ---
 name: fix
-description: 'Use when the user asks to fix a local bug, make a verifier pass, or implement an already-adjudicated repair. Select and prove a root repair. Not for acquiring reviews, adjudicating review feedback, PR or CI orchestration, merge conflicts, or publishing.'
+description: 'Use when the user asks to fix a local bug, make a verifier pass, or implement an already-adjudicated repair, including a pasted FIX: block, traceback, or compiler error with a known local cause. Select and prove a root repair. Not for acquiring reviews, adjudicating review feedback, PR or CI orchestration, merge conflicts, or publishing.'
 ---
 
 # Fix the defect at its root

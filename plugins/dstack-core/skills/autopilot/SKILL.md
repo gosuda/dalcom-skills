@@ -1,6 +1,6 @@
 ---
 name: autopilot
-description: 'Use when a human has an approved delivery plan and wants the full chain run under phase gates. Not for planning, open-ended debugging, or single-step execution.'
+description: 'Use when a human has an approved delivery plan and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. Not for planning, open-ended debugging, or single-step execution.'
 ---
 
 # Autopilot

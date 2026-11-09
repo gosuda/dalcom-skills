@@ -1,6 +1,6 @@
 ---
 name: workflows-driven
-description: 'Use when work decomposes across subagents or phases: audits, migrations, research sweeps, or scale one context cannot hold. Not for remote, credential, publish, deploy, or irreversible changes.'
+description: 'Use when work decomposes across subagents or phases: audits, migrations, research sweeps, or scale one context cannot hold, or the user says workflowz, workflow DAG, or orchestrate max. Not for remote, credential, publish, deploy, or irreversible changes.'
 ---
 
 # Workflows-driven

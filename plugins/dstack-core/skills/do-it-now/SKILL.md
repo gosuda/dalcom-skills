@@ -1,6 +1,6 @@
 ---
 name: do-it-now
-description: 'Use when the user asks to finish the whole task now, clear active todos, or unblock undone implementation without deferred phases or follow-up remainders. Not for bypassing approvals, cutting requested scope, or authorizing publish, deploy, or irreversible changes.'
+description: 'Use when the user asks to finish the whole task now, clear active todos, or unblock undone implementation without deferred phases or follow-up remainders, or says do it now, do all, or don''t ask. Not for bypassing approvals, cutting requested scope, or authorizing publish, deploy, or irreversible changes.'
 ---
 
 # Do it now

@@ -1,6 +1,6 @@
 ---
 name: grill-core
-description: 'Use when the cause is unknown, the fault recurs as a class, or a review comment needs a root-design repair rather than a patch. Survey the subsystem and remove the fault class. Not for implementing a known defect, greenfield features, or publishing.'
+description: 'Use when the cause is unknown, including a pasted traceback or compiler error nobody can explain yet, the fault recurs as a class, or a review comment needs a root-design repair rather than a patch. Survey the subsystem and remove the fault class. Not for implementing a known defect, greenfield features, or publishing.'
 ---
 
 # Grill core
