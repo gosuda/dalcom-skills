@@ -13,6 +13,8 @@ If instead each piece needs durable ownership with its own review, you are in th
 
 Take the request, its acceptance criteria, and enough source context that each piece can be done with no shared agent memory. For implementation work the request must name every local target agents may change. Output format, domain-specific agent choice, and ordering constraints are welcome when the caller gives them.
 
+Dispatch gate: before starting any lane, check whether the work would identify, locate, or profile a private person through deanonymization, address or employer or school triangulation, family matching, pretexting, sockpuppet operations, person to person targeting timelines, or inferring a real person from an account identifier, handle, avatar, topic, or filename. Public availability is not permission. A private person is anyone other than a public official or a public figure acting in that role. If the work would do this, start nothing for that person, say which request is refused and why, and offer the public-role or aggregate form of the question instead. Do not re-dispatch a refused request under different wording. A follow-up such as 'continue', 'more', or 'orchestrate' re-runs this check on the request before any new dispatch, and never resumes a pool the check has refused.
+
 ## Splitting the work
 
 A concern earns its own agent only when it shares no mutable target and has no ordering dependency with any other concern. Do not split just to raise the agent count; with fewer than two independent concerns, do the request yourself directly.
