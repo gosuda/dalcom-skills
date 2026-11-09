@@ -11,7 +11,7 @@ export function danglingPointers(descriptions, slugs) {
       const target = m[1];
       if (ARTICLES.has(target)) continue;
       const rx = new RegExp(`^${target.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[a-z0-9-]*")}$`);
-      if (![...slugs].some((s) => rx.test(s))) out.push(`${dir}: dangling pointer use ${target}`);
+      if (![...slugs].some((s) => rx.test(s))) out.push([dir, target]);
     }
   }
   return out;
@@ -23,7 +23,7 @@ export function danglingMentions(files, slugs) {
   const out = [];
   for (const [path, text] of files) {
     for (const m of text.matchAll(MENTION_RE)) {
-      if (!slugs.has(m[1])) out.push(`${path}: /skill:${m[1]} names no skill`);
+      if (!slugs.has(m[1])) out.push([path, m[1]]);
     }
   }
   return out;
@@ -38,20 +38,17 @@ if (process.argv.includes("--self-test")) {
     ["p/skills/d", "Use when w. Not for review: use no-such-skill."],
     ["p/skills/e", "Use when v. Not for seats: use nothing-*-here."],
   ]);
-  const got = danglingPointers(planted, slugs);
-  const want = ["p/skills/d: dangling pointer use no-such-skill", "p/skills/e: dangling pointer use nothing-*-here"];
-  if (JSON.stringify(got) !== JSON.stringify(want)) {
-    process.stderr.write(`check-skill-routes self-test: expected ${JSON.stringify(want)}, got ${JSON.stringify(got)}\n`);
-    process.exit(1);
-  }
+  const sameRecords = (got, want) => JSON.stringify(got) === JSON.stringify(want);
+  const pointers = danglingPointers(planted, slugs);
+  const wantPointers = [["p/skills/d", "no-such-skill"], ["p/skills/e", "nothing-*-here"]];
   const mentions = danglingMentions(
     new Map([["p/router.md", "Run `/skill:design`, then `/skill:no-such-skill`."]]),
     slugs,
   );
-  const wantMentions = ["p/router.md: /skill:no-such-skill names no skill"];
-  if (JSON.stringify(mentions) !== JSON.stringify(wantMentions)) {
+  const wantMentions = [["p/router.md", "no-such-skill"]];
+  if (!sameRecords(pointers, wantPointers) || !sameRecords(mentions, wantMentions)) {
     process.stderr.write(
-      `check-skill-routes self-test: expected ${JSON.stringify(wantMentions)}, got ${JSON.stringify(mentions)}\n`,
+      `check-skill-routes self-test: dangling pointers ${JSON.stringify(pointers)}, dangling mentions ${JSON.stringify(mentions)}\n`,
     );
     process.exit(1);
   }
@@ -200,7 +197,9 @@ for (const [, dir] of skills) {
   const description = parsed.get(dir)?.entries.find((e) => e.path === "description")?.value;
   if (description) descriptions.set(dir, description);
 }
-const dangling = danglingPointers(descriptions, new Set(skills.map(([slug]) => slug)));
+const dangling = danglingPointers(descriptions, new Set(skills.map(([slug]) => slug))).map(
+  ([dir, target]) => `${dir}: dangling pointer use ${target}`,
+);
 if (dangling.length)
   errors.push(`${dangling.slice(0, 5).join("; ")} (${dangling.length} total)`);
 
@@ -213,7 +212,9 @@ const routerFiles = new Map(
     readFileSync(join(ROOT, ROUTER_DIR, rel), "utf8"),
   ]),
 );
-const danglingRouter = danglingMentions(routerFiles, new Set(skills.map(([slug]) => slug)));
+const danglingRouter = danglingMentions(routerFiles, new Set(skills.map(([slug]) => slug))).map(
+  ([path, slug]) => `${path}: /skill:${slug} names no skill`,
+);
 if (danglingRouter.length)
   errors.push(`${danglingRouter.slice(0, 5).join("; ")} (${danglingRouter.length} total)`);
 
