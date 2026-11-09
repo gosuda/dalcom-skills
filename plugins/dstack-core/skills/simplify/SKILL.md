@@ -51,6 +51,16 @@ Terminal classification keeps the long-standing meanings its consumers rely on, 
 
 A non-empty raw list with an empty survivor set is exit 12, never silent success. Line delta is reported evidence only, never the predicate; no percentage or count target is accepted.
 
+End with this block, which callers quote verbatim as the receipt for the result code:
+
+```text
+simplify result
+code:      <0 | 11 | 12 | 13 | 14 | 15>
+base:      <resolved base and how it was resolved>
+cuts:      <owner skill and commit per cut | none>
+verifier:  <command and exit code after the last increment>
+```
+
 ## What simplify never does
 
 It never re-derives a module blind to dodge a handoff, never cuts a boundary surface on silence, never widens scope past the named change plus its proven callers, and never leaves two owners cutting the same lines. Anything beyond the forced set that no route owns is emitted as a candidate with file, line, and reason, not dropped and not force-applied.
