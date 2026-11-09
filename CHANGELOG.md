@@ -5,6 +5,22 @@ All notable changes to Dalcom Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.17] - 2026-11-10
+### Changed
+- Invoking `autowatch` or `watch-and-repair-pr` is now the standing review grant for
+  the one pull request or merge request it watches. An open pull request is always
+  watched. Each cycle fixes valid review findings, pushes them to the request's own
+  branch, replies in the thread, and resolves it; `resolve-pr-comments` takes the same
+  grant from those two callers and still asks for exact-text approval when run alone.
+  Merging, force-pushing, other branches, and every rate-limit, lock, or policy stop
+  stay as before.
+- The watch ends only when the request is fully clean: checks pass on the current head,
+  no thread is open, and no review is still expected, including a bot that reviewed an
+  earlier head or a recent merged pull request of the same repository. A silent
+  expected reviewer holds the watch open and is named in the report; a `declined` or
+  `needs-human` item ends it as `blocked-with-owner`.
+- `ask-dalcom` routes the watch skills with the new behavior.
+
 ## [2.1.16] - 2026-11-09
 ### Changed
 - The auto skills share one way to read an invocation. A bare call takes its subject
