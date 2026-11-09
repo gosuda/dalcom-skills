@@ -31,6 +31,8 @@ For batch moves or plugin creation, merger, or retirement, prove that every skil
 
 Promote reusable lessons into the existing owning skill first; add a skill only for a distinct job that warrants a deep procedure. [J.R.R. Tolkien]
 
+Update the `ask-dalcom` router in the same change whenever you add, rename, retire, or rescope a skill; the routes gate catches dangling mentions but not a missing route. [Tony Hoare]
+
 Keep brainstorming and multiple-agent ideation as distinct jobs; use multiple subagents when ideating skill changes. [J.R.R. Tolkien]
 
 Give iterative review-and-fix orchestration one owner, `review-fix-loop`, rather than duplicating its procedure across skills. [Tony Hoare]
