@@ -32,7 +32,7 @@ Shape signals that help triage module interiors live in `references/quality.md`;
 
 Simplify itself is the single integration owner. It dispatches disjoint scopes to their owners, sequences dependent rewrites so boundary-gated cuts land after the interior they depend on, and every routee result comes back through simplify for integration: no owner merges past the others, and unrelated repo-wide expansion is never in scope. Structures the inspection clears stay untouched.
 
-What holds at every level, carried here so no route needs re-derivation: all writes are reversible local writes with version control as the rollback, and there is no remote mutation. A cut that reaches a live consumer surface, stored data, or anything non-reversible waits for an explicit yes; on silence the surface stays and a compat removal hands to `refactor-break-compat` with file, line, evidence, and reason. No compatibility alias, shim, tombstone, dual path, or deprecated wrapper survives any route. A baseline with new failures stops all cutting before it starts. A failure's identity is its test name, or its diagnostic rule plus path plus message; a failure is new unless a baseline run on the pre-change tree (the caller's recorded baseline, such as the autopilot preflight, or one simplify runs itself) holds the same identity and no cut touches the file it names; inherited failures are listed in the result and never block; after each increment run the narrowest applicable verifier first, then the repository's own test command, reverting the increment on red. Test edits are mechanical migration to the new contract only, each with a recorded reason; deleting, suppressing, skipping, or weakening tests to force green is never done here. Close with a ghost sweep: string references to every removed concept across code, tests, docs, configs, and messages must resolve to nothing or the candidate is reclassified not-dead.
+What holds at every level, carried here so no route needs re-derivation: all writes are reversible local writes with version control as the rollback, and there is no remote mutation. A cut that reaches a live consumer surface, stored data, or anything non-reversible waits for an explicit yes; on silence the surface stays and a compat removal hands to `refactor-break-compat` with file, line, evidence, and reason. No compatibility alias, shim, tombstone, dual path, or deprecated wrapper survives any route. A baseline with new failures stops all cutting before it starts. A failure's identity is its test name, or its diagnostic rule plus path plus message; a failure is new unless a baseline run on the pre-change tree (the caller's recorded baseline, such as the autopilot preflight, or one simplify runs itself) holds the same identity and no cut touches the file it names; inherited failures are listed in the result and never block; after each increment run the narrowest applicable verifier first, then the repository's own test command, reverting the increment on red. When the caller withholds commit authority, every route applies its cuts as uncommitted increments, reverts a red increment in the working tree, and records `uncommitted` in place of each commit. Test edits are mechanical migration to the new contract only, each with a recorded reason; deleting, suppressing, skipping, or weakening tests to force green is never done here. Close with a ghost sweep: string references to every removed concept across code, tests, docs, configs, and messages must resolve to nothing or the candidate is reclassified not-dead.
 
 ## What comes back
 
@@ -45,7 +45,7 @@ Terminal classification keeps the long-standing meanings its consumers rely on, 
 | 0 | Clean: compressed at the right levels, checks green, no residue |
 | 11 | Empty diff after all resolutions; nothing to do |
 | 12 | Findings existed but the survivor set was empty; report attached, no patch |
-| 13 | A fix regressed behavior; that commit auto-reverted, prior green commits remain |
+| 13 | A fix regressed behavior; that increment auto-reverted, prior green increments remain |
 | 14 | The post-fix audit caught new bloat in the simplify chain; the chain reverted |
 | 15 | A commit mixed more than one concern; split before merge |
 
@@ -57,7 +57,7 @@ End with this block, which callers quote verbatim as the receipt for the result 
 simplify result
 code:      <0 | 11 | 12 | 13 | 14 | 15>
 base:      <resolved base and how it was resolved>
-cuts:      <owner skill and commit per cut | none>
+cuts:      <owner skill and commit per cut, or uncommitted | none>
 verifier:  <command and exit code after the last increment>
 inherited: <failures whose identity matches the baseline and whose files no cut touched, left as found | none>
 ```
