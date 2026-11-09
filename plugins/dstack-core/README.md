@@ -92,7 +92,7 @@ Each row states when to reach for the skill. Invoke one as `/dstack-core:<name>`
 | refactor-break-compat | Use when modernizing APIs, removing compat shims, killing feature flags, or rewriting a subsystem cleanly. |
 | research | Use when researching a named library, framework, SDK, API, or service, or finding a migration guide. |
 | resolve | Use when local feedback needs adjudication, or the user explicitly chooses analyze, reception, summary, interactive, or autonomous mode for one feedback batch. |
-| resolve-pr-comments | Use when handling GitHub PR or GitLab MR review threads, top-level comments, or review bodies on one named PR/MR in a single batch: enumerate completely, judge against current code, repair valid findings at the root, and post only explicitly approved replies and resolutions. |
+| resolve-pr-comments | Use when handling GitHub PR or GitLab MR review threads, top-level comments, or review bodies on one named PR/MR in a single batch: enumerate completely, judge against current code, repair valid findings at the root, and post replies, resolutions, and pushes under explicit human approval or under the standing review grant of a watch-and-repair-pr or autowatch invocation. |
 | retro | Use when a finished session, period, milestone, or cycle needs an evidence-backed look-back, or an existing system needs its unexplained rationale recovered. |
 | retune | Use when a skill corpus degrades on a new model and needs measurement-first retuning against a registered bar. |
 | review-fix-loop | Use when review and repair must repeat to an evidenced end state, locally or across one or more GitHub PRs or GitLab MRs, or the user says resolve new review findings, fix failing CIs, or loop until green across all open PRs. |

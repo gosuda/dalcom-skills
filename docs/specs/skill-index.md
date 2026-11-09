@@ -216,7 +216,7 @@
 | research | dstack-core | Coding | Use when researching a named library, framework, SDK, API, or service, or finding a migration guide. |
 | resolve | dstack-core | Coding | Use when local feedback needs adjudication, or the user explicitly chooses analyze, reception, summary, interactive, or autonomous mode for one feedback batch. |
 | resolve-merge-conflicts | dstack-git | Coding | Use when a merge, rebase, cherry-pick, or stash pop stops on conflicts. |
-| resolve-pr-comments | dstack-core | Coding | Use when handling GitHub PR or GitLab MR review threads, top-level comments, or review bodies on one named PR/MR in a single batch: enumerate completely, judge against current code, repair valid findings at the root, and post only explicitly approved replies and resolutions. |
+| resolve-pr-comments | dstack-core | Coding | Use when handling GitHub PR or GitLab MR review threads, top-level comments, or review bodies on one named PR/MR in a single batch: enumerate completely, judge against current code, repair valid findings at the root, and post replies, resolutions, and pushes under explicit human approval or under the standing review grant of a watch-and-repair-pr or autowatch invocation. |
 | retro | dstack-core | Coding | Use when a finished session, period, milestone, or cycle needs an evidence-backed look-back, or an existing system needs its unexplained rationale recovered. |
 | retune | dstack-core | Coding | Use when a skill corpus degrades on a new model and needs measurement-first retuning against a registered bar. |
 | reverse-engineering | dstack-native | Coding | Use when triaging an unknown binary, decompiling with Ghidra, scripting radare2, or diffing two builds for patched functions. |
@@ -288,7 +288,7 @@
 | visual-diff-review | dstack-review | Coding | Use when asked to review a diff and produce a 7-section visual page. |
 | vulnerability-triage-brocards | dstack-security | Security | Use when a vulnerability report, CVE, bug-bounty submission, or automated finding needs triage before deep verification. |
 | wait-what | dstack-learn | Productivity | Use when the user says "wait, what", "the explanation is unclear", "say that again", or asks to restate the last response in plain language. |
-| watch-and-repair-pr | dstack-git | Coding | Use when a human or autowatch explicitly invokes one watcher cycle for an open pull request or merge request that must move toward mergeable or blocked. |
+| watch-and-repair-pr | dstack-git | Coding | Use when a human or autowatch explicitly invokes one watcher cycle that fixes, replies, resolves, and pushes review feedback on the open pull request or merge request own branch and waits for every expected review until the request is clean or blocked. |
 | watch-for | dstack-run | Coding | Use when monitoring a file, log, endpoint, or artifact for drift or errors, or polling a target until a predicate holds. |
 | watch-for-harness-mode | dstack-run | Coding | Use when a proven watch pattern should become a reusable harness artifact with configurable inputs. |
 | watch-for-structured | dstack-run | Coding | Use when the user wants to classify a surface state and page an on-call API when triggered. |
