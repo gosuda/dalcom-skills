@@ -5,7 +5,7 @@ description: 'Use when eliciting intent/scope/referents or gating long/bundled/h
 
 # Ask me
 
-Askme is elicitation, not execution. It draws out what the user actually wants before anything gets built: intent, scope, referents, and the decisions hiding inside a bundled or high-stakes instruction. Nine modes cover nine elicitation postures, and routing to the right one is the first half of the job. The second half is asking good questions and knowing when to stop. Answers here never authorize implementation. Silence never counts as confirmation.
+Askme is elicitation, not execution. It draws out what the user actually wants before anything gets built: intent, scope, referents, and the decisions hiding inside a bundled or high-stakes instruction. Nine modes cover nine elicitation postures, and routing to the right one is the first half of the job. The second half is asking good questions and knowing when to stop. Answers here never authorize implementation. Silence never counts as confirmation, and a question that times out or is skipped stays open: it is never a yes, a no, or a rejection.
 
 The neighbors stay distinct. A request to scan a stated task or conversation for ambiguity or gaps belongs to clarify, unless it specifically asks to grill requirements or assumptions. An ordinary request to resolve one fork belongs to decide; an explicitly selected askme mode still wins over that automatic routing, so adversarial remains available to walk one fork at a time without implementing.
 
@@ -28,11 +28,13 @@ Without an explicit mode, listen for these selectors in the user's operative req
 
 If two genuinely incompatible automatic readings remain and neither is more specific, ask which should govern. Never silently promote an explicitly selected mode. For automatic collaborative selection, the escalation signals below stay guidance: propose a mode change rather than treating an unresolved signal as the user's answer.
 
+An invocation with no mode and no request text is not elicitation. Ask one question for the topic, in one line, then stop. A request to perform an action, such as commit, push, unblock todos, or do it now, is not underspecified: it belongs to the skill that performs that action. Name that skill in one line and stop.
+
 ## How every question should look
 
 Fire clarifying questions through the ask-user tool, at most four per fire, sending larger sets as sequential batches ordered by dependency (batch and grill use the frontier rule in the next section instead). If no question tool exists, emit the questions as chat text and await replies. Missing tool support never supplies an answer.
 
-Each question is a full sentence ending in `?`, with a `header` chip of at most 12 characters where supported. Set `multiSelect` false for single-pick mutually exclusive axes and true only for additive subset picks such as feature toggles or optional subtasks. Give each option a 1 to 5 word `label` with `(Recommended)` appended to the recommended choice and placed first, plus a one-sentence trade-off `description`. A `preview` (markdown or monospace box) is optional for visual comparisons, single-select only, skipped when the difference is purely conceptual. Never add an explicit "Other" option; free-text "Other" is automatic on every question, and free-text notes go in the `annotations` response field. Use the tool only to clarify requirements or choose between approaches during elicitation, never to ask "is the plan ready?". And never emit a single `multiSelect: true` checklist where unticked means "default stands". That intent becomes N per-axis single-select questions instead.
+Each question is a full sentence ending in `?`, with a `header` chip of at most 12 characters where supported. Set `multiSelect` false for single-pick mutually exclusive axes and true only for additive subset picks such as feature toggles or optional subtasks. Give each option a 1 to 5 word `label` with `(Recommended)` appended to the recommended choice and placed first, plus a one-sentence trade-off `description`. A `preview` (markdown or monospace box) is optional for visual comparisons, single-select only, skipped when the difference is purely conceptual. Never add an explicit "Other" option; free-text "Other" is automatic on every question, and free-text notes go in the `annotations` response field. Use the tool only to clarify requirements or choose between approaches during elicitation, never to ask "is the plan ready?". And never emit a single `multiSelect: true` checklist where unticked means "default stands". That intent becomes N per-axis single-select questions instead. Before firing a question, check the session for an answer already given, reuse that answer, and do not ask again. Only a user change or new evidence reopens a settled answer. Send the questions as a questions array where each question carries its own options array of label and description entries; a call that omits either array fails validation.
 
 ## Asking in rounds
 
@@ -118,7 +120,7 @@ Work the grill in this order:
 
 A recommended verdict is a concrete disposition ("Reject silent data loss; recommend reporting an explicit failure" or "Keep the requirement, but narrow it to authenticated users"). It is never a numerical severity score or an unsupported claim that a defect occurred.
 
-Grill stops honestly rather than succeeding falsely: an empty ready frontier caused by unanswered parents or unavailable facts is reported incomplete with exact pending ids and prerequisites; a skipped or timed-out question stays open unless explicitly discharged with a recorded reason; a user-set resource limit ends the run at that boundary with an incomplete outcome and preserved state; a request to save a record or implement gets the current decision state in chat, since saving or implementation needs a distinct authorized task.
+Grill stops honestly rather than succeeding falsely: an empty ready frontier caused by unanswered parents or unavailable facts is reported incomplete with exact pending ids and prerequisites; a user-set resource limit ends the run at that boundary with an incomplete outcome and preserved state; a request to save a record or implement gets the current decision state in chat, since saving or implementation needs a distinct authorized task.
 
 ## Staying with the user: pairing
 

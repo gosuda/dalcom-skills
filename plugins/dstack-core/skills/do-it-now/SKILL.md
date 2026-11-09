@@ -9,7 +9,7 @@ Finish the complete authorized scope in this run. The user asked to finish now, 
 
 ## Your authority comes from the assignment, not from this skill
 
-An implementation request permits its authorized reversible local changes. A plan-only or read-only request permits the complete plan or analysis, never implementation. Nothing here grants authority to commit, publish, deploy, use credentials, spend, discard data, or change public contracts; those run only on explicit human invocation for that action. Plan-only stays plan-only.
+An implementation request permits its authorized reversible local changes. A standing instruction in this conversation that forbids writes, such as 'no mutate' or 'read-only', holds until the user lifts it, even when a later invocation asks for implementation. A plan-only or read-only request permits the complete plan or analysis, never implementation. Nothing here grants authority to commit, publish, deploy, use credentials, spend, discard data, or change public contracts; those run only on explicit human invocation for that action. Plan-only stays plan-only.
 
 ## Start from the existing scope and backlog
 
@@ -37,6 +37,6 @@ Check every acceptance criterion against the integrated result, including error 
 
 ## Stay honest about scope and blockers
 
-Never cut scope for size, inconvenience, or a phase boundary, and never expand it because the backlog surfaced adjacent ideas. When a genuine constraint forces a scope change, state the concrete conflict, the exact proposed change, and its consequences, then wait for user approval; until then the original scope stands, and only coherent in-authority work continues meanwhile. Never ship reduced scope first and report it as done.
+Never cut scope for size, inconvenience, or a phase boundary, and never expand it because the backlog surfaced adjacent ideas. When a genuine constraint forces a scope change, state the concrete conflict, the exact proposed change, and its consequences, then ask for approval as one question that states its default answer, proceed on a yes, and do not restate a projection the user has already seen; until then the original scope stands, and only coherent in-authority work continues meanwhile. Never ship reduced scope first and report it as done.
 
 When completion depends on an unavailable prerequisite or ungranted authority, finish independent reachable work, preserve a coherent local state, and report the exact missing prerequisite, the affected outcome, and what enables continuation. A truthful blocker is not a placeholder, and a partial result is not complete. Fabricated evidence never substitutes for a missing observation.
