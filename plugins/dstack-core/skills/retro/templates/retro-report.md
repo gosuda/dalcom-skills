@@ -19,6 +19,12 @@ Severity-ranked friction candidates. Standing is confirmed, inferred, or unverif
 
 When no friction is observed, this section carries exactly "No environment friction detected." with zero candidates.
 
+Skill verdicts (skill check only; delete otherwise):
+
+| Skill | Runs | Verdict | Evidence |
+|---|---|---|---|
+| [slug] | [count from invocations in the transcript] | [keep \| fix \| unclear] | [verbatim excerpt or line reference] |
+
 ## Engineering verdict (engineering mode only)
 
 Period: [start date to end date]
