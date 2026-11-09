@@ -7,11 +7,11 @@ description: 'Use when bloated code needs clean re-derivation, or the user says 
 
 Some modules are past patching: layers of accretion, duplicated branches, indirection that no longer serves any caller. This skill rebuilds such a module from its consumer contract instead of refactoring its structure, so the accretion cannot reproduce itself under fresh names. It runs on one target at a time, deletes everything the contract does not require, and commits each target atomically with its essential behaviors tested.
 
-It works only where version control can undo it: every mutation touches VCS-tracked targets, the exact set is shown before anything is deleted, and nothing is pushed anywhere. There is no remote mutation in this skill.
+It works only where version control can undo it: every mutation touches VCS-tracked targets, the exact set is shown before anything is deleted, and nothing is pushed anywhere. There is no remote mutation in this skill. Before the first deletion, the target paths must have no uncommitted changes; if they do, stop and report those paths, because reverting to the last green commit would also discard them.
 
 ## Name the target
 
-A named path goes straight to work. A blank invocation or explicit repo-wide wording is the only license to survey: rank candidates by bloat signal, size, duplication, indirection depth, and branch density, then work the list in order, one target committed before the next begins. Anything identifiable scopes to itself. Escalating a named grievance into a whole-tree campaign is this skill's worst failure, and trigger phrasing alone never distinguishes a single target from a sweep.
+A named path goes straight to work. A blank invocation or explicit repo-wide wording is the only license to survey: rank candidates by bloat signal, size, duplication, indirection depth, and branch density, then work the list in order, one target committed before the next begins. Anything identifiable scopes to itself. Each invocation is one run with no standing cadence; a recurring sweep needs a cadence request in that invocation. Escalating a named grievance into a whole-tree campaign is this skill's worst failure, and trigger phrasing alone never distinguishes a single target from a sweep.
 
 ## Separate interior from boundary
 
@@ -41,7 +41,7 @@ Present every boundary surface and get an explicit answer before touching it. In
 *   Yes: cut it.
 *   No: keep it permanently. It is contract, not residue.
 
-Cut none on silence or after a no. This is the one place the skill stops, and stopping is the design, not hedging.
+Cut none on silence or after a no. A general instruction such as no defer or do all of it is never a recorded answer for a boundary surface. Each boundary surface needs its own yes or no after it has been presented with its class. This is the one place the skill stops, and stopping is the design, not hedging.
 
 ## Demolish, test, commit
 
