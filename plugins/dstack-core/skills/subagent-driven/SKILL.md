@@ -41,7 +41,7 @@ A bare follow-up such as 'continue', 'orchestrate', or 'orchestrate more' resume
 
 After every task lands, run `scripts/review-package MERGE_BASE HEAD` with MERGE_BASE from `git merge-base main HEAD`. Dispatch the final reviewer on the most capable model, pointed at the Minor findings the ledger accumulated. Its findings dispatch one fix worker with the complete list, then re-review.
 
-Ship through the atomic path: sort work into atomic commits in detached HEAD, then publish with git-branchless `submit`.
+Ship through the atomic path: sort work into atomic commits in detached HEAD. Publish with git-branchless `submit` only when the user explicitly asks for publication. Otherwise stop after the local atomic commits and report the branch name and commit list.
 
 Then run the closing chain in this order. Complete the implementation path first. Run this skill own review and fix gate to green (audit clean and verifier green per task, then the whole-branch review), bounded at 3 fix cycles per unit. Past that bound, stop as blocked or non-converged instead of widening scope to unrelated code. Finish with an offensive simplify pass: re-derive the general case from contracts, delete old structure with no shims, aliases, or flags, collapse special cases, migrate every caller in the same change, keep one concern per atomic commit. Ask first before removing any live consumer surface, and stay inside this skill authority throughout. Run the verifier after each increment and revert the increment on red. End with a simplify compression pass over dead branches, duplicated logic, and one-use wrappers, with behavior preserved and checks green.
 
