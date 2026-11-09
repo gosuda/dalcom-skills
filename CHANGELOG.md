@@ -5,6 +5,27 @@ All notable changes to Dalcom Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.15] - 2026-11-09
+### Added
+- `ask-dalcom` routes a situation to the right dstack skills, with one reference per plugin
+  and a routes check that fails when the router names a retired skill.
+
+### Changed
+- `autopilot` gates cite receipts, review runs through `code-review` in a fresh context,
+  inherited failures are kept apart from new ones, itemized requests count as plans, a host
+  preflight runs before execute, and the report ends with a `next:` line.
+- `simplify` ends with a `simplify result` block that callers quote as the receipt.
+- `grill-core` gains a findings batch path for several findings from one review or verifier
+  run.
+- `autoplan` and `autoplan-and-autopilot` resolve the ledger path from the project.
+- `retro` routes skill checks to environment mode, with a skill verdict block.
+- Nine skill descriptions answer the author's habitual phrases, such as orchestrate,
+  approved, and resolve new review findings.
+- The push skills run `verification-before-completion` first, and `commit-push-pr` names
+  `commit-push-current` or `commit-push-main` for current-branch and main targets.
+- `workflows-driven` can hold a session-wide fan-out width.
+- `subagent-driven` waits for every worker before it finalizes.
+
 ## [2.1.14] - 2026-10-31
 ### Changed
 - `autowatch` now watches the whole pull request or merge request, not only CI. Each
