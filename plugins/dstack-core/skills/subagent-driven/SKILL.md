@@ -15,14 +15,14 @@ The plan file defines task boundaries, file scopes, and done criteria. Model sel
 
 Before execution, scan the plan for self-conflicts (tasks contradicting each other, Global Constraints, or plan-mandated defects). Batch every finding into one user question. A clean scan proceeds silently.
 
-Check the recovery ledger before starting: `cat "$(git rev-parse --show-toplevel)/.outline/sdd/progress.md"`. Tasks marked complete there are done. Resume at the first incomplete task. When the ledger is missing, reconstruct it from `git log` using the plan task order and the timestamps of commits matching each task concern.
+Check the recovery ledger before starting: `cat "$(git rev-parse --show-toplevel)/.outline/sdd/progress.md"`. Tasks marked complete there are done. Resume at the first incomplete task. When the ledger is missing, reconstruct it from `git log` using the plan task order and the timestamps of commits matching each task concern. If no task commit exists yet, create the ledger with every task incomplete before the first dispatch.
 
 ## Run each task through implement, review, and gate
 
 Work tasks in order, one at a time:
 
 1. Split the task into one-concern work with explicit file boundaries. Two tasks editing the same file are not independent. Sequence or merge them.
-2. Run `scripts/task-brief PLAN_FILE N`. It extracts the full task text to a uniquely named file and prints the path. That brief is the single source of requirements.
+2. Run `scripts/task-brief PLAN_FILE N`. It extracts the full task text to a uniquely named file and prints the path. That brief is the single source of requirements. The plan must head each task `Task N`: the script matches only that heading form and exits 3 for any other, so write the brief by hand for a plan with other headings.
 3. Record the BASE commit (current HEAD) before dispatching.
 4. Dispatch one fresh implementer with `references/implementer-prompt.md` filled in. Fresh means no carried context and no resumed worker. Always name the model.
 5. The implementer works, verifies, commits one concern, self-reviews, writes a full report to the report file, and returns a short status: DONE, DONE_WITH_CONCERNS, NEEDS_CONTEXT, or BLOCKED.
@@ -47,6 +47,6 @@ Then run the closing chain in this order. Complete the implementation path first
 
 ## Recover dead workers without destroying the tree
 
-A worker dying mid-task leaves a dirty tree. Inspect first (`git status`, `git diff`) and revert only that worker changes: discard its edits, remove the stray files it created, leave pre-existing uncommitted work untouched. Never blanket-reset or `git clean` the whole tree. A dead worker never resumes onto a dirty tree, and the next task never builds on uncommitted partial work.
+A worker dying mid-task leaves a dirty tree. Inspect first (`git status`, `git diff`) and save that worker's uncommitted diff and its untracked files under the workspace first, then revert only that worker's changes: discard its edits, remove the stray files it created, leave pre-existing uncommitted work untouched. Never blanket-reset or `git clean` the whole tree. A dead worker never resumes onto a dirty tree, and the next task never builds on uncommitted partial work.
 
 Before retrying, inspect the designated workspace, actual commit objects, dirty and untracked state, report, and ledger. Verify which outcomes exist and which remain incomplete. Continue only the remaining work in that preserved workspace, with a brief naming completed work that must not repeat. Provider or quota failures with no productive execution are resource blockers, never evidence that a full redispatch will help. Partial work and ownership carry over, and recovery grants no new push, merge, or publication authority.
