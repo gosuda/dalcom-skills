@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, loadCatalog, skillRows } from "./plugin-surfaces.mjs";
 
@@ -12,6 +12,18 @@ export function danglingPointers(descriptions, slugs) {
       if (ARTICLES.has(target)) continue;
       const rx = new RegExp(`^${target.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[a-z0-9-]*")}$`);
       if (![...slugs].some((s) => rx.test(s))) out.push(`${dir}: dangling pointer use ${target}`);
+    }
+  }
+  return out;
+}
+
+const MENTION_RE = /`\/skill:([a-z0-9][a-z0-9-]*)`/g;
+const ROUTER_DIR = "plugins/dstack-core/skills/ask-dalcom";
+export function danglingMentions(files, slugs) {
+  const out = [];
+  for (const [path, text] of files) {
+    for (const m of text.matchAll(MENTION_RE)) {
+      if (!slugs.has(m[1])) out.push(`${path}: /skill:${m[1]} names no skill`);
     }
   }
   return out;
@@ -32,7 +44,20 @@ if (process.argv.includes("--self-test")) {
     process.stderr.write(`check-skill-routes self-test: expected ${JSON.stringify(want)}, got ${JSON.stringify(got)}\n`);
     process.exit(1);
   }
-  process.stdout.write("check-skill-routes self-test: 5 planted descriptions, 2 dangling caught\n");
+  const mentions = danglingMentions(
+    new Map([["p/router.md", "Run `/skill:design`, then `/skill:no-such-skill`."]]),
+    slugs,
+  );
+  const wantMentions = ["p/router.md: /skill:no-such-skill names no skill"];
+  if (JSON.stringify(mentions) !== JSON.stringify(wantMentions)) {
+    process.stderr.write(
+      `check-skill-routes self-test: expected ${JSON.stringify(wantMentions)}, got ${JSON.stringify(mentions)}\n`,
+    );
+    process.exit(1);
+  }
+  process.stdout.write(
+    "check-skill-routes self-test: 5 planted descriptions, 2 dangling caught; 2 planted mentions, 1 dangling caught\n",
+  );
   process.exit(0);
 }
 
@@ -178,6 +203,19 @@ for (const [, dir] of skills) {
 const dangling = danglingPointers(descriptions, new Set(skills.map(([slug]) => slug)));
 if (dangling.length)
   errors.push(`${dangling.slice(0, 5).join("; ")} (${dangling.length} total)`);
+
+const routerReferences = readdirSync(join(ROOT, ROUTER_DIR, "references"))
+  .filter((f) => f.endsWith(".md"))
+  .map((f) => `references/${f}`);
+const routerFiles = new Map(
+  ["SKILL.md", ...routerReferences].map((rel) => [
+    `${ROUTER_DIR}/${rel}`,
+    readFileSync(join(ROOT, ROUTER_DIR, rel), "utf8"),
+  ]),
+);
+const danglingRouter = danglingMentions(routerFiles, new Set(skills.map(([slug]) => slug)));
+if (danglingRouter.length)
+  errors.push(`${danglingRouter.slice(0, 5).join("; ")} (${danglingRouter.length} total)`);
 
 const byName = new Map();
 const missingManifest = [];

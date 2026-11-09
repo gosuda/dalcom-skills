@@ -239,6 +239,7 @@ working.
 | Description | Present, at most 1024 characters (the Agent Skills limit), and stating a trigger unless `disable-model-invocation: true` |
 | Display name | Unique across every generated `agents/openai.yaml`, so no two skills share a label in a harness picker |
 | Pointer | Every `Not for <x>: use <slug>` pointer names an existing skill, directly or through a slug glob such as `from-*-perspective`; an article after `use`, as in `use the mewt CLI`, is prose, not a pointer |
+| Router mentions | Every `` `/skill:<slug>` `` in the ask-dalcom router and its references names an existing skill, so retiring or renaming a skill forces the router to follow in the same change; a new skill is not caught, so add it to the router in the same change |
 
 A trigger is one of these phrases, case-insensitive, with the trailing space load-bearing: `use when `,
 `use this `, `use for `, `use to `, `use after `, `use on `, `use during `, `runs /`, `invoked `,
@@ -252,11 +253,11 @@ gate with `missing display_name` until `just render` has run.
 
 Each failure class reports its first five instances and a total.
 
-`--self-test` runs the pointer check against planted descriptions and exits non-zero unless it catches the
-dangling pointers and passes the valid ones. A built-in structural parser reads the frontmatter: flat keys
-and one level of nesting, hyphenated keys such as `disable-model-invocation` included. Flow styles,
-multi-line scalars, and sequences are outside its scope; strict YAML parsing belongs to
-`check-skill-frontmatter.py`.
+`--self-test` runs the pointer and router-mention checks against planted descriptions and mentions and
+exits non-zero unless it catches every dangling one and passes the valid ones. A built-in structural
+parser reads the frontmatter: flat keys and one level of nesting, hyphenated keys such as
+`disable-model-invocation` included. Flow styles, multi-line scalars, and sequences are outside its
+scope; strict YAML parsing belongs to `check-skill-frontmatter.py`.
 
 ### check-skill-frontmatter.py
 
