@@ -20,7 +20,7 @@
 | autopilot | dstack-core | Coding | Use when a human has a delivery plan, or an approved one from autoplan or brainstorm, and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. |
 | autoplan | dstack-core | Coding | Use when the user runs /autoplan on a plan or idea. |
 | autoplan-and-autopilot | dstack-core | Coding | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present the amended plan, and execute under verified phase gates; the invocation approves local, reversible work. |
-| autowatch | dstack-core | Coding | Use when the user explicitly asks for autonomous end-to-end work from request to an open pull request or merge request, then a reactive watch of CI, reviews, comments, and conflicts until decided. |
+| autowatch | dstack-core | Coding | Use when the user explicitly asks for autonomous end-to-end work from request to an open pull request or merge request, or asks to watch an existing open pull request or merge request until decided. |
 | bakeoff | dstack-planning | Productivity | Use when choosing well needs developing competing solutions to a defined brief beyond their current form. |
 | brainstorm | dstack-core | Coding | Use when capturing or refining notes, a transcript, a brain dump, or an existing idea, or when a concrete visual question is clearer shown in a local browser. |
 | breaking-driven | dstack-core | Coding | Use when bloated code needs clean re-derivation, or the user says "this module is bloated" or "break it and rebuild". |
@@ -288,7 +288,7 @@
 | visual-diff-review | dstack-review | Coding | Use when asked to review a diff and produce a 7-section visual page. |
 | vulnerability-triage-brocards | dstack-security | Security | Use when a vulnerability report, CVE, bug-bounty submission, or automated finding needs triage before deep verification. |
 | wait-what | dstack-learn | Productivity | Use when the user says "wait, what", "the explanation is unclear", "say that again", or asks to restate the last response in plain language. |
-| watch-and-repair-pr | dstack-git | Coding | Use when a human explicitly invokes a watcher cycle for an open pull request or merge request that must move toward mergeable or blocked. |
+| watch-and-repair-pr | dstack-git | Coding | Use when a human or autowatch explicitly invokes one watcher cycle for an open pull request or merge request that must move toward mergeable or blocked. |
 | watch-for | dstack-run | Coding | Use when monitoring a file, log, endpoint, or artifact for drift or errors, or polling a target until a predicate holds. |
 | watch-for-harness-mode | dstack-run | Coding | Use when a proven watch pattern should become a reusable harness artifact with configurable inputs. |
 | watch-for-structured | dstack-run | Coding | Use when the user wants to classify a surface state and page an on-call API when triggered. |
