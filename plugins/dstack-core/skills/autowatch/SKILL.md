@@ -7,6 +7,15 @@ description: 'Use when the user explicitly asks for autonomous end-to-end work f
 
 One request goes in; the finished state its shape calls for comes out. A code change with publication in scope ends as an open PR or MR whose URL you hold, with the whole PR or MR decided (CI, review threads, comments, review bodies, conflicts, and protection gates), after implementation, simplification, review, residual recording, learning capture, commit, push, and watch. With no remote and consented local-only, the run instead closes as local-only `DONE`, with push, PR or MR creation, and the PR or MR watch skipped. Merging stays with the user unless granted for this run.
 
+## Read the invocation
+
+Free-text arguments are the subject: a request, a bug report, an issue reference, a plan path, a PR or MR number, or a PR or MR URL.
+`/skill:<name>` tokens in the arguments are routing hints; drop them before reading the subject.
+`orchestrate`, `continue`, `go`, and `do it now` resume the current run and never restart it.
+With no free-text subject, take the first source that yields exactly one candidate: a plan written or approved in this session (plan route), then a plan file path named earlier in this session (plan route), then the open PR on the current branch (watch route).
+Print `subject: <what> (<how found>)` as the first output line.
+When no source yields one, stop before any write with one line: `autowatch needs a request, a plan path, or an open PR on this branch.`
+
 This skill owns routing, work-source verification, sequencing, residual handoff, and close-out. Implementation, diagnosis, review, thread adjudication, learning curation, commit authoring, PR or MR publication, and the watch cycle belong to their owning skills. Call those owners with bounded packets and read their returns. Never reimplement them.
 
 ## What you carry in

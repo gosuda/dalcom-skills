@@ -17,9 +17,9 @@
 | audit-project | dstack-core | Coding | Use when the user says "audit my code", "find all the bugs", "review until clean", or "grill my changes". |
 | autolearn | dstack-core | Coding | Use when a verified fix yields a generalized well-abstracted invariant with enforcement or proof, or existing solution docs need bounded refresh. |
 | automatic-freeform-graphs-design | dstack-planning | Productivity | Use when a user wants a looser conceptual graph for exploratory work. |
-| autopilot | dstack-core | Coding | Use when a human has an approved delivery plan and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. |
+| autopilot | dstack-core | Coding | Use when a human has a delivery plan, or an approved one from autoplan or brainstorm, and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. |
 | autoplan | dstack-core | Coding | Use when the user runs /autoplan on a plan or idea. |
-| autoplan-and-autopilot | dstack-core | Coding | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present for approval, and execute under verified phase gates. |
+| autoplan-and-autopilot | dstack-core | Coding | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present the amended plan, and execute under verified phase gates; the invocation approves local, reversible work. |
 | autowatch | dstack-core | Coding | Use when the user explicitly asks for autonomous end-to-end work from request to an open pull request or merge request, then a reactive watch of CI, reviews, comments, and conflicts until decided. |
 | bakeoff | dstack-planning | Productivity | Use when choosing well needs developing competing solutions to a defined brief beyond their current form. |
 | brainstorm | dstack-core | Coding | Use when capturing or refining notes, a transcript, a brain dump, or an existing idea, or when a concrete visual question is clearer shown in a local browser. |

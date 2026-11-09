@@ -38,7 +38,7 @@ What holds at every level, carried here so no route needs re-derivation: all wri
 
 One integrated result: the cuts applied per owning skill with their commits, every migrated caller, boundary decisions with their yes or no evidence, reverted increments with failing checks, ghost-sweep result, and verifier evidence.
 
-Terminal classification keeps the long-standing meanings its consumers rely on, including the autopilot G2 gate which passes on 0, 11, and 12, absorbs a self-reverted 13, and halts for human re-planning on 14 and 15:
+Terminal classification keeps the long-standing meanings its consumers rely on, including the autopilot simplify gate which passes on 0, 11, and 12, absorbs a self-reverted 13, and halts for human re-planning on 14 and 15:
 
 | Code | Meaning |
 |---|---|

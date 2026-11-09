@@ -9,6 +9,15 @@ Solved problems evaporate. Autolearn keeps the durable part: one generalized, we
 
 Writes stay reversible and local: the operating repo's `docs/solutions/` and repo-root `CONCEPTS.md`, staged only from surfaces this skill wrote or edited, committed locally by the repo's flow, never pushed. Publication needs a separate explicit authority. Nothing here performs remote, publish, deploy, credential, or paid mutation. The skill directory resolves from this skill's own directory: `references/schema.md`, `references/concepts.md`, `scripts/validate-record.py`, `assets/solution-template.md`. Never invoke a peer skill at runtime for these contracts.
 
+## Read the invocation
+
+Control tokens come off first, as the next section defines. Free-text arguments are the subject: a solved problem, a verified fix, or a refresh scope.
+`/skill:<name>` tokens in the arguments are routing hints; drop them before reading the subject.
+`orchestrate`, `continue`, `go`, and `do it now` resume the current run and never restart it.
+With no free-text subject, take the first source that yields exactly one candidate: the last verified fix in this session.
+Print `subject: <what> (<how found>)` as the first output line.
+When no source yields one, stop before any write with one line: `nothing qualifies: no verified fix in this session.`
+
 ## Route first: strip tokens, pick the job
 
 Control tokens come off before anything else is read as context or scope. Accepted tokens are `mode:refresh [scope]`, `mode:headless`, `consent:write`, and `consent:cross-branch`. Unknown or repeated tokens are errors.
