@@ -33,6 +33,8 @@ Work tasks in order, one at a time:
 
 Requirements living in unchanged code or spanning tasks come back from reviewers as Cannot Verify from Diff items. Those never block: resolve each centrally before marking the task complete. A confirmed gap is a failed spec review. Return to the implementer, then re-review.
 
+Never mark a task complete, run the final review, or report while a dispatched worker has not returned its status, and never do a worker's task yourself while it runs. A worker that returns nothing because it died, hung, or was lost goes through the recovery section below and is relaunched once with a changed brief that names the work already done; a second failure marks the task BLOCKED and stops the chain.
+
 ## Close the branch and ship it whole
 
 After every task lands, run `scripts/review-package MERGE_BASE HEAD` with MERGE_BASE from `git merge-base main HEAD`. Dispatch the final reviewer on the most capable model, pointed at the Minor findings the ledger accumulated. Its findings dispatch one fix worker with the complete list, then re-review.
