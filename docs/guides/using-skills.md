@@ -40,7 +40,7 @@ Point the skill at the material and state the job in the same line.
 
 ## Choose between overlapping skills
 
-When you cannot tell which skill fits at all, ask `ask-dalcom` with your situation: it names one route, what to have ready, and when you are done.
+When you cannot tell which skill fits at all, ask `ask-dalcom` with your situation (`/dstack-core:ask-dalcom` in Claude Code, `$ask-dalcom` in Codex): it names one route, what each step does, and what must exist first, and it runs none of it.
 
 Most descriptions end with a `Not for ...` clause that names the narrower skill. Read it and reach for the narrower one.
 
