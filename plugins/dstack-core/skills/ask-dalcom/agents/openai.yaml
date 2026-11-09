@@ -1,0 +1,3 @@
+interface:
+  display_name: "Ask Dalcom"
+  short_description: "Use when the user asks which dstack skill or chain of skills to use for a situation and names no skill, which route to take across skills, or what must exist before a named skill."

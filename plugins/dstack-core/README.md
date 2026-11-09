@@ -2,7 +2,7 @@
 
 Cross-project workflows for planning, implementation, review, verification, and delivery.
 
-83 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
+84 skills, category Coding. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -39,6 +39,7 @@ Each row states when to reach for the skill. Invoke one as `/dstack-core:<name>`
 | abstract-well | Use when the user wants to classify abstractions as useful, bad, or busy and keep one shallow level. |
 | architect | Use when non-trivial code needs a design, codebase architecture needs improving through survey and deepening, or one module needs targeted interface narrowing, seams, or testability. |
 | architecture-simplification | Use when the user explicitly asks to simplify an architecture, collapse modules or crates, or cut a dependency graph within approved boundaries. |
+| ask-dalcom | Use when the user asks which dstack skill or chain of skills to use for a situation and names no skill, which route to take across skills, or what must exist before a named skill. |
 | askme | Use when eliciting intent/scope/referents or gating long/bundled/high-stakes/hard-to-undo work: exhaustive/collaborative/adversarial/grill/gate/batch/interview/proposal/pairing. |
 | audit-project | Use when the user says "audit my code", "find all the bugs", "review until clean", or "grill my changes". |
 | autolearn | Use when a verified fix yields a generalized well-abstracted invariant with enforcement or proof, or existing solution docs need bounded refresh. |

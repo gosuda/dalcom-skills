@@ -8,6 +8,7 @@
 | architecture-simplification | dstack-core | Coding | Use when the user explicitly asks to simplify an architecture, collapse modules or crates, or cut a dependency graph within approved boundaries. |
 | articulate | dstack-writing | Writing | Use when the user knows what they mean but cannot express it completely or clearly. |
 | artifact-arena | dstack-run | Coding | Use when asked to run /artifact-arena to generate and judge competing artifact implementations. |
+| ask-dalcom | dstack-core | Coding | Use when the user asks which dstack skill or chain of skills to use for a situation and names no skill, which route to take across skills, or what must exist before a named skill. |
 | askme | dstack-core | Coding | Use when eliciting intent/scope/referents or gating long/bundled/high-stakes/hard-to-undo work: exhaustive/collaborative/adversarial/grill/gate/batch/interview/proposal/pairing. |
 | assembly-arm | dstack-native | Coding | Use when reading or writing AArch64 or AArch32 Thumb assembly, inline asm in C, AAPCS64 register roles, or NEON and SVE vector code. |
 | assembly-x86 | dstack-native | Coding | Use when reading GCC or Clang x86-64 assembly, writing inline asm, decoding AT&T syntax, or applying System V AMD64 register rules. |
