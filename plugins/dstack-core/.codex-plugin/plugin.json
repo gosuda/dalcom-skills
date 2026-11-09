@@ -1,6 +1,6 @@
 {
   "name": "dstack-core",
-  "version": "2.1.16",
+  "version": "2.1.17",
   "description": "Cross-project workflows for planning, implementation, review, verification, and delivery.",
   "keywords": [
     "dstack",
