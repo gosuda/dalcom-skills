@@ -1,37 +1,7 @@
-// Verify every authored skill satisfies the install routes it is published on.
-//
-//   gh skill install gosuda/dalcom-skills plugins/<plugin>/skills/<slug>
-//   plugin install <plugin>@dstack   (Claude, Codex, Cursor marketplaces)
-//
-// Both resolve a skill as <dir>/SKILL.md whose frontmatter name equals the
-// directory name, so a mismatch silently drops the skill from one route while
-// leaving the other working.
-//
-// Checks:
-//   (a) frontmatter parses, carries a name, and the name equals the directory
-//   (b) frontmatter values containing ': ' are single-quoted (AGENTS.md contract:
-//       an unquoted colon-space plain scalar is invalid YAML for strict parsers)
-//   (c) display_name is unique across every generated agents/openai.yaml, so two
-//       skills never present the same label in a harness picker
-//   (d) the description states a trigger a harness can route on
-//   (e) every `Not for <x>: use <slug>` pointer names a skill that exists, so a
-//       fold or rename cannot leave a description routing into nothing
-//
-// `--self-test` runs the pointer check against planted descriptions and exits
-// non-zero unless the dangling pointer is caught and the valid ones pass.
-//
-// Frontmatter is parsed with a tiny built-in structural YAML parser (no dependency)
-// so nested and hyphenated keys like metadata.short-description validate correctly.
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, loadCatalog, skillRows } from "./plugin-surfaces.mjs";
 
-// --- (e) pointer targets ---
-// A pointer is `use <target>` after a colon, semicolon, comma, or open paren:
-// the `Not for <x>: use <y>` form every description carries. The target is a
-// slug or a slug glob (`from-*-perspective`), and it dangles when it matches no
-// skill directory. An article after `use` (`use the mewt CLI`) is prose, not a
-// pointer.
 const POINTER_RE = /(?:[:;,]|\() use `?([a-z0-9][a-z0-9*-]*[a-z0-9*])`?/g;
 const ARTICLES = new Set(["a", "an", "the", "your", "its"]);
 export function danglingPointers(descriptions, slugs) {
@@ -67,43 +37,32 @@ if (process.argv.includes("--self-test")) {
 }
 
 const errors = [];
-// [slug, repository-relative directory] for every authored skill.
 const skills = loadCatalog().entries.flatMap((entry) =>
   skillRows(entry).map((slug) => [slug, `${entry.directory}/skills/${slug}`]),
 );
 
-// --- tiny structural YAML frontmatter parser (no dependency) ---
-// Returns { entries: [{ path, key, value, quoted, raw }], error } or null when
-// there is no frontmatter block.  `path` is a dotted path (e.g. "metadata.short-description").
-// `quoted` is true when the scalar was single- or double-quoted.  Only handles the
-// flat + one-level-nested mapping shape used by SKILL.md frontmatter; flow styles,
-// multi-line scalars, and sequences are out of scope (frontmatter does not use them).
 function parseFrontmatterYaml(text) {
   if (!text.startsWith("---\n")) return null;
   const end = text.indexOf("\n---", 4);
   if (end === -1) return { error: "unterminated frontmatter", entries: [] };
   const block = text.slice(4, end);
   const entries = [];
-  const stack = []; // [{ indent, pathPrefix }]
+  const stack = [];
   for (const line of block.split("\n")) {
     if (line.trim() === "" || /^\s*#/.test(line)) continue;
     const indent = line.length - line.trimStart().length;
-    // Pop stack entries whose indent is >= current (siblings or dedent).
     while (stack.length && stack[stack.length - 1].indent >= indent) stack.pop();
     const trimmed = line.trimStart();
     const m = /^([A-Za-z0-9][A-Za-z0-9_-]*):\s?(.*)$/.exec(trimmed);
-    if (!m) continue; // non-key lines (sequence items, etc.) are ignored
+    if (!m) continue;
     const key = m[1];
     const rawVal = m[2];
     const prefix = stack.length ? stack[stack.length - 1].pathPrefix + "." : "";
     const path = prefix + key;
     if (rawVal.trim() === "") {
-      // Nested mapping parent — push onto stack for subsequent indented keys.
       stack.push({ indent, pathPrefix: path });
       continue;
     }
-    // Quoted scalars may carry a trailing inline comment after the closing
-    // quote; record which quote character closed the value ('\'', '"', null).
     let value, quote = null;
     const v = rawVal.trim();
     let qm = /^'((?:[^']|'')*)'(?:\s+#.*)?$/.exec(v);
@@ -121,7 +80,6 @@ function parseFrontmatterYaml(text) {
   return { entries, error: null };
 }
 
-// --- (a) frontmatter presence + name == directory ---
 const badName = [];
 const badFrontmatter = [];
 const parsed = new Map();
@@ -157,7 +115,6 @@ if (badName.length)
     `name/directory mismatches: ${badName.slice(0, 5).join("; ")} (${badName.length} total)`,
   );
 
-// --- (b) frontmatter values containing ': ' must be single-quoted ---
 const badQuote = [];
 for (const [, dir] of skills) {
   const fm = parsed.get(dir);
@@ -175,6 +132,7 @@ if (badQuote.length)
     `': ' frontmatter values not single-quoted: ${badQuote.slice(0, 5).join("; ")} (${badQuote.length} total)`,
   );
 
+const AGENT_SKILLS_DESCRIPTION_LIMIT = 1024;
 const TRIGGERS = [
   "use when ",
   "use this ",
@@ -199,9 +157,8 @@ for (const [, dir] of skills) {
     badDescription.push(`${dir}: frontmatter has no description`);
     continue;
   }
-  // Agent Skills spec: description is 1-1024 characters.
-  if (description.length > 1024)
-    badDescription.push(`${dir}: description ${description.length} chars, limit 1024`);
+  if (description.length > AGENT_SKILLS_DESCRIPTION_LIMIT)
+    badDescription.push(`${dir}: description ${description.length} chars, limit ${AGENT_SKILLS_DESCRIPTION_LIMIT}`);
   const humanOnly =
     fm.entries.find((e) => e.path === "disable-model-invocation")?.value === "true";
   const lowered = description.toLowerCase();
@@ -222,7 +179,6 @@ const dangling = danglingPointers(descriptions, new Set(skills.map(([slug]) => s
 if (dangling.length)
   errors.push(`${dangling.slice(0, 5).join("; ")} (${dangling.length} total)`);
 
-// --- (c) display_name uniqueness across generated manifests ---
 const byName = new Map();
 const missingManifest = [];
 for (const [, dir] of skills) {

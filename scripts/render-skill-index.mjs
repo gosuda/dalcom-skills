@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-// Write docs/specs/skill-index.md: one row per skill sorted by slug.
-// --check diffs against the file on disk and exits 1 on drift.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { ROOT, loadCatalog, skillRows, skillTrigger, tableCell } from "./plugin-surfaces.mjs";

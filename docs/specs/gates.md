@@ -60,6 +60,8 @@ file carries two fields under `interface`:
 A `short_description` under 25 characters is an error, not a warning: the first sentence is where a
 skill states its trigger, and a fragment that short states none.
 
+The 64 character ceiling the generator once imposed was a local choice, not an Agent Plugins requirement. The Codex skill parser in `codex-rs/skills/src/interface.rs` resolves `interface.short_description` against `MAX_DESCRIPTION_LEN = 1024` and only warns above that. The upstream `openai.yaml` reference calls 25 to 64 characters a soft "for quick scanning" guideline, not an enforced limit. Cutting a sentence at 64 characters left dangling conjunctions, articles, prepositions, and mid-clause fragments on the user-facing surface, so the first sentence is now emitted in full. The defensive 1024 cap cuts at the last clause boundary (comma, semicolon, colon, or spaced dash) at or before 1024, strips trailing punctuation, and falls back to the last space. No current first sentence approaches 1024. The longest observed first sentence is 342 characters, so this branch is unreachable on this tree.
+
 `--only <slug>[,<slug>...]` limits the run to named skills, which is how a fixture is checked while
 the tree is mid-edit. Any other invocation processes every skill the catalog reaches.
 
@@ -130,6 +132,9 @@ the persona from the charter and would emit a file with no preamble or a doubled
 File arguments are accepted and filtered to the styles directory, which is how the hook tolerates
 being handed every staged path.
 
+A crashed run exits 2. It must not share the rewrite exit 1. The render recipe treats exit
+1 as success.
+
 ### sync-outline-skills.mjs
 
 Mirrors every skill into `.devin/skills/<slug>/` in the outline repository, the project-scope path
@@ -140,12 +145,22 @@ The mirror carries exactly the files `git ls-files` tracks under each skill dire
 generated `agents/openai.yaml`, with executable bits preserved. A recursive copy was rejected because
 `plugins/.gitignore` excludes eval and workspace directories that exist locally, and re-encoding
 those patterns would be a second model of the ignore rules. Beside the slug directories it writes
+
+Devin does not read `agents/openai.yaml`. The mirror keeps it so each skill directory stays
+byte identical to its source. An exclusion list drifts when a second per-host manifest
+appears. Root files sit beside the slug directories. Agent Skills discovery ignores plain
+files there.
+
 `LICENSE`, `NOTICE`, a `README.md` naming the source, and an `index.json` recording which plugin each
 slug came from, since flattening drops that.
 
 The run prunes: anything under `.devin/skills/` that the plugin tree no longer carries is deleted.
 Deletion never leaves that prefix. Because the run prunes, the target is validated first and must
 hold both `manifest.json` and `.git`.
+
+A retired slug must not keep answering `/slug` in Devin. Deletion stays inside
+`.devin/skills/`. Every deleted file is generated. Git restore in the outline repository
+recovers a committed file. A resync recovers the rest.
 
 | Condition | Result |
 |---|---|
@@ -170,10 +185,16 @@ would-be result. An unknown section, a missing tool-layer tag, a duplicate share
 malformed overlay therefore fails even when the shared bodies already match. A missing carrier is
 skipped; an existing path that is not a regular file is an error.
 
+The rewriter loads `check-carriers.py` by path. The hyphen in the file name blocks a plain import.
+
+A dangling symlink counts as unusable, not absent. It fails as a symlink instead of skipping as missing.
+
 A carrier may hold one `<role>` overlay above the canonical block. If only the overlay is present,
 the planner inserts the canonical block after it rather than rewriting the overlay. `--self-test`
 proves that shape, the audit reuse, and the non-file override, using synthetic fixtures so a machine
 with no carrier still runs it.
+
+Any other missing section enters at the `<code_tools>` line. Entries at one offset keep baseline order.
 
 ## Checks
 
@@ -199,6 +220,8 @@ The name-parity rule exists because Codex resolves a plugin's namespace from the
 alone. Five manifests with different names load one plugin's components under another's namespace,
 and nothing else reports it.
 
+Retired surfaces stay listed because each one regrew at least once from a generator that outlived its purpose.
+
 Passing output: `plugin surfaces ok: 22 plugins, 305 skills`.
 
 ### check-skill-routes.mjs
@@ -212,9 +235,10 @@ working.
 |---|---|
 | Frontmatter | Present, terminated, and carrying `name` |
 | Name | Equals the directory slug |
-| Quoting | Any value containing `: ` is single-quoted; double quotes fail with their own message |
-| Description | Present, at most 1024 characters, and stating a trigger unless `disable-model-invocation: true` |
-| Display name | Unique across every generated `agents/openai.yaml` |
+| Quoting | Any value containing `: ` is single-quoted; double quotes fail with their own message; strict YAML parsers reject an unquoted colon-space |
+| Description | Present, at most 1024 characters (the Agent Skills limit), and stating a trigger unless `disable-model-invocation: true` |
+| Display name | Unique across every generated `agents/openai.yaml`, so no two skills share a label in a harness picker |
+| Pointer | Every `Not for <x>: use <slug>` pointer names an existing skill, directly or through a slug glob such as `from-*-perspective`; an article after `use`, as in `use the mewt CLI`, is prose, not a pointer |
 
 A trigger is one of these phrases, case-insensitive, with the trailing space load-bearing: `use when `,
 `use this `, `use for `, `use to `, `use after `, `use on `, `use during `, `runs /`, `invoked `,
@@ -227,6 +251,12 @@ The display-name check reads the generated `agents/openai.yaml`, so a freshly ad
 gate with `missing display_name` until `just render` has run.
 
 Each failure class reports its first five instances and a total.
+
+`--self-test` runs the pointer check against planted descriptions and exits non-zero unless it catches the
+dangling pointers and passes the valid ones. A built-in structural parser reads the frontmatter: flat keys
+and one level of nesting, hyphenated keys such as `disable-model-invocation` included. Flow styles,
+multi-line scalars, and sequences are outside its scope; strict YAML parsing belongs to
+`check-skill-frontmatter.py`.
 
 ### check-skill-frontmatter.py
 
@@ -251,10 +281,14 @@ rather than passing unnoticed.
 The `metadata` key the Agent Skills specification allows is rejected here, so a skill that needs it
 has to widen `ALLOWED_KEYS` first.
 
+The gate parses on Python 3.9, the oldest interpreter a contributor may carry. A backslash in an f-string field is a SyntaxError below 3.12, and this exact form shipped here once. `ast.parse(feature_version=...)` misses it, because the flag does not downgrade the f-string tokenizer. The self-test therefore checks both halves: grammar newer than 3.9, and backslashes in f-string fields.
+
 `--self-test` runs the inline fixtures for the scalar rules and the compatibility rules, then exits
 before the tree scan. Fixtures are string literals rather than files because every tracked markdown
 file is gated by `check-voice`, and a fixture carrying a defect by design would need an ignored
 directory the gates can see.
+
+The f-string check is measured on Python 3.9 and 3.14, thirteen cases on each, with zero wrong verdicts. It does not slice the field by node position, because positions are unreliable below 3.12 and the slice catches legal backslashes in the literal part. It does not unparse the field, because unparsing drops a line continuation and reports a false pass.
 
 ### check-voice.py
 
@@ -299,15 +333,21 @@ fixtures, including the 92-path inventory count, repository target scope parity,
 carrier present/absent checks without touching real user carriers, authored-sibling negative
 controls, and the explicit-argument pin.
 
+Ignored files are never targets, and untracked files are never targets. The self-test proves both with a live witness. It checks that the index returns nothing for an existing ignored path. It checks that an untracked markdown file stays out of the target set even when the file carries findings.
+
 ### check-carriers.py
 
 Proves the two external harness carriers hold the canonical shared doctrine. Sections are the
 whole-line `<tag>` to `</tag>` blocks of `system-prompt-baseline.md`, compared byte for byte, with
 line endings preserved so a CRLF carrier cannot pass an LF baseline.
 
+Tags match on whole lines only. A substring match starts on a tag name inside prose and reports drift that is not there. A style-clean carrier can still carry wrong doctrine, so the voice gate cannot stand in for this check. A green run does not assert whether a carrier may hold rules the baseline lacks.
+
 Four sections are the harness tool layer and are exempt from comparison but required to be present:
 `git`, `directives`, `code_tools`, `thinking`. The gate prints this bound on every run, because
 doctrine written inside those four is outside what a green run asserts.
+
+AGENTS.md orders this split. It tells each carrier to keep its harness-specific tool layer and tool names. Codex shells out through rtk, while omp and Claude Code use native file tools.
 
 | Carrier shape | Verdict |
 |---|---|
@@ -318,6 +358,8 @@ doctrine written inside those four is outside what a green run asserts.
 | A tool-layer section is absent | Failure |
 | One extra `<role>` block above the canonical one | Allowed; the omp carrier prepends a persona overlay this way |
 | A `<role>` below the canonical one, or two overlays | Failure |
+
+The overlay sits above the charter role and states that it overrules the cascade on identity conflict. Only one overlay is allowed, because any extra block still steers behavior.
 
 When neither carrier is installed the gate prints a notice and exits 0, so a contributor who uses
 neither harness is not blocked. `--self-test` builds every drift shape synthetically from the
@@ -330,6 +372,121 @@ sections. `check-carriers.py` and `just sync-carriers-check` both have to be gre
 
 ### check-skill-scripts.py
 Compile-, syntax-, and self-checks shipped skill executables before commit. This gates shipped executables; it is not a test suite. `--self-test` flags planted defects, and the hook pair runs the gate plus its fixtures.
+
+It compiles every tracked Python file under `plugins/` and `scripts/`. It runs `bash -n`
+on every tracked shell script under `plugins/`. A file counts as shell when it carries a shell
+shebang or a `.sh` suffix. It runs each shipped `--self-check`. A missing heavyweight
+import prints a skip, not a failure. The torch self-check is
+`plugins/dstack-performance/skills/cpu-kernel-authoring/scripts/benchmark_cpu.py` with skip
+exit 2. It holds the E4M3 to BF16 conversion against an independent float oracle. Both
+reference snippets must carry each constant in `FP8_CONSTANTS`. The pinned pairs come from
+the hardware verified run: zero, one flushed subnormal, one, two, and both NaN signs. E4M3
+subnormals are representable in BF16. The taught kernels flush them by design. The oracle
+checks every other encoding with independent float packing. `--self-test` plants one broken
+file of each kind and proves each detector fires.
+
+## Shared modules
+
+### plugin-surfaces.mjs
+
+`plugin-surfaces.mjs` renders every distribution surface from `catalog/plugins.json`.
+The catalog is the only identity ledger.
+No source is published to a package registry.
+Every source is a repository-relative path.
+
+Five harness lanes share one catalog entry.
+Each lane owns one root registry and one manifest per plugin.
+Hermes owns no registry file.
+Install one Hermes plugin with `hermes plugins install <repo>/plugins/<id>`.
+
+| Lane | Registry | Per-plugin manifest |
+|---|---|---|
+| Claude Code | `.claude-plugin/marketplace.json` | `plugins/<id>/.claude-plugin/plugin.json` |
+| Codex | `.codex-plugin/marketplace.json` | `plugins/<id>/.codex-plugin/plugin.json` |
+| Cursor | `.cursor-plugin/marketplace.json` | `plugins/<id>/.cursor-plugin/plugin.json` |
+| Grok | `.grok-plugin/marketplace.json` | `plugins/<id>/.grok-plugin/plugin.json` |
+| Kimi | `.kimi-plugin/marketplace.json` | `plugins/<id>/.kimi-plugin/plugin.json` |
+| Hermes | none | `plugins/<id>/plugin.yaml` plus `plugins/<id>/__init__.py` |
+
+A dotdir manifest declares only what the harness default does not resolve.
+Kimi defaults to a root `SKILL.md` fallback, so `skills` is mandatory there.
+Codex and Grok default to the dotted `.mcp.json`, so `mcpServers` is explicit there.
+Claude Code defaults to `skills/`, Codex defaults to `./skills`, and Grok defaults
+to `skills/`.
+Cursor discovers `skills/` and the dotless `mcp.json` by default.
+
+Codex reads `.claude-plugin/marketplace.json` today.
+`MARKETPLACE_MANIFEST_RELATIVE_PATHS` in `codex-rs/core-plugins/src/marketplace.rs`
+holds no `.codex-plugin/` entry, so the Codex registry here is forward-compat and
+inert today.
+
+`loadCatalog` accepts an `id` of 1 to 64 characters.
+Use lowercase alphanumerics and hyphens, with alphanumerics at both ends.
+Use no `--` and no period.
+Grok and Kimi reject periods, so the shared grammar excludes them.
+
+Every harness dotdir manifest carries the same `name`.
+Codex resolves the plugin namespace from the dotdir list only
+(`plugin_namespace_for_root_uri` in
+`codex-rs/utils/plugins/src/plugin_namespace.rs`) and never from a root file.
+Diverged names load one plugin's components under another plugin's namespace.
+`check-plugin-surfaces.mjs` asserts the parity.
+
+| Manifest | Rule | Reason |
+|---|---|---|
+| Claude Code | Omit `skills`. Point `mcpServers` at `./mcp.json` and `outputStyles` at `./output-styles` where each exists. | `skills` defaults to `skills/`. |
+| Codex Legacy (`RawPluginManifest` in `codex-rs/core-plugins/src/manifest.rs`) | Omit `skills`. Omit `$schema`. Set `mcpServers` to `./mcp.json` where `mcp.json` exists. | The Legacy default is the dotted `.mcp.json`. `resolve_manifest_path` drops a value without the leading `./`. The published schemastore schema is closed and rejects `$schema`, while the Rust deserializer ignores it. |
+| Cursor | Carry identity only. | Cursor discovers `skills/` and the dotless `mcp.json` by default. |
+| Grok | Omit `skills`. Set `mcpServers` to `./mcp.json` where `mcp.json` exists. | Grok defaults to the dotted `.mcp.json`. |
+| Kimi | Always declare `skills: "./skills"`. Inline the `mcpServers` map from `mcp.json`. Carry name only in `author`. | Without `skills` Kimi loads zero skills from `skills/`. Kimi's schema strips the non-standard `alwaysLoad` key instead of erroring. Kimi's `readAuthor` accepts no `url` field. |
+| Hermes `plugin.yaml` | Skip the harness dotdirs. Express every scalar as a JSON string. | A root Agent Plugins `plugin.json` flips Codex and Cursor into the retired portable format. YAML reads a JSON string as a double-quoted scalar. |
+
+The Hermes entry point is identical in every plugin.
+`register()` hands each `skills/<slug>/SKILL.md` to `ctx.register_skill`, which
+namespaces it as `<plugin>:<slug>`.
+It reads `description` with the same closed scalar grammar
+`check-skill-frontmatter.py` enforces, so the skill index carries the routing
+trigger without importing Hermes internals.
+
+Each Claude marketplace entry carries `policy.authentication: "ON_USE"`.
+Codex parses this registry too with a path-agnostic entry parser and would
+otherwise default authentication to `ON_INSTALL`.
+
+`source.path` in the Codex marketplace resolves against the marketplace root.
+Start it with `./` and keep it inside the repository.
+The Grok marketplace spells the local source as `{"type": "local", "path"}`.
+Codex uses `source` for the same role.
+`path` resolves against the marketplace root and rejects `..` and absolute paths.
+Grok `owner` carries name only because `IndexOwner` has no `url` field.
+Kimi resolves a relative source against the registry directory, so the source
+climbs one level to `../plugins/<id>`.
+Kimi entries key by `id`; the other lanes key by `name`.
+Consume it from a local clone with `/plugins marketplace <clone>/.kimi-plugin/marketplace.json`.
+Kimi cannot install a GitHub repository subdirectory, so its lane is the local clone.
+
+`parseScalar` parses one single-line YAML scalar after `key:`.
+`firstSentence` takes text up to the first period plus whitespace, else the whole value.
+`tableCell` escapes backslashes and pipes and folds newlines to spaces, so a pipe
+or newline in a trigger cannot split the row.
+`skillTrigger` is the description first sentence, the trigger a human or a model routes on.
+`repoSlug` derives the `gh skill install` owner and repo slug from the catalog
+`repository` URL rather than a second literal that can drift.
+
+Only the plugin table is generated in the root `README.md`.
+The prose around it is authored.
+`renderRootReadme` replaces that one region in the current file.
+A hand-kept copy drifted: a category flip in `catalog/plugins.json` left the table
+stale with every gate green.
+
+### carriers.py
+
+Names the two external harness carriers. Both live in the home directory of the user who
+runs the harness. Git cannot list them, so each gate that touches them imports this list.
+The entries are `~/.codex/AGENTS.md` and `~/.omp/agent/AGENTS.md`. `check-voice.py` holds
+them to the voice contract. `check-carriers.py` holds them to the canonical doctrine. The
+list uses `Path.home()`. A hardcoded absolute path once carried a username. It resolved to
+nothing on other machines. The gate then skipped both carriers without a word. A gate that
+needs another location takes it as an argument. It must not add a third copy of this list.
 
 ## Exit codes
 

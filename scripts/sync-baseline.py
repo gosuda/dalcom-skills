@@ -22,15 +22,10 @@ ROLE_LINE = "<role>"
 
 
 class CascadeError(Exception):
-    """A style file does not have the structure the generator requires."""
+    pass
 
 
 def split_preamble(path: Path) -> str:
-    """Return everything before the style's cascade region.
-
-    Raises CascadeError when the file lacks the two `<role>` lines the layout requires,
-    rather than silently emitting a file with no persona or a doubled charter.
-    """
     lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
     role_indices = [i for i, line in enumerate(lines) if line.rstrip("\r\n") == ROLE_LINE]
     if len(role_indices) < 2:
@@ -66,13 +61,10 @@ def main() -> int:
     try:
         canonical = CANONICAL.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError) as err:
-        # A crashed run must not share the rewrite exit 1, which the
-        # render recipe treats as success.
         print(f"error: {err}", file=sys.stderr)
         return 2
 
     targets = args.files or sorted(STYLES_DIR.glob("*.md"))
-    # pre-commit passes every staged file; keep only the styles this script owns.
     targets = [p for p in targets if p.resolve().parent == STYLES_DIR]
     if not targets:
         return 0
@@ -86,8 +78,6 @@ def main() -> int:
                 path.write_text(expected, encoding="utf-8")
                 print(f"synced {path.relative_to(REPO_ROOT)}")
         except (CascadeError, OSError, UnicodeDecodeError) as err:
-            # A crashed run must not share the rewrite exit 1, which the
-            # render recipe treats as success.
             print(f"error: {err}", file=sys.stderr)
             return 2
         if drifted_now:
@@ -104,7 +94,7 @@ def main() -> int:
             print(f"  {rel}", file=sys.stderr)
         print("run scripts/sync-baseline.py to fix", file=sys.stderr)
         return 1
-    return 1  # files were rewritten; fail the hook so the run is re-staged
+    return 1
 
 
 if __name__ == "__main__":

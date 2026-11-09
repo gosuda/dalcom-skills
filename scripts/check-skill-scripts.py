@@ -1,18 +1,4 @@
 #!/usr/bin/env python3
-"""Whole-tree gate for executable skill content: compile, shell syntax, self-checks.
-
-Checks that `prek` cannot otherwise run:
-- every tracked Python file under plugins/ and scripts/ must compile;
-- every tracked shell script under plugins/ (a shell shebang or a .sh
-  suffix) must pass `bash -n`;
-- every skill script that ships a --self-check must pass it, with a
-  printed skip (not a failure) on hosts missing its heavyweight import;
-- the E4M3 -> BF16 conversion taught in two reference files is held against
-  an independent float oracle so the two cannot silently diverge.
-
---self-test plants one broken file of each kind and proves every detector
-fires, because a gate that has never seen a defect is a hope, not a gate.
-"""
 
 import re
 import struct
@@ -23,20 +9,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# Scripts whose self-check needs torch: (script, skip exit code).
 SELF_CHECKS = [
     ("plugins/dstack-performance/skills/cpu-kernel-authoring/scripts/benchmark_cpu.py", 2),
 ]
 
-# The constants the intrinsics text must carry in both reference snippets.
 FP8_SNIPPETS = [
     "plugins/dstack-performance/skills/cpu-kernel-authoring/references/dtype_optimizations.yaml",
     "plugins/dstack-performance/skills/cpu-kernel-authoring/references/quantized_gemm_patterns.yaml",
 ]
 FP8_CONSTANTS = ["set1_epi16(120)", "slli_epi16", ", 7)", ", 4)", "0x7F", "0x7FC0"]
 
-# Known pairs pinned from the hardware-verified run: zero, a flushed
-# subnormal, one, two, and both NaN signs.
 FP8_KNOWN_PAIRS = {0x00: 0x0000, 0x01: 0x0000, 0x38: 0x3F80, 0x40: 0x4000, 0x7F: 0x7FC0, 0xFF: 0xFFC0}
 
 BROKEN_PY = "def f(:\n    pass\n"
@@ -115,10 +97,6 @@ def _fp8_model_errors() -> list[str]:
         if (b & 0x7F) == 0x7F:
             continue
         e = (b >> 3) & 0xF
-        # e==0 is the pinned flush-to-zero contract: E4M3 subnormals are
-        # representable in bf16, and the taught kernels deliberately flush
-        # them, matching the hardware-verified reference. Every other
-        # encoding is checked against an independent float packing.
         value = 0.0 if e == 0 else (1.0 + (b & 0x7) / 8.0) * 2.0 ** (e - 7)
         if b & 0x80:
             value = -value

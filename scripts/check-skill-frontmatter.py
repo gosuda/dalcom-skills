@@ -1,28 +1,4 @@
 #!/usr/bin/env python3
-"""Strict-scalar validation of every SKILL.md frontmatter, standard library only.
-
-The manifest gate (scripts/render-skill-manifests.mjs) parses frontmatter with a
-hand-rolled scalar reader that uses lastIndexOf("'") to bracket single-quoted
-values, so an unescaped apostrophe inside the scalar is silently swallowed
-instead of rejected. `gh skill publish` uses a strict YAML parser and rejects
-the same file with `yaml: did not find expected key`, leaving the skill
-unpublishable on the Agent Plugins surface while every local gate stays green.
-
-This checker closes that hole without a third-party parser. The repository
-constraint is that every script is dependency-free Node ESM or standard-library
-Python, and an `import yaml` here would take the whole gate set down with
-ModuleNotFoundError on any machine without PyYAML.
-
-A YAML reimplementation is not needed, because the frontmatter shape is closed:
-one flat mapping, keys drawn from a fixed set, values either plain or quoted on
-a single line. No block scalars, no flow collections, no continuation lines. The
-checker validates exactly that shape and walks each quoted scalar by the quoting
-rules a strict parser applies. Anything outside the shape fails loudly and names
-what it saw, so an author who introduces a new value form is told to extend the
-checker rather than passing silently.
-
-Run `--self-test` to check the checker against its own fixtures.
-"""
 import ast
 import json
 import re
@@ -33,27 +9,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ALLOWED_KEYS = {"name", "description", "disable-model-invocation", "argument-hint", "allowed-tools"}
 REQUIRED_KEYS = ("name", "description")
-# A plain scalar starting with one of these is an indicator character in YAML and
-# means something other than the text it appears to be.
 PLAIN_INDICATORS = "[]{}&*!|>%@`\"'#,"
-# `-`, `?`, and `:` are indicators only when a space or the end of the scalar follows.
 PLAIN_INDICATORS_BEFORE_SPACE = "-?:"
-# YAML 1.2 section 5.7. Anything else after a backslash is an unknown escape and a
-# strict parser rejects the scalar.
 DOUBLE_QUOTED_ESCAPES = set('0abtnvfre "/\\N_LP') | set("xuU")
-# \x takes two hex digits, \u four, \U eight (YAML 1.2 section 5.7).
 HEX_ESCAPES = {"x": 2, "u": 4, "U": 8}
 
 
 def scan_single_quoted(value):
-    """Walk a single-quoted scalar. Return None when valid, else the reason."""
     i = 1
     while i < len(value):
         c = value[i]
         if c != "'":
             i += 1
             continue
-        if value[i + 1 : i + 2] == "'":  # '' is one literal apostrophe
+        if value[i + 1 : i + 2] == "'":
             i += 2
             continue
         rest = value[i + 1 :].strip()
@@ -64,7 +33,6 @@ def scan_single_quoted(value):
 
 
 def scan_double_quoted(value):
-    """Walk a double-quoted scalar. Return None when valid, else the reason."""
     i = 1
     while i < len(value):
         c = value[i]
@@ -94,7 +62,6 @@ def scan_double_quoted(value):
 
 
 def scan_plain(value):
-    """Validate a plain (unquoted) scalar. Return None when valid, else the reason."""
     if value[0] in PLAIN_INDICATORS:
         return f"plain scalar starts with the indicator character {value[0]!r}"
     if value[0] in PLAIN_INDICATORS_BEFORE_SPACE and (len(value) == 1 or value[1].isspace()):
@@ -107,7 +74,6 @@ def scan_plain(value):
 
 
 def check_frontmatter(text):
-    """Return a list of reasons the frontmatter is not strictly parseable."""
     if not text.startswith("---\n"):
         return ["missing opening frontmatter fence"]
     end = text.find("\n---", 4)
@@ -126,8 +92,6 @@ def check_frontmatter(text):
         if not sep or not key or not all(c.isalnum() or c in "_-" for c in key):
             reasons.append(f"line {lineno}: not a 'key: value' pair")
             continue
-        # YAML needs a space or a line end after the colon; `key:value` is one plain
-        # scalar, not a mapping entry.
         if raw and raw[0] not in " \t":
             reasons.append(f"line {lineno}: key {key!r} has no space after its colon")
             continue
@@ -155,7 +119,6 @@ def check_frontmatter(text):
 
 
 def catalog_skills():
-    """Yield (plugin_id, slug, skill_md_path) for every catalog-published skill."""
     catalog = json.loads((ROOT / "catalog" / "plugins.json").read_text("utf-8"))
     if catalog.get("schema") != "odin-plugin-catalog/v1":
         raise SystemExit(f"unexpected catalog schema: {catalog.get('schema')}")
@@ -219,37 +182,16 @@ CASES = [
 ]
 
 
-# `language: system` runs whichever python3 the machine has, so this gate must parse
-# on the oldest interpreter a contributor might carry. PEP 701 allowed a backslash
-# inside an f-string replacement field only from 3.12; before that it is a
-# SyntaxError, and it shipped here once. `ast.parse(feature_version=...)` catches
-# grammar that is too new but cannot see this case, because feature_version does not
-# downgrade the f-string tokenizer, so the two halves below cover different gaps.
 MIN_PYTHON = (3, 9)
 
 
 def source_backslash_in_fstring(text=None):
-    """Return the offending line numbers, or an empty list when the source is clean.
-
-    Measured on 3.9.25 and 3.14.7, thirteen cases each, zero wrong verdicts. Two
-    earlier attempts were wrong in opposite directions: slicing the source by node
-    position invents false positives below 3.12, where f-string node positions are
-    unreliable and the slice picks up the enclosing literal, where a backslash is
-    legal. Unparsing the field instead re-emits the code, so a line continuation
-    inside a field vanishes and the check reports a false pass on a new runner.
-    """
     text = Path(__file__).read_text("utf-8") if text is None else text
     try:
         tree = ast.parse(text, feature_version=MIN_PYTHON)
     except SyntaxError as e:
-        # Below 3.12 the interpreter rejects a backslash in a replacement field
-        # itself, so this branch is the authoritative answer for f-string internals
-        # as well as for grammar newer than MIN_PYTHON.
         return [e.lineno or 0]
     if sys.version_info < (3, 12):
-        # f-string node positions are unreliable here, and the parse above already
-        # spoke for every construct this check guards. Slicing would only invent
-        # false positives from escapes in the literal part.
         return []
     return sorted(
         {
@@ -267,7 +209,6 @@ Q = chr(39)
 T3 = Q * 3
 
 COMPAT_CASES = [
-    # label, source, want_detected
     ("legal escape in literal part", 'x = f"a' + BS + 'nb{value}"', False),
     ("legal tab literal, two fields", 'x = f"' + BS + 't{a}-{b}"', False),
     ("legal escape, no f-string", 'x = "a' + BS + 'nb"', False),

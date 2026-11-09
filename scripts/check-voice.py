@@ -1,14 +1,4 @@
 #!/usr/bin/env python3
-"""Enforce voice invariants over authored prose and external carriers.
-
-Invariants:
-- Bold runs: >= 2 consecutive labels or >= 5 consecutive lead-ins trip the gate.
-- Dashes: >= 5 em/en dashes within a 600-character window trip the gate.
-- Headings: title-cased minor words past position one trip the gate.
-- Banned vocabulary: AI-marker words outside exempt ban-list subjects trip the gate.
-- Quotes: curly quotes in prose trip the gate.
-- Scope: gate git-tracked markdown files excluding vendored assets, plus harness carriers.
-"""
 
 import contextlib
 import io
@@ -62,7 +52,6 @@ BOLD_LEAD_RUN = 5
 
 
 def writable(path):
-    """Return True if path can be opened for writing, False otherwise."""
     try:
         os.close(os.open(path, os.O_WRONLY))
     except OSError:
@@ -71,7 +60,6 @@ def writable(path):
 
 
 def git_tracked(pathspecs):
-    """Repository-relative paths tracked by the git index matching pathspecs."""
     try:
         result = subprocess.run(
             ["git", "ls-files", "-z", "--", *pathspecs],
@@ -88,7 +76,6 @@ def git_tracked(pathspecs):
 
 
 def carrier_targets(carriers):
-    """Filter carriers to present files; abort if an unwritable carrier has findings."""
     present = []
     for carrier in carriers:
         if not carrier.is_file():
@@ -108,7 +95,6 @@ _FATE = "plugins/dstack-core/skills/let-fate-decide"
 
 
 def _fate_vendored():
-    """Pinned upstream inventory loaded from the fate skill's draw script."""
     draw_module = runpy.run_path(str(ROOT / _FATE / "scripts" / "draw.py"), run_name="draw")
     return frozenset(f"{_FATE}/{rel}" for rel in draw_module["expected_asset_files"]())
 
@@ -117,18 +103,15 @@ VENDORED_UPSTREAM = _fate_vendored()
 
 
 def repo_targets():
-    """Every tracked markdown file, minus verbatim upstream."""
     return sorted(ROOT / path for path in git_tracked(["*.md"])
                   if path not in VENDORED_UPSTREAM)
 
 
 def default_targets(carriers=CARRIERS):
-    """Every tracked markdown file plus harness carriers, minus verbatim upstream."""
     return repo_targets() + carrier_targets(carriers)
 
 
 def prose_only(text):
-    """Drop fenced blocks and inline spans, preserving line count for accurate reporting."""
     out = []
     fenced = False
     for line in text.split("\n"):
@@ -142,7 +125,6 @@ def prose_only(text):
 
 
 def dash_run(prose):
-    """Longest dash run inside one window, with the line it starts on."""
     hits = [m.start() for m in DASH.finditer(prose)]
     worst = 0
     where = 0
@@ -157,7 +139,6 @@ def dash_run(prose):
 
 
 def bold_runs(prose):
-    """Maximal runs of lines opening with a bold span, as (first line, length, label count)."""
     runs = []
     start = 0
     length = 0
@@ -179,14 +160,12 @@ def bold_runs(prose):
 
 
 def classify_run(labels):
-    """Classify a run: ('label', BOLD_RUN) if labels >= 2 else ('lead', BOLD_LEAD_RUN)."""
     if labels >= 2:
         return "label", BOLD_RUN
     return "lead", BOLD_LEAD_RUN
 
 
 def bold_findings(prose):
-    """One finding per tripping bold run, reported at the run's first line."""
     found = []
     for start, length, labels in bold_runs(prose):
         kind, threshold = classify_run(labels)
@@ -202,7 +181,6 @@ def bold_findings(prose):
 
 
 def label(path):
-    """Repository-relative path when inside the tree, absolute otherwise."""
     try:
         return path.relative_to(ROOT)
     except ValueError:
@@ -287,7 +265,6 @@ SELF_TEST = (
 
 
 def run_verdict(prose):
-    """(caught, kind) for the first bold run that trips its threshold."""
     for _, length, labels in bold_runs(prose):
         kind, threshold = classify_run(labels)
         if length >= threshold:
@@ -296,7 +273,6 @@ def run_verdict(prose):
 
 
 def ignored_witness():
-    """An ignored file that exists in the tree, or None on a clean clone."""
     result = subprocess.run(
         ["git", "ls-files", "-z", "--others", "--ignored", "--exclude-standard"],
         cwd=ROOT, capture_output=True, text=True, check=True)
@@ -308,13 +284,11 @@ def ignored_witness():
 
 
 def ignored_case(got):
-    """Invariant: git index returns nothing for an existing ignored path."""
     witness = ignored_witness()
     return got == [] and (witness is None or Path(witness).is_file())
 
 
 def carrier_witness_probe():
-    """Controlled carrier inputs: present carrier is targeted, absent is skipped."""
     dir_ = tempfile.mkdtemp()
     try:
         present = Path(dir_) / "present.md"
@@ -335,7 +309,6 @@ def carrier_witness_case(probe):
 
 
 def untracked_witness_probe():
-    """Probe that untracked, non-ignored markdown files in the tree are not targeted."""
     without = len(repo_targets())
     dir_ = tempfile.mkdtemp(dir=ROOT)
     try:
@@ -353,14 +326,12 @@ def untracked_witness_case(probe):
 
 
 def vendored_case(got):
-    """Invariant: all 92 vendored paths are tracked by git but excluded from repository targets."""
     tracked = set(git_tracked(sorted(VENDORED_UPSTREAM)))
     return (tracked == set(VENDORED_UPSTREAM)
             and not any(str(ROOT / path) in got for path in VENDORED_UPSTREAM))
 
 
 def authored_sibling_case(got):
-    """Invariant: fate skill authored siblings remain repository targets."""
     siblings = (f"{_FATE}/SKILL.md",
                 f"{_FATE}/agents/draw.md",
                 f"{_FATE}/references/SOURCE-MAP.md")
@@ -368,7 +339,6 @@ def authored_sibling_case(got):
 
 
 def scope_parity_case(got):
-    """Invariant: target set equals tracked markdown files minus VENDORED_UPSTREAM."""
     expected = {str(ROOT / path) for path in git_tracked(["*.md"])
                 if path not in VENDORED_UPSTREAM}
     return set(got) == expected
@@ -409,7 +379,6 @@ TARGET_CASES = (
 
 
 def self_test():
-    """Run every bold and scope case against the compiled rule; return the exit code."""
     failed = 0
     for name, text, (want_caught, want_kind) in SELF_TEST:
         caught, kind = run_verdict(prose_only(text))
@@ -430,7 +399,6 @@ def self_test():
 
 
 def explicit_targets(argv):
-    """Explicit file arguments gate whatever they name, including a vendored path."""
     return [Path(a).resolve() for a in argv]
 
 
