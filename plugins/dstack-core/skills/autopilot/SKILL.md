@@ -1,6 +1,6 @@
 ---
 name: autopilot
-description: 'Use when a human has an approved delivery plan and wants the full chain run under phase gates. Not for planning, open-ended debugging, or single-step execution.'
+description: 'Use when a human has an approved delivery plan and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. Not for planning, open-ended debugging, or single-step execution.'
 ---
 
 # Autopilot
@@ -11,11 +11,11 @@ You run an approved delivery plan from first edit to observed close-out, under p
 
 You need a feature description, an approved execution plan, the repository, acceptance criteria, and a close-out condition. Scope limits, an assigned executor, the target branch, remote and PR destination, required checks, and shipping instructions ride along when given. When something optional is missing you may fill it in only if repository evidence gives exactly one safe answer.
 
-Read the plan first and reject contradictions, naming the conflicting pair. If the invocation names an executor that is not available, stop and say so. Then confirm approval: plan-mode approval (`ExitPlanMode`) or an equivalent written approval the user has given. With no approval record there is no implementation and no delegation. Route to planning instead.
+Read the plan first and reject contradictions, naming the conflicting pair. If the invocation names an executor that is not available, stop and say so. Then confirm approval in one of the two forms `references/pipeline-gates.md` defines: a plan approved through plan mode or in writing, or an itemized invocation where every item names a location and the expected change or check. A list given as examples covers only the listed items. Anything else gets no implementation and no delegation: halt and route to `autoplan-and-autopilot`.
 
 ## Bind every step to the repository
 
-Before changing anything, gather enough repository evidence to tie each plan step to a concrete artifact (a file, directory, or remote target) and to the behavior, verification, and remote destination behind it. State the scope boundary plainly: what is inside the campaign and what is excluded from it. Everything after this point stays inside that boundary.
+Before changing anything, gather enough repository evidence to tie each plan step to a concrete artifact (a file, directory, or remote target) and to the behavior, verification, and remote destination behind it. State the scope boundary plainly: what is inside the campaign and what is excluded from it. Everything after this point stays inside that boundary. Then record the preflight from `references/pipeline-gates.md`: the verifier commands, the host tools they need checked against repository pins, and the baseline failure set. A missing tool or a pin mismatch halts here; only the baseline set can make a failure inherited.
 
 ## Keep dangerous consequences human-gated
 
@@ -27,11 +27,11 @@ When an iteration loop waits on a human gate, name the smallest gate that unbloc
 
 The chain runs execute, then simplify, then review, then finalize, then report. Report always runs, for success and halt alike. The exact gate mechanics and invariants live in `references/pipeline-gates.md` and that file is binding. On any conflict within autopilot, it governs directly.
 
-Each phase follows the same state machine: run the phase, check its gate, advance on pass. A failing gate fires its autofix arm at most once, then rechecks. A failing recheck halts the chain, never a second autofix. A red gate never advances to the next phase.
+Each phase follows the same state machine: run the phase, check its gate, advance on pass. A failing gate fires its autofix arm at most once, then rechecks. A failing recheck halts the chain, never a second autofix. A red gate never advances to the next phase. A gate passes only on a receipt, as `references/pipeline-gates.md` defines; a gate without one halts with the reason `no receipt`.
 
-- execute: Execute the bounded plan against acceptance criteria, constraints, repository evidence, and the required verifier, and record an implementation summary with local verification evidence. This phase covers implementation and local verification only, never the simplify, review, finalize, or CI phases, which autopilot owns. On verifier failure, `grill-core` runs once in findings and verifier-failure mode on the failing output, then one recheck. A second failure halts with the verifier output and diff recorded.
-- simplify: Simplify the completed diff with behavior preserved. A `simplify` exit of `0`, `11` (empty diff), or `12` (false-positive-only) passes. A behavior regression (exit `13`) is self-reverted inside `simplify`. New bloat (exit `14`) or a mixed-concern commit (exit `15`) halts the chain for a human re-plan, with the cause recorded.
-- review: Review the in-scope change for critical and high findings, unhandled error paths, scope creep, and stubs. When critical or high findings occur, `grill-core` runs once as the autofix arm on those findings, followed by a re-review of the changed files only. Zero critical and zero high findings remain, or the chain halts with the residual findings listed. `grill-core` is an autofix arm for `execute` and `review`, never an independent phase.
+- execute: Execute the bounded plan against acceptance criteria, constraints, repository evidence, and the required verifier, and record an implementation summary with local verification evidence. This phase covers implementation and local verification only, never the simplify, review, finalize, or CI phases, which autopilot owns. On verifier failure, `grill-core` runs once on the failing output, through its Findings batch path when several distinct failures appear, then one recheck. Execute also needs proof of reach: the verifier output names each new test, each new test was seen failing without its fix, and a user-visible fix ran through its real entry point. A second failure halts with the verifier output and diff recorded.
+- simplify: Simplify the completed diff with behavior preserved. A `simplify` exit of `0`, `11` (empty diff), or `12` (false-positive-only) passes. A behavior regression (exit `13`) is self-reverted inside `simplify`. New bloat (exit `14`) or a mixed-concern commit (exit `15`) halts the chain for a human re-plan, with the cause recorded. Read the result code only from the `simplify result` block, which the report quotes; without that block the gate halts with the reason `no receipt`.
+- review: An independent reviewer, a fresh context that gets the diff, the plan, and its acceptance criteria but never the executor's conclusions, runs `code-review` on the in-scope change for critical and high findings, unhandled error paths, scope creep, and stubs. When critical or high findings occur, `grill-core` runs once through its Findings batch path on those findings, followed by a re-review of the changed files only. Zero critical and zero high findings remain inside the diff, or the chain halts with the residual findings listed. Findings in code the diff does not touch are reported as inherited. `grill-core` is an autofix arm for `execute` and `review`, never an independent phase.
 - finalize: Finalize the reviewed change: run the required checks, create atomic commits, and only with explicit shipping authority covering the exact branch, remote, and PR destination push or create-or-update the PR. Otherwise leave changes local. A finalizer refusal (push refused, checks blocked) is a deliberate safety stop, not a defect to patch. When `git remote` is empty, or `mode:local` is set, run local-only: local checks, atomic commits, no push or PR creation, no invented remote, and the report states `mode: local-only` with the unpushed commit list.
 - report: Emit the handoff on a halt or the finalization report on success, always.
 
@@ -62,11 +62,15 @@ There is exactly one terminal result. `DONE` delivers the behavior, the changed 
 autopilot report
 mode:          <full | local-only> [+ headless]
 task:          <one line>
+plan:          <plan mode | plan file <path> | invocation items <count>, each checked against the invocation message>
+host:          <verifier commands named | tools checked, with expected and observed versions | facts learned in this run, or none>
 phases:        execute <✓ | HALT> · simplify <✓ | HALT | skipped> · review <✓ | HALT | skipped> · finalize <✓ | local-only | HALT | skipped> · report ✓
-autofix:       grill-core <ran once in <execute | review> | skipped, gates clean>
-gates:         <execute simplify review finalize pass/fail, with the autofix arm noted where it fired>
+autofix:       <grill-core firings in phase order, one per phase that fired: execute: <root cause line>; review: <root cause line> | not needed, every gate passed on its first check>
+gates:         <per gate, pass or fail with its receipt: execute verifier commands, exit codes, and new test names; the quoted simplify result block; the reviewer verdict with critical and high counts; finalize checks plus commits or the pull request URL>
+inherited:     <baseline failures and out-of-diff findings left as found | none>
 commits:       <sha + subject per commit>
 remote:        <pushed branch / PR url | local-only, not pushed>
+next:          <one exact action for the human, such as "authorize the push of 17 commits to origin/<branch>" | none>
 outcome:       <shipped | HALT at <phase> (gate <gate-name>), see handoff above>
 ```
 

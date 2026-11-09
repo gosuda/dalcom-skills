@@ -17,7 +17,7 @@ No-PR mode is done when `git status --porcelain` is empty and `git rev-list --le
 
 ## Four ways to run
 
-The mode is `pull-request` (the default full workflow, also covering GitLab MRs), `no-pull-request`, `description-only`, or `description-update`. A stack is an opt-in modifier only when the user explicitly asks for stacked PRs or MRs. Never propose a stack for one logical change.
+The mode is `pull-request` (the default full workflow, also covering GitLab MRs), `no-pull-request`, `description-only`, or `description-update`. A stack is an opt-in modifier only when the user explicitly asks for stacked PRs or MRs. Never propose a stack for one logical change. A request whose push target is the checked-out branch without a pull request, or the default branch, belongs to `commit-push-current` or `commit-push-main`, which run only when the user invokes them by name: stop before any commit, name the matching skill for the user to type, and change nothing.
 
 Other things you need: the working tree, branch, history, remotes, remote default, existing PR/MR, and `gh` / `glab` auth (gathered by you, see below). The forge (GitHub or GitLab) comes from the verified request URL or remote URL, never assumed; ambiguity stops the run, so never guess GitHub. GitHub open state is `OPEN`, GitLab is `opened`; GitLab IIDs are project-scoped, never global node IDs, and GitHub status names do not apply to GitLab. User-supplied evidence (URL, embed, path) is optional. Human decisions cover detached HEAD, unpushed default-branch commits, ambiguous target, and description rewrite approval. The PR/MR target (origin versus upstream, base, head) is required in pull-request mode.
 
@@ -43,7 +43,7 @@ Detached HEAD: ask whether to create a branch; on yes create and continue, on no
 
 Author commits with `commit`. Its atomicity, staging discipline, named-file commit, and message-file rules apply; they are not restated here. Description-only and description-update skip this step.
 
-State the push set. New to origin (`git ls-remote --heads origin <branch>` empty): list `git log --oneline origin/<default>..HEAD`, materializing the tracking ref first when this skill created the branch. Existing: refresh the tracking tip (`git fetch --no-tags origin refs/heads/<branch>:refs/remotes/origin/<branch>`; on failure stop without pushing) and list `git log --oneline origin/<branch>..HEAD`. On no `origin`, report local-only with the commit list and stop. On failed fetch with no fetched base, stop; never preview from HEAD alone.
+Before stating the push set, run `verification-before-completion` on the tree about to be pushed unless fresh verification evidence for that exact tree already exists in this session; a red result stops before any push and names the failure. State the push set. New to origin (`git ls-remote --heads origin <branch>` empty): list `git log --oneline origin/<default>..HEAD`, materializing the tracking ref first when this skill created the branch. Existing: refresh the tracking tip (`git fetch --no-tags origin refs/heads/<branch>:refs/remotes/origin/<branch>`; on failure stop without pushing) and list `git log --oneline origin/<branch>..HEAD`. On no `origin`, report local-only with the commit list and stop. On failed fetch with no fetched base, stop; never preview from HEAD alone.
 
 ## Put evidence in the body
 

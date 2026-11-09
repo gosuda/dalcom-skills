@@ -2,7 +2,7 @@
 
 DStack workflows for authoring, auditing, benchmarking, and publishing agent skills.
 
-8 skills, category Productivity. Install the whole plugin below, or take a single skill with `gh skill install`.
+6 skills, category Productivity. Install the whole plugin below, or take a single skill with `gh skill install`.
 
 ## Install
 
@@ -42,8 +42,6 @@ Each row states when to reach for the skill. Invoke one as `/dstack-skills:<name
 | model-challenge | Use when a user requests an independent Codex or Gemini review of uncommitted code, a branch diff, or a specific commit. |
 | model-retuning | Use when asked to run /model-retuning to retune a skill corpus for a new model, measurement-first. |
 | review-plugin-submission | Use when asked to review a plugin for marketplace readiness via a read-only audit of published quality gates. |
-| skill-gap-finder | Use when the user suspects no installed skill covers a task and wants proof. |
-| skill-scanner | Use when a user asks to scan, audit, or validate a skill for security issues. |
 
 ## Workflows
 

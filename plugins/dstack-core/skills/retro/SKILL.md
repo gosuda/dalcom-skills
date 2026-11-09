@@ -7,11 +7,11 @@ description: 'Use when a finished session, period, milestone, or cycle needs an 
 
 A retro explains finished work: what helped, what hurt, and what to keep. It never saves learnings itself. Findings that deserve to live on become pointers to compound or autolearn, which own capture. It never writes docs/solutions/, CONCEPTS.md, or rationale topic files.
 
-This skill is read-only, except for one file write and only when the user explicitly asks for a file report. No version control, credential, paid, published, deployed, or remote mutation follows from running it. If the user wants the report as a file, write it to the path they name. When they ask for a file but name no path, use `reports/retro-<mode>-<slug>.md`. Otherwise the report stays in chat.
+This skill is read-only, except for one file write and only when the user explicitly asks for a file report. No version control, credential, paid, published, deployed, or remote mutation follows from running it. If the user wants the report as a file, write it to the path they name. When they ask for a file but name no path, use `reports/retro-<mode>-<slug>.md`. The file format follows the request: markdown by default, and HTML when the request asks for HTML, carrying the same content as the chat report; an HTML file without a named path goes to `reports/retro-<mode>-<slug>.html`. Otherwise the report stays in chat.
 
 ## Run one mode at a time
 
-Pick exactly one mode from the request and stay inside it. A request that names no mode gets one clarifying question covering the five modes and what each needs, not five reports.
+Pick exactly one mode from the request and stay inside it. A request that names no mode gets one clarifying question covering the five modes and what each needs, not five reports. One request needs no question: a request to check, evaluate, or review how skills behaved in a session (a skill check) is environment mode.
 
 | Mode | What it examines | What you need before starting |
 |---|---|---|
@@ -53,7 +53,7 @@ Each mode then gets its own verdict, built from the pattern findings above.
 
 ### Environment verdict
 
-The ranked friction candidates are the verdict; no separate breakdown is needed. When no friction is observed, say so plainly with zero candidates rather than inventing any.
+The ranked friction candidates are the verdict; no separate breakdown is needed. When no friction is observed, say so plainly with zero candidates rather than inventing any. For a skill check, add the skill verdict block from the template: one row per skill the session invoked, with its run count taken from the skill invocations in the transcript (never from the agent's own report), a verdict of keep, fix, or unclear, and the evidence. A verdict is a judgment with evidence, never a score.
 
 ### Engineering verdict
 
@@ -79,10 +79,10 @@ Missing required scope stops the run before gathering, with what is missing stat
 
 ## What retired into this skill
 
-Retro is the only surviving retrospective entry point, with no aliases kept. Agent environment friction taxonomy, severity ranking, and evidence validation came from the agent environment retrospective. Period telemetry, source precedence, breakdowns, and gap accounting came from the engineering retrospective. Criterion classification, strategy assessment, adjusted plan, and measurable next milestone came from the learning retrospective. Lesson extraction, asset separation, pattern escalation, and anti-pattern plus gate discipline came from cycle memo, whose build and versioning machinery stays with the work owners. The explicit keep, iterate, or restart decision came from the cross run playbook, which likewise does not run cycles here. Rationale gap scanning, evidence search and trust order, Evidence and Status classification, conflict flagging, and the unknown discipline came from keep why; its topic file capture moved to compound under the keep why fold. The skill doctor decode the transcript plus evidence cited per turn discipline is carried by the shared evidence rules; its numeric scores and scratch HTML report were grading, not retrospective analysis, and were not carried.
+Retro is the only surviving retrospective entry point, with no aliases kept. Agent environment friction taxonomy, severity ranking, and evidence validation came from the agent environment retrospective. Period telemetry, source precedence, breakdowns, and gap accounting came from the engineering retrospective. Criterion classification, strategy assessment, adjusted plan, and measurable next milestone came from the learning retrospective. Lesson extraction, asset separation, pattern escalation, and anti-pattern plus gate discipline came from cycle memo, whose build and versioning machinery stays with the work owners. The explicit keep, iterate, or restart decision came from the cross run playbook, which likewise does not run cycles here. Rationale gap scanning, evidence search and trust order, Evidence and Status classification, conflict flagging, and the unknown discipline came from keep why; its topic file capture moved to compound under the keep why fold. The skill doctor decode the transcript plus evidence cited per turn discipline is carried by the shared evidence rules; its numeric scores were grading, not retrospective analysis, and were not carried; its per-skill verdicts live on as the skill verdict block of environment mode.
 
 Compound and autolearn keep the capture jobs, and compound additionally receives the keep why topic file capture. Retro recommends capture; it never writes those surfaces.
 
 ## What you hand back
 
-A report with the scope, sources consulted, sources unavailable, the routed mode's required sections, ranked recommendations, explicit gaps, and capture pointers naming the owning skill per pointer. File form goes to the user named path, or to `reports/retro-<mode>-<slug>.md` when a file was asked for without a path.
+A report with the scope, sources consulted, sources unavailable, the routed mode's required sections, ranked recommendations, explicit gaps, and capture pointers naming the owning skill per pointer. File form goes to the user named path, or to `reports/retro-<mode>-<slug>.md` when a file was asked for without a path, with the `.html` extension instead when the request asks for HTML.

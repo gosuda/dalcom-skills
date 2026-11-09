@@ -1,6 +1,6 @@
 ---
 name: review-fix-loop
-description: 'Use when review and repair must repeat to an evidenced end state, locally or across one or more GitHub PRs or GitLab MRs. Coordinates batches, topology, and convergence. Not for a single feedback batch, a review-only report, or merge-queue policy.'
+description: 'Use when review and repair must repeat to an evidenced end state, locally or across one or more GitHub PRs or GitLab MRs, or the user says resolve new review findings, fix failing CIs, or loop until green across all open PRs. Coordinates batches, topology, and convergence. Not for a single feedback batch, a review-only report, or merge-queue policy.'
 ---
 
 # Repeat review and repair until the evidence closes

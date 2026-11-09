@@ -1,6 +1,6 @@
 {
   "name": "dstack-rust",
-  "version": "2.1.14",
+  "version": "2.1.15",
   "description": "DStack workflows for Rust development: cargo, async, FFI, cross-compilation, debugging, and unsafe review.",
   "author": {
     "name": "gosuda",

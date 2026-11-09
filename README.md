@@ -29,10 +29,10 @@ Methodology: [dstack](https://github.com/gosuda/dstack)
 
 ## What is this
 
-304 skills in 22 plugins. A skill is authored once, at
+305 skills in 22 plugins. A skill is authored once, at
 `plugins/<plugin>/skills/<slug>/SKILL.md`, and that path is its only home. The directory states
 which plugin owns the skill, so no registry has to answer that question. Every plugin and
-marketplace ships at one `releaseVersion`, currently 2.1.14, held in `catalog/plugins.json`.
+marketplace ships at one `releaseVersion`, currently 2.1.15, held in `catalog/plugins.json`.
 
 Each harness resolves components from fixed conventions at the plugin root, so this layout is the
 one every supported client already discovers. Nothing is copied at publish time, and nothing is
@@ -191,12 +191,12 @@ Each name installs with the same command:
 /plugin install dstack-security@dstack
 ```
 
-The largest plugins are `dstack-core` at 83, `dstack-marketing` at 28, and `dstack-run` at 20.
+The largest plugins are `dstack-core` at 86, `dstack-marketing` at 28, and `dstack-run` at 20.
 Install one skill instead of a whole plugin with `gh skill install`, shown under Install above.
 
 ## Using the skills
 
-You install plugins once and invoke skills every day. Start with the [getting-started guide](docs/guides/getting-started.md) to run your first skill. Read [using the skills](docs/guides/using-skills.md) for the invocation mechanics. Browse [example workflows](docs/guides/workflows.md) for chains mined from real sessions.
+You install plugins once and invoke skills every day. Not sure which skill fits? Run `/dstack-core:ask-dalcom` followed by your situation; other harnesses spell it as the [using the skills](docs/guides/using-skills.md) table shows. Start with the [getting-started guide](docs/guides/getting-started.md) to run your first skill. Read [using the skills](docs/guides/using-skills.md) for the invocation mechanics. Browse [example workflows](docs/guides/workflows.md) for chains mined from real sessions.
 
 ## Plugins
 

@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-// Write every generated distribution surface. --check reports drift and exits 1
-// instead of writing, which is how the pre-commit hook runs it.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import {
@@ -34,7 +32,6 @@ for (const entry of catalog.entries) {
   );
 }
 
-// Only the plugin table is owned here; the surrounding prose is authored.
 wanted.set(
   "README.md",
   renderRootReadme(catalog, readFileSync(join(ROOT, "README.md"), "utf8")),

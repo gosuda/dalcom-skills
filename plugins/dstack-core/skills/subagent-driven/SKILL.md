@@ -1,6 +1,6 @@
 ---
 name: subagent-driven
-description: 'Use when a user says execute with subagents or hands over an ordered multi-task plan. Not for credential, paid, or deployment work, or any mutation outside the skill''s designated workspace.'
+description: 'Use when a user says execute with subagents or orchestrate, or hands over an ordered multi-task plan. Not for credential, paid, or deployment work, or any mutation outside the skill''s designated workspace.'
 ---
 
 # Subagent-driven development
@@ -32,6 +32,8 @@ Work tasks in order, one at a time:
 9. Gate on audit clean and verifier green, then mark the task complete. Critical or Important findings dispatch one fix worker with the complete findings list, followed by re-review. An audit that cannot clear aborts the chain rather than building on it. Never squash or force through.
 
 Requirements living in unchanged code or spanning tasks come back from reviewers as Cannot Verify from Diff items. Those never block: resolve each centrally before marking the task complete. A confirmed gap is a failed spec review. Return to the implementer, then re-review.
+
+Never mark a task complete, run the final review, or report while a dispatched worker has not returned its status, and never do a worker's task yourself while it runs. A worker that returns nothing because it died, hung, or was lost goes through the recovery section below and is relaunched once with a changed brief that names the work already done; a second failure marks the task BLOCKED and stops the chain.
 
 ## Close the branch and ship it whole
 

@@ -39,6 +39,8 @@ Then run `git remote`. If no remote named `origin` exists, do not push and do no
 
 ## Re-prove the destination, preview the exact push, and wait
 
+Before the preview, run `verification-before-completion` on the tree about to be pushed unless fresh verification evidence for that exact tree already exists in this session; a red result stops before any push and names the failure.
+
 Re-run `git config --get-all remote.origin.push` and `git remote get-url --all --push origin` plus the FETCH_URL match. Any custom refspec, unobservable URL, multiple push URLs, or fetch-push divergence means report and stop without pushing. The exact URL match lets the fetch-side tip stand for the push side, but still prove the tips agree. For an existing branch run `git ls-remote origin refs/heads/<current-branch>` and `git ls-remote "$PUSH_URL" refs/heads/<current-branch>`. Each must return one line with the same non-empty SHA, or report the divergence and stop without pushing.
 
 Refresh the tracking tip with `git fetch --no-tags origin refs/heads/<current-branch>:refs/remotes/origin/<current-branch>`. On failure report and stop without pushing. Re-resolve both tip SHAs after the fetch and require the same identical SHA. Any difference means report and stop without pushing. List `git log --oneline origin/<current-branch>..HEAD`. When the left count is non-zero the remote holds commits HEAD lacks, so name them in the preview, because the push will be rejected until they are integrated.

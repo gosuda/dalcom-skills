@@ -1,8 +1,4 @@
 #!/usr/bin/env node
-// Structural gate over the plugin tree. Byte drift is checked by
-// render-plugin-surfaces.mjs --check; this file holds the invariants that no
-// renderer can restate: retired surfaces stay dead, every plugin directory
-// matches the catalog, and no npm artifact comes back.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, loadCatalog, skillRows } from "./plugin-surfaces.mjs";
@@ -11,8 +7,6 @@ const catalog = loadCatalog();
 const errors = [];
 const ids = catalog.entries.map((entry) => entry.id);
 
-// Surfaces removed in earlier cutovers, plus the npm model retired with this one.
-// Each one regrew at least once from a generator that outlived its purpose.
 const RETIRED = [
   "catalog/packages.json",
   "catalog/provenance-rows.json",
@@ -41,7 +35,6 @@ const RETIRED = [
 for (const path of RETIRED)
   if (existsSync(join(ROOT, path))) errors.push(`retired surface present: ${path}`);
 
-// Every plugins/ directory is a catalog entry and every entry has a directory.
 const onDisk = readdirSync(join(ROOT, "plugins"), { withFileTypes: true })
   .filter((d) => d.isDirectory())
   .map((d) => d.name)
@@ -53,11 +46,6 @@ if (extra.length) errors.push(`plugin directories without a catalog entry: ${ext
 const tiered = ids.filter((id) => id.endsWith("-advanced"));
 if (tiered.length) errors.push(`plugin id names a tier, not a job: ${tiered.join(", ")}`);
 
-// A plugin with no skills installs nothing. Each harness dotdir manifest must
-// exist, parse, and carry the catalog name: Codex resolves the plugin namespace
-// from the dotdir list only (plugin_namespace_for_root_uri in
-// codex-rs/utils/plugins/src/plugin_namespace.rs) and never from a root file,
-// so diverged names load one plugin's components under another's namespace.
 const DOTDIRS = [
   ".claude-plugin",
   ".codex-plugin",
@@ -83,16 +71,10 @@ for (const entry of catalog.entries) {
         `${entry.id}: ${dotdir}/plugin.json name is ${manifests[dotdir].name}, catalog id is ${entry.id}`,
       );
   }
-  // The published Codex manifest schema is closed and rejects $schema, which the
-  // Rust deserializer would happily ignore.
   if (manifests[".codex-plugin"] && "$schema" in manifests[".codex-plugin"])
     errors.push(`${entry.id}: .codex-plugin/plugin.json must not declare $schema`);
-  // Kimi's default is a root SKILL.md fallback, not skills/, so the key is load-bearing.
   if (manifests[".kimi-plugin"] && !manifests[".kimi-plugin"].skills)
     errors.push(`${entry.id}: .kimi-plugin/plugin.json must declare skills`);
-  // Codex and Grok default to the dotted .mcp.json, so a plugin shipping the
-  // dotless mcp.json must override the default in both or its MCP silently
-  // stops loading.
   if (existsSync(join(ROOT, entry.directory, "mcp.json")))
     for (const dotdir of [".codex-plugin", ".grok-plugin"]) {
       const manifest = manifests[dotdir];
@@ -101,9 +83,6 @@ for (const entry of catalog.entries) {
           `${entry.id}: ${dotdir}/plugin.json must declare mcpServers "./mcp.json"`,
         );
     }
-  // Hermes reads the root plugin.yaml and imports __init__.py. A root plugin.json
-  // would be read as an Agent Plugins manifest by Codex and Cursor, which is the
-  // retired surface above, so Hermes stays on the native pair.
   for (const file of ["plugin.yaml", "__init__.py"])
     if (!existsSync(join(ROOT, entry.directory, file)))
       errors.push(`${entry.id}: missing Hermes ${file}`);
@@ -117,16 +96,12 @@ for (const entry of catalog.entries) {
     const skillDir = join(ROOT, entry.directory, "skills", slug);
     if (!existsSync(join(skillDir, "SKILL.md")))
       errors.push(`${entry.id}/${slug}: missing SKILL.md`);
-    // Immediate children only: a nested SKILL.md never loads.
     for (const child of readdirSync(skillDir, { withFileTypes: true }))
       if (child.isDirectory() && existsSync(join(skillDir, child.name, "SKILL.md")))
         errors.push(`${entry.id}/${slug}: nested SKILL.md at ${child.name}/ never loads`);
   }
 }
 
-// No registry source may reach outside the repository. Kimi's registry lives in
-// .kimi-plugin/, so its sources climb one directory up to reach plugins/ and
-// key their entries by id rather than name.
 for (const registry of [
   ".claude-plugin/marketplace.json",
   ".codex-plugin/marketplace.json",

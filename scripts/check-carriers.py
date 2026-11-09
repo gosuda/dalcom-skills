@@ -1,20 +1,4 @@
 #!/usr/bin/env python3
-"""Prove each external harness carrier holds the canonical shared doctrine.
-
-AGENTS.md fixes the rule this enforces: every harness-independent section must match
-`system-prompt-baseline.md` byte for byte, while each carrier keeps its own tool layer.
-So the four tool-surface sections may diverge in content and the rest may not.
-
-The claim is therefore bounded, and the gate prints its own bound. Content inside the
-four exempt sections is never compared, and `directives` is one of them, so doctrine
-written there is outside what a green run asserts. Whether the carriers should be allowed
-to hold rules the baseline does not is a live question rather than a settled one, tracked
-as an open gate; this gate refuses to imply an answer by staying silent about its scope.
-
-A style check cannot stand in for this. Running the voice gate over a carrier passes for
-any style-clean file, whatever doctrine it carries, which is the defect class this
-replaces.
-"""
 
 import re
 import sys
@@ -27,39 +11,16 @@ BASELINE = ROOT / "system-prompt-baseline.md"
 
 from carriers import CARRIERS
 
-# Sections carrying harness tool names, so their bodies are expected to differ.
-# AGENTS.md: "Preserve each carrier's harness-specific <code_tools> layer and tool
-# names. Codex shells out through rtk; omp and Claude Code provide native file tools."
-# Their bodies are ignored, but each must still be present: a carrier that drops one
-# has lost that doctrine entirely rather than adapted it.
 TOOL_LAYER = frozenset({"git", "directives", "code_tools", "thinking"})
 
-# Tags a carrier may repeat in order to prepend its own material ahead of the canonical
-# block. The omp carrier does exactly this: a persona overlay sits above the charter
-# <role> and declares that it overrules the cascade on identity conflict. For every
-# other shared tag, a repeat is how divergent doctrine would hide behind a matching
-# copy, so repeats are rejected.
 OVERLAY_TAGS = frozenset({"role"})
 
 
 def read_exact(path):
-    """Read a file without translating line endings.
-
-    `Path.read_text()` opens in universal-newlines mode, so a CRLF carrier compares
-    equal to an LF baseline and newline drift passes a contract that claims to be byte
-    for byte.
-    """
     return path.read_bytes().decode("utf-8")
 
 
 def blocks(text):
-    """Return ordered (tag, body, body_start, body_end) for whole-line tag blocks.
-
-    The match is anchored to a full line on purpose. An unanchored pattern starts on a
-    tag name mentioned in prose and swallows the neighbouring section, which reports
-    drift that is not there. Repeated tags are returned separately rather than
-    collapsed, because collapsing them hides a divergent copy behind a matching one.
-    """
     marks = [
         (m.group(1), m.group(0).startswith("</"), m.start(), m.end())
         for m in re.finditer(r"^</?(\w[\w-]*)>$", text, re.M)
@@ -75,12 +36,10 @@ def blocks(text):
 
 
 def sections(text):
-    """Return ordered (tag, body) for whole-line <tag> ... </tag> blocks."""
     return [(tag, body) for tag, body, _, _ in blocks(text)]
 
 
 def audit(baseline_text, carrier_text, label="carrier"):
-    """Return (shared_matched, failures) comparing one carrier to the baseline."""
     base = sections(baseline_text)
     base_tags = [t for t, _ in base]
     failures = []
@@ -107,10 +66,6 @@ def audit(baseline_text, carrier_text, label="carrier"):
         if not found:
             failures.append(f"{label}: section <{tag}> is absent")
         elif tag in OVERLAY_TAGS:
-            # The documented cascade puts the carrier's overlay above the canonical
-            # block, which stays last and stays byte-identical. Bound the shape rather
-            # than accept any matching copy: an altered extra block still steers
-            # behaviour, so only one overlay is allowed and it may not sit below.
             if found[-1] != canonical[tag]:
                 failures.append(f"{label}: the last <{tag}> block is not the canonical one")
             elif len(found) > 2:
@@ -118,10 +73,6 @@ def audit(baseline_text, carrier_text, label="carrier"):
             else:
                 matched += 1
         elif len(found) > 1:
-            # A repeated section is malformed whatever the copies contain. Even when
-            # they match today, the shape is one edit away from the divergent-duplicate
-            # case above, and a consumer has no rule for which copy wins. Only the
-            # overlay tags handled above may appear more than once.
             failures.append(f"{label}: section <{tag}> appears {len(found)} times")
         elif found[0] == canonical[tag]:
             matched += 1
@@ -148,9 +99,6 @@ def main():
             for line in failures:
                 print(f"check-carriers: {line}", file=sys.stderr)
             return 1
-        # The carriers live outside this repository, in the home directory of whoever
-        # runs the harness. A contributor who uses neither Codex nor omp has neither,
-        # and must not be blocked by their absence.
         print("check-carriers: no external carrier is installed here, nothing to compare")
         return 0
     for carrier in present:
@@ -169,13 +117,6 @@ def main():
 
 
 def self_test():
-    """Prove the audit catches each way a carrier can drift.
-
-    Every fixture is synthetic, so this runs identically on a machine with no carrier
-    installed. The live carriers are reported when present and never asserted, because
-    this runs as an unconditional hook and a contributor who uses neither harness must
-    not be blocked.
-    """
     baseline_text = read_exact(BASELINE)
     ordered = sections(baseline_text)
     canonical = dict(ordered)
@@ -192,7 +133,6 @@ def self_test():
     body = canonical[victim]
 
     def loader_preserves_crlf():
-        """Read a CRLF file through the real loader and prove it was not translated."""
         import tempfile
 
         with tempfile.TemporaryDirectory() as d:

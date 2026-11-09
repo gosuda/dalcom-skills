@@ -1,6 +1,6 @@
 ---
 name: parallel-launch
-description: 'Use when work splits into independent sub-tasks or cross-domain research. Not for durable scope ownership with per-scope review: use partition-scopes-to-subagents.'
+description: 'Use when work splits into independent sub-tasks or cross-domain research, or the user says orchestrate, fan out, or more parallel about independent work. Not for durable scope ownership with per-scope review: use partition-scopes-to-subagents.'
 ---
 
 # Parallel launch

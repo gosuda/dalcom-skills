@@ -30,6 +30,8 @@ Run `git remote` again. Without a remote named `origin`, report local-only with 
 
 ## Preview the exact push and wait for approval
 
+Before the preview, run `verification-before-completion` on the tree about to be pushed unless fresh verification evidence for that exact tree already exists in this session; a red result stops before any push and names the failure.
+
 Refresh the tracking tip with `git fetch --no-tags origin refs/heads/<default>:refs/remotes/origin/<default>`, stopping without pushing on failure. Prove the preview tip is the push tip: `git ls-remote origin refs/heads/<default>` and `git ls-remote "$PUSH_URL" refs/heads/<default>` must each return one line with the same non-empty SHA. Missing, failed, or disagreeing output means divergence or an unobservable destination, so report and stop without pushing. The earlier URL match plus this SHA check proves the same repository state, not just the same branch name.
 
 List the full set with `git log --oneline origin/<default>..HEAD`. A non-zero left count means the remote holds commits HEAD lacks. Name them in the preview, because the push will be rejected until they are integrated. Show the target, the matched URLs, the matched tip SHA, and the commit list, then wait for the human to approve the exact mutation set (platform blocking question tool, chat fallback). Silence or refusal stops with nothing pushed. On approval, re-resolve both tip SHAs and require the same identical SHA. Any difference gets a fresh preview and another wait.

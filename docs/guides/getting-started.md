@@ -37,12 +37,12 @@ List your installed plugins. On Claude Code the command is `claude plugin list`,
 Type a skill invocation with a request after it:
 
 ```text
-/dstack-core:necessary-work Is this change really needed, or is the task already done?
+/dstack-core:ask-dalcom I want to add a feature to this repository. Where do I start?
 ```
 
-That is the Claude Code spelling; in Codex type `$necessary-work` and the same request.
+That is the Claude Code spelling; in Codex type `$ask-dalcom` and the same request.
 
-`necessary-work` asks whether the work stays inside the ask, so it fits a first run: you read the answer and judge it at once.
+`ask-dalcom` maps your situation to the skills that fit it, the order to run them in, and what to have ready, so it is the right first run when you do not know which skill to use. It recommends a route and runs none of it.
 
 What happened: the skill's instructions were prepended to your request, and the model answered both together. That is all an invocation does.
 

@@ -178,8 +178,11 @@ Reviewed source paths:
   skills/engineering/codebase-design/DESIGN-IT-TWICE.md
   skills/engineering/improve-codebase-architecture/SKILL.md
   skills/engineering/improve-codebase-architecture/HTML-REPORT.md
+  skills/engineering/ask-matt/SKILL.md
+  skills/engineering/ask-matt/PHASE-BOUNDARIES.md
 Local adaptation:
   architect — current-source incorporation of portable deepening and YAGNI-scoped survey behavior (`plugins/dstack-core/skills/architect/SKILL.md`)
+  ask-dalcom: router shape adapted from ask-matt (a main flow with on-ramps, stances, and a phase-boundary choice of continue, delegate, or hand off) over dstack skills; no upstream sentence copied (`plugins/dstack-core/skills/ask-dalcom/SKILL.md`)
 ODIN-authored (not Pocock): plans-complete — new completion/readiness owner grounded in settled ODIN plan + four PlanCompletion reviews; current Matt source has no plan-complete path. resolve-merge-conflicts retained as historical provenance only; current revision removed it.
 
 mblode/agent-skills

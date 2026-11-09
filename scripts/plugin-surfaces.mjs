@@ -1,24 +1,3 @@
-// Render every distribution surface from the one identity ledger, catalog/plugins.json.
-//
-// Five harness surfaces, five root registries, five per-plugin manifests:
-//
-//   Claude Code   .claude-plugin/marketplace.json + plugins/<id>/.claude-plugin/plugin.json
-//   Codex         .codex-plugin/marketplace.json  + plugins/<id>/.codex-plugin/plugin.json
-//   Cursor        .cursor-plugin/marketplace.json + plugins/<id>/.cursor-plugin/plugin.json
-//   Grok          .grok-plugin/marketplace.json   + plugins/<id>/.grok-plugin/plugin.json
-//   Kimi          .kimi-plugin/marketplace.json   + plugins/<id>/.kimi-plugin/plugin.json
-//   Hermes        plugins/<id>/plugin.yaml + plugins/<id>/__init__.py, installed per plugin
-//                 with `hermes plugins install <repo>/plugins/<id>`; no registry file
-//
-// Each harness resolves component locations by its own conventions, so a dotdir
-// manifest declares only what those defaults do not already resolve: Kimi needs
-// `skills` (its default is a root SKILL.md fallback), and Codex and Grok need
-// `mcpServers` where the default filename is the dotted .mcp.json. Codex reads
-// .claude-plugin/marketplace.json today — MARKETPLACE_MANIFEST_RELATIVE_PATHS in
-// codex-rs/core-plugins/src/marketplace.rs has no .codex-plugin/ entry — so the
-// Codex registry here is forward-compat and inert today.
-//
-// Every source is a repository-relative path: nothing is published to a package registry.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -43,9 +22,6 @@ export function loadCatalog(root = ROOT) {
     seen.add(entry.id);
     if (entry.directory !== `plugins/${entry.id}`)
       throw new Error(`${entry.id}: directory must be plugins/${entry.id}`);
-    // Intersection of the four harness name grammars (Codex, Cursor, Grok, Kimi):
-    // 1-64 chars, lowercase alnum plus hyphens, alphanumeric at both ends, no
-    // consecutive '--'. Periods are excluded because Grok and Kimi reject them.
     if (
       !/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(entry.id) ||
       entry.id.length > 64 ||
@@ -63,14 +39,6 @@ const author = (catalog) => ({
 
 const hasMcp = (entry) => existsSync(join(ROOT, entry.directory, "mcp.json"));
 
-// Claude Code plugin manifest. `skills` defaults to skills/, so it stays unset;
-// mcpServers and outputStyles point at the shared root files where they exist.
-//
-// Every harness dotdir manifest carries the SAME `name` as this one: Codex
-// resolves the plugin namespace from the dotdir list only
-// (plugin_namespace_for_root_uri in codex-rs/utils/plugins/src/plugin_namespace.rs)
-// and never from a root file, so diverged names load one plugin's components
-// under another's namespace. check-plugin-surfaces asserts the parity.
 export function renderClaudePluginManifest(catalog, entry) {
   const manifest = {
     $schema: CLAUDE_PLUGIN_SCHEMA,
@@ -90,12 +58,6 @@ export function renderClaudePluginManifest(catalog, entry) {
   return manifest;
 }
 
-// Codex plugin manifest, Legacy format (RawPluginManifest in
-// codex-rs/core-plugins/src/manifest.rs). No $schema: the published schemastore
-// schema is closed and rejects the key, while the Rust deserializer ignores it.
-// `skills` stays unset because Codex defaults to ./skills; `mcpServers` must be
-// explicit because the Legacy default is the dotted .mcp.json, and
-// resolve_manifest_path drops any value without the leading ./.
 export function renderCodexPluginManifest(catalog, entry) {
   const manifest = {
     name: entry.id,
@@ -113,8 +75,6 @@ export function renderCodexPluginManifest(catalog, entry) {
   return manifest;
 }
 
-// Cursor plugin manifest: identity only. Cursor discovers skills under skills/
-// and MCP at the dotless mcp.json by its own defaults, so nothing else is declared.
 export function renderCursorPluginManifest(catalog, entry) {
   return {
     name: entry.id,
@@ -129,9 +89,6 @@ export function renderCursorPluginManifest(catalog, entry) {
   };
 }
 
-// Grok plugin manifest. `skills` stays unset (Grok defaults to skills/);
-// `mcpServers` is explicit for the same reason as Codex: Grok's default filename
-// is the dotted .mcp.json.
 export function renderGrokPluginManifest(catalog, entry) {
   const manifest = {
     name: entry.id,
@@ -147,11 +104,6 @@ export function renderGrokPluginManifest(catalog, entry) {
   return manifest;
 }
 
-// Kimi plugin manifest. `skills` is mandatory: without it Kimi falls back to a
-// root SKILL.md and loads zero skills from skills/. `mcpServers` is an inline
-// server map rather than a path, so the shared mcp.json is read and inlined
-// verbatim; Kimi's schema strips the non-standard alwaysLoad key instead of
-// erroring. author carries name only: Kimi's readAuthor accepts no url field.
 export function renderKimiPluginManifest(catalog, entry) {
   const manifest = {
     name: entry.id,
@@ -174,10 +126,6 @@ export function renderKimiPluginManifest(catalog, entry) {
   return manifest;
 }
 
-// Hermes native plugin manifest. Hermes skips the harness dotdirs and reads a
-// root plugin.yaml; a root Agent Plugins plugin.json would instead flip Codex and
-// Cursor into the retired portable format, so the native pair is used. Every
-// scalar is a JSON string, which YAML reads as a double-quoted scalar.
 export function renderHermesPluginManifest(catalog, entry) {
   const q = (value) => JSON.stringify(value);
   return [
@@ -193,11 +141,6 @@ export function renderHermesPluginManifest(catalog, entry) {
   ].join("\n");
 }
 
-// Hermes entry point, identical in every plugin. register() hands each
-// skills/<slug>/SKILL.md to ctx.register_skill, which namespaces it as
-// <plugin>:<slug>. The description is read from the frontmatter with the same
-// closed scalar grammar check-skill-frontmatter enforces, so the skill index
-// carries the routing trigger without importing Hermes internals.
 export const HERMES_PLUGIN_ENTRY = `import json
 from pathlib import Path
 
@@ -246,18 +189,11 @@ export function renderClaudeMarketplace(catalog) {
       license: catalog.license,
       keywords: entry.tags,
       category: entry.category,
-      // Codex parses this registry too (its entry parser is path-agnostic) and
-      // would otherwise default authentication to ON_INSTALL; this holds ON_USE.
       policy: { installation: "AVAILABLE", authentication: "ON_USE" },
     })),
   };
 }
 
-// Codex marketplace. Codex's own candidate list (MARKETPLACE_MANIFEST_RELATIVE_PATHS
-// in codex-rs/core-plugins/src/marketplace.rs) reads .claude-plugin/marketplace.json
-// from this tree and holds no .codex-plugin/ entry, so this file is forward-compat
-// and inert today. `source.path` resolves against the marketplace root, so it
-// starts with ./ and stays inside the repository.
 export function renderCodexMarketplace(catalog) {
   return {
     name: catalog.marketplace_name,
@@ -293,10 +229,6 @@ export function renderCursorMarketplace(catalog) {
   };
 }
 
-// Grok marketplace. The local source discriminator is `type`, the documented
-// spelling (Codex uses `source` for the same role). `path` resolves against the
-// marketplace root and rejects `..` and absolute paths. owner carries name only:
-// Grok's IndexOwner has no url field.
 export function renderGrokMarketplace(catalog) {
   return {
     name: catalog.marketplace_name,
@@ -314,11 +246,6 @@ export function renderGrokMarketplace(catalog) {
   };
 }
 
-// Kimi marketplace, consumed from a local clone:
-//   /plugins marketplace <clone>/.kimi-plugin/marketplace.json
-// Kimi resolves a relative source against the registry's own directory, so the
-// source climbs one level out of .kimi-plugin/ to reach plugins/. Kimi cannot
-// install a GitHub repository subdirectory, so its lane is the local clone.
 export function renderKimiMarketplace(catalog) {
   return {
     version: "2",
@@ -333,7 +260,6 @@ export function renderKimiMarketplace(catalog) {
   };
 }
 
-// Parse a single-line YAML scalar following "key:".
 export function parseScalar(raw) {
   const s = raw.trim();
   if (s.startsWith("'")) {
@@ -362,18 +288,15 @@ export function parseFrontmatter(text) {
   return out;
 }
 
-// First sentence: text up to the first period followed by whitespace, else the whole value.
 export function firstSentence(desc) {
   const m = /(.+?\.)\s/.exec(desc);
   return m ? m[1] : desc;
 }
 
-// Escape a Markdown table cell: a bare | or a newline in a trigger splits the row.
 export function tableCell(text) {
   return text.replace(/\\/g, "\\\\").replace(/\|/g, "\\|").replace(/\s*\n\s*/g, " ").trim();
 }
 
-// The trigger a human or a model routes on: the description's first sentence.
 export function skillTrigger(entry, slug) {
   const path = join(ROOT, entry.directory, "skills", slug, "SKILL.md");
   const front = parseFrontmatter(readFileSync(path, "utf8"));
@@ -389,8 +312,6 @@ export function skillRows(entry) {
     .sort();
 }
 
-// The owner/repo slug used by `gh skill install`, derived from the catalog's
-// repository URL rather than a second literal that can drift.
 const repoSlug = (catalog) =>
   catalog.repository.replace(/^https:\/\/github\.com\//, "");
 
@@ -446,10 +367,6 @@ export function renderPluginReadme(catalog, entry, skills) {
   return lines.join("\n");
 }
 
-// The root README states each plugin's category, and a hand-kept copy of the ledger drifts:
-// flipping a category in catalog/plugins.json used to leave the table stale with every gate
-// green. Only the table is generated. The prose around it is authored, so this returns the
-// current file with one region replaced rather than a whole rendered README.
 const ROOT_README_TABLE = /(^## Plugins\n\n)(?:\|[^\n]*\n)+/m;
 
 export function renderRootReadme(catalog, current) {

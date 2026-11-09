@@ -40,6 +40,8 @@ Point the skill at the material and state the job in the same line.
 
 ## Choose between overlapping skills
 
+When you cannot tell which skill fits at all, ask `ask-dalcom` with your situation: it names one route, what to have ready, and when you are done.
+
 Most descriptions end with a `Not for ...` clause that names the narrower skill. Read it and reach for the narrower one.
 
 `todos-update` resyncs a task list that drifted from the tree. `todos-enhance` sharpens tasks that read as vague headings. Each names the other as out of scope, so a stale list calls for the first and a coarse list calls for the second.

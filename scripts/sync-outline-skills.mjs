@@ -1,22 +1,4 @@
 #!/usr/bin/env node
-// Mirror the plugin skill tree into a flat Devin skill tree in the outline repository.
-//
-// Four decisions, each with a rejected alternative:
-//
-// - The mirror carries exactly the files git tracks under a skill directory. A recursive
-//   filesystem copy would carry ignored local artifacts: plugins/.gitignore excludes **/evals/,
-//   **/iteration-*/, evals.json, *-workspace/, and __pycache__/, and at least one such directory
-//   exists in the tree today. Re-encoding those patterns here would be a second model of the
-//   ignore rules, so git ls-files answers instead.
-// - Every tracked file under the skill directory is mirrored, including the generated
-//   agents/openai.yaml that Devin does not read. The rejected alternative was excluding that one
-//   path: an exclusion list is what drifts when a second per-host manifest appears, and the
-//   mirror's contract is that a skill directory is byte-identical to its source.
-// - The mirror prunes. A slug retired upstream must not keep answering /slug in Devin, so
-//   anything under .devin/skills/ that the plugin tree no longer carries is deleted. Deletion is
-//   confined to that prefix and every deleted file is generated, so git restore in the outline
-//   repository recovers any file already committed there and a resync recovers the rest.
-// - The target is validated before any write, because the run prunes.
 import { execFileSync } from "node:child_process";
 import {
   chmodSync,
@@ -74,7 +56,6 @@ if (!existsSync(join(target, "manifest.json")) || !existsSync(join(target, ".git
 
 const catalog = loadCatalog();
 
-// Map repository-relative path to the git mode string (100644 or 100755).
 const tracked = new Map();
 const out = execFileSync("git", ["ls-files", "-sz", "--", "plugins"], {
   cwd: ROOT,
@@ -90,8 +71,8 @@ for (const rec of out.split("\0")) {
 
 const wanted = new Map();
 const errors = [];
-const owner = new Map(); // slug -> plugin id, for the collision guard and the index
-const counts = new Map(); // slug -> number of mirrored files
+const owner = new Map();
+const counts = new Map();
 
 for (const entry of catalog.entries) {
   for (const slug of skillRows(entry)) {
@@ -126,8 +107,6 @@ for (const entry of catalog.entries) {
   }
 }
 
-// Generated root files sit beside the slug directories, where Agent Skills discovery ignores
-// plain files.
 const licenseText = readFileSync(join(ROOT, "LICENSE"), "utf8");
 const noticeText = readFileSync(join(ROOT, "licenses/NOTICE"), "utf8");
 const skillCount = owner.size;
@@ -224,7 +203,6 @@ for (const [relative, spec] of wanted) {
   written += 1;
 }
 
-// Prune: collect every file under .devin/skills that is not in the wanted map.
 if (existsSync(destRoot)) {
   function walk(dir) {
     const entries = readdirSync(dir, { withFileTypes: true });
@@ -250,7 +228,6 @@ if (existsSync(destRoot)) {
   walk(destRoot);
 }
 
-// Remove now-empty directories, keeping the DEST root itself.
 if (!check && existsSync(destRoot)) {
   function removeEmpty(dir) {
     const entries = readdirSync(dir, { withFileTypes: true });

@@ -18,6 +18,7 @@ Shared rules first, then the five distinct evidence paths.
 - Friction types: tool-failure, slow-retry, missing-context, state-loss, navigation-overhead, unclear-feedback.
 - No artifact supplied: report "No session artifact supplied." and stop.
 - No friction observed: report "No environment friction detected." with zero candidates. Do not fabricate candidates.
+- Skill check: add one skill verdict row per skill the session invoked (runs, keep, fix, or unclear, evidence). Count runs from skill invocations in the transcript, never from the agent's own report.
 
 ## engineering
 

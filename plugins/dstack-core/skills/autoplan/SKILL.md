@@ -9,11 +9,11 @@ An idea or plan goes in; an amended plan and an appended task ledger come out, p
 
 ## What goes in
 
-The one required input is a plan or idea to develop, supplied as a file path or inline text. A file path is read; inline text is used directly. With no plan or idea supplied, stop before any write and report that. An existing `tasks/autoplan-ledger.jsonl` may ride along to extend. When absent, it gets created.
+The one required input is a plan or idea to develop, supplied as a file path or inline text. A file path is read; inline text is used directly. With no plan or idea supplied, stop before any write and report that. An existing ledger may ride along to extend; when none exists, one is created at the resolved path.
 
 ## The ledger and task naming
 
-`tasks/autoplan-ledger.jsonl` carries the task list. Create it when missing. Otherwise append new tasks to the end, never overwriting or truncating existing entries. Each run appends only the tasks it produces.
+The ledger file carries the task list. Resolve its path once per run and use the first rule that applies: a path the invocation names; a directory for plans, tasks, or working documents that the project instruction file (`AGENTS.md` or `CLAUDE.md`) names, holding `autoplan-ledger.jsonl`; an existing `autoplan-ledger.jsonl` anywhere in the repository; otherwise `tasks/autoplan-ledger.jsonl`. State the resolved path at the approval gate. Create the file when missing. Otherwise append new tasks to the end, never overwriting or truncating existing entries. Each run appends only the tasks it produces.
 
 Internally, preserve existing stored ledger `id`, `description`, and `phase` fields and values, and never migrate user records. Each ledger line is a JSON object with `id`, `description`, and `phase` keys. For internal sequencing and tracking, each task ID joins its reviewing phase prefix (`CEO`, `DES`, `DX`, `ENG`) to a zero-padded sequence number within that phase:
 

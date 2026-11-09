@@ -1,6 +1,6 @@
 ---
 name: grill-core
-description: 'Use when the cause is unknown, the fault recurs as a class, or a review comment needs a root-design repair rather than a patch. Survey the subsystem and remove the fault class. Not for implementing a known defect, greenfield features, or publishing.'
+description: 'Use when the cause is unknown, including a pasted traceback or compiler error nobody can explain yet, the fault recurs as a class, or a review comment needs a root-design repair rather than a patch. Survey the subsystem and remove the fault class. Not for implementing a known defect, greenfield features, or publishing.'
 ---
 
 # Grill core
@@ -11,7 +11,7 @@ You work locally only. No commits, no pushes, no remote mutations, no thread sta
 
 ## What you start with
 
-- The failing symptom, test, command, or review finding. Required.
+- The failing symptom, test, command, or review finding, or a findings batch from one review or verifier run. Required.
 - The project check command that defines passing. Required, or discovered in the repo.
 - Full review history for the affected surface: prior review comments, fix attempts, and reverted patches gathered from the repo and version control before any mutation.
 - The named local artifacts in scope, stated before any edit.
@@ -124,6 +124,14 @@ unrun cases:
 prompt/input diff:
 terminal status:
 ```
+
+### Findings batch: several findings from one review or verifier run
+
+1. Judge every finding against the current code as valid, invalid, or tradeoff, with one line of evidence. Decline invalid findings; never fix them.
+2. Group the valid findings by shared root cause: findings whose fixes all follow from correcting one wrong assumption or missing invariant form one group. A finding that shares no cause with another is a group of one.
+3. Run the full procedure above (reproduce, name the core fault, repair at the root, pin it) once per group of two or more, and once per single finding whose cause is unknown.
+4. A single finding with a known, local cause, such as a wrong sentence, a wrong constant, or a missing check at one call site, gets a direct fix plus a regression test where behavior changed. Prose and documentation fixes need no test.
+5. Return one verdict per finding, the groups with their root cause lines, and the list of changed files, so the caller can re-review exactly those files.
 
 ## Pin it and prove it
 
