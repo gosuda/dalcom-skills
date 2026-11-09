@@ -9,7 +9,7 @@ Pin what is stable and supported today, with dated evidence a later reader can c
 
 ## Assemble the grounding set
 
-List every choice the change pins before grounding any of them: language edition, runtime, each framework and dependency, build and test tooling, and the platform baseline. Nothing is grounded until this list is complete.
+List every choice the change pins before grounding any of them: language edition, runtime, each framework and dependency, build and test tooling, and the platform baseline. Nothing is grounded until this list is complete. A request that names no change or choice to ground gets one question asking which, and nothing is looked up before the answer.
 
 Also collect the existing constraints: repo pins and version floors where they exist. A floor is a minimum compatibility constraint, never a frozen choice. An existing exact pin is a recorded default that can be raised, never a silent freeze.
 

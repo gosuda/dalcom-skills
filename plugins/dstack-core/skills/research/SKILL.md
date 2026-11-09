@@ -7,7 +7,7 @@ description: 'Use when researching a named library, framework, SDK, API, or serv
 
 Answer a question about a named external library, framework, SDK, API, CLI, or service with a cited artifact written to disk. Codebase-internal questions do not belong here; hand those to a scout subagent. This job never mutates anything remote and never takes a paid action. Its product is one Markdown file, and returning without writing it fails the run.
 
-To start you need the subject, pulled as a canonical name from the request, plus an optional pinned version such as `pydantic@2.7`. Without a stated version, record "latest stable" and resolve it from official docs. The artifact lands under a preferred target path when given, otherwise under `docs/research/` when that directory exists and `.outline/research/` when it does not, filed under a slug of the subject name.
+To start you need the subject, pulled as a canonical name from the request, plus an optional pinned version such as `pydantic@2.7`. Without a stated version, record "latest stable" and resolve it from official docs. The artifact lands under a preferred target path when given, otherwise under `docs/research/` when that directory exists and `.outline/research/` when it does not, filed under a slug of the subject name. If the request names no subject, ask for one in one line and stop; never pick a subject from context.
 
 ## Send one worker that owns the artifact
 
