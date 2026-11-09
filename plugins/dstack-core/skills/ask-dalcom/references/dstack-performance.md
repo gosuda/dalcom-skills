@@ -5,4 +5,4 @@ DStack workflows for measured performance: hardware kernels, profilers, byte bud
 ## Routes
 
 - One named path and one measured fix: `/skill:optimize`; a whole subsystem driven to a measured floor: `/skill:optimize-extremely`.
-- No benchmark yet: `/skill:fastopt` for suspected hot paths, `/skill:fastopt-extreme` to estimate and propose complexity-neutral cuts. Tools: `/skill:heaptrack`, `/skill:simd-intrinsics`, `/skill:cpu-kernel-authoring` (user only), `/skill:decoded-memo-retention`.
+- No benchmark yet: `/skill:fastopt` turns suspected hot paths into hypotheses and benchmark designs without changing code, and `/skill:fastopt-extreme` estimates and proposes complexity-neutral cuts. Tools: `/skill:heaptrack`, `/skill:simd-intrinsics`, `/skill:cpu-kernel-authoring` (user only), `/skill:decoded-memo-retention`.

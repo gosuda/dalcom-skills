@@ -23,6 +23,7 @@ You are done when the outcome and its proof are written down before anything is 
 - Binding environmental limits or authoritative policies that constrain the outcome.
 - Existing measurements only. Do not take new measurements unless the delete test proves one is necessary.
 - Where the request is ambiguous and the inputs cannot resolve it, take the smallest interpretation consistent with the stated intent and record that choice openly.
+- A later user message that repeats the request with a wider target or more scope replaces the contract. Restate the outcome and the minimum proof for the new target, then classify again.
 
 ## Paring the work down
 

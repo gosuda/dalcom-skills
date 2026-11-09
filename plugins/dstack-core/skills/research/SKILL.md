@@ -7,11 +7,11 @@ description: 'Use when researching a named library, framework, SDK, API, or serv
 
 Answer a question about a named external library, framework, SDK, API, CLI, or service with a cited artifact written to disk. Codebase-internal questions do not belong here; hand those to a scout subagent. This job never mutates anything remote and never takes a paid action. Its product is one Markdown file, and returning without writing it fails the run.
 
-To start you need the subject, pulled as a canonical name from the request, plus an optional pinned version such as `pydantic@2.7`. Without a stated version, record "latest stable" and resolve it from official docs. The artifact lands under a preferred target path when given, otherwise under `docs/research/` when that directory exists and `.outline/research/` when it does not, filed under a slug of the subject name.
+To start you need the subject, pulled as a canonical name from the request, plus an optional pinned version such as `pydantic@2.7`. Without a stated version, record "latest stable" and resolve it from official docs. The artifact lands under a preferred target path when given, otherwise under `docs/research/` when that directory exists and `.outline/research/` when it does not, filed under a slug of the subject name. If the request names no subject, ask for one in one line and stop; never pick a subject from context.
 
 ## Send one worker that owns the artifact
 
-Dispatch a background subagent through `task` with self-contained instructions covering subject, version, source-ladder requirements, and target path. That worker owns completion: it climbs the ladder, cites its claims, and writes the file. You record the outcome as artifact-on-disk or as `BLOCKED` with a named failure class. A partially successful run still returns the artifact path with its specific gaps listed.
+Dispatch a background subagent through `task` with self-contained instructions covering subject, version, source-ladder requirements, and target path. That worker owns completion: it climbs the ladder, cites its claims, and writes the file. You record the outcome as artifact-on-disk or as `BLOCKED` with a named failure class. A partially successful run still returns the artifact path with its specific gaps listed. A request that names several subjects gets one worker for the first and a list of the rest for the user to confirm; one invocation never dispatches a worker per subject.
 
 ## Climb the source ladder in order
 
@@ -29,7 +29,7 @@ The ladder is done when every tier is probed, or (in primary-source-only mode) w
 
 ## Cite every claim honestly
 
-Every factual claim carries at least one source URL or doc path. Anything drawn solely from training data carries the label `[Speculative — training data only]`. For each load-bearing claim, test both stances against external sources (the surprising case that it holds, the settled case that it fails) and record both results; where no authoritative source is reachable, label the claim unverified and assert nothing from intuition.
+Every factual claim carries at least one source URL or doc path. Anything drawn solely from training data carries the label `[Speculative — training data only]`. For each load-bearing claim, test both stances against external sources (the surprising case that it holds, the settled case that it fails) and record both results; where no authoritative source is reachable, label the claim unverified and assert nothing from intuition. A tier sets the ceiling for a label, not the label itself: a claim reads Verified only when the worker opened the cited page in this run and quotes the supporting line.
 
 ## When only primary sources count
 
@@ -44,4 +44,4 @@ Name what happened and stop rather than pretending the artifact is complete:
 - `task-dispatch-failed`: the subagent never started or returned nothing.
 - No writable outcome at all: return `BLOCKED: <failure class>` with the specific reason.
 
-The finished file holds the subject id, the claims each with citations and confidence labels (Verified for Tiers 1 and 2, Probable for Tiers 3 and 4, Unverified for Tier 5, Speculative for training data only), and the open questions with attempted tiers, in that order.
+The finished file holds the subject id, the claims each with citations and confidence labels (Verified for Tiers 1 and 2 only when opened and quoted in this run, otherwise Probable; Probable for Tiers 3 and 4; Unverified for Tier 5; Speculative for training data only), and the open questions with attempted tiers, in that order.

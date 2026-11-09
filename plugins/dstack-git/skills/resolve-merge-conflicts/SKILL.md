@@ -13,7 +13,7 @@ Everything here is reversible and local: editing conflicted files, staging resol
 
 ## Start from the conflict stop, not from a guess
 
-Run `git status` first. Name which integration is actually in progress and list every unmerged path; `git status` together with `git diff --name-only --diff-filter=U` is authoritative for that list. If there are zero unmerged paths, the reason you were called does not hold, so stop.
+Run `git status` first. Name which integration is actually in progress and list every unmerged path; `git status` together with `git diff --name-only --diff-filter=U` is authoritative for that list. If there are zero unmerged paths, the reason you were called does not hold, so stop. When the branch is only behind its base, report the behind count and name the fetch and integrate command for the user to approve.
 
 When asked to find conflict stops across worktrees, enumerate the registered worktrees from structured porcelain records, resolve each exact gitdir relative to its own workspace, and record the operation markers, unmerged entries, and read errors per workspace. Never parse a commit OID as a path. A complete scan with zero stops ends the run with trigger-not-met plus the enumerated coverage; an unreadable workspace is unknown, never clear. Report a live worker's integration without taking it over, and treat newly created workspaces as invalidating the earlier coverage set.
 

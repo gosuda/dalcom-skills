@@ -49,7 +49,7 @@ Each row states when to reach for the skill. Invoke one as `/dstack-git:<name>` 
 | propose-issue | Use when the user asks to propose an issue, file or open a bug report, or turn a reported defect into a tracked issue. |
 | resolve-merge-conflicts | Use when a merge, rebase, cherry-pick, or stash pop stops on conflicts. |
 | triage | Use when issues or external pull requests must move through a category and state machine with verification, grilling, and agent-ready briefs. |
-| watch-and-repair-pr | Use when a human explicitly invokes a watcher cycle for an open pull request or merge request that must move toward mergeable or blocked. |
+| watch-and-repair-pr | Use when a human or autowatch explicitly invokes one watcher cycle for an open pull request or merge request that must move toward mergeable or blocked. |
 | worktree | Use when work needs an isolated git worktree: new work, an existing ref, a gated feature workspace, a manifest-tracked loop run, or a candidate patch captured without touching the current checkout. |
 
 ## Workflows

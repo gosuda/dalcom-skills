@@ -11,20 +11,20 @@ Saying "execute with subagents" or handing over an ordered multi-task plan invok
 
 ## What the plan must give you
 
-The plan file defines task boundaries, file scopes, and done criteria. Model selection for each dispatch is required. An omitted model silently inherits the session most expensive model and defeats cost control, so always set one explicitly. Fresh subagents see only what gets put in front of them: the task brief path, relevant context from earlier tasks, and every decision or interface the implementer must respect.
+The plan file defines task boundaries, file scopes, and done criteria. Select a model or agent tier for each dispatch. Pass the model argument when the dispatch tool accepts one for that agent. When the tool rejects a per-call model, select the agent tier instead and record the choice in the ledger. An omitted model inherits the session model, which is usually the most expensive, so set one explicitly. Fresh subagents see only what gets put in front of them: the task brief path, relevant context from earlier tasks, and every decision or interface the implementer must respect.
 
 Before execution, scan the plan for self-conflicts (tasks contradicting each other, Global Constraints, or plan-mandated defects). Batch every finding into one user question. A clean scan proceeds silently.
 
-Check the recovery ledger before starting: `cat "$(git rev-parse --show-toplevel)/.outline/sdd/progress.md"`. Tasks marked complete there are done. Resume at the first incomplete task. When the ledger is missing, reconstruct it from `git log` using the plan task order and the timestamps of commits matching each task concern.
+Check the recovery ledger before starting: `cat "$(git rev-parse --show-toplevel)/.outline/sdd/progress.md"`. Tasks marked complete there are done. Resume at the first incomplete task. When the ledger is missing, reconstruct it from `git log` using the plan task order and the timestamps of commits matching each task concern. If no task commit exists yet, create the ledger with every task incomplete before the first dispatch.
 
 ## Run each task through implement, review, and gate
 
 Work tasks in order, one at a time:
 
 1. Split the task into one-concern work with explicit file boundaries. Two tasks editing the same file are not independent. Sequence or merge them.
-2. Run `scripts/task-brief PLAN_FILE N`. It extracts the full task text to a uniquely named file and prints the path. That brief is the single source of requirements.
+2. Run `scripts/task-brief PLAN_FILE N`. It extracts the full task text to a uniquely named file and prints the path. That brief is the single source of requirements. The plan must head each task `Task N`: the script matches only that heading form and exits 3 for any other, so write the brief by hand for a plan with other headings.
 3. Record the BASE commit (current HEAD) before dispatching.
-4. Dispatch one fresh implementer with `references/implementer-prompt.md` filled in. Fresh means no carried context and no resumed worker. Always name the model.
+4. Dispatch one fresh implementer with `references/implementer-prompt.md` filled in. Fresh means no carried context and no resumed worker. Name the model or tier, as the section above requires.
 5. The implementer works, verifies, commits one concern, self-reviews, writes a full report to the report file, and returns a short status: DONE, DONE_WITH_CONCERNS, NEEDS_CONTEXT, or BLOCKED.
 6. Resolve the status before moving on. Missing context gets supplied and the task re-dispatches. Reasoning problems re-dispatch on a more capable model. Oversized tasks split first. Plan errors escalate to the user. A worker saying it is stuck always triggers a change of some kind before retry. Never retry unchanged.
 7. Run `scripts/review-package BASE HEAD`. It writes one file (commit list, stat summary, full diff with context) and prints the path. Use the recorded BASE, never HEAD~1.
@@ -35,16 +35,18 @@ Requirements living in unchanged code or spanning tasks come back from reviewers
 
 Never mark a task complete, run the final review, or report while a dispatched worker has not returned its status, and never do a worker's task yourself while it runs. A worker that returns nothing because it died, hung, or was lost goes through the recovery section below and is relaunched once with a changed brief that names the work already done; a second failure marks the task BLOCKED and stops the chain.
 
+A bare follow-up such as 'continue', 'orchestrate', or 'orchestrate more' resumes this run from the todo list or ledger and dispatches the next ready wave, and a finished wave is never a stopping condition. If a wait call aborts, check the worker's report file and its commits, never its agent handle, then resume from them. When a provider limit ends the run, write the resume state to the ledger and report the restart command.
+
 ## Close the branch and ship it whole
 
 After every task lands, run `scripts/review-package MERGE_BASE HEAD` with MERGE_BASE from `git merge-base main HEAD`. Dispatch the final reviewer on the most capable model, pointed at the Minor findings the ledger accumulated. Its findings dispatch one fix worker with the complete list, then re-review.
 
-Ship through the atomic path: sort work into atomic commits in detached HEAD, then publish with git-branchless `submit`.
+Ship through the atomic path: sort work into atomic commits in detached HEAD. Publish with git-branchless `submit` only when the user explicitly asks for publication. Otherwise stop after the local atomic commits and report the branch name and commit list.
 
 Then run the closing chain in this order. Complete the implementation path first. Run this skill own review and fix gate to green (audit clean and verifier green per task, then the whole-branch review), bounded at 3 fix cycles per unit. Past that bound, stop as blocked or non-converged instead of widening scope to unrelated code. Finish with an offensive simplify pass: re-derive the general case from contracts, delete old structure with no shims, aliases, or flags, collapse special cases, migrate every caller in the same change, keep one concern per atomic commit. Ask first before removing any live consumer surface, and stay inside this skill authority throughout. Run the verifier after each increment and revert the increment on red. End with a simplify compression pass over dead branches, duplicated logic, and one-use wrappers, with behavior preserved and checks green.
 
 ## Recover dead workers without destroying the tree
 
-A worker dying mid-task leaves a dirty tree. Inspect first (`git status`, `git diff`) and revert only that worker changes: discard its edits, remove the stray files it created, leave pre-existing uncommitted work untouched. Never blanket-reset or `git clean` the whole tree. A dead worker never resumes onto a dirty tree, and the next task never builds on uncommitted partial work.
+A worker dying mid-task leaves a dirty tree. Inspect first (`git status`, `git diff`) and save that worker's uncommitted diff and its untracked files under the workspace first, then revert only that worker's changes: discard its edits, remove the stray files it created, leave pre-existing uncommitted work untouched. Never blanket-reset or `git clean` the whole tree. A dead worker never resumes onto a dirty tree, and the next task never builds on uncommitted partial work.
 
 Before retrying, inspect the designated workspace, actual commit objects, dirty and untracked state, report, and ledger. Verify which outcomes exist and which remain incomplete. Continue only the remaining work in that preserved workspace, with a brief naming completed work that must not repeat. Provider or quota failures with no productive execution are resource blockers, never evidence that a full redispatch will help. Partial work and ownership carry over, and recovery grants no new push, merge, or publication authority.

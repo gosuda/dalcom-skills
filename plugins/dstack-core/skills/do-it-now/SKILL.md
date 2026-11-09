@@ -9,7 +9,7 @@ Finish the complete authorized scope in this run. The user asked to finish now, 
 
 ## Your authority comes from the assignment, not from this skill
 
-An implementation request permits its authorized reversible local changes. A plan-only or read-only request permits the complete plan or analysis, never implementation. Nothing here grants authority to commit, publish, deploy, use credentials, spend, discard data, or change public contracts; those run only on explicit human invocation for that action. Plan-only stays plan-only.
+An implementation request permits its authorized reversible local changes. A standing instruction in this conversation that forbids writes, such as 'no mutate' or 'read-only', holds until the user lifts it, even when a later invocation asks for implementation. A plan-only or read-only request permits the complete plan or analysis, never implementation. Nothing here grants authority to commit, publish, deploy, use credentials, spend, discard data, or change public contracts; those run only on explicit human invocation for that action. Plan-only stays plan-only.
 
 ## Start from the existing scope and backlog
 
@@ -21,7 +21,9 @@ Check each claimed-complete item against its actual state and acceptance evidenc
 
 ## Account for the whole ask, then execute in dependency order
 
-List the requested outcomes, acceptance criteria, affected consumers, and approval boundaries. Never redefine the task around the easiest subset. Dispatch independent ready work, use internal phases and separate local commits when authorized, delegate when useful, and carry integration through to final delivery. A finished internal phase, a worker return, or an updated task list is progress, never a stopping condition.
+List the requested outcomes, acceptance criteria, affected consumers, and approval boundaries. Never redefine the task around the easiest subset. Dispatch independent ready work, use internal phases and separate local commits when authorized, delegate when useful, and carry integration through to final delivery. A finished internal phase, a worker return, or an updated task list is progress, never a stopping condition. Do not end the turn while a dispatched worker is still running. A bare follow-up such as 'continue', 'orchestrate', or 'orchestrate more' resumes this run from the todo list or ledger and dispatches the next ready wave, and a finished wave is never a stopping condition.
+
+Dispatch gate: before starting any lane, check whether the work would identify, locate, or profile a private person through deanonymization, address or employer or school triangulation, family matching, pretexting, sockpuppet operations, person to person targeting timelines, or inferring a real person from an account identifier, handle, avatar, topic, or filename. Public availability is not permission. A private person is anyone other than a public official or a public figure acting in that role. If the work would do this, start nothing for that person, say which request is refused and why, and offer the public-role or aggregate form of the question instead. Do not re-dispatch a refused request under different wording. A follow-up such as 'continue', 'more', or 'orchestrate' re-runs this check on the request before any new dispatch, and never resumes a pool the check has refused.
 
 ## Ship real behavior on every required path
 
@@ -35,6 +37,6 @@ Check every acceptance criterion against the integrated result, including error 
 
 ## Stay honest about scope and blockers
 
-Never cut scope for size, inconvenience, or a phase boundary, and never expand it because the backlog surfaced adjacent ideas. When a genuine constraint forces a scope change, state the concrete conflict, the exact proposed change, and its consequences, then wait for user approval; until then the original scope stands, and only coherent in-authority work continues meanwhile. Never ship reduced scope first and report it as done.
+Never cut scope for size, inconvenience, or a phase boundary, and never expand it because the backlog surfaced adjacent ideas. When a genuine constraint forces a scope change, state the concrete conflict, the exact proposed change, and its consequences, then ask for approval as one question that states its default answer, proceed on a yes, and do not restate a projection the user has already seen; until then the original scope stands, and only coherent in-authority work continues meanwhile. Never ship reduced scope first and report it as done.
 
 When completion depends on an unavailable prerequisite or ungranted authority, finish independent reachable work, preserve a coherent local state, and report the exact missing prerequisite, the affected outcome, and what enables continuation. A truthful blocker is not a placeholder, and a partial result is not complete. Fabricated evidence never substitutes for a missing observation.

@@ -17,7 +17,7 @@ RECHECK(P):    evaluate gate(P)
                  pass            -> ADVANCE
                  fail            -> HALT(P)          [never a second AUTOFIX]
 ADVANCE:       P := next phase in {execute, simplify, review, finalize, report}; goto RUN(P)
-HALT(P):       stop the chain; collect residual findings from P; route to report with halt=P
+HALT(P):       stop new dispatch at once; cancel or collect every in-flight worker; collect residual findings from P; route to report with halt=P
 ```
 
 Invariants the machine enforces:
@@ -26,18 +26,20 @@ Invariants the machine enforces:
 - No red advance: `ADVANCE` is reachable only from a passing `CHECK`/`RECHECK`. A red gate never enters the next phase.
 - Report is terminal and unconditional: Both the success tail (after finalize passes) and every `HALT(P)` route to `report`.
 - Publication authority: Remote publication, pushing, pull request creation, and remote mutation require explicit human authority naming the exact target. Local work is reversible with version control as rollback; without explicit publication authority covering the exact branch and remote, the chain remains local-only.
-- Local-only execution: When `git remote` is empty or `mode:local` is active, no remote is invented or contacted; finalize runs local checks and creates atomic commits locally.
+- Local-only execution: When `git remote` is empty or `mode:local` is active, no remote is invented or contacted; finalize runs local checks and creates atomic commits locally only under commit authority.
+- Commit authority: a commit in any phase needs authorization from the approved plan or the invocation. This covers the simplify cuts and their reverts as well as finalize. Without it, every phase passes the restriction to the skill it dispatches: `simplify` and its routees apply each cut as an uncommitted increment, a red increment is reverted in the working tree, and the run ends with the verified tree uncommitted.
 - Receipts: a gate passes only on a receipt another reader can check. Execute: each verifier command with its exit code and the names of the new or changed tests its output shows. Simplify: the `simplify result` block, quoted. Review: the reviewer's verdict with its critical and high counts. Finalize: the finalizer report with its check results and the commits or the pull request URL. An autofix arm: the `grill-core` root cause line. A gate without its receipt has failed: report it as HALT with the reason `no receipt`, never as passed. A phase reports `skipped` only when an earlier HALT kept it from starting.
 - Inherited failures: a failure is inherited only when the preflight baseline holds the same identity and the diff does not touch the file it names. Every other failure is red. Inherited failures never block, and the report lists them on its `inherited:` line. Review applies the same rule: a critical or high finding in code the diff does not touch is inherited and does not block.
 
 ## Precondition: before execute
 
-The chain begins only when an approved plan exists, in one of two forms.
+The chain begins only when an approved plan exists, in one of three forms.
 
 - A plan the user approved through the harness plan mode (`ExitPlanMode` in Claude Code), or a plan file the user approved in writing.
+- A plan subject in the invocation: a plan file path, a `local://` plan, or a plan written or approved in this session. Invoking autopilot with it approves local, reversible work on that plan under the limits SKILL.md states. An idea with no plan is not a plan subject.
 - An itemized request in the invocation message itself, where every item names a location (file, symbol, test, or a review finding with its file and line) and the expected change or the check that proves it. A review findings list qualifies when each finding carries a location and a fix. A list introduced as examples ("for example", "such as", "e.g.") covers only the items it lists; ask before extending it to unlisted siblings.
 
-Anything else fails the precondition: open scope such as "fix the rest", items without a location, or a goal with no expected change. autopilot never writes the plan, and "scope unknown" has no autofix arm. Fails -> do not start; HALT before execute and route to `autoplan-and-autopilot`, which reviews the request, asks for approval, and then runs these same gates. The report names the plan source on its `plan:` line.
+Anything else fails the precondition: open scope such as "fix the rest", items without a location, or a goal with no expected change. autopilot never writes the plan, and "scope unknown" has no autofix arm. Fails -> do not start; HALT before execute and route to `autoplan-and-autopilot`, which reviews the request, presents the amended plan, and then runs these same gates. The report names the plan source on its `plan:` line. Steering words sent after an invocation (`orchestrate`, `continue`, `go`, `do it now`, `workflowz`, `Don't ask`) resume or widen work and approve nothing, and an invocation with no subject is not approval.
 
 ## Preflight: before execute
 
@@ -55,10 +57,10 @@ The semantic phases are **execute**, **simplify**, **review**, **finalize**, and
 
 | Gate | Phase / operation | Pass criteria (exact) | Autofix arm A(P) | On RECHECK still-fail |
 |------|---------------|-----------------------|------------------|-----------------------|
-| execute | execute (orchestrated) | Orchestrated execution covers implementation and local verification only, returning a structured summary; the plan's steps are implemented, the repo-native verifier (build / type-check / test, as the repo defines) exits clean apart from inherited failures, and proof of reach holds: the verifier output names each new or changed test (a selection that matched zero tests proves nothing), each new test was observed failing with its fix absent, and a user-visible fix ran once through its real entry point (the binary, CLI, endpoint, or screen a user touches). It must not run the simplify, review, finalize, or CI phases; autopilot owns those. | `grill-core` once on the failing verifier output, through its Findings batch path when the output holds more than one distinct failure | HALT → hand off the verifier failure and the diff so far |
+| execute | execute (orchestrated) | Orchestrated execution covers implementation and local verification only, returning a structured summary; the plan's steps are implemented, the repo's formatter check and linter pass on the changed files, and the repo-native verifier (build / type-check / test, as the repo defines) exits clean apart from inherited failures, and proof of reach holds: the verifier output names each new or changed test (a selection that matched zero tests proves nothing), each new test was observed failing with its fix absent, and a user-visible fix ran once through its real entry point (the binary, CLI, endpoint, or screen a user touches). It must not run the simplify, review, finalize, or CI phases; autopilot owns those. | `grill-core` once on the failing verifier output, through its Findings batch path when the output holds more than one distinct failure; a failure with a known cause, such as a formatter or lint failure, gets one direct fix by the parent instead, then one recheck | HALT → hand off the verifier failure and the diff so far |
 | simplify | simplify | `simplify` ran and its quoted `simplify result` block shows code `0`, `11` (empty diff), or `12` (false-positive-only); behavior preserved. The code is read only from that block. | none distinct, `simplify` self-reverts a behavior regression (its exit `13`) internally | HALT on exit `14` (new bloat) or `15` (mixed-concern commit): these need a human re-plan |
-| review | review (`code-review` by an independent reviewer) | An independent reviewer ran `code-review` on the in-scope diff against the approved plan and its acceptance criteria and returned a verdict with file-and-line findings. After at most one `grill-core` pass and a re-review of the changed files by the same reviewer, no critical or high finding remains inside the diff. | `grill-core` once through its Findings batch path on the critical and high findings, then re-review of the changed files only | HALT → hand off residual critical/high findings |
-| finalize | finalize (local checks, atomic commits, authorized push/PR) | Finalizer report returned: checks green and PR created/updated (full mode), or commits made and push skipped (local-only). The report carries review findings, check results, publication classification, and PR URL or local-only status. | none; a finalizer refusal (push refused, checks blocked) is a deliberate safety stop, not a defect to patch | HALT → hand off the finalizer's blocked report and the unpushed commits |
+| review | review (`code-review` by an independent reviewer) | An independent reviewer ran `code-review` on the in-scope diff against the approved plan and its acceptance criteria and returned a verdict with file-and-line findings. After at most one `grill-core` pass and a re-review of the changed files by the same reviewer, no critical or high finding remains inside the diff, and the native verifier passes on the final tree. | `grill-core` once through its Findings batch path on the critical and high findings, then re-review of the changed files only | HALT → hand off residual critical/high findings |
+| finalize | finalize (local checks, atomic commits, authorized push/PR) | Finalizer report returned: checks green and PR created/updated (full mode), or commits made when authorized (else the tree is left uncommitted) and push skipped (local-only). The report carries review findings, check results, publication classification, and PR URL or local-only status. | none; a finalizer refusal (push refused, checks blocked) is a deliberate safety stop, not a defect to patch | HALT → hand off the finalizer's blocked report and the unpushed commits |
 
 `grill-core` is an autofix arm (supporting `execute` and `review`), not an independent phase, and has no separate gate. `report` is the terminal reporting phase; it evaluates no gate and always runs.
 
@@ -69,8 +71,8 @@ An independent reviewer is a fresh context, a subagent where the harness has one
 Run `git remote`. Empty output → local-only; also forced by `mode:local`.
 
 Local-only effect:
-- finalize: the finalizer runs the local check suite, makes atomic commits, and skips push and PR creation. No remote is invented. The report states `mode: local-only` with the unpushed commit list.
-- report: report still runs and the report states `mode: local-only` with the unpushed commit list.
+- finalize: the finalizer runs the local check suite, makes atomic commits only when authorized, and skips push and PR creation. No remote is invented. The report states `mode: local-only` with the unpushed commit list, or `uncommitted` when no commits were authorized.
+- report: report still runs and the report states `mode: local-only` with the unpushed commit list, or `uncommitted` when no commits were authorized.
 
 ## Halt handoff format
 

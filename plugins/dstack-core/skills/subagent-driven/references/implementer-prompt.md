@@ -7,7 +7,7 @@ Fill this template when dispatching an implementer. Use a fresh, self-contained 
 ```
 Subagent:
   description: "Implement Task N: [task name]"
-  model: [MODEL — REQUIRED: pick per SKILL.md Model Selection. An omitted
+  model: [MODEL — REQUIRED: pick per SKILL.md, section 'What the plan must give you'. An omitted
          model inherits the session's model — usually the most expensive —
          which silently defeats cost control.]
   prompt: |
@@ -18,6 +18,7 @@ Subagent:
     Read your task brief first: [BRIEF_FILE]
     It is your requirements — the full task text from the plan, with the exact
     values to use verbatim. The brief governs; this prompt only frames it.
+    Binding constraints, verbatim: [GLOBAL_CONSTRAINTS]. Include the plan's Global Constraints and every project rule that governs code changes, such as a no-comments rule. This worker does not inherit the parent session's rules.
 
     ## Context
 
@@ -38,6 +39,7 @@ Subagent:
     3. Run the verification command and confirm it passes.
     4. Commit your work. One concern, one commit. Conventional prefix.
        Nothing else in the body is required.
+       Never bypass a commit hook (no --no-verify). A failing hook is a blocker: report it with status BLOCKED.
 
     5. Self-review (below).
     6. Report back.

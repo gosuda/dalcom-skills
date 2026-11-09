@@ -43,10 +43,10 @@ Each row states when to reach for the skill. Invoke one as `/dstack-core:<name>`
 | askme | Use when eliciting intent/scope/referents or gating long/bundled/high-stakes/hard-to-undo work: exhaustive/collaborative/adversarial/grill/gate/batch/interview/proposal/pairing. |
 | audit-project | Use when the user says "audit my code", "find all the bugs", "review until clean", or "grill my changes". |
 | autolearn | Use when a verified fix yields a generalized well-abstracted invariant with enforcement or proof, or existing solution docs need bounded refresh. |
-| autopilot | Use when a human has an approved delivery plan and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. |
+| autopilot | Use when a human has a delivery plan, or an approved one from autoplan or brainstorm, and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. |
 | autoplan | Use when the user runs /autoplan on a plan or idea. |
-| autoplan-and-autopilot | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present for approval, and execute under verified phase gates. |
-| autowatch | Use when the user explicitly asks for autonomous end-to-end work from request to an open pull request or merge request, then a reactive watch of CI, reviews, comments, and conflicts until decided. |
+| autoplan-and-autopilot | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present the amended plan, and execute under verified phase gates; the invocation approves local, reversible work. |
+| autowatch | Use when the user explicitly asks for autonomous end-to-end work from request to an open pull request or merge request, or asks to watch an existing open pull request or merge request until decided. |
 | brainstorm | Use when capturing or refining notes, a transcript, a brain dump, or an existing idea, or when a concrete visual question is clearer shown in a local browser. |
 | breaking-driven | Use when bloated code needs clean re-derivation, or the user says "this module is bloated" or "break it and rebuild". |
 | catchup | Use when the human returns after a gap, cannot follow the project, asks what happened, or wants a visual HTML recap page. |

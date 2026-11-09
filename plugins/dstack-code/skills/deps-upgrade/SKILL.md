@@ -15,9 +15,9 @@ You need a working repository with history, toolchains for each in-scope ecosyst
 
 Before the first mutation, confirm each required tool exists (`command -v`) and run the full suite on the clean tree as the baseline. Missing tools or a red baseline stop the run before anything changes, because upgrade results on a red tree are not attributable.
 
-Refuse to start, without changing anything, when any of these holds: an active feature branch with high churn, a pre-release freeze window, a mid-incident window, or a task that is really an API-break-driven refactor rather than a dependency upgrade. Report which gate tripped.
+Refuse to start, without changing anything, when any of these holds: an active feature branch with high churn, a pre-release freeze window, a mid-incident window, a task that is really an API-break-driven refactor rather than a dependency upgrade, or a bug report that names no dependency change. Report which gate tripped.
 
-Freeze the ecosystem list, path scope, tier ceiling, and allowlist/blocklist from the operator directives before doing anything else, and never widen them mid-run. Findings outside scope become report items, not work.
+Freeze the ecosystem list, path scope, tier ceiling, and allowlist/blocklist from the operator directives before doing anything else, and never widen them mid-run. Scope stated in the invocation text counts as operator direction. If neither the operator directives nor the invocation text state the ecosystems, the paths, and the highest tier, refuse to start and ask one question naming the missing item; never guess a missing item. Findings outside scope become report items, not work.
 
 ## Baseline, then inventory
 

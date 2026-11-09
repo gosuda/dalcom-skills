@@ -7,7 +7,7 @@ description: 'Use when modernizing APIs, removing compat shims, killing feature 
 
 Tear out an old API shape and move every caller to its replacement in one clean cutover, leaving no shim, flag, or adapter behind. This skill demolishes the old path, so if the old path must survive, use a regular additive refactor instead. Everything here is local: writes touch only version-tracked refactor targets, rollback is version control, and nothing reaches the network. The demolition owner migrates every consumer in the same cutover and never hands migration work to consumers or keeps a compatibility alias behind.
 
-You need the old surface (compat shims, legacy adapters, feature flags, version gates, backward-compatible interfaces) and the new contract every caller must adopt. An optional file or module scope bounds the work; without one, the blast-radius map sets the boundary, and nothing outside the approved manifest gets touched no matter what a review finding suggests.
+You need the old surface (compat shims, legacy adapters, feature flags, version gates, backward-compatible interfaces) and the new contract every caller must adopt. If the request does not name the old surface or the new contract, stop and ask one question naming the missing item; a word such as AGGRESSIVE is neither. An optional file or module scope bounds the work; without one, the blast-radius map sets the boundary, and nothing outside the approved manifest gets touched no matter what a review finding suggests.
 
 ## Name the replacement contract and its proof
 

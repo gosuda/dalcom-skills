@@ -1,6 +1,6 @@
 ---
 name: wayfinder
-description: 'Use when a greenfield project or large feature build will not fit in a single agent session and the route must be charted as decision tickets first. Not for implementation, remote credential changes, or work that fits in one session.'
+description: 'Use when a greenfield project or large feature build will not fit in a single agent session and the route must be charted as decision tickets first. Not for a complete implementation plan (use plans), implementation, remote credential changes, or work that fits in one session.'
 ---
 
 # Wayfinder

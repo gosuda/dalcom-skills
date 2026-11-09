@@ -17,10 +17,10 @@
 | audit-project | dstack-core | Coding | Use when the user says "audit my code", "find all the bugs", "review until clean", or "grill my changes". |
 | autolearn | dstack-core | Coding | Use when a verified fix yields a generalized well-abstracted invariant with enforcement or proof, or existing solution docs need bounded refresh. |
 | automatic-freeform-graphs-design | dstack-planning | Productivity | Use when a user wants a looser conceptual graph for exploratory work. |
-| autopilot | dstack-core | Coding | Use when a human has an approved delivery plan and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. |
+| autopilot | dstack-core | Coding | Use when a human has a delivery plan, or an approved one from autoplan or brainstorm, and wants the full chain run under phase gates, including a reply of approved, approve all, run it, or go on right after a plan was presented. |
 | autoplan | dstack-core | Coding | Use when the user runs /autoplan on a plan or idea. |
-| autoplan-and-autopilot | dstack-core | Coding | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present for approval, and execute under verified phase gates. |
-| autowatch | dstack-core | Coding | Use when the user explicitly asks for autonomous end-to-end work from request to an open pull request or merge request, then a reactive watch of CI, reviews, comments, and conflicts until decided. |
+| autoplan-and-autopilot | dstack-core | Coding | Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present the amended plan, and execute under verified phase gates; the invocation approves local, reversible work. |
+| autowatch | dstack-core | Coding | Use when the user explicitly asks for autonomous end-to-end work from request to an open pull request or merge request, or asks to watch an existing open pull request or merge request until decided. |
 | bakeoff | dstack-planning | Productivity | Use when choosing well needs developing competing solutions to a defined brief beyond their current form. |
 | brainstorm | dstack-core | Coding | Use when capturing or refining notes, a transcript, a brain dump, or an existing idea, or when a concrete visual question is clearer shown in a local browser. |
 | breaking-driven | dstack-core | Coding | Use when bloated code needs clean re-derivation, or the user says "this module is bloated" or "break it and rebuild". |
@@ -105,7 +105,7 @@
 | explain-concept | dstack-learn | Productivity | Use when a concept needs making clear rather than practising: explain simply, why does this exist, draw it, or simplify for a beginner. |
 | explainer-artifact | dstack-learn | Productivity | Use when asked to create an explainer document for a concept, diff, idea, or work recap. |
 | explore | dstack-core | Coding | Use when asked to explore the codebase to map structure, symbols, and dependencies. |
-| fastopt | dstack-performance | Coding | Use when optimizing suspected hot paths without waiting for benchmarks. |
+| fastopt | dstack-performance | Coding | Use when a suspected hot path needs read-only hypotheses and benchmark designs, without waiting for benchmarks and without a code change. |
 | fastopt-extreme | dstack-performance | Coding | Use when estimating hot paths and proposing complexity-neutral cold simplifications while refusing complexity theater. |
 | feedback-sweep | dstack-run | Coding | Use when asked to /feedback-sweep [setup\|reconfigure] [mode:non-interactive]. |
 | figure-it-out | dstack-run | Coding | Use when non-trivial work should run a matched playbook to verified real-surface completion, or a bespoke workflow when none fits. |
@@ -142,8 +142,8 @@
 | heaptrack | dstack-performance | Coding | Use when tracking heap allocations on Linux with heaptrack: allocation hotspots, peak heap, temporary allocations, leaks, or a diff of two runs via heaptrack_print. |
 | how | dstack-research | Research | Use when the user asks "how does X work" and wants an architecture walkthrough of the code path or subsystem, including its gotchas. |
 | humaniseur-fr | dstack-writing | Writing | Use when the user supplies French text that reads like AI output and asks to naturalize it. |
-| humanizer-korean-plain | dstack-writing | Writing | Use when Korean prose reads as machine-generated, machine-translated, or bureaucratic and must be rewritten as plain, natural Korean without changing its meaning. |
-| humanizer-korean-ste | dstack-writing | Writing | Use when Korean technical documents such as runbooks, procedures, manuals, or operating guides need controlled wording: one action per step, conditions before actions, unified terms, and warnings placed before risky steps. |
+| humanizer-korean-plain | dstack-writing | Writing | Use when Korean prose reads as machine-generated (기계 문체), machine-translated (번역투), or bureaucratic (행정 문체) and must be rewritten as plain, natural Korean without changing its meaning. |
+| humanizer-korean-ste | dstack-writing | Writing | Use when Korean technical documents such as runbooks, procedures, manuals, or operating guides (절차서, 운영 지침, 매뉴얼, 장애 대응 문서) need controlled wording: one action per step, conditions before actions, unified terms, and warnings placed before risky steps. |
 | humanizer-plain-english | dstack-writing | Writing | Use when asked to make English plain, clear, natural, and readable while keeping its meaning and voice. |
 | humanizer-simple-english-asd-ste100 | dstack-writing | Writing | Use when asked to rewrite technical English toward ASD-STE100 Simplified Technical English: short, unambiguous sentences, one instruction per step, consistent terms, and AI-style padding removed. |
 | ideate-multiple-agents | dstack-planning | Productivity | Use when the user wants divergent ideas or an independently generated candidate pool grounded in the working repository. |
@@ -288,7 +288,7 @@
 | visual-diff-review | dstack-review | Coding | Use when asked to review a diff and produce a 7-section visual page. |
 | vulnerability-triage-brocards | dstack-security | Security | Use when a vulnerability report, CVE, bug-bounty submission, or automated finding needs triage before deep verification. |
 | wait-what | dstack-learn | Productivity | Use when the user says "wait, what", "the explanation is unclear", "say that again", or asks to restate the last response in plain language. |
-| watch-and-repair-pr | dstack-git | Coding | Use when a human explicitly invokes a watcher cycle for an open pull request or merge request that must move toward mergeable or blocked. |
+| watch-and-repair-pr | dstack-git | Coding | Use when a human or autowatch explicitly invokes one watcher cycle for an open pull request or merge request that must move toward mergeable or blocked. |
 | watch-for | dstack-run | Coding | Use when monitoring a file, log, endpoint, or artifact for drift or errors, or polling a target until a predicate holds. |
 | watch-for-harness-mode | dstack-run | Coding | Use when a proven watch pattern should become a reusable harness artifact with configurable inputs. |
 | watch-for-structured | dstack-run | Coding | Use when the user wants to classify a surface state and page an on-call API when triggered. |

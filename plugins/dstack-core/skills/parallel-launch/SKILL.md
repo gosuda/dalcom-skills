@@ -13,14 +13,16 @@ If instead each piece needs durable ownership with its own review, you are in th
 
 Take the request, its acceptance criteria, and enough source context that each piece can be done with no shared agent memory. For implementation work the request must name every local target agents may change. Output format, domain-specific agent choice, and ordering constraints are welcome when the caller gives them.
 
+Dispatch gate: before starting any lane, check whether the work would identify, locate, or profile a private person through deanonymization, address or employer or school triangulation, family matching, pretexting, sockpuppet operations, person to person targeting timelines, or inferring a real person from an account identifier, handle, avatar, topic, or filename. Public availability is not permission. A private person is anyone other than a public official or a public figure acting in that role. If the work would do this, start nothing for that person, say which request is refused and why, and offer the public-role or aggregate form of the question instead. Do not re-dispatch a refused request under different wording. A follow-up such as 'continue', 'more', or 'orchestrate' re-runs this check on the request before any new dispatch, and never resumes a pool the check has refused.
+
 ## Splitting the work
 
 A concern earns its own agent only when it shares no mutable target and has no ordering dependency with any other concern. Do not split just to raise the agent count; with fewer than two independent concerns, do the request yourself directly.
 
 1. Carve the request into independent concerns by that test. Dependent concerns go into later batches, each batch naming its prerequisites.
 2. Before any mutation, list every batch's named local targets and capture the prior content or exact undo operation for each one.
-3. Brief one task-specific agent per concern: complete context, bounded objective, named writable targets, acceptance criteria, concrete result format. No agent may rely on memory or output from another agent running alongside it.
-4. Launch everything in the current independent batch together in one concurrent dispatch, and hold dependent work until its batch's prerequisites finish.
+3. Brief one task-specific agent per concern: complete context, bounded objective, named writable targets, acceptance criteria, concrete result format. No agent may rely on memory or output from another agent running alongside it. Each brief names a result file under the repository, and results are collected from those files, never from agent handles.
+4. Launch the current independent batch together in one concurrent dispatch, up to the lane width the request names. With no named width, launch at most about three to five lanes at once and run the rest as later sub-batches. Before dispatch, name the batch's liveness interval and cut rule. Hold dependent work until its batch's prerequisites finish.
 
 ## Putting it together and checking it
 
@@ -34,6 +36,7 @@ Hand back the composition only when that review passes.
 
 - The split was unsafe: shared mutable targets or a hidden ordering surfaced. Do not launch that batch. Repartition into sequential work, or return `blocked` naming the conflicting targets or the dependency.
 - An agent fails or comes back incomplete: keep every independently usable result untouched and return `blocked` with the failed concern, the observed error, the missed acceptance criterion, and one targeted follow-up.
+- A lane with no completed step within the liveness interval the batch names gets one probe. If the probe fails, cut the lane, record the cut, and do its work inline or return `blocked`.
 - Results conflict and the supplied evidence cannot settle it: return `non-converged` with both positions, the unresolved fact, and the targeted check that would settle it.
 - The review fails: do not present the composition as complete. Return `non-converged` with the failed review criteria, the usable partial results, and a targeted follow-up.
 - Something mutated without authorization, or only partly: stop dispatching. Restore every changed local target from its captured prior content or exact undo, then report what was restored and anything that could not be. Never hide the error or claim completion.

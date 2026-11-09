@@ -29,6 +29,8 @@ Prefer enforcement over prose, in this order: linter or formatter rule, hook, CI
 
 Write the target so it contains only the admitted instructions, each stated operationally with its condition and its required action or prohibition. Then re-read the result and verify every instruction against the admission gate and its recorded evidence; anything ungrounded or derivable comes out before you declare success.
 
+When the user names the section headings, keep those headings in that order and apply the admission gate to the lines under each one.
+
 Where the environment allows, run the commands the file names. A passing check alone never proves you ran the commands. Otherwise verify each command exists in the manifest, note the limitation, and mark the check unverified rather than passing it.
 
 ## Report what changed and how to undo it

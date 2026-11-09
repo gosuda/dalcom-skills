@@ -13,7 +13,7 @@ Reach for this when you are writing or restructuring code, when you are consider
 
 ## What you may touch
 
-Make reversible local edits inside the requested scope only, with no remote mutation. Rollback is version control or undo. Get human approval before removing a live or consumer-facing surface, discarding stored data or history, or taking any irreversible, remote, or paid action.
+Make reversible local edits inside the requested scope only, with no remote mutation. Each invocation is one run with no standing cadence; a recurring sweep needs a cadence request in that invocation. Rollback is version control or undo. Get human approval before removing a live or consumer-facing surface, discarding stored data or history, or taking any irreversible, remote, or paid action.
 
 Your change replaces broken structure with its clean re-derived form: absorb special cases, delete the obsolete mechanism, and migrate every in-scope dependent in the same change. Adjacent improvements stay out of the change set. Mention one separately only when it materially affects the requested work.
 

@@ -11,7 +11,7 @@ For genuinely independent parallel tasks that share no issue and no writable sur
 
 ## What you need before starting
 
-One issue or pull request with its acceptance criteria; the local target workspace, whose current bytes and metadata are the composition base; the checks each worker and the final composed result must satisfy; named local locations for the checkpoint, the isolated composition, and the run report; and any fixed ordering constraints between units of work (otherwise the partition itself decides which worker nodes are independent). The production task DAG comes from those units of work and their declared ordering constraints only. If required input, a checkpoint, isolation, or a required check is unavailable, return `blocked` without touching the target.
+One issue or pull request with its acceptance criteria; the local target workspace, whose current bytes and metadata are the composition base; the checks each worker and the final composed result must satisfy; named local locations for the checkpoint, the isolated composition, and the run report; and any fixed ordering constraints between units of work (otherwise the partition itself decides which worker nodes are independent). The production task DAG comes from those units of work and their declared ordering constraints only. If required input, a checkpoint, isolation, or a required check is unavailable, return `blocked` without touching the target. When the acceptance criteria or the write-set partition were drafted by the agent rather than supplied by the user, confirm them with the user before dispatching any writer.
 
 ## Checkpointing the base
 
@@ -25,7 +25,7 @@ Stop before running any worker if coverage is incomplete, any two sets overlap, 
 
 ## Running and vetting the workers
 
-Run every ready node in an isolated copy of the base. Each worker may change only its declared write set and must return its exact diff, its check results, and its proof. No worker approves its own result, and no worker approves the composition.
+Run every ready node in an isolated copy of the base, give each worker that copy's absolute path, and state in its brief that every read and write must resolve under it. Each worker may change only its declared write set and must return its exact diff, its check results, and its proof. No worker approves its own result, and no worker approves the composition. Any change to the target checkout that no approved composition declares stops the run as `split-falsified`.
 
 Validate each returned diff against its node contract before composing anything. An overlap, an out-of-set byte, or a failing check falsifies the responsible node: re-run only that node in fresh isolation and validate again. When the failure spans write sets or exposes missing partition coverage, the split itself is falsified instead of any one node.
 

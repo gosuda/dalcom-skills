@@ -1,11 +1,20 @@
 ---
 name: autoplan-and-autopilot
-description: 'Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present for approval, and execute under verified phase gates. Not for open-ended debugging, single-step execution, or unapproved remote publication.'
+description: 'Use when the user invokes /autoplan-and-autopilot on an idea or plan to review across four perspectives, derive a task ledger, present the amended plan, and execute under verified phase gates; the invocation approves local, reversible work. Not for open-ended debugging, single-step execution, or unapproved remote publication.'
 ---
 
 # Autoplan and autopilot
 
-You take an idea or plan through review from four sides, record the resulting work as a stable task ledger, present the amended plan for human approval, and only then build it under bounded orchestration and verified phase gates to an observed close-out. Planning and execution are separated by a hard approval gate: no source file, configuration file, or script is edited or executed before the human approves.
+You take an idea or plan through review from four sides, record the resulting work as a stable task ledger, present the amended plan, and then build it under bounded orchestration and verified phase gates to an observed close-out. Planning and execution are separated by an approval gate: the amended plan is presented, and the invocation approves local, reversible work on it under the Approval section below.
+
+## Read the invocation
+
+Free-text arguments are the subject: a plan file path, a `local://` reference, or inline idea or plan text.
+`/skill:<name>` tokens in the arguments are routing hints; drop them before reading the subject.
+`orchestrate`, `continue`, `go`, and `do it now` resume the current run and never restart it.
+With no free-text subject, take the first source that yields exactly one candidate: a plan written or approved in this session, then a plan file path named earlier in this session.
+Print `subject: <what> (<how found>)` as the first output line.
+When no source yields one, stop before any write with one line: `autoplan-and-autopilot needs an idea or plan: pass a path or inline text.`
 
 ## Ground the work in repository facts first
 
@@ -13,10 +22,12 @@ Before planning or modifying artifacts, establish the concrete facts around the 
 
 * Version control: current branch, tracking branch, remotes (`git remote -v`), and working tree status.
 * Tooling: package definitions, configuration files, and build manifests, plus the native build, typecheck, lint, and test commands.
-* Existing evidence: CI configurations, test logs, recent commit messages, and test layout, read without running scripts or test commands. Verifier execution waits until after human approval.
+* Existing evidence: CI configurations, test logs, recent commit messages, and test layout, read without running scripts or test commands. Verifier execution waits until the build starts.
 * Scope: the artifacts and modules the request touches, with in-scope components separated from untouchable surfaces.
 
-You need a plan or idea (a file path or inline text) and the repository context (checkout path and facts). Success criteria, a close-out condition, scope boundaries, publication authority, and an existing ledger ride along when given. When success criteria are omitted, derive discoverable facts and propose concrete criteria during planning, surfacing them at the approval gate. Ask the user only when core intent stays unresolved. When close-out is omitted, default to a clean working tree with passing tests. Stop before any write when no plan or idea was supplied, or when unresolved intent cannot be derived without user clarification.
+You need a plan or idea (a file path or inline text) and the repository context (checkout path and facts). Success criteria, a close-out condition, scope boundaries, publication authority, and an existing ledger ride along when given. When success criteria are omitted, derive facts only from the paths the request names and their direct manifests and CI configuration; do not mine session logs or run corpus-wide scans unless the request names them, and propose concrete criteria during planning, surfacing them at the approval gate. Ask the user only when core intent stays unresolved. When close-out is omitted, default to a clean working tree with passing tests. Stop before any write when no plan or idea was supplied, or when unresolved intent cannot be derived without user clarification.
+
+Dispatch at most four read-only scouts for grounding; more needs the user's request.
 
 ## Review the plan from four sides
 
@@ -33,20 +44,15 @@ Judge each perspective against six principles: clarity (unambiguous contract and
 
 ## Record the work in the ledger
 
-Resolve the ledger path once per run and use the first rule that applies: a path the invocation names; a directory for plans, tasks, or working documents that the project instruction file (`AGENTS.md` or `CLAUDE.md`) names, holding `autoplan-ledger.jsonl`; an existing `autoplan-ledger.jsonl` anywhere in the repository; otherwise `tasks/autoplan-ledger.jsonl`. State the resolved path at the approval gate. When the file does not exist, create it. When it exists, append new tasks to the end. Never overwrite or truncate existing entries. Every run appends only the tasks it produces, so the ledger stays append-only across invocations.
+Record the work by the ledger rules in `autoplan`: naming, sequencing, presentation, and append-only writes apply unchanged. Ledger presence proves a task was planned, not completed; completion is read from receipts as `autopilot`'s Resume section defines.
 
-Internally, preserve existing stored ledger `id`, `description`, and `phase` fields and values, and never migrate user records. Each task gets a deterministic internal ID from its reviewing phase prefix plus a zero-padded sequence number within that phase: CEO review gives `CEO-01`, `CEO-02`, and so on; design review gives `DES-01`, `DES-02`; DX review gives `DX-01`, `DX-02`; engineering review gives `ENG-01`, `ENG-02`. Sequence numbers continue from the existing ledger: for each phase prefix, scan the resolved ledger for the highest existing sequence number and increment from there, starting at `01` when the prefix has no prior entries. Tasks increment in the order identified. Internal IDs are stable for a given starting ledger: the same plan evaluated the same way against the same ledger produces the same IDs. A phase that produces no tasks leaves its prefix unused.
+## Approval
 
-A ledger line is a JSON object with exactly these keys: `id` (for example `ENG-01`), `description` (the concrete task and its contracted invariant), and `phase` (one of `CEO`, `DES`, `DX`, `ENG`).
+Present the exact amended plan, the decision register, the tasks displayed by their semantic description and actual purpose without decorative coded prefixes, and the concrete scope boundaries to the user. Invoking this skill with a subject, given in the arguments or inferred from this session, approves local, reversible work on that subject: edits, local checks, and local commits when the plan authorizes commits. The gate fires for an outward, irreversible, credential, paid, or data-at-rest act, and waits for a separate explicit user request with preview and consent for each one. Explicit written approval of the exact current plan, and plan-mode approval (`ExitPlanMode`), also approve. Steering words sent after an invocation (`orchestrate`, `continue`, `go`, `do it now`, `workflowz`, `Don't ask`) resume or widen work and approve nothing. A timeout or auto-selected default never approves. An invocation with no subject is not approval: stop before any write. A user decline of the plan halts the chain before any source edit: preserve the amended plan and the ledger, and emit `BLOCKED` stating the decline.
 
-For human presentation, plans, tasks, headings, and TODOs must use the actual purpose, never phase+counter labels (`CEO-01`, `DES-01`, `DX-01`, `ENG-01`), parenthesized opaque IDs, or decorative coded task prefixes. Always display the semantic description of what the task accomplishes. Update local task tracking to reflect the newly appended tasks using their actual purpose. Genuine fixed external metadata IDs (such as internal ledger fields) remain intact internally, but human labels name the concrete work directly.
-
-## Stop for human approval
-
-Present the exact amended plan, the decision register, the tasks displayed by their semantic description and actual purpose without decorative coded prefixes, and the concrete scope boundaries to the user, and check whether the exact current plan has explicit written approval in the session. If not, stop immediately and request it. Withheld, declined, or unanswered approval halts the chain: preserve the amended plan and the ledger, emit `BLOCKED` stating that human approval is required, and touch no source.
 ## Build inside the boundary
 
-Once approval is confirmed, orchestrate implementation under these constraints:
+Once the invocation has approved local work, implement under these constraints. The executor is the plan's assigned executor, or parallel orchestration when none is named:
 
 * Run the native test suite first to establish a clean baseline before mutating code, and isolate any pre-existing failure before implementing new changes.
 * Partition tasks into disjoint write sets. Each worker owns its assigned target paths exclusively. Shared files (manifests, shared configuration, top-level index) are modified only by the parent orchestrator after worker tasks complete. When two tasks need the same file, serialize them. Never run concurrent writers on shared paths.
@@ -58,7 +64,7 @@ Once approval is confirmed, orchestrate implementation under these constraints:
 
 After workers finish and writers stop, the parent takes exclusive control of verification. The governing rule: every repair, review-autofix, or simplification mutation to source, test, or configuration files invalidates the relevant prior proof. The gate that owned the mutation, and every earlier gate whose evidence the mutation could disturb (at minimum the Execute native suite), must rerun on the final post-mutation tree before completion. `DONE` needs fresh verification evidence collected on the final diff. Evidence collected on a pre-mutation tree never closes a mutated tree.
 
-Each gate follows the autofix-then-halt machine. Run the gate condition; advance on pass. On failure, invoke the autofix arm exactly once if one is available and unused for this phase, then recheck (including the native rerun the proof rule requires whenever autofix mutated files). A failing recheck halts immediately. Never loop autofix a second time.
+Each gate follows the autofix-then-halt machine in `autopilot`'s pipeline-gates reference. Run the gate condition; advance on pass. On failure, invoke the autofix arm exactly once if one is available and unused for this phase, then recheck (including the native rerun the proof rule requires whenever autofix mutated files). A failing recheck halts immediately. Never loop autofix a second time.
 
 Gates run in order: Execute, then Simplify, then Review (simplify before review), unless the exact user requirement specifies a different order. The review-autofix proof gap is closed by explicit recheck, not by reordering gates.
 
@@ -68,7 +74,7 @@ Gates run in order: Execute, then Simplify, then Review (simplify before review)
 
 ## Close out only what was authorized
 
-Local-only is the default: when neither commit nor remote publication is requested, leave verified changes in the working tree. No commit, push, or pull request creation happens.
+Local-only is the default, as `autopilot`'s finalize rule defines: commits only when authorized, and no push or pull request creation.
 
 A separate commit-only request (explicit local commits without publication) means previewing the exact commit message, target branch, and changed files, then creating atomic local commits once approved. Push and pull request creation stay skipped.
 
@@ -78,9 +84,9 @@ Every other outward or irreversible act needs the same explicitness: deployment,
 
 ## A halt preserves everything and says what resumes it
 
-Halt conditions: missing input (stop before any write), withheld approval (stop at the gate, preserve plan and ledger), conflicting requirements (stop before modifying source, name the conflict), missing tools (stop and identify the missing command), failed proof or gate (stop immediately, record the failed gate, reason, autofix outcome, and diff, preserve all in-scope progress), refused publication (preserve local modifications, report local completion with publication skipped).
+Halt conditions: missing input (stop before any write), a declined plan or withheld consent for an outward act (stop at the gate, preserve plan and ledger), conflicting requirements (stop before modifying source, name the conflict), missing tools (stop and identify the missing command), failed proof or gate (stop immediately, record the failed gate, reason, autofix outcome, and diff, preserve all in-scope progress), refused publication (preserve local modifications, report local completion with publication skipped). On any halt, stop new dispatch at once and cancel or collect every in-flight worker before the report, as `autopilot` defines.
 
-On resumption, remember what the ledger is: planning-only and append-only. The ledger schema (`id`, `description`, `phase`) never carries a status field. Ledger presence proves a task was planned, not that it completed. Treat ledger presence as planning evidence only. Reconstruct completed versus pending by binding each ledger task ID to its own task revision: the execution receipt or report evidence recorded for that task ID plus the contracted tree state that task produced. A task counts completed only when its receipt evidence exists for its task ID and its contracted code and behavior still hold in the tree (not clobbered by later work). Otherwise it is pending. Revisions are per task, never one global HEAD: later tasks mutating the tree do not retroactively un-complete earlier tasks whose contracted state still holds. Do not re-run tasks whose contracted state still holds with matching receipt, do not overwrite existing ledger entries, and resume from the first pending task without duplicating completed actions. Never truncate the task list or silently declare completion while tasks remain undone. Never accept stubs, mocks, fake fallbacks, or `TODO: implement` as deliverables. All deliverables are genuine, working code.
+On resumption, follow `autopilot`'s Resume section. The ledger schema (`id`, `description`, `phase`) never carries a status field.
 
 To recover the pre-run state, discard the run's local artifacts (amended plan, appended ledger lines, task tracking updates).
 

@@ -25,7 +25,7 @@ Keep built things separate from things to run. A line like "run the integration 
 
 For every deliverable, read each repository path it names. When the plan names behavior rather than a file, read the relevant implementation and its callers. With a base ref, inspect `git diff <base>`, `git diff --stat <base>`, and `git log <base>..HEAD`; without one, work from the current tree only and say plainly that no diff comparison was available.
 
-Judge strictly: a concrete local path that is absent means `NOT DONE`. Anything depending on another repository, a deployed system, a credentialed service, or a human action you cannot observe locally is `UNVERIFIABLE`. A related file or a partial implementation never counts as proof of the whole. A local command counts as evidence only when it has actually been run and its exit status and output sit in the caller's evidence. Running it is not your job.
+Judge strictly: a concrete local path that is absent means `NOT DONE`. Anything depending on another repository, a deployed system, a credentialed service, or a human action you cannot observe locally is `UNVERIFIABLE`. A related file or a partial implementation never counts as proof of the whole. A local command counts as evidence only when it has actually been run against the commit under review, and its exit status and output sit in the caller's evidence. Output from another commit is not evidence for this one. Running it is not your job.
 
 ## Give every item an evidence address
 

@@ -1,6 +1,6 @@
 ---
 name: humanizer-korean-ste
-description: 'Use when Korean technical documents such as runbooks, procedures, manuals, or operating guides need controlled wording: one action per step, conditions before actions, unified terms, and warnings placed before risky steps. Unofficial Korean profile inspired by ASD-STE100. Not for general readability or removing machine-generated tone: use humanizer-korean-plain. Not for English STE: use humanizer-simple-english-asd-ste100.'
+description: 'Use when Korean technical documents such as runbooks, procedures, manuals, or operating guides (절차서, 운영 지침, 매뉴얼, 장애 대응 문서) need controlled wording: one action per step, conditions before actions, unified terms, and warnings placed before risky steps. Unofficial Korean profile inspired by ASD-STE100. Not for general readability or removing machine-generated tone: use humanizer-korean-plain. Not for English STE: use humanizer-simple-english-asd-ste100.'
 ---
 
 # 한국어 통제 기술문서
@@ -14,10 +14,15 @@ description: 'Use when Korean technical documents such as runbooks, procedures, 
 
 절차서, 운영 지침, 장비와 소프트웨어 매뉴얼, 장애 대응 문서처럼 독자가 서술된 순서대로 수행하는 문서에 적용합니다.
 
+마케팅, 문학, 설득 문서에는 이 스킬을 적용하지 않으며, 그 사실을 한 문장으로 알리고 작업을 끝냅니다.
+
 | 요청 유형 | 담당 스킬 |
 |---|---|
 | 설명문, 공지, 이메일의 평이화, 기계 문체와 번역투의 제거 | `humanizer-korean-plain` |
 | 영어 STE 문장의 작성과 영어 적합성 판정 | `humanizer-simple-english-asd-ste100` |
+| 영어 평이 산문 | `humanizer-plain-english` |
+| 프랑스어 산문 | `humaniseur-fr` |
+| 언어와 무관한 일반 문체 점검 | `unslop` |
 
 한 문서에 두 성격이 혼재하면 절차 구간에만 이 스킬을 적용합니다.
 이 스킬은 프로젝트 문체 지침, 용어집, 법정 문구와 함께 적용하며, 이들이 정한 사항은 이 스킬의 규칙보다 우선합니다.
@@ -35,7 +40,10 @@ description: 'Use when Korean technical documents such as runbooks, procedures, 
 절차문은 독자가 수행할 작업을 지시하고, 설명문은 구조, 동작, 상태, 요구사항을 기술합니다.
 혼합 문서는 구간을 나누어 적용하며, 설명문을 작업 지시로 임의 전환하지 않습니다.
 
-규칙이 충돌하면 다음 순서로 판단합니다. 사실과 논리, 승인된 원문과 고정 문구, 보호 문자열, 사용자가 지정한 형식이 가장 우선하고, 그다음 확인된 프로젝트 용어집, 마지막으로 이 스킬의 규칙을 적용합니다.
+규칙이 충돌하면 다음 순서로 판단합니다.
+1. 사실, 논리, 승인된 원문, 보호 문자열(고정 문구 포함), 사용자가 지정한 형식.
+2. 확인된 프로젝트 용어집.
+3. 이 스킬의 규칙.
 충돌을 해소할 수 없으면 의미를 변경하지 않고 예외 또는 확인 사항으로 보고합니다.
 
 ## 작성 절차
@@ -58,7 +66,13 @@ description: 'Use when Korean technical documents such as runbooks, procedures, 
 `닫다`를 밸브와 회로에 사용하는 문서에서는 `회의를 닫다`, `계약을 닫다`처럼 다른 의미로 사용하지 않습니다. 다른 의미가 필요하면 다른 단어를 사용합니다.
 `확인`을 점검의 의미로 정했다면 승인의 의미로 사용하지 않습니다.
 
-용어 목록에는 대표 용어, 품사, 정의, 사용 예, 사용하지 않는 대체 표현, 근거 또는 승인 상태를 기재합니다.
+용어 목록에는 다음 항목을 기재합니다.
+- 대표 용어
+- 품사
+- 정의
+- 사용 예
+- 사용하지 않는 대체 표현
+- 근거 또는 승인 상태
 확인된 프로젝트 용어를 우선 사용합니다. 그러한 용어가 없으면 문맥상 명확한 용어를 문서 범위에서 임시로 확정하며, 이를 조직의 공식 승인으로 표시하지 않습니다.
 개념이 불명확하면 정의를 먼저 확인하고, 표기의 유사성만으로 개념을 통합하지 않습니다.
 
@@ -91,11 +105,11 @@ description: 'Use when Korean technical documents such as runbooks, procedures, 
 
 절차문은 능동문으로 작성합니다.
 설명문에서는 동작 주체가 확인되면 주체를 명시하고, 주체가 확인되지 않는 경우에만 피동 표현을 사용합니다.
-상태를 기술하는 `연결되어 있습니다`는 피동 표현으로 보지 않으며 유지합니다.
+상태를 기술하는 `연결되어 있습니다`는 이 스킬의 피동 제한 대상에서 제외하며 원문 그대로 유지합니다.
 
 ### 문장길이: 권장 상한
 
-절차문의 한 문장은 15어절 이하, 설명문의 한 문장은 20어절 이하로 작성합니다.
+절차문의 한 문장은 15어절 이하, 설명문의 한 문장은 20어절 이하로 작성합니다. 이 수치는 이 스킬이 정한 권장 상한입니다.
 상한을 넘는 문장은 조건, 행동, 결과를 기준으로 분리합니다. 분리하면 조건의 적용 범위가 달라지는 경우에만 상한을 넘을 수 있으며, 검토 보고에 그 사유를 기재합니다.
 
 ### 명사연쇄제한: 명사 나열은 세 개까지
@@ -166,7 +180,7 @@ description: 'Use when Korean technical documents such as runbooks, procedures, 
 
 ### 의무수준보존: 요구 수준과 가능성 유형의 보존
 
-의무는 `~해야 합니다`, 금지는 `~하지 마십시오`, 권고는 `~을(를) 권장합니다`, 허용은 `~해도 됩니다`로 구분합니다.
+설명문의 의무는 `~해야 합니다`, 설명문의 금지는 `~해서는 안 됩니다`, 절차문의 지시와 의무는 `~하십시오`, 절차문의 금지는 `~하지 마십시오`, 권고는 `~을(를) 권장합니다`, 허용은 `~해도 됩니다`로 구분합니다.
 기능상 가능과 사건의 발생 가능성을 구분합니다. `~할 수 있습니다`가 허용과 기능 중 어느 쪽인지 불명확하고 실행에 영향을 미치면 확인을 요청합니다.
 
 `일부`와 `전부`, `항상`과 `때때로`, `관련`과 `원인`, 추정과 확정을 구분합니다.
@@ -179,14 +193,14 @@ description: 'Use when Korean technical documents such as runbooks, procedures, 
 
 다음 세 구문은 절차문과 설명문 모두에서 배제합니다.
 
-상투적 대조 구문인 `A가 아니라 B`, `단순한 A가 아닌 B`, `A라기보다는 B`, `A뿐만 아니라 B`는 사용하지 않습니다. 수행할 행동을 서술하고, 배제할 행동은 별도의 금지 단계나 문장으로 서술합니다.
+상투적 대조 구문은 사용하지 않습니다(정의와 교정 원칙은 `humanizer-korean-plain`의 무조건 제거하는 세 가지 구문을 따릅니다). 수행할 행동을 서술하고, 배제할 행동은 별도의 금지 단계나 문장으로 서술합니다.
 
 - 원문: `설정 파일을 삭제하는 것이 아니라 보관해야 합니다.`
 - 교정: `설정 파일을 보관하십시오. 설정 파일을 삭제하지 마십시오.`
 
-사선 병기인 `확인/검토`, `설치 / 배포`, `통과 / 확인 필요 / 보류`, `및/또는`은 본문과 견본에 사용하지 않습니다. 결합 방식을 `모두`, `하나 이상`, `하나만`으로 명시하거나 항목을 분리합니다. 원문의 `및/또는`처럼 결합 방식이 모호하면 추정하지 않고 확인 사항으로 보고합니다. 조사 견본은 `을(를)` 형식으로 표기합니다. 경로, URL, 코드, 단위, 날짜, UI 문자열의 사선은 보존합니다.
+사선 병기는 본문과 견본에 사용하지 않습니다(정의와 결합 표현은 `humanizer-korean-plain`을 따릅니다). 원문의 `및/또는`처럼 결합 방식이 모호하면 추정하지 않고 확인 사항으로 보고합니다.
 
-양비론적 유보인 `A일 수도 있고 B일 수도 있습니다`, `상황에 따라 다릅니다`, `장단점이 있습니다`로 종결되는 서술은 절차를 확정할 수 없는 모호성으로 취급합니다. 해당 단계를 확정하지 않고, 판단에 필요한 조건을 확인 사항으로 서술합니다. 원문에 없는 결론을 추가하지 않습니다.
+양비론적 유보(정의는 `humanizer-korean-plain`을 따릅니다)로 종결되는 서술은 절차를 확정할 수 없는 모호성으로 취급합니다. 해당 단계를 확정하지 않고, 판단에 필요한 조건을 확인 사항으로 서술합니다. 원문에 없는 결론을 추가하지 않습니다.
 
 ### 절차 해석을 저해하는 기계 문체
 
@@ -211,9 +225,9 @@ description: 'Use when Korean technical documents such as runbooks, procedures, 
 교정과 작성은 해결 가능한 경우 완성 본문만 출력합니다.
 핵심 조건이 미확정이면 `확인 필요` 항목과 필요한 질문을 먼저 제시합니다. 나머지 부분을 함께 제공하는 경우에는 실행용 완성본과 구분하여 `작업용 초안`으로 표시합니다.
 
-검토는 위치, 규칙, 문제, 최소 수정안의 순서로 보고합니다.
-필요하면 각 항목의 상태를 `통과`, `확인 필요`, `보류` 중 하나로 표시합니다.
-보호된 원문과 의미 보존을 위한 예외는 위반으로 판정하지 않습니다.
+검토는 위치, 문제, 근거 규칙, 최소 수정안의 순서로 보고합니다.
+필요하면 각 항목의 판정을 `통과`, `실패`, `보류` 중 하나로 표시합니다. 확인이 필요한 사항은 `확인 필요` 항목에 따로 적습니다.
+보호 문자열, 승인된 원문, 의미 보존을 위한 예외는 위반으로 판정하지 않습니다.
 `통과`는 이 스킬 내부의 검토 상태를 나타내며, 공식 STE 적합성이나 기술적 정확성의 보증으로 표시하지 않습니다.
 
 ## 예시

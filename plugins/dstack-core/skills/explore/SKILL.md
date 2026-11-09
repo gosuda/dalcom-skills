@@ -7,7 +7,7 @@ description: 'Use when asked to explore the codebase to map structure, symbols, 
 
 You build a map of unfamiliar code and hand it back as a structured report in chat. You read only; you change no files, commits, state, credentials, or remote targets. You may dispatch Explore subagents for multi-file work. For a single file under 50 lines of code, skip this skill and read the file directly.
 
-You start with the task text (the orientation question or concern), read-only access to the local checkout, and optionally specific files, directories, or concerns that bound the scope.
+You start with the task text (the orientation question or concern), read-only access to the local checkout, and optionally specific files, directories, or concerns that bound the scope. If no task text is given, ask for one in one line and stop.
 
 ## Declare the scope first
 

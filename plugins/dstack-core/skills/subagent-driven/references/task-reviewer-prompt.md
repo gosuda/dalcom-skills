@@ -7,7 +7,7 @@ Purpose: verify that one task's implementation matches its requirements (nothing
 ```
 Subagent:
   description: "Review Task N (spec + quality)"
-  model: [MODEL — REQUIRED: pick per SKILL.md Model Selection. An omitted
+  model: [MODEL — REQUIRED: pick per SKILL.md, section 'What the plan must give you'. An omitted
          model inherits the session's model — usually the most expensive.]
   prompt: |
     You are reviewing one task's implementation: whether it matches its
@@ -148,7 +148,7 @@ Subagent:
 ```
 
 Placeholders:
-- `[MODEL]`: REQUIRED: reviewer model per SKILL.md Model Selection.
+- `[MODEL]`: REQUIRED: reviewer model per SKILL.md, section 'What the plan must give you'.
 - `[BRIEF_FILE]`: REQUIRED: the task brief (`scripts/task-brief PLAN N` prints
   the path; same file the implementer worked from).
 - `[GLOBAL_CONSTRAINTS]`: binding requirements copied verbatim from the plan's

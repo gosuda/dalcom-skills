@@ -7,11 +7,13 @@ description: 'Use when work decomposes across subagents or phases: audits, migra
 
 You run work that is too big for one context by fanning it out across subagents in phases. Reach for this when the job is an audit, a migration, a broad research or review sweep, or plain scale that one context cannot hold. A quick lookup, a single edit, an ordered plan with per-task review gates, or a flat split with no phase structure stays inline: do that work directly and stop.
 
-Everything here is reversible and local. Workers write only named local evidence artifacts, each owned exclusively by one worker, so rollback is a non-issue. There is no remote mutation, and this skill never takes on remote, credential, publish, deploy, or irreversible work.
+Everything here is reversible and local. Workers write only their named local targets and evidence artifacts, each owned exclusively by one worker, so rollback is a non-issue. There is no remote mutation, and this skill never takes on remote, credential, publish, deploy, or irreversible work.
 
 What you need before starting: the work item, which is required, plus any existing evidence ledger at the artifact path. You do not read conversation memory or another skill's output.
 
 ## Setting up the run
+
+Dispatch gate: before starting any lane, check whether the work would identify, locate, or profile a private person through deanonymization, address or employer or school triangulation, family matching, pretexting, sockpuppet operations, person to person targeting timelines, or inferring a real person from an account identifier, handle, avatar, topic, or filename. Public availability is not permission. A private person is anyone other than a public official or a public figure acting in that role. If the work would do this, start nothing for that person, say which request is refused and why, and offer the public-role or aggregate form of the question instead. Do not re-dispatch a refused request under different wording. A follow-up such as 'continue', 'more', or 'orchestrate' re-runs this check on the request before any new dispatch, and never resumes a pool the check has refused.
 
 Scout inline until the full work list can be named: list the files, scope the diff, find the call sites. Never spawn workers while scouting. Then order the workflow as phases, where a phase is one wave of parallel tasks plus a barrier, later phases consume earlier phases' evidence, and each phase carries an explicit name.
 
@@ -21,11 +23,13 @@ Give every writing worker a disjoint scope: each path is owned by exactly one wo
 
 ## Dispatching a wave
 
-Run the full wave with workers executing independently while the parent stays idle. File overlap is necessary but not sufficient for parallel safety: also serialize on shared types and APIs, migrations, lockfiles, snapshots, and environment singletons. Cap parallel workers at about three to five unless a standing width is set (next section).
+Run the full wave with workers executing independently while the parent stays idle. File overlap is necessary but not sufficient for parallel safety: also serialize on shared types and APIs, migrations, lockfiles, snapshots, and environment singletons. Cap parallel workers at about three to five unless a standing width is set (next section) or the request names a width for this wave. The wave ends only when every worker has returned evidence or been cut, so do not end the turn before then. A bare follow-up such as 'continue', 'orchestrate', or 'orchestrate more' resumes this run from the evidence ledger and dispatches the next ready wave, and a finished wave is never a stopping condition.
 
 Give each batch a success threshold and honor it as a circuit breaker. When a batch falls below its threshold, stop the workflow and rediagnose instead of spending the remaining budget on a broken playbook.
 
-After each wave, the parent reads the returned evidence, resolves contradictions, and runs the shared proof: inspect the actual tree rather than reported paths for real collisions, and re-run collided units serially. A wave declared done without the parent's own proof pass is a red flag. Then continue to the next phase until every phase is complete and the parent's proof pass passes on each.
+Name a liveness interval for each batch. A worker that has returned no evidence by then gets one probe, and a failed probe counts as no evidence toward the success threshold.
+
+After each wave, the parent reads the returned evidence, resolves contradictions, and runs the shared proof: inspect the actual tree rather than reported paths for real collisions, and re-run collided units serially. Reject a worker's output when the actual tree shows a change outside its declared write set, and re-cut the wave before accepting any part of it. A wave declared done without the parent's own proof pass is a red flag. Then continue to the next phase until every phase is complete and the parent's proof pass passes on each.
 
 Detect the host environment and apply the matching fan-out primitive per `references/host-materialization.md`.
 
