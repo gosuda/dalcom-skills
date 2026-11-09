@@ -16,8 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   stay as before.
 - The watch ends only when the request is fully clean: checks pass on the current head,
   no thread is open, and no review is still expected, including a bot that reviewed an
-  earlier head. A silent expected reviewer holds the watch open and is named in the
-  report; a `declined` or `needs-human` item ends it as `blocked-with-owner`.
+  earlier head or a recent merged pull request of the same repository. A silent
+  expected reviewer holds the watch open and is named in the report; a `declined` or
+  `needs-human` item ends it as `blocked-with-owner`.
 - `ask-dalcom` routes the watch skills with the new behavior.
 
 ## [2.1.16] - 2026-11-09
