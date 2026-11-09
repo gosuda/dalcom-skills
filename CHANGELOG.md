@@ -5,6 +5,31 @@ All notable changes to Dalcom Skills will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.16] - 2026-11-09
+### Changed
+- The auto skills share one way to read an invocation. A bare call takes its subject
+  from the session, `/skill:` tokens are routing hints, and nudge words resume work.
+  Invoking `autopilot` with a plan subject, or `autoplan-and-autopilot` with an idea or
+  plan, approves local, reversible work; outward, irreversible, credential, paid, and
+  data-at-rest acts still need explicit consent, and a timeout never approves. A halt
+  stops new dispatch, and a re-entry resumes from the todo list, ledger, and tree.
+  `autowatch` can watch an open pull request through `watch-and-repair-pr`, and
+  `autolearn` documents a validator command that resolves.
+- `do-it-now`, `parallel-launch`, and `workflows-driven` refuse lanes that identify,
+  locate, or profile a private person, and a bare continue keeps a run going until its
+  barrier.
+- Publish skills treat a timeout as refusal, check a named account, leave user work
+  untouched, and resolve the pull request base from the remote. `ci-fix` answers a
+  repeated bare call in one line.
+- Planning, intent, and posture skills stop on missing input, carry settled answers
+  forward, require an opened source before a claim counts as verified, and state the
+  todo call shape.
+- The Korean writing skills keep the source register, share one verdict vocabulary, and
+  hold each shared rule in one place.
+- `ask-dalcom` follows each change: the approval forms, steering words inside a running
+  chain, the watch-only route, named fan-out widths, the read-only `fastopt`, and the
+  Korean skill split.
+
 ## [2.1.15] - 2026-11-09
 ### Added
 - `ask-dalcom` routes a situation to the right dstack skills, with one reference per plugin

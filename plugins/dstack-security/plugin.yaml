@@ -1,5 +1,5 @@
 name: "dstack-security"
-version: "2.1.15"
+version: "2.1.16"
 description: "DStack workflows for security review, vulnerability triage, and defensive implementation."
 author: "gosuda"
 manifest_version: 2
