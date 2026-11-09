@@ -29,7 +29,7 @@ The ladder is done when every tier is probed, or (in primary-source-only mode) w
 
 ## Cite every claim honestly
 
-Every factual claim carries at least one source URL or doc path. Anything drawn solely from training data carries the label `[Speculative — training data only]`. For each load-bearing claim, test both stances against external sources (the surprising case that it holds, the settled case that it fails) and record both results; where no authoritative source is reachable, label the claim unverified and assert nothing from intuition.
+Every factual claim carries at least one source URL or doc path. Anything drawn solely from training data carries the label `[Speculative — training data only]`. For each load-bearing claim, test both stances against external sources (the surprising case that it holds, the settled case that it fails) and record both results; where no authoritative source is reachable, label the claim unverified and assert nothing from intuition. A tier sets the ceiling for a label, not the label itself: a claim reads Verified only when the worker opened the cited page in this run and quotes the supporting line.
 
 ## When only primary sources count
 
@@ -44,4 +44,4 @@ Name what happened and stop rather than pretending the artifact is complete:
 - `task-dispatch-failed`: the subagent never started or returned nothing.
 - No writable outcome at all: return `BLOCKED: <failure class>` with the specific reason.
 
-The finished file holds the subject id, the claims each with citations and confidence labels (Verified for Tiers 1 and 2, Probable for Tiers 3 and 4, Unverified for Tier 5, Speculative for training data only), and the open questions with attempted tiers, in that order.
+The finished file holds the subject id, the claims each with citations and confidence labels (Verified for Tiers 1 and 2 only when opened and quoted in this run, otherwise Probable; Probable for Tiers 3 and 4; Unverified for Tier 5; Speculative for training data only), and the open questions with attempted tiers, in that order.
