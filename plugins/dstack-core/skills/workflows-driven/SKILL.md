@@ -21,13 +21,17 @@ Give every writing worker a disjoint scope: each path is owned by exactly one wo
 
 ## Dispatching a wave
 
-Run the full wave with workers executing independently while the parent stays idle. File overlap is necessary but not sufficient for parallel safety: also serialize on shared types and APIs, migrations, lockfiles, snapshots, and environment singletons. Cap parallel workers at about three to five.
+Run the full wave with workers executing independently while the parent stays idle. File overlap is necessary but not sufficient for parallel safety: also serialize on shared types and APIs, migrations, lockfiles, snapshots, and environment singletons. Cap parallel workers at about three to five unless a standing width is set (next section).
 
 Give each batch a success threshold and honor it as a circuit breaker. When a batch falls below its threshold, stop the workflow and rediagnose instead of spending the remaining budget on a broken playbook.
 
 After each wave, the parent reads the returned evidence, resolves contradictions, and runs the shared proof: inspect the actual tree rather than reported paths for real collisions, and re-run collided units serially. A wave declared done without the parent's own proof pass is a red flag. Then continue to the next phase until every phase is complete and the parent's proof pass passes on each.
 
 Detect the host environment and apply the matching fan-out primitive per `references/host-materialization.md`.
+
+## Holding a width for the session
+
+When the user says `orchestrate max`, `max width`, or `workflowz max`, set a standing width for the rest of the session. Every later wave then dispatches one worker per disjoint write scope it holds, up to the harness's concurrent-agent limit, and never waits for a "more" nudge. The serialization rules above and the circuit breaker still apply, and a quick lookup or a single edit still stays inline. Say once that the width is active. It ends when the user says `normal width` or the harness compacts the context.
 
 ## The closing chain
 
