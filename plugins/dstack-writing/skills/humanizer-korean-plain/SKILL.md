@@ -1,6 +1,6 @@
 ---
 name: humanizer-korean-plain
-description: 'Use when Korean prose reads as machine-generated, machine-translated, or bureaucratic and must be rewritten as plain, natural Korean without changing its meaning. Covers rewriting, drafting from notes, and reviewing notices, emails, READMEs, and explanatory text. Not for controlled procedures or one-action-per-step runbooks: use humanizer-korean-ste. Not for spelling-only checks that must keep the original style.'
+description: 'Use when Korean prose reads as machine-generated (기계 문체), machine-translated (번역투), or bureaucratic (행정 문체) and must be rewritten as plain, natural Korean without changing its meaning. Covers rewriting, drafting from notes, and reviewing notices, emails, READMEs, and explanatory text. Not for controlled procedures or one-action-per-step runbooks: use humanizer-korean-ste. Also use for spelling-only requests: fix notation errors and keep the original style.'
 ---
 
 # 한국어 평이화와 기계 문체 제거
@@ -151,7 +151,7 @@ description: 'Use when Korean prose reads as machine-generated, machine-translat
 
 ### 문체와 높임
 
-출력 문체는 원문과 사용자의 지시를 따릅니다. 지시가 없으면 원문의 종결 어미 체계를 유지합니다.
+출력 문체는 원문과 사용자의 지시를 따릅니다. 지시가 없으면 원문의 종결 어미 체계를 유지하고, 원문이 없는 작성(메모에서 작성)은 합쇼체로 씁니다. 원문이 혼재하면 하십시오체로 통일하고, 한 출력 안에서 해요체와 합쇼체를 섞지 않습니다.
 의무와 금지는 명확하게 서술하며, 정중함을 이유로 의무를 권유 수준으로 약화하지 않습니다.
 원문의 정서 표현이나 사과가 글의 목적에 속하면 유지합니다.
 
@@ -167,12 +167,12 @@ description: 'Use when Korean prose reads as machine-generated, machine-translat
 
 다음 세 구문은 빈도와 관계없이 출력에서 배제합니다. 다른 문체 특징에 적용하는 밀도 기준은 이 세 구문에 적용하지 않습니다.
 
-상투적 대조 구문은 `A가 아니라 B입니다`, `단순한 A가 아닌 B`, `A라기보다는 B`, `A뿐만 아니라 B까지`처럼 누구도 주장하지 않은 A를 부정하여 B를 강조하는 형식입니다. B를 직접 서술합니다. 특정 해석의 배제가 독자에게 실제로 필요하면 그 부정을 별도의 문장으로 서술합니다.
+상투적 대조 구문은 `A가 아니라 B입니다`, `단순한 A가 아닌 B`, `A라기보다는 B`, `A뿐만 아니라 B`처럼 누구도 주장하지 않은 A를 부정하여 B를 강조하는 형식입니다. B를 직접 서술하고, 다른 대조 구문으로 바꾸지 않습니다. 특정 해석의 배제가 독자에게 실제로 필요하면 그 부정을 별도의 문장으로 서술합니다.
 
 - 원문: `이 도구는 단순한 배포 도구가 아니라 운영 자동화 플랫폼입니다.`
-- 교정: `이 도구는 배포와 서버 상태 점검을 자동화합니다.` (원문 문맥에서 해당 기능이 확인된 경우)
+- 교정: `이 도구는 운영 자동화 플랫폼입니다.`
 
-사선 병기는 `확인/검토`, `설치 / 배포`, `통과/실패`처럼 두 개념을 사선으로 나열하는 형식입니다. 두 개념의 관계를 `와`, `및`, `또는`, `중 하나`로 명시하거나 별도의 문장으로 분리합니다. 관계가 원문에서 확인되지 않으면 임의로 정하지 않고 확인 사항으로 남깁니다. 조사 견본은 `을(를)` 형식으로 표기합니다. 경로, URL, 코드, `km/h` 같은 단위, 날짜, UI 문자열에 포함된 사선은 보존합니다.
+사선 병기는 `확인/검토`, `설치 / 배포`, `통과/실패`처럼 두 개념을 사선으로 나열하는 형식입니다. 두 개념의 관계를 `와`, `및`, `또는`, `중 하나`, `모두`, `하나 이상`, `하나만` 중에서 명시하거나 별도의 문장으로 분리합니다. 관계가 원문에서 확인되지 않으면 임의로 정하지 않고 확인 사항으로 남깁니다. 조사 견본은 `을(를)` 형식으로 표기합니다. 경로, URL, 코드, `km/h` 같은 단위, 날짜, UI 문자열에 포함된 사선은 보존합니다.
 
 양비론적 유보는 `A일 수도 있고 B일 수도 있으며 둘 다 아닐 수도 있습니다`, `상황에 따라 다릅니다`, `장단점이 있습니다`처럼 판단을 제시하지 않고 종결하는 형식입니다. 원문이 한쪽을 뒷받침하면 그 판단을 서술합니다. 뒷받침하지 않으면 판단에 필요한 조건을 한 문장으로 서술하고, 원문의 불확실성은 같은 강도의 유보 표현 하나로 유지합니다. 원문에 없는 결론을 만들지 않습니다.
 
@@ -181,10 +181,10 @@ description: 'Use when Korean prose reads as machine-generated, machine-translat
 아래 특징은 단독으로 나타나면 문제가 되지 않는 경우가 많으며, 반복되거나 여러 유형이 중첩되어 글 전체가 획일적인 흐름을 보일 때 교정합니다.
 전체 목록과 교정 예는 [references/ai-tells.md](references/ai-tells.md)에 수록되어 있으며, 교정과 검토 작업에서는 이 목록을 한 차례 대조합니다.
 
-- 번역투 구조: `~에 대한`, `~을 통해`, `~에 있어서`, `~로부터`, `~에 의해`, `회의를 가지다`, 이중 피동 `되어지다`, 불필요한 대명사 `그것`과 `그들`, 습관적 복수 표지 `~들`.
+- 번역투 구조: `~에 대한`, `~을 통해`, `~를 통해`, `~에 있어서`, `~로부터`, `~에 의해`, `회의를 가지다`, 이중 피동 `되어지다`, 불필요한 대명사 `그것`과 `그들`, 습관적 복수 표지 `~들`.
 - 명사화와 형식 동사: `검토를 진행합니다`, `지원을 제공합니다`, `개선이 이루어졌습니다`. 의미가 같으면 `검토합니다`, `지원합니다`, `개선했습니다`로 교정합니다.
 - 근거 없는 의미 부여와 판촉 어휘: `혁신적인`, `획기적인`, `다양한`, `효과적으로`, `원활한`, `중요한 역할을 합니다`, `새로운 지평을 엽니다`. 근거가 있으면 구체적 사실로 대체하고, 근거가 없으면 삭제합니다.
-- 기계적 구성: 습관적 세 항목 나열, 문단마다 반복되는 `결론적으로`와 `요약하자면`, `~에 대해 알아보겠습니다` 같은 예고문, 자문자답, 굵은 글씨와 이모지와 줄표의 과용.
+- 기계적 구성: 습관적 세 항목 나열, 문단마다 반복되는 `결론적으로`와 `요약하자면`, `~에 대해 알아보겠습니다` 같은 예고문, 자문자답, 굵은 글씨와 이모지와 줄표의 과용, 개조식 명사형 종결(`~함`, `~할 것`, `~요망`).
 - 대화형 응답 표현과 높임법 오류: `좋은 질문입니다`, `도움이 되셨길 바랍니다`, 사물 존칭 `결제가 완료되셨습니다`, 중복 높임 `하실 수 있으십니다`, 사실 진술에 붙는 `~인 것 같습니다`.
 
 기계 문체를 제거하는 과정에서 원문의 정보를 삭제하지 않습니다.
@@ -204,7 +204,7 @@ description: 'Use when Korean prose reads as machine-generated, machine-translat
 
 ## 출력 형식
 
-교정과 작성의 출력은 한국어 완성 본문으로 한정합니다. 규칙 설명, 자기 평가, 수정 내역은 요청이 있을 때만 첨부합니다.
+교정과 작성의 출력은 한국어 완성 본문으로 한정합니다. 교정할 부분이 없다는 한 문장은 예외로 허용합니다. 규칙 설명, 자기 평가, 수정 내역은 요청이 있을 때만 첨부합니다.
 미확정 사항이 남으면 본문 뒤에 `확인 필요` 항목으로 분리하여 기재합니다. 완성 본문을 작성할 수 없으면 필요한 질문을 먼저 제시합니다.
 
 검토는 원문을 변경하지 않으며 위치, 문제, 근거 규칙, 최소 수정안의 순서로 보고합니다.
@@ -216,7 +216,7 @@ description: 'Use when Korean prose reads as machine-generated, machine-translat
 
 원문: `본 기능은 사용자 경험의 향상을 위해 다양한 옵션들을 제공하며, 이를 통해 보다 효율적인 작업이 가능합니다.`
 
-교정: `이 기능에는 여러 설정 항목이 있어 작업 방식에 맞게 조정할 수 있습니다.`
+교정: `이 기능은 여러 옵션을 제공합니다.`
 
 원문에 효율성의 근거와 옵션 목록이 없으면 수치와 항목을 추가하지 않습니다. 옵션 목록이 문맥에 있으면 그 명칭을 사용합니다.
 
