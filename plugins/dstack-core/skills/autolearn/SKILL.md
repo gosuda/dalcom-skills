@@ -11,12 +11,13 @@ Writes stay reversible and local: the operating repo's `docs/solutions/` and rep
 
 ## Read the invocation
 
-Control tokens come off first, as the next section defines. Free-text arguments are the subject: a solved problem, a verified fix, or a refresh scope.
+Control tokens come off first and pick the route, as the next section defines. The free-text arguments that remain are the subject: a solved problem, a verified fix, or a refresh scope.
 `/skill:<name>` tokens in the arguments are routing hints; drop them before reading the subject.
 `orchestrate`, `continue`, `go`, and `do it now` resume the current run and never restart it.
-With no free-text subject, take the first source that yields exactly one candidate: the last verified fix in this session.
+On the refresh route the subject is optional: with no free-text subject, refresh covers its default scope under Maintain the shelf.
+On every other route, with no free-text subject, take the first source that yields exactly one candidate: the last verified fix in this session.
 Print `subject: <what> (<how found>)` as the first output line.
-When no source yields one, stop before any write with one line: `nothing qualifies: no verified fix in this session.`
+When a route that needs a subject finds none, stop before any write with one line: `nothing qualifies: no verified fix in this session.`
 
 ## Route first: strip tokens, pick the job
 

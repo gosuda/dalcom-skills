@@ -9,7 +9,7 @@ One request goes in; the finished state its shape calls for comes out. A code ch
 
 ## Read the invocation
 
-Free-text arguments are the subject: a request, a bug report, an issue reference, a plan path, a PR or MR number, or a PR or MR URL.
+Control tokens come off first: `budget:<n>` sets the run budget and never names a subject. The free-text arguments that remain are the subject: a request, a bug report, an issue reference, a plan path, a PR or MR number, or a PR or MR URL.
 `/skill:<name>` tokens in the arguments are routing hints; drop them before reading the subject.
 `orchestrate`, `continue`, `go`, and `do it now` resume the current run and never restart it.
 With no free-text subject, take the first source that yields exactly one candidate: a plan written or approved in this session (plan route), then a plan file path named earlier in this session (plan route), then the open PR on the current branch (watch route).

@@ -9,14 +9,12 @@ You run a delivery plan from first edit to observed close-out, under phase gates
 
 ## Read the invocation
 
-Free-text arguments are the subject: a plan file path, a `local://` reference, or inline plan text.
+Control tokens come off first: `mode:local` selects the local-only finalize, and `workflowz` is a harness keyword. Neither names a subject. The free-text arguments that remain are the subject: a plan file path, a `local://` reference, or inline plan text.
 `/skill:<name>` tokens in the arguments are routing hints; drop them before reading the subject.
 `orchestrate`, `continue`, `go`, and `do it now` resume the current run and never restart it.
 With no free-text subject, take the first source that yields exactly one candidate: a plan approved (an accepted `ExitPlanMode`, or an approval message) or written in this session, then a plan file path named earlier in this session.
 Print `subject: <what> (<how found>)` as the first output line.
 When no source yields one, stop at plan intake with one line: `autopilot needs a plan: pass a plan path, or run /autoplan-and-autopilot with your idea.`
-
-Treat `workflowz` as a harness keyword; it never names a subject.
 
 ## Start only with a plan
 
