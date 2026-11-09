@@ -1,6 +1,6 @@
 ---
 name: sync-docs
-description: 'Use when a behavioral diff may have left docs or CHANGELOG stale, or when tidy targets stale code comments. Applies only safe fixes. Not for roadmap drift: use drift-detect.'
+description: 'Use when a behavioral diff may have left docs or CHANGELOG stale, or when tidy targets stale code comments. Applies only safe fixes. Not for steering a document toward a target state you name: use writing-for-agents for agent-read documents or docs-writing for others. Not for roadmap drift: use drift-detect.'
 ---
 
 # Sync docs
@@ -23,6 +23,8 @@ You need a scope and a base before you start.
 | Scope | `recent` (changed files from the current branch or last few commits), `before-pr` (branch diff against the PR base), or `all` (all tracked code and docs). |
 | Base | An explicit base ref is preferred. Without one, resolve the default branch, then fall back to `HEAD~5` for `recent`. |
 
+With no scope given, use `recent` in `report` mode and say so in the first line. `all` runs only when the user names it.
+
 Stop before doing anything if there is no diff or the scope is empty. Report the resolved base and scope rather than inventing drift. If the base ref is ambiguous, list the candidate refs and ask. When the user expects PR readiness, refuse an ambiguous review scope outright.
 
 In DStack tool mode, use `bash` only for git commands. Use `find`, `search`, `read`, `lsp`, `ast_grep`, and `edit` for everything else.
@@ -44,7 +46,7 @@ Then classify each finding as HIGH, MEDIUM, or LOW using the severity taxonomy i
 There are exactly two safe fixes, and both need HIGH-certainty evidence:
 
 1. Stale version number. Replace the exact semver in docs with the manifest version, but only when the line clearly labels it as the product or package version. Get the manifest field per ecosystem from `references/detection-recipes.md` (package.json `version`, Cargo.toml `package.version`, pyproject.toml `project.version`; Go tag-derived versions are never auto-fixed). Years, dates, protocol or API versions, port numbers, and third-party image tags are never safe fixes. If a manifest fails to parse, skip its version bump and flag the file as MEDIUM with the reason.
-2. Missing changelog entry. Insert a minimal bullet under `## [Unreleased]`, creating that section directly below the title if absent, citing the commit or file evidence. Never touch historical release sections, and never write changelog prose that needs product judgment.
+2. Missing changelog entry. Insert a minimal bullet under `## [Unreleased]`, creating that section directly below the title if absent, citing the commit or file evidence. Never touch historical release sections, and never write changelog prose that needs product judgment. If `CHANGELOG.md` does not exist, flag that and create nothing.
 
 Everything else is flag-only, no matter how certain: removed or renamed exports, import-path changes, stale examples, undocumented exports, docs describing dead code or wrappers, doc-drift or dead-doc suspicion. Those need human intent. After applying a safe fix, re-read the edited lines. On mismatch, revert the edit and reclassify the issue as flag-only with its `reasonFlagOnly`.
 

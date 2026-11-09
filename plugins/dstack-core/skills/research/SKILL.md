@@ -11,7 +11,7 @@ To start you need the subject, pulled as a canonical name from the request, plus
 
 ## Send one worker that owns the artifact
 
-Dispatch a background subagent through `task` with self-contained instructions covering subject, version, source-ladder requirements, and target path. That worker owns completion: it climbs the ladder, cites its claims, and writes the file. You record the outcome as artifact-on-disk or as `BLOCKED` with a named failure class. A partially successful run still returns the artifact path with its specific gaps listed.
+Dispatch a background subagent through `task` with self-contained instructions covering subject, version, source-ladder requirements, and target path. That worker owns completion: it climbs the ladder, cites its claims, and writes the file. You record the outcome as artifact-on-disk or as `BLOCKED` with a named failure class. A partially successful run still returns the artifact path with its specific gaps listed. A request that names several subjects gets one worker for the first and a list of the rest for the user to confirm; one invocation never dispatches a worker per subject.
 
 ## Climb the source ladder in order
 

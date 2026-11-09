@@ -1,6 +1,6 @@
 ---
 name: fastopt
-description: 'Use when optimizing suspected hot paths without waiting for benchmarks. Not for estimated hot and cold analysis: use fastopt-extreme. Not for measured-floor campaigns: use optimize-extremely.'
+description: 'Use when a suspected hot path needs read-only hypotheses and benchmark designs, without waiting for benchmarks and without a code change. Not for a single measured fix: use optimize. Not for estimated hot and cold analysis: use fastopt-extreme. Not for measured-floor campaigns: use optimize-extremely.'
 ---
 
 # Fastopt

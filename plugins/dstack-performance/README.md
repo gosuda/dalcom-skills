@@ -38,7 +38,7 @@ Each row states when to reach for the skill. Invoke one as `/dstack-performance:
 |---|---|
 | cpu-kernel-authoring | Use when writing, optimizing, or benchmarking a C++ CPU kernel with AVX2 or AVX512 intrinsics for the Hugging Face kernels ecosystem. |
 | decoded-memo-retention | Use when a query-scoped decoded-block cache is bounded only by serialized work bytes, or when fallback paths retain many decoded blocks. |
-| fastopt | Use when optimizing suspected hot paths without waiting for benchmarks. |
+| fastopt | Use when a suspected hot path needs read-only hypotheses and benchmark designs, without waiting for benchmarks and without a code change. |
 | fastopt-extreme | Use when estimating hot paths and proposing complexity-neutral cold simplifications while refusing complexity theater. |
 | heaptrack | Use when tracking heap allocations on Linux with heaptrack: allocation hotspots, peak heap, temporary allocations, leaks, or a diff of two runs via heaptrack_print. |
 | optimize | Use when one named path or performance symptom needs a single measured fix. |

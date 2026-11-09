@@ -1,3 +1,3 @@
 interface:
   display_name: "Fastopt"
-  short_description: "Use when optimizing suspected hot paths without waiting for benchmarks."
+  short_description: "Use when a suspected hot path needs read-only hypotheses and benchmark designs, without waiting for benchmarks and without a code change."

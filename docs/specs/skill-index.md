@@ -105,7 +105,7 @@
 | explain-concept | dstack-learn | Productivity | Use when a concept needs making clear rather than practising: explain simply, why does this exist, draw it, or simplify for a beginner. |
 | explainer-artifact | dstack-learn | Productivity | Use when asked to create an explainer document for a concept, diff, idea, or work recap. |
 | explore | dstack-core | Coding | Use when asked to explore the codebase to map structure, symbols, and dependencies. |
-| fastopt | dstack-performance | Coding | Use when optimizing suspected hot paths without waiting for benchmarks. |
+| fastopt | dstack-performance | Coding | Use when a suspected hot path needs read-only hypotheses and benchmark designs, without waiting for benchmarks and without a code change. |
 | fastopt-extreme | dstack-performance | Coding | Use when estimating hot paths and proposing complexity-neutral cold simplifications while refusing complexity theater. |
 | feedback-sweep | dstack-run | Coding | Use when asked to /feedback-sweep [setup\|reconfigure] [mode:non-interactive]. |
 | figure-it-out | dstack-run | Coding | Use when non-trivial work should run a matched playbook to verified real-surface completion, or a bespoke workflow when none fits. |

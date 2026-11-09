@@ -26,7 +26,7 @@ Per entry, record the current stable version with its release date, the current 
 
 ## Floors are not pins
 
-A compatibility floor sets the lowest acceptable version. The selected version must satisfy the floor, the floor never freezes the choice at the floor version, and the preferred pick stays the latest stable LTS satisfying the floor, otherwise the latest stable satisfying the floor. An existing exact repo pin is the recorded default, not a freeze: compare it against the preferred pick, keep the old pin only when project policy or a verified incompatibility requires it, and otherwise raise it. Name every override: the old pin or floor, the selected version showing the floor is satisfied, and the reason the pin was kept or raised.
+A compatibility floor sets the lowest acceptable version. The selected version must satisfy the floor, the floor never freezes the choice at the floor version, and the preferred pick stays the latest stable LTS satisfying the floor, otherwise the latest stable satisfying the floor, unless the user has stated a channel policy (LTS only or stable only). A stated policy overrides this preference and is recorded in the change. An existing exact repo pin is the recorded default, not a freeze: compare it against the preferred pick, keep the old pin only when project policy or a verified incompatibility requires it, and otherwise raise it. Name every override: the old pin or floor, the selected version showing the floor is satisfied, and the reason the pin was kept or raised.
 
 ## Read the current pattern before writing code
 
@@ -34,7 +34,7 @@ Read the chosen version current recommended pattern from its release channel doc
 
 ## Treat maintenance as context
 
-Record the last 24 months of activity history, the repository archive status, applicable unresolved critical advisories affecting the selected exact version, and evidence of ecosystem adoption and de facto use such as downstream dependents, distribution packaging, or continued integration references.
+Record the repository archive status, applicable unresolved critical advisories affecting the selected exact version, and evidence of ecosystem adoption and de facto use such as downstream dependents, distribution packaging, or continued integration references.
 
 Archive status is evidence inside this assessment, never an automatic rejection. An archived project with an endorsed successor moves to the successor. An archived project with no successor, and a long quiet project with no release, stands or falls on advisory applicability plus adoption evidence, with the reasoning recorded. Never reject a stable project solely because its last commit, release, or security fix is old.
 
